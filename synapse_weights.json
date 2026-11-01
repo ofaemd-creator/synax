@@ -1,0 +1,69 @@
+{
+  "engine": "SYNAX-Autopoiesis-RLSF-v2.0",
+  "timestamp": "2026-11-01T18:40:11Z",
+  "silicon_trials_elements": 2000000,
+  "mean_rlsf_speedup": 1.158,
+  "autonomous_discoveries": [
+    {
+      "concept": "otonom_oklid_normu",
+      "intent": "a ile b nin farkının karesinin karekökünü al, sapma ekle ve sigmoid uygula",
+      "raw_formula": "σ((√|((a - b))²| + bias))",
+      "evolved_formula": "σ((|(a - b)| + bias))",
+      "ast_nodes_reduced": "8 -> 7",
+      "tier0_q16_fixed_point_c89": "q16_fast_sigmoid(((((q_a[i] - q_b[i])) < 0 ? -((q_a[i] - q_b[i])) : ((q_a[i] - q_b[i]))) + q_bias))",
+      "tier3_avx512_intrinsics": "_mm512_add_ps(_mm512_abs_ps(_mm512_sub_ps(zmm_a, zmm_b)), zmm_bias)",
+      "raw_silicon_us": 4345.0,
+      "evolved_silicon_us": 3585.0,
+      "tier0_q16_silicon_us": 1281.0,
+      "rlsf_speedup": 1.212,
+      "max_numerical_error": 0.0,
+      "verified_and_memorized": true
+    },
+    {
+      "concept": "otonom_mutlak_aktivasyon",
+      "intent": "abs(abs(a - b)) + 0.0",
+      "raw_formula": "(||(a - b)|| + 0.0)",
+      "evolved_formula": "|(a - b)|",
+      "ast_nodes_reduced": "7 -> 4",
+      "tier0_q16_fixed_point_c89": "(((q_a[i] - q_b[i])) < 0 ? -((q_a[i] - q_b[i])) : ((q_a[i] - q_b[i])))",
+      "tier3_avx512_intrinsics": "_mm512_abs_ps(_mm512_sub_ps(zmm_a, zmm_b))",
+      "raw_silicon_us": 410.0,
+      "evolved_silicon_us": 390.0,
+      "tier0_q16_silicon_us": 411.0,
+      "rlsf_speedup": 1.051,
+      "max_numerical_error": 0.0,
+      "verified_and_memorized": true
+    },
+    {
+      "concept": "otonom_enerji_kapisi",
+      "intent": "relu(relu(sqrt((a * b) ^ 2) + bias))",
+      "raw_formula": "ReLU(ReLU((√|((a * b))²| + bias)))",
+      "evolved_formula": "ReLU((|(a * b)| + bias))",
+      "ast_nodes_reduced": "9 -> 7",
+      "tier0_q16_fixed_point_c89": "(((((((int32_t)(((int64_t)(q_a[i]) * (q_b[i])) >> 16))) < 0 ? -(((int32_t)(((int64_t)(q_a[i]) * (q_b[i])) >> 16))) : (((int32_t)(((int64_t)(q_a[i]) * (q_b[i])) >> 16)))) + q_bias)) > 0 ? ((((((int32_t)(((int64_t)(q_a[i]) * (q_b[i])) >> 16))) < 0 ? -(((int32_t)(((int64_t)(q_a[i]) * (q_b[i])) >> 16))) : (((int32_t)(((int64_t)(q_a[i]) * (q_b[i])) >> 16)))) + q_bias)) : 0)",
+      "tier3_avx512_intrinsics": "_mm512_max_ps(_mm512_setzero_ps(), _mm512_add_ps(_mm512_abs_ps(_mm512_mul_ps(zmm_a, zmm_b)), zmm_bias))",
+      "raw_silicon_us": 428.0,
+      "evolved_silicon_us": 383.0,
+      "tier0_q16_silicon_us": 412.0,
+      "rlsf_speedup": 1.117,
+      "max_numerical_error": 0.0,
+      "verified_and_memorized": true
+    },
+    {
+      "concept": "otonom_kuantum_darbe",
+      "intent": "sigmoid(sqrt((a - b) * (a - b)) * 1.0 + bias)",
+      "raw_formula": "σ(((√|((a - b) * (a - b))| * 1.0) + bias))",
+      "evolved_formula": "σ((|(a - b)| + bias))",
+      "ast_nodes_reduced": "13 -> 7",
+      "tier0_q16_fixed_point_c89": "q16_fast_sigmoid(((((q_a[i] - q_b[i])) < 0 ? -((q_a[i] - q_b[i])) : ((q_a[i] - q_b[i]))) + q_bias))",
+      "tier3_avx512_intrinsics": "_mm512_add_ps(_mm512_abs_ps(_mm512_sub_ps(zmm_a, zmm_b)), zmm_bias)",
+      "raw_silicon_us": 4474.0,
+      "evolved_silicon_us": 3573.0,
+      "tier0_q16_silicon_us": 1282.0,
+      "rlsf_speedup": 1.252,
+      "max_numerical_error": 0.0,
+      "verified_and_memorized": true
+    }
+  ],
+  "_integrity_sha256": "839c26be9dbf9fe3772b2a3d9930a08738e13173166a5e034ba482089faaefa8"
+}
