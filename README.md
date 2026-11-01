@@ -64,7 +64,7 @@ print(report["sure_us"])      # 35.92 µs (for 500,000 elements!)
 | **`GEN-1 [Unrolled-4x]`** | `SIMD:4x \| PF:0B \| T:1` | `8,407.4 µs` | `58.7x` |
 | **`GEN-3 [Tycon-8Core]`** | `SIMD:8x \| PF:0B \| T:8 (4P+4E)` | `2,128.2 µs` | `232.1x` |
 | **`MUT-3 [Firestorm-4P-Only]`** | `SIMD:16x \| PF:256B \| T:4 (P-Only)` | **`1,885.2 µs`** | **`262.0x`** *(Fastest CPU DNA)* |
-| **`GEN-4 [Metal-GPU]`** | `Unified float4 Shader` | **`1,816.0 µs`** | **`272.0x - 310.0x`** |
+| **`GEN-4 [Metal-GPU]`** | `Unified float4 Shader` | **`1,816.0 µs`** | **`~1.3x - 8.0x`** (Skaler C99 loop disable bazlı) |
 
 ---
 
@@ -73,3 +73,4 @@ print(report["sure_us"])      # 35.92 µs (for 500,000 elements!)
 - **Foundation, Book & Whitepaper:** [https://synaxcode.org](https://synaxcode.org)
 - **Full-Screen Cloud Studio IDE:** [https://synaxcode.online](https://synaxcode.online)
 - **Contact:** `dev@synaxcode.com`
+
