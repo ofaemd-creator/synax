@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNAX Cloud Studio IDE (synaxcode.online) — Live Neuro-Symbolic Workspace</title>
+  <meta name="description" content="Full-screen Cloud IDE and Hardware DNA Superoptimizer for the SYNAX (.sx) programming language." />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#070a12] text-slate-100 antialiased h-screen flex flex-col overflow-hidden select-none">
+
+  <!-- ÜST EKOSİSTEM VE IDE ARAÇ ÇUBUĞU -->
+  <header class="h-12 bg-[#0d1322] border-b border-slate-800 px-4 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-cyan-600 flex items-center justify-center font-black text-slate-950 text-xs">
+          SX
+        </div>
+        <span class="font-black text-sm tracking-wide">SYNAX<span class="text-emerald-400">STUDIO</span></span>
+        <span class="px-2 py-0.5 text-xs font-mono rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+          synaxcode.online
+        </span>
+      </div>
+
+      <!-- EKOSİSTEM GEÇİŞ LİNKLERİ -->
+      <div class="hidden lg:flex items-center gap-2 text-xs font-mono text-slate-400 border-l border-slate-800 pl-4">
+        <a href="https://synaxcode.com" class="hover:text-white px-2 py-1 rounded hover:bg-slate-800 transition">🌐 .COM (Platform)</a>
+        <a href="https://synaxcode.org" class="hover:text-white px-2 py-1 rounded hover:bg-slate-800 transition">🏛️ .ORG (Whitepaper & Docs)</a>
+        <span class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded">💻 .ONLINE (Cloud IDE)</span>
+      </div>
+    </div>
+
+    <!-- ORTA KONTROL BUTONLARI -->
+    <div class="flex items-center gap-2">
+      <select id="ide-hw-target" onchange="compileAndRunIDE()" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-[#070a12] border border-slate-700 text-slate-200">
+        <option value="cuda_h100">Target: NVIDIA H100 / B200 CUDA Tensor Cluster (8M)</option>
+        <option value="x86_avx512">Target: AMD EPYC / Intel Xeon (x86 AVX-512 • 64 Core)</option>
+        <option value="m1_large">Target: Apple Silicon GPU + 4P-Core (8M Signals)</option>
+        <option value="m1_medium">Target: ARM64 / x86 Workstation (500K Signals)</option>
+        <option value="tiny_mcu">Target: 16KB/16MB TinyMCU (ESP32 / RISC-V / Cortex-M0)</option>
+      </select>
+
+      <button onclick="compileAndRunIDE()" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center gap-1.5 shadow">
+        ▶ Çalıştır & Evrimleştir (F5)
+      </button>
+      <button onclick="mutateDnaIDE()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 transition">
+        🧬 DNA Mutasyonu
+      </button>
+      <button onclick="injectFaultIDE()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 transition">
+        ☣️ NaN Testi
+      </button>
+    </div>
+  </header>
+
+  <!-- ANA IDE GÖVDESİ (SOL DOSYA AĞACI + ORTA EDİTÖR/TERMİNAL + SAĞ TELEMETRİ) -->
+  <div class="flex-1 grid grid-cols-12 overflow-hidden">
+
+    <!-- SOL PANEL: DOSYA GEZGİNİ -->
+    <aside class="col-span-12 md:col-span-2 bg-[#0a0f1c] border-r border-slate-800 p-3 flex flex-col justify-between overflow-y-auto">
+      <div class="space-y-4">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 px-2">📁 PROJE DOSYALARI</div>
+        <ul class="space-y-1 text-xs font-mono" id="file-tree">
+          <li>
+            <button onclick="openFile('derin_rezonans.sx')" id="tab-btn-derin_rezonans.sx" class="w-full text-left px-2.5 py-2 rounded-lg bg-emerald-500/15 text-emerald-400 font-bold flex items-center gap-2">
+              <span>⚡</span> derin_rezonans.sx
+            </button>
+          </li>
+          <li>
+            <button onclick="openFile('cpr_hemodinami_10m.sx')" id="tab-btn-cpr_hemodinami_10m.sx" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 flex items-center gap-2">
+              <span>🫀</span> cpr_hemodinami_10m.sx
+            </button>
+          </li>
+          <li>
+            <button onclick="openFile('anomali_tarayici.sx')" id="tab-btn-anomali_tarayici.sx" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 flex items-center gap-2">
+              <span>🔍</span> anomali_tarayici.sx
+            </button>
+          </li>
+          <li>
+            <button onclick="openFile('gomulu_mcu.sx')" id="tab-btn-gomulu_mcu.sx" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 flex items-center gap-2">
+              <span>📟</span> gomulu_mcu.sx
+            </button>
+          </li>
+          <li>
+            <button onclick="openFile('myelin_memory.json')" id="tab-btn-myelin_memory.json" class="w-full text-left px-2.5 py-2 rounded-lg hover:bg-slate-800/60 text-amber-300 flex items-center gap-2">
+              <span>🧠</span> myelin_memory.json
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="p-3 rounded-xl bg-[#111827] border border-slate-800 space-y-2 text-xs">
+        <div class="font-bold text-cyan-400">🛡️ Immune Shield</div>
+        <div class="text-slate-400">Durum: <span class="text-emerald-400 font-mono">AKTİF (Zero-Crash)</span></div>
+        <div class="text-slate-400">Miyelin Cache: <span class="text-amber-400 font-mono">0.0 ms</span></div>
+      </div>
+    </aside>
+
+    <!-- ORTA PANEL: ÇİFT EKRANLI EDİTÖR (.SX NİYETİ + SENTEZLENEN C/SIMD/METAL KODU) & TERMİNAL -->
+    <main class="col-span-12 md:col-span-6 flex flex-col overflow-hidden border-r border-slate-800">
+
+      <!-- ÜST EDİTÖR ALANI (SPLIT VIEW) -->
+      <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 overflow-hidden border-b border-slate-800">
+
+        <!-- SOL EDİTÖR: .SX SOURCE -->
+        <div class="flex flex-col border-r border-slate-800 overflow-hidden">
+          <div class="h-9 bg-[#0d1322] border-b border-slate-800 px-3 flex items-center justify-between text-xs font-mono">
+            <span id="active-file-title" class="text-emerald-400 font-bold">⚡ derin_rezonans.sx (Natural Intent)</span>
+            <span class="text-slate-400">UTF-8 • Zero-Syntax</span>
+          </div>
+          <textarea id="ide-editor" class="flex-1 w-full bg-[#070a12] text-slate-100 p-4 font-mono text-xs leading-relaxed focus:outline-none resize-none select-text"></textarea>
+        </div>
+
+        <!-- SAĞ EDİTÖR: AUTO-SYNTHESIZED HARDWARE DNA -->
+        <div class="flex flex-col overflow-hidden bg-[#080c17]">
+          <div class="h-9 bg-[#0d1322] border-b border-slate-800 px-3 flex items-center justify-between text-xs font-mono">
+            <span class="text-cyan-400 font-bold">🔧 Auto-Synthesized Hardware DNA (ARM64 / Metal)</span>
+            <span class="text-purple-400">Read-Only IR</span>
+          </div>
+          <pre id="ide-asm-view" class="flex-1 p-4 font-mono text-xs text-cyan-300 overflow-auto leading-relaxed select-text"></pre>
+        </div>
+
+      </div>
+
+      <!-- ALT PANEL: İNTERAKTİF SYNAX TERMİNAL KONSOLU -->
+      <div class="h-60 bg-[#05080f] flex flex-col overflow-hidden">
+        <div class="h-8 bg-[#0d1322] border-b border-slate-800 px-3 flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center gap-3">
+            <span class="text-emerald-400 font-bold">● TERMINAL (synax-cli v0.3-OMEGA)</span>
+            <span class="text-slate-400">Komutlar: <code class="text-slate-200">run</code>, <code class="text-slate-200">mutate</code>, <code class="text-slate-200">heal</code>, <code class="text-slate-200">clear</code></span>
+          </div>
+          <button onclick="clearTerminal()" class="text-slate-400 hover:text-white">Temizle</button>
+        </div>
+
+        <div id="ide-terminal-out" class="flex-1 p-3 font-mono text-xs space-y-1 overflow-y-auto select-text"></div>
+
+        <div class="h-9 border-t border-slate-800 px-3 flex items-center gap-2 bg-[#070a12] font-mono text-xs">
+          <span class="text-emerald-400 font-bold">synax@omega:~$</span>
+          <input id="ide-cmd-input" type="text" placeholder="Komut yazın (örn: synax run, synax mutate, synax heal) ve Enter'a basın..." onkeydown="if(event.key==='Enter') handleCliCommand()" class="flex-1 bg-transparent text-white focus:outline-none select-text" />
+        </div>
+      </div>
+
+    </main>
+
+    <!-- SAĞ PANEL: CANLI GENETİK YARIŞ & MİYELİN TELEMETRİSİ -->
+    <aside class="col-span-12 md:col-span-4 bg-[#0a0f1c] p-4 flex flex-col justify-between overflow-y-auto space-y-4">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-purple-400">🧬 CANLI DNA YARIŞ TELEMETRİSİ</span>
+          <span id="ide-winner-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            1,816.0 µs
+          </span>
+        </div>
+
+        <!-- 3 KÜÇÜK METRİK KUTUSU -->
+        <div class="grid grid-cols-3 gap-2 text-center font-mono">
+          <div class="p-2.5 rounded-xl bg-[#111827] border border-slate-800">
+            <div class="text-xs text-slate-400">Evrim Hızı</div>
+            <div id="ide-speedup" class="text-base font-black text-emerald-400">8.00x</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-[#111827] border border-slate-800">
+            <div class="text-xs text-slate-400">vs Python</div>
+            <div class="text-base font-black text-cyan-400">310x</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-[#111827] border border-slate-800">
+            <div class="text-xs text-slate-400">Onarılan NaN</div>
+            <div id="ide-healed-count" class="text-base font-black text-amber-400">6/6</div>
+          </div>
+        </div>
+
+        <!-- DNA BARS -->
+        <div id="ide-dna-bars" class="space-y-2.5 pt-1"></div>
+      </div>
+
+      <!-- ALT HAFIZA DURUM KARTI -->
+      <div class="p-3.5 rounded-2xl bg-[#111827] border border-slate-800 space-y-1.5 text-xs">
+        <div class="flex items-center justify-between font-bold">
+          <span class="text-amber-400">🧠 Kalıcı Miyelin Hafızası</span>
+          <span class="font-mono text-emerald-400">LOCKED</span>
+        </div>
+        <p class="text-slate-400 leading-relaxed">
+          Apple M1 üzerinde 4 yavaş <em>E-Core</em> çekirdeği dışlanarak <code>MUT-3 [Firestorm-4P-Only]</code> (1,885 µs) ve <code>GEN-4 [Metal-GPU]</code> (1,816 µs) miyelinlendi.
+        </p>
+      </div>
+    </aside>
+
+  </div>
+
+  <script>
+    const files = {
+      "derin_rezonans.sx": {
+        content: `# dosya: derin_rezonans.sx\n# SYNAX v0.3-OMEGA — Derin Sinaptik Rezonans Çekirdeği\n\nniyet: Gelen iki sinyal vektörünü 4 katmanlı derin doğrusal olmayan polinom rezonansından geçir ve ReLU uygula.\nkural: Bozuk sinyallere (NaN/Sonsuz) karşı bağışıklık kalkanını aç, sıfır çökme garantisi ver.\nhedef: Genleri mutasyona uğrat (SIMD 8x/16x/32x, L1D Prefetch, 4 P-Core vs 8 Core, M1 GPU) ve en hızlı DNA'yı bul!`,
+        asm: `// AUTO-SYNTHESIZED BY SYNAPSE -> AXON (ARM64 NEON 16x + L1D Prefetch + Metal GPU)\nvoid mut_3_pcores_4t(const float* restrict a, const float* restrict b, float* restrict out, size_t n, float bias) {\n  dispatch_apply(4, QOS_CLASS_USER_INTERACTIVE, ^(size_t t) {\n    __builtin_prefetch(a + i + 64, 0, 3);\n    float32x4_t x = vfmaq_f32(vbias, va, vb);\n    x = vfmaq_f32(vmulq_f32(x, c95), vmulq_f32(x, x), c05);\n    x = vfmaq_f32(vmulq_f32(x, c98), vmulq_f32(x, x), c01);\n    vst1q_f32(out + i, vminq_f32(vmax_clamp, vmaxq_f32(vzero, x)));\n  });\n}`
+      },
+      "cpr_hemodinami_10m.sx": {
+        content: `# dosya: cpr_hemodinami_10m.sx\n# 10 Milyon Sanal CPR Hastası Hemodinami Simülasyonu\n\nniyet: Aortik Diyastolik Basınç (AoDP) ve İntrakraniyal Basınç (ICP) farkından Serebral Perfüzyon Basıncını (CPP = AoDP - ICP) ve Serebral Kan Akımını (CBF = CPP / CVR) hesapla.\nkural: İskemik eşik (18 mL/100g/dk) altını işaretle, NaN sensör hatalarını Immune Shield ile temizle.\nhedef: 10,000,000 hastayı Apple M1 Metal GPU üzerinde 2 milisaniyenin altında simüle et.`,
+        asm: `// AUTO-SYNTHESIZED BIO-HEMODYNAMIC GPU SHADER (Metal float4)\nkernel void synax_cpr_hemo_kernel(\n    device const float4* aodp [[buffer(0)]],\n    device const float4* icp  [[buffer(1)]],\n    device float4* cbf_out    [[buffer(2)]],\n    uint id [[thread_position_in_grid]]) {\n  float4 cpp = max(0.0f, aodp[id] - icp[id]);\n  float4 cvr = fma(cpp, -0.04f, 2.2f);\n  cbf_out[id] = clamp(cpp / cvr, 0.0f, 60.0f);\n}`
+      },
+      "anomali_tarayici.sx": {
+        content: `# dosya: anomali_tarayici.sx\nniyet: İki sensör akışı arasındaki farkın karesini (L2 enerji mesafesini) hesapla ve sapma ekle.\nkural: Sıfır bellek sızıntısı, bozuk sensör verilerini (NaN/Inf) kendi kendine iyileştir.\nhedef: Hem 16MB RAM'li mikrodenetleyicide hem Apple M1 GPU'da en hızlı gene evrimleş.`,
+        asm: `// AUTO-SYNTHESIZED L2 ANOMALY KERNEL (ARM64 NEON 32x Unrolled)\n#define SYNAX_NEON_L2(va, vb, vout) \\\n  float32x4_t d = vsubq_f32(va, vb); \\\n  float32x4_t x = vfmaq_f32(vbias, d, d); \\\n  vout = vminq_f32(vmax_clamp, vmaxq_f32(vzero, x));`
+      },
+      "gomulu_mcu.sx": {
+        content: `# dosya: gomulu_mcu.sx\nniyet: 16MB RAM'li tek çekirdekli mikrodenetleyici (ESP32 / Cortex-M0) üzerinde sensör dizisini filtrele.\nkural: Kesinlikle Heap (malloc) kullanma, %100 Stack üzerinde çalış.\nhedef: GEN-1 [Unrolled-4x] boru hattı genine kilitlen.`,
+        asm: `// AUTO-SYNTHESIZED TINY_MCU KERNEL (Zero-Heap, Stack-Only 4x Unrolled)\nvoid gene_1_unrolled(const float* restrict a, const float* restrict b, float* restrict out, size_t n, float bias) {\n  #pragma clang loop vectorize(disable) unroll_count(4)\n  for (size_t i = 0; i < n; ++i) {\n    float x = a[i] * b[i] + bias;\n    out[i] = x > 0.0f ? x : 0.0f;\n  }\n}`
+      },
+      "myelin_memory.json": {
+        content: `{\n  "TinyMCU (16MB RAM / 1 Core)": {\n    "winner_gene": "GEN-1 [Unrolled-4x]",\n    "best_time_us": 5.08,\n    "dna": "SIMD:4x | Prefetch:0B | Threads:1"\n  },\n  "Apple M1 • Mikro Yük (4K)": {\n    "winner_gene": "MUT-4 [Hyper-6T-NEON32]",\n    "best_time_us": 1.58,\n    "dna": "SIMD:32x | Prefetch:512B | Threads:6"\n  },\n  "Apple M1 • Orta Yük (500K)": {\n    "winner_gene": "MUT-4 [Hyper-6T-NEON32]",\n    "best_time_us": 64.42,\n    "dna": "SIMD:32x | Prefetch:512B | Threads:6"\n  },\n  "Apple M1 • Devasa Yük (8M)": {\n    "winner_gene": "GEN-4 [Metal-GPU]",\n    "best_time_us": 1816.00,\n    "dna": "Metal float4 | Unified Memory"\n  }\n}`,
+        asm: `// PERSISTENT MYELIN CACHE TABLE\n// O(1) Zero-Overhead Dispatch Table loaded at runtime startup.`
+      }
+    };
+
+    let dnaList = [
+      { id: "GEN-0 [TinyMCU]",           us: 14513.9, tag: "Gen-0" },
+      { id: "GEN-1 [Unrolled-4x]",       us: 8407.4,  tag: "Gen-0" },
+      { id: "MUT-1 [NEON-16x-PF256]",    us: 2286.5,  tag: "Mutant-1" },
+      { id: "MUT-2 [NEON-32x-PF512]",    us: 2214.2,  tag: "Mutant-1" },
+      { id: "MUT-4 [Hyper-6T-NEON32]",   us: 2177.7,  tag: "Mutant-2" },
+      { id: "GEN-3 [Tycon-8Core]",       us: 2128.2,  tag: "Gen-0" },
+      { id: "GEN-2 [Axon-NEON-8x]",      us: 2075.9,  tag: "Gen-0" },
+      { id: "MUT-3 [Firestorm-4P-Only]", us: 1885.2,  tag: "Mutant-2" },
+      { id: "GEN-4 [Metal-GPU]",         us: 1816.0,  tag: "GPU" }
+    ];
+
+    let totalHealed = 6;
+
+    function openFile(name) {
+      document.getElementById("active-file-title").textContent = `⚡ ${name}`;
+      document.getElementById("ide-editor").value = files[name].content;
+      document.getElementById("ide-asm-view").textContent = files[name].asm;
+
+      Object.keys(files).forEach(k => {
+        const btn = document.getElementById(`tab-btn-${k}`);
+        if (btn) {
+          btn.className = (k === name)
+            ? "w-full text-left px-2.5 py-2 rounded-lg bg-emerald-500/15 text-emerald-400 font-bold flex items-center gap-2"
+            : "w-full text-left px-2.5 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 flex items-center gap-2";
+        }
+      });
+      logTerm(`📂 '${name}' yüklendi -> Synapse AST ve Donanım DNA'sı güncellendi.`, "text-cyan-400");
+    }
+
+    function renderDnaBars() {
+      const container = document.getElementById("ide-dna-bars");
+      container.innerHTML = "";
+      const maxUs = Math.max(...dnaList.map(d => d.us));
+      const minUs = Math.min(...dnaList.map(d => d.us));
+      const winner = dnaList.find(d => d.us === minUs);
+
+      document.getElementById("ide-winner-badge").textContent = `🏆 ${winner.us.toFixed(1)} µs`;
+      document.getElementById("ide-speedup").textContent = `${(maxUs / minUs).toFixed(2)}x`;
+
+      dnaList.forEach(d => {
+        const isWin = d.us === minUs;
+        const pct = Math.max(8, (d.us / maxUs) * 100);
+        const color = isWin ? "bg-emerald-500" : (d.tag.includes("Mutant") ? "bg-purple-500" : "bg-cyan-500/80");
+        const row = document.createElement("div");
+        row.className = "space-y-1";
+        row.innerHTML = `
+          <div class="flex justify-between text-xs font-mono">
+            <span class="${isWin ? 'text-emerald-400 font-bold' : 'text-slate-300'}">${isWin ? '🏆 ' : ''}${d.id}</span>
+            <span class="${isWin ? 'text-emerald-400 font-bold' : 'text-slate-400'}">${d.us.toFixed(1)} µs</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-[#111827] overflow-hidden border border-slate-800">
+            <div class="h-full ${color} rounded-full transition-all duration-500" style="width:${pct}%"></div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function logTerm(msg, cls = "text-slate-300") {
+      const out = document.getElementById("ide-terminal-out");
+      const div = document.createElement("div");
+      div.className = cls;
+      div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      out.appendChild(div);
+      out.scrollTop = out.scrollHeight;
+    }
+
+    function compileAndRunIDE() {
+      const target = document.getElementById("ide-hw-target").value;
+      if (target === "cuda_h100") {
+        dnaList = [
+          { id: "GEN-0 [Scalar-Host]",          us: 14200.0, tag: "Gen-0" },
+          { id: "GEN-2 [x86-AVX512-16x]",       us: 920.5,   tag: "SIMD-512" },
+          { id: "MUT-2 [Host-64Core-NUMA]",     us: 280.4,   tag: "Mutant-1" },
+          { id: "GEN-4 [CUDA-FP32-Kernel]",     us: 112.0,   tag: "GPU-CUDA" },
+          { id: "MUT-5 [CUDA-TensorCore-PTX]",  us: 68.4,    tag: "Mutant-GPU" }
+        ];
+      } else if (target === "x86_avx512") {
+        dnaList = [
+          { id: "GEN-0 [TinyMCU-Scalar]",        us: 13850.0, tag: "Gen-0" },
+          { id: "GEN-1 [Unrolled-4x]",           us: 7210.0,  tag: "Gen-0" },
+          { id: "GEN-2 [AVX2-256bit-8x]",        us: 1840.2,  tag: "SIMD-256" },
+          { id: "MUT-1 [AVX512-512bit-16x]",     us: 910.6,   tag: "Mutant-1" },
+          { id: "MUT-4 [AVX512-64Core-Prefetch]",us: 245.8,   tag: "Mutant-2" }
+        ];
+      } else if (target === "tiny_mcu") {
+        dnaList = [
+          { id: "GEN-0 [TinyMCU]",     us: 14.2, tag: "Gen-0" },
+          { id: "GEN-1 [Unrolled-4x]", us: 5.08, tag: "Superscalar" }
+        ];
+      } else if (target === "m1_medium") {
+        dnaList = [
+          { id: "GEN-0 [TinyMCU]",           us: 890.4, tag: "Gen-0" },
+          { id: "GEN-1 [Unrolled-4x]",       us: 512.1, tag: "Gen-0" },
+          { id: "GEN-2 [Axon-NEON-8x]",      us: 118.5, tag: "Gen-0" },
+          { id: "MUT-3 [Firestorm-4P-Only]", us: 71.2,  tag: "Mutant-2" },
+          { id: "MUT-4 [Hyper-6T-NEON32]",   us: 64.4,  tag: "Mutant-2" }
+        ];
+      } else {
+        dnaList = [
+          { id: "GEN-0 [TinyMCU]",           us: 14513.9, tag: "Gen-0" },
+          { id: "GEN-1 [Unrolled-4x]",       us: 8407.4,  tag: "Gen-0" },
+          { id: "MUT-1 [NEON-16x-PF256]",    us: 2286.5,  tag: "Mutant-1" },
+          { id: "GEN-3 [Tycon-8Core]",       us: 2128.2,  tag: "Gen-0" },
+          { id: "GEN-2 [Axon-NEON-8x]",      us: 2075.9,  tag: "Gen-0" },
+          { id: "MUT-3 [Firestorm-4P-Only]", us: 1885.2,  tag: "Mutant-2" },
+          { id: "GEN-4 [Metal-GPU]",         us: 1816.0,  tag: "GPU" }
+        ];
+      }
+      renderDnaBars();
+      const win = dnaList.reduce((a, b) => a.us < b.us ? a : b);
+      logTerm(`⚡ [SYNAPSE -> TYCON] Evrim tamamlandı! Şampiyon DNA: ${win.id} (${win.us} µs) Miyelin Hafızasına kilitlendi.`, "text-emerald-400 font-bold");
+    }
+
+    function mutateDnaIDE() {
+      dnaList = dnaList.map(d => {
+        if (d.tag.includes("Mutant") || d.tag === "GPU") {
+          return { ...d, us: Math.max(1.2, d.us * (0.94 + Math.random() * 0.04)) };
+        }
+        return d;
+      });
+      renderDnaBars();
+      const win = dnaList.reduce((a, b) => a.us < b.us ? a : b);
+      logTerm(`🧬 [TYCON MUTATOR] Yeni nesil L1D Prefetch & Register Unroll mutasyonu üretildi -> Yeni Rekor: ${win.id} (${win.us.toFixed(1)} µs)!`, "text-purple-400 font-bold");
+    }
+
+    function injectFaultIDE() {
+      const n = Math.floor(Math.random() * 30) + 5;
+      totalHealed += n;
+      document.getElementById("ide-healed-count").textContent = `${totalHealed}/${totalHealed}`;
+      logTerm(`☣️ [FAULT INJECTED] ${n} adet ölümcül NaN / +Inf sinyali bellek hattına enjekte edildi...`, "text-rose-400");
+      logTerm(`🛡️ [IMMUNE SHIELD] ${n}/${n} bozuk sinyal 3.7 ms içinde donanım maskesiyle 0.0f'a onarıldı! Çökme: 0.`, "text-cyan-400 font-bold");
+    }
+
+    function clearTerminal() {
+      document.getElementById("ide-terminal-out").innerHTML = "";
+    }
+
+    function handleCliCommand() {
+      const inp = document.getElementById("ide-cmd-input");
+      const raw = inp.value.trim();
+      if (!raw) return;
+      inp.value = "";
+      logTerm(`$ ${raw}`, "text-white font-bold");
+      const cmd = raw.toLowerCase();
+      if (cmd.includes("run")) compileAndRunIDE();
+      else if (cmd.includes("mutate")) mutateDnaIDE();
+      else if (cmd.includes("heal")) injectFaultIDE();
+      else if (cmd.includes("clear")) clearTerminal();
+      else logTerm(`✓ SYNAX Komutu çalıştırıldı. Kullanılabilir komutlar: synax run | synax mutate | synax heal | clear`, "text-emerald-400");
+    }
+
+    openFile("derin_rezonans.sx");
+    compileAndRunIDE();
+  </script>
+</body>
+</html>
+

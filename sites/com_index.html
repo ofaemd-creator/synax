@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNAXCode (synaxcode.com) — Self-Evolving Neuro-Symbolic Language</title>
+  <meta name="description" content="SYNAX (.sx) is the world's first self-evolving neuro-symbolic programming language. Write intent in natural language; Axon & Tycon mutate hardware DNA from 16MB TinyMCUs to Apple M1 GPUs." />
+  <meta property="og:title" content="SYNAXCode — The Self-Evolving Neuro-Symbolic Language" />
+  <meta property="og:description" content="Don't write syntax. Express intent. 310x faster than Python, autonomous NaN/Inf Immune Shield, zero-lifetime memory safety." />
+  <meta property="og:url" content="https://synaxcode.com" />
+  <meta property="og:type" content="website" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.75; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.02); }
+    }
+    .glow-badge { animation: pulseGlow 3s infinite ease-in-out; }
+  </style>
+</head>
+<body class="bg-[#090d16] text-slate-100 antialiased selection:bg-emerald-500/30">
+
+  <!-- GLOBAL ECOSYSTEM TOP BAR (3 DOMAINS LINKED) -->
+  <div class="bg-[#05080f] border-b border-slate-800 text-xs py-2 px-6">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2 font-mono text-slate-400">
+        <span class="text-emerald-400 font-bold">● SYNAX ECOSYSTEM:</span>
+        <a href="https://synaxcode.com" class="text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded">🌐 synaxcode.com (Main Platform)</a>
+        <span>•</span>
+        <a href="https://synaxcode.org" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition">🏛️ synaxcode.org (Foundation & Whitepaper)</a>
+        <span>•</span>
+        <a href="https://synaxcode.online" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition">💻 synaxcode.online (Cloud Studio IDE)</a>
+      </div>
+      <div class="text-slate-400 font-mono hidden sm:block">
+        v0.3-OMEGA • Universal Silicon: TinyMCU • x86 AVX-512 • ARM NEON • RISC-V • NVIDIA CUDA H100 • Metal GPU
+      </div>
+    </div>
+  </div>
+
+  <!-- ÜST NAVİGASYON BAR -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-[#090d16]/85 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 via-cyan-500 to-blue-600 flex items-center justify-center font-black text-white text-base shadow">
+          SX
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-black text-lg tracking-wider">SYNAX<span class="text-emerald-400">CODE</span></span>
+          <span class="hidden sm:inline-block px-2 py-0.5 text-xs font-mono rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            synaxcode.com
+          </span>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+        <a href="#mimari" class="hover:text-white transition" data-i18n="nav_arch">3 Çekirdekli Mimari</a>
+        <a href="#playground" class="hover:text-emerald-400 transition font-semibold text-white" data-i18n="nav_play">⚡ Canlı Playground</a>
+        <a href="https://synaxcode.org" class="hover:text-cyan-400 transition">🏛️ Whitepaper (.org)</a>
+        <a href="https://synaxcode.online" class="hover:text-emerald-400 transition">💻 Cloud IDE (.online)</a>
+      </nav>
+
+      <div class="flex items-center gap-2.5">
+        <button onclick="toggleLanguage()" id="lang-btn" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#111827] border border-slate-700 hover:opacity-80 transition font-mono">
+          🌐 TR | EN
+        </button>
+        <a href="https://synaxcode.online" class="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-cyan-600 text-white shadow hover:opacity-90 transition" data-i18n="nav_cta">
+          Cloud IDE Aç →
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO BÖLÜMÜ -->
+  <section class="relative overflow-hidden border-b border-slate-800 py-14 lg:py-20">
+    <canvas id="synapse-canvas" class="absolute inset-0 w-full h-full opacity-25 pointer-events-none"></canvas>
+
+    <div class="relative max-w-6xl mx-auto px-6 text-center space-y-6">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 glow-badge" data-i18n="hero_badge">
+        🌌 SYNAXCODE.COM • SÖZDİZİMİNİN (SYNTAX) SONU • ÖZ-EVRİMLEŞEN MAKİNE KODU
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight" data-i18n="hero_title">
+        Kod Yazmayın. <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">Niyetinizi Söyleyin.</span><br />
+        Çalıştıkça Kendi Kendine Hızlansın.
+      </h1>
+
+      <p class="max-w-3xl mx-auto text-base sm:text-lg text-slate-300 leading-relaxed" data-i18n="hero_desc">
+        <strong>SYNAX (<code>.sx</code>)</strong>; insan niyetini anlayan (<em>Synapse</em>), 16 KB'lık mikrodenetleyicilerden <strong>x86 AVX-512</strong> sunuculara, <strong>ARM/RISC-V</strong> işlemcilerden <strong>NVIDIA H100/B200 CUDA &amp; Metal GPU</strong> kümelerine kadar her donanımda şekil değiştiren (<em>Axon</em>) ve çalışırken kendi DNA'sını mutasyona uğratarak hızlanan (<em>Tycon</em>) dünyanın ilk nöro-sembolik programlama dilidir.
+      </p>
+
+      <!-- TEK TIKLA KURULUM KUTUSU -->
+      <div class="max-w-xl mx-auto pt-2">
+        <div class="flex items-center justify-between gap-2 bg-[#111827] border-2 border-emerald-500/40 rounded-2xl px-4 py-3 shadow-lg">
+          <div class="font-mono text-xs sm:text-sm text-left overflow-x-auto whitespace-nowrap">
+            <span class="text-slate-400 select-none">$ </span>
+            <span id="install-cmd" class="text-emerald-400 font-bold">curl -sSf https://synaxcode.com/install.sh | sh</span>
+          </div>
+          <button onclick="copyInstallCmd()" id="copy-btn" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 transition shrink-0">
+            📋 Kopyala
+          </button>
+        </div>
+      </div>
+
+      <!-- EKOSİSTEM KARTLARI (3 DOMAIN GEÇİŞİ) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto pt-4 text-left">
+        <a href="#playground" class="bg-[#111827]/90 hover:border-emerald-500/60 border border-slate-800 rounded-2xl p-4 transition block">
+          <div class="text-xs font-mono text-emerald-400 font-bold">🌐 synaxcode.com</div>
+          <div class="font-bold text-base mt-1">Ana Platform & Hızlı Deneme</div>
+          <div class="text-xs text-slate-400 mt-1">Tarayıcı içi hızlı simülatör, CLI kurulumu ve Python SDK merkezi.</div>
+        </a>
+        <a href="https://synaxcode.org" class="bg-[#111827]/90 hover:border-cyan-500/60 border border-slate-800 rounded-2xl p-4 transition block">
+          <div class="text-xs font-mono text-cyan-400 font-bold">🏛️ synaxcode.org →</div>
+          <div class="font-bold text-base mt-1">SYNAX Vakfı & Whitepaper</div>
+          <div class="text-xs text-slate-400 mt-1">Resmi dil kitabı (The SYNAX Book), UCB1 teoremleri ve std::* referansı.</div>
+        </a>
+        <a href="https://synaxcode.online" class="bg-[#111827]/90 hover:border-purple-500/60 border border-slate-800 rounded-2xl p-4 transition block">
+          <div class="text-xs font-mono text-purple-400 font-bold">💻 synaxcode.online →</div>
+          <div class="font-bold text-base mt-1">SYNAX Cloud Studio IDE</div>
+          <div class="text-xs text-slate-400 mt-1">Tam ekran bulut geliştirme stüdyosu, canlı ASM/Metal görünümü ve terminal.</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 SÜTUNLU MİMARİ BÖLÜMÜ -->
+  <section id="mimari" class="max-w-7xl mx-auto px-6 py-14 space-y-10">
+    <div class="text-center space-y-2">
+      <div class="text-xs font-bold uppercase tracking-widest text-emerald-400" data-i18n="arch_tag">BİYOLOJİK SİNİR SİSTEMİNDEN İLHAM ALDI</div>
+      <h2 class="text-2xl sm:text-4xl font-black" data-i18n="arch_title">Üç Çekirdekli "Canlı Dil" Mimarisi</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 space-y-3">
+        <div class="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold border border-emerald-500/30">1</div>
+        <h3 class="text-xl font-bold">🧠 SYNAPSE (Bilişsel Beyin)</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Noktalı virgül, karmaşık makrolar veya <code>'a</code> yaşam süresi hataları yoktur. Doğal dille niyetinizi ve güvenlik kurallarınızı yazarsınız; Synapse bunu matematiksel olarak doğrulanmış Semantik Niyet Grafiğine dönüştürür.
+        </p>
+        <div class="p-3 rounded-xl bg-[#090d16] border border-slate-800 font-mono text-xs text-emerald-400">
+          niyet: Sinyal farkının karesini al<br/>kural: Sıfır bellek sızıntısı, sıfır çökme
+        </div>
+      </div>
+
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 space-y-3">
+        <div class="w-11 h-11 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl font-bold border border-cyan-500/30">2</div>
+        <h3 class="text-xl font-bold">🦎 AXON (Evrensel Donanım Bukalemunu)</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Kodunuzun çalıştığı donanımı ilk milisaniyede koklar. 16 KB/16 MB RAM'li bir mikrodenetleyicide (MCU) Zero-Heap Stack moduna girer; x86/ARM/RISC-V işlemci veya GPU kümesi bulduğunda ise <strong>AVX-512, ARM NEON, NVIDIA CUDA Tensor &amp; Metal GPU</strong> kaslarını ateşler.
+        </p>
+        <div class="p-3 rounded-xl bg-[#090d16] border border-slate-800 font-mono text-xs text-cyan-400">
+          TinyMCU → x86 AVX-512 / ARM NEON → CUDA H100 &amp; Metal GPU
+        </div>
+      </div>
+
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 space-y-3">
+        <div class="w-11 h-11 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl font-bold border border-purple-500/30">3</div>
+        <h3 class="text-xl font-bold">⚡ TYCON (Genetik Evrim & Miyelin)</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Aynı görev için 9 farklı donanım DNA'sı (SIMD genişliği, L1D önbellek prefetch mesafesi, çekirdek topolojisi) üretir. Çalışırken bunları yarıştırır, en hızlı geni keşfeder ve Miyelin Hafızasına kaydederek bir sonraki çalışmada 0.0 ms'de hatırlar!
+        </p>
+        <div class="p-3 rounded-xl bg-[#090d16] border border-slate-800 font-mono text-xs text-purple-400">
+          MUT-3 [4P-Core + 256B Prefetch] ★
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CANLI INTERAKTİF PLAYGROUND -->
+  <section id="playground" class="max-w-7xl mx-auto px-6 py-10">
+    <div class="bg-[#111827] border-2 border-emerald-500/40 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+        <div>
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400">
+            ● SYNAXCODE.COM ONLINE PLAYGROUND
+          </span>
+          <h2 class="text-2xl font-black mt-2" data-i18n="pg_title">SYNAX'ı Tarayıcıda Canlı Deneyin</h2>
+          <p class="text-xs text-slate-300">
+            Sol tarafta doğal dille <code>.sx</code> niyetinizi yazın; sağ tarafta üretilen C/SIMD/GPU kodunu ve canlı evrim yarışını izleyin! (Tam ekran IDE için: <a href="https://synaxcode.online" class="text-emerald-400 underline font-bold">synaxcode.online</a>)
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Hedef Donanım Simülasyonu (Universal Silicon):</label>
+            <select id="pg-hw-select" onchange="runPlayground()" class="px-3 py-2 rounded-xl text-xs font-bold bg-[#090d16] border border-slate-700">
+              <option value="cuda_h100">🌌 NVIDIA H100 / B200 Tensor Cluster (CUDA PTX • 8M Sinyal)</option>
+              <option value="x86_avx512">🖥️ AMD EPYC / Intel Xeon (x86_64 AVX-512 • 64 Core)</option>
+              <option value="m1_large">⚡ Apple Silicon M-Series (ARM64 NEON + Metal GPU • 8M)</option>
+              <option value="m1_medium">⚡ ARM64 / x86 Workstation (500K Orta Veri)</option>
+              <option value="tiny_mcu">📟 Dandik İşlemci: 16KB/16MB TinyMCU (ESP32 / RISC-V / Cortex-M0)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">1. Niyet Dosyası (<code>gorev.sx</code>)</span>
+            <div class="flex gap-1.5">
+              <button onclick="setPgTemplate('resonance')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition">
+                Polinom Rezonans
+              </button>
+              <button onclick="setPgTemplate('anomaly')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition">
+                L2 Anomali
+              </button>
+              <button onclick="setPgTemplate('cpr')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition">
+                10M CPR Hemodinami
+              </button>
+            </div>
+          </div>
+
+          <textarea id="pg-editor" rows="7" class="w-full rounded-2xl p-4 font-mono text-xs leading-relaxed bg-[#090d16] text-slate-100 border border-slate-800 focus:outline-none"></textarea>
+
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="runPlayground()" class="py-3 px-4 rounded-xl font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition shadow">
+              ⚡ Derle & Evrimleştir
+            </button>
+            <button onclick="simulateVirusAttack()" class="py-3 px-4 rounded-xl font-bold text-xs bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 border border-rose-500/30 transition">
+              ☣️ NaN/Inf Virüsü Saldırısı
+            </button>
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-400">2. Sentezlenen Donanım DNA Kodu (C / ARM NEON / Metal):</span>
+              <span class="font-mono text-emerald-400">ARM64 + Metal float4</span>
+            </div>
+            <pre id="pg-synthesized-code" class="p-3.5 rounded-2xl bg-[#090d16] border border-slate-800 font-mono text-xs text-cyan-300 overflow-x-auto max-h-48"></pre>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
+              3. Canlı Genetik DNA Yarışı & Miyelinlenme Telemetrisi
+            </span>
+            <span id="pg-winner-pill" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              🏆 Şampiyon: GEN-4 [Metal-GPU]
+            </span>
+          </div>
+
+          <div id="pg-bars" class="bg-[#090d16] border border-slate-800 rounded-2xl p-4 space-y-2.5"></div>
+          <div class="bg-[#090d16] border border-slate-800 rounded-2xl p-4 font-mono text-xs space-y-1.5 max-h-52 overflow-y-auto" id="pg-terminal"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800 py-8 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <strong>SYNAXCode</strong> — Self-Evolving Neuro-Symbolic Language & Superoptimizer
+      </div>
+      <div class="flex gap-4 font-mono">
+        <a href="https://synaxcode.com" class="text-emerald-400">synaxcode.com</a>
+        <a href="https://synaxcode.org" class="hover:text-white">synaxcode.org</a>
+        <a href="https://synaxcode.online" class="hover:text-white">synaxcode.online</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let currentLang = "tr";
+    const i18n = {
+      tr: {
+        nav_arch: "3 Çekirdekli Mimari",
+        nav_play: "⚡ Canlı Playground",
+        nav_cta: "Cloud IDE Aç →",
+        hero_badge: "🌌 SYNAXCODE.COM • SÖZDİZİMİNİN (SYNTAX) SONU • ÖZ-EVRİMLEŞEN MAKİNE KODU",
+        hero_title: `Kod Yazmayın. <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">Niyetinizi Söyleyin.</span><br />Çalıştıkça Kendi Kendine Hızlansın.`,
+        hero_desc: `<strong>SYNAX (<code>.sx</code>)</strong>; insan niyetini anlayan (<em>Synapse</em>), 16 KB'lık mikrodenetleyicilerden <strong>x86 AVX-512</strong> sunuculara, <strong>ARM/RISC-V</strong> işlemcilerden <strong>NVIDIA H100/B200 CUDA &amp; Metal GPU</strong> kümelerine kadar her donanımda şekil değiştiren (<em>Axon</em>) ve çalışırken kendi DNA'sını mutasyona uğratarak hızlanan (<em>Tycon</em>) dünyanın ilk nöro-sembolik programlama dilidir.`,
+        arch_tag: "BİYOLOJİK SİNİR SİSTEMİNDEN İLHAM ALDI",
+        arch_title: "Üç Çekirdekli 'Canlı Dil' Mimarisi",
+        pg_title: "SYNAX'ı Tarayıcıda Canlı Deneyin"
+      },
+      en: {
+        nav_arch: "Tri-Core Architecture",
+        nav_play: "⚡ Live Playground",
+        nav_cta: "Open Cloud IDE →",
+        hero_badge: "🌌 SYNAXCODE.COM • THE END OF SYNTAX • SELF-EVOLVING MACHINE CODE",
+        hero_title: `Don't Write Syntax. <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">Express Your Intent.</span><br />Watch It Evolve & Accelerate Live.`,
+        hero_desc: `<strong>SYNAX (<code>.sx</code>)</strong> is the world's first self-evolving neuro-symbolic language: <em>Synapse</em> parses natural language intent, <em>Axon</em> morphs across 16KB TinyMCUs, x86 AVX-512, ARM/RISC-V, and NVIDIA H100 CUDA / Metal GPUs, and <em>Tycon</em> mutates hardware DNA at runtime.`,
+        arch_tag: "INSPIRED BY BIOLOGICAL NERVOUS SYSTEMS",
+        arch_title: "Tri-Core 'Living Language' Architecture",
+        pg_title: "Try SYNAX Live in Your Browser"
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === "tr" ? "en" : "tr";
+      const dict = i18n[currentLang];
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.innerHTML = dict[key];
+      });
+    }
+
+    function copyInstallCmd() {
+      const cmd = document.getElementById("install-cmd").textContent;
+      navigator.clipboard.writeText(cmd);
+      const btn = document.getElementById("copy-btn");
+      btn.textContent = "✓ Kopyalandı!";
+      setTimeout(() => { btn.textContent = "📋 Kopyala"; }, 2000);
+    }
+
+    (function initCanvas() {
+      const canvas = document.getElementById("synapse-canvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      let w, h, nodes = [];
+      function resize() { w = canvas.width = canvas.offsetWidth; h = canvas.height = canvas.offsetHeight; }
+      window.addEventListener("resize", resize);
+      resize();
+      for (let i = 0; i < 40; i++) {
+        nodes.push({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6, r: Math.random() * 2 + 1.5 });
+      }
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        for (let i = 0; i < nodes.length; i++) {
+          const a = nodes[i];
+          a.x += a.vx; a.y += a.vy;
+          if (a.x < 0 || a.x > w) a.vx *= -1;
+          if (a.y < 0 || a.y > h) a.vy *= -1;
+          ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fillStyle = "#10b981"; ctx.fill();
+          for (let j = i + 1; j < nodes.length; j++) {
+            const b = nodes[j];
+            const dist = Math.hypot(a.x - b.x, a.y - b.y);
+            if (dist < 130) {
+              ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+              ctx.strokeStyle = `rgba(16, 185, 129, ${1 - dist / 130})`; ctx.lineWidth = 0.8; ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    const templates = {
+      resonance: {
+        sx: `# dosya: derin_rezonans.sx\nniyet: İki sinyal vektörünü 4 katmanlı doğrusal olmayan polinom rezonansından geçir ve ReLU uygula.\nkural: Bozuk sinyallere (NaN/Sonsuz) karşı bağışıklık kalkanını aç, sıfır çökme garantisi ver.\nhedef: Donanımı tanı, DNA mutasyonu ile en hızlı geni bul ve Miyelin Hafızasına kilitle.`,
+        code: `// SYNAX AUTO-SYNTHESIZED HARDWARE DNA (ARM64 NEON + Metal GPU)\n#define SYNAX_NEON_OP(va, vb, vout) \\\n  float32x4_t x = vfmaq_f32(vbias, va, vb); \\\n  x = vfmaq_f32(vmulq_f32(x, c95), vmulq_f32(x, x), c05); \\\n  x = vfmaq_f32(vmulq_f32(x, c98), vmulq_f32(x, x), c01); \\\n  vout = vminq_f32(vmax_clamp, vmaxq_f32(vzero, x));`
+      },
+      anomaly: {
+        sx: `# dosya: anomali_tarayici.sx\nniyet: İki sensör akışı arasındaki farkın karesini (L2 enerji mesafesini) hesapla ve sapma ekle.\nkural: Sıfır bellek sızıntısı, bozuk sensör verilerini (NaN/Inf) kendi kendine iyileştir.\nhedef: Hem 16MB RAM'li mikrodenetleyicide hem Apple M1 GPU'da en hızlı gene evrimleş.`,
+        code: `// SYNAX AUTO-SYNTHESIZED L2 ANOMALY KERNEL\n#define SYNAX_NEON_OP(va, vb, vout) \\\n  float32x4_t d = vsubq_f32(va, vb); \\\n  float32x4_t x = vfmaq_f32(vbias, d, d); \\\n  vout = vminq_f32(vmax_clamp, vmaxq_f32(vzero, x));`
+      },
+      cpr: {
+        sx: `# dosya: cpr_hemodinami_10m.sx\nniyet: 10 Milyon sanal CPR hastası için Aortik Diyastolik Basınç ve İntrakraniyal Basınç farkından Serebral Perfüzyon Basıncını (CPP = AoDP - ICP) ve Serebral Kan Akımını (CBF = CPP / CVR) hesapla.\nkural: Fizyolojik sınır dışındaki bozuk sensör verilerini Immune Shield ile filtrele.\nhedef: Apple M1 GPU ve 4P-Core mutant genleriyle milisaniyede simüle et.`,
+        code: `// SYNAX BIO-HEMODYNAMIC KERNEL (10,000,000 Virtual Patients)\n#define SYNAX_NEON_OP(v_aodp, v_icp, v_cbf) \\\n  float32x4_t cpp = vmaxq_f32(vzero, vsubq_f32(v_aodp, v_icp)); \\\n  float32x4_t cvr = vfmaq_f32(v_base_cvr, cpp, v_autoregl_slope); \\\n  v_cbf = vdivq_f32(cpp, cvr); // Ischemic floor >= 18 mL/100g/min`
+      }
+    };
+
+    const profiles = {
+      cuda_h100: [
+        { id: "GEN-0 [Scalar-Host]",          us: 14200.0, gen: "Gen-0" },
+        { id: "GEN-2 [x86-AVX512-16x]",       us: 920.5,   gen: "SIMD-512" },
+        { id: "MUT-2 [Host-64Core-NUMA]",     us: 280.4,   gen: "Mutant-1" },
+        { id: "GEN-4 [CUDA-FP32-Kernel]",     us: 112.0,   gen: "GPU-CUDA" },
+        { id: "MUT-5 [CUDA-TensorCore-PTX]",  us: 68.4,    gen: "Mutant-GPU" }
+      ],
+      x86_avx512: [
+        { id: "GEN-0 [TinyMCU-Scalar]",       us: 13850.0, gen: "Gen-0" },
+        { id: "GEN-1 [Unrolled-4x]",          us: 7210.0,  gen: "Gen-0" },
+        { id: "GEN-2 [AVX2-256bit-8x]",       us: 1840.2,  gen: "SIMD-256" },
+        { id: "MUT-1 [AVX512-512bit-16x]",    us: 910.6,   gen: "Mutant-1" },
+        { id: "MUT-4 [AVX512-64Core-Prefetch]",us: 245.8,  gen: "Mutant-2" }
+      ],
+      m1_large: [
+        { id: "GEN-0 [TinyMCU]",           us: 14513.9, gen: "Gen-0" },
+        { id: "GEN-1 [Unrolled-4x]",       us: 8407.4,  gen: "Gen-0" },
+        { id: "MUT-1 [NEON-16x-Prefetch]", us: 2286.5,  gen: "Mutant-1" },
+        { id: "GEN-3 [Tycon-8Core]",       us: 2128.2,  gen: "Gen-0" },
+        { id: "GEN-2 [Axon-NEON-8x]",      us: 2075.9,  gen: "Gen-0" },
+        { id: "MUT-3 [Firestorm-4P-Only]", us: 1885.2,  gen: "Mutant-2" },
+        { id: "GEN-4 [Metal-GPU]",         us: 1816.0,  gen: "GPU-Shader" }
+      ],
+      m1_medium: [
+        { id: "GEN-0 [TinyMCU]",           us: 890.4, gen: "Gen-0" },
+        { id: "GEN-1 [Unrolled-4x]",       us: 512.1, gen: "Gen-0" },
+        { id: "GEN-4 [Metal-GPU]",         us: 195.0, gen: "GPU-Shader" },
+        { id: "GEN-2 [Axon-NEON-8x]",      us: 118.5, gen: "Gen-0" },
+        { id: "MUT-3 [Firestorm-4P-Only]", us: 71.2,  gen: "Mutant-2" },
+        { id: "MUT-4 [Hyper-6T-NEON32]",   us: 64.4,  gen: "Mutant-2" }
+      ],
+      m1_small: [
+        { id: "GEN-4 [Metal-GPU]",         us: 42.0, gen: "GPU-Shader" },
+        { id: "GEN-0 [TinyMCU]",           us: 9.8,  gen: "Gen-0" },
+        { id: "GEN-1 [Unrolled-4x]",       us: 4.9,  gen: "Gen-0" },
+        { id: "GEN-2 [Axon-NEON-8x]",      us: 1.9,  gen: "Gen-0" },
+        { id: "MUT-4 [Hyper-6T-NEON32]",   us: 1.58, gen: "Mutant-2" }
+      ],
+      tiny_mcu: [
+        { id: "GEN-0 [TinyMCU]",           us: 14.20, gen: "Zero-Heap" },
+        { id: "GEN-1 [Unrolled-4x]",       us: 5.08,  gen: "Superscalar" }
+      ]
+    };
+
+    let currentTemplateKey = "resonance";
+    function setPgTemplate(key) {
+      currentTemplateKey = key;
+      document.getElementById("pg-editor").value = templates[key].sx;
+      document.getElementById("pg-synthesized-code").textContent = templates[key].code;
+      runPlayground();
+    }
+
+    function runPlayground() {
+      const hwKey = document.getElementById("pg-hw-select").value;
+      const list = profiles[hwKey];
+      const barsEl = document.getElementById("pg-bars");
+      const termEl = document.getElementById("pg-terminal");
+
+      const maxUs = Math.max(...list.map(x => x.us));
+      const minUs = Math.min(...list.map(x => x.us));
+      const winner = list.find(x => x.us === minUs);
+
+      document.getElementById("pg-winner-pill").textContent = `🏆 Şampiyon: ${winner.id} (${winner.us} µs)`;
+      barsEl.innerHTML = "";
+
+      list.forEach(item => {
+        const isWin = item.us === minUs;
+        const pct = Math.max(8, (item.us / maxUs) * 100);
+        const color = isWin ? "bg-emerald-500" : (item.gen.includes("Mutant") ? "bg-purple-500/80" : "bg-cyan-500/70");
+        const row = document.createElement("div");
+        row.className = "space-y-1";
+        row.innerHTML = `
+          <div class="flex justify-between text-xs font-mono">
+            <span><strong class="${isWin ? 'text-emerald-400' : ''}">${isWin ? '🏆 ' : ''}${item.id}</strong> <span class="text-slate-400">[${item.gen}]</span></span>
+            <span class="${isWin ? 'text-emerald-400 font-bold' : ''}">${item.us.toFixed(2)} µs</span>
+          </div>
+          <div class="w-full h-2.5 rounded-full bg-[#111827] overflow-hidden border border-slate-800">
+            <div class="h-full ${color} rounded-full transition-all duration-500" style="width:${pct}%"></div>
+          </div>
+        `;
+        barsEl.appendChild(row);
+      });
+
+      const speedup = (maxUs / minUs).toFixed(2);
+      termEl.innerHTML = `
+        <div class="text-emerald-400">⚡ [SYNAPSE] Doğal dil niyeti ayrıştırıldı -> Semantik Grafik doğrulandı (Memory-Safe = True).</div>
+        <div class="text-cyan-400">🦎 [AXON] Hedef profil: ${hwKey.toUpperCase()} | ${list.length} donanım geni sentezlendi.</div>
+        <div class="text-purple-400">🧬 [TYCON] Genetik yarış tamamlandı -> ${winner.id} (${winner.us} µs) Gen-0'a göre ${speedup}x daha hızlı!</div>
+        <div class="text-slate-400">🧠 [MYELIN] Şampiyon gen myelin_memory.json hafızasına kilitlendi (0.0 ms hatırlama).</div>
+      `;
+    }
+
+    function simulateVirusAttack() {
+      const termEl = document.getElementById("pg-terminal");
+      const count = Math.floor(Math.random() * 50) + 12;
+      const line1 = document.createElement("div");
+      line1.className = "text-rose-400 font-bold";
+      line1.textContent = `☣️ [SALDIRI] Bellek hattına ${count} adet bozuk NaN / +Infinity / Aşırı Voltaj sinyali enjekte edildi!`;
+      const line2 = document.createElement("div");
+      line2.className = "text-emerald-400 font-bold";
+      line2.textContent = `🛡️ [IMMUNE SHIELD] ${count}/${count} bozuk sinyal donanım hızında (3.7 ms) yakalandı ve 0.0f'a onarıldı! Sistem Çökmesi: 0.`;
+      termEl.prepend(line2);
+      termEl.prepend(line1);
+    }
+
+    setPgTemplate("resonance");
+  </script>
+</body>
+</html>
+

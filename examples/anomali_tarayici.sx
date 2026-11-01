@@ -1,0 +1,7 @@
+# dosya: anomali_tarayici.sx
+# SYNAX v0.2 — Anomali ve Enerji Farkı Tarayıcısı
+
+niyet: İki sensör akışı arasındaki farkın karesini (L2 enerji mesafesini) hesapla ve sapma ekle.
+kural: Sıfır bellek sızıntısı, bozuk sensör verilerini (NaN/Inf) kendi kendine iyileştir.
+hedef: Hem 16MB RAM'li mikrodenetleyicide hem Apple M1 GPU'da en hızlı gene evrimleş.
+

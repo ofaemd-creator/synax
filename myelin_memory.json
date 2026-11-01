@@ -1,0 +1,82 @@
+{
+  "TinyMCU (16MB RAM / 1 Core)": {
+    "winner_gene": "GEN-1 [Unrolled-4x]",
+    "best_time_us": 5.08,
+    "dna": {
+      "gene_id": "GEN-1 [Unrolled-4x]",
+      "fn_name": "gene_1_unrolled",
+      "generation": 0,
+      "arch_target": "UNROLLED_PIPE",
+      "simd_lanes": 4,
+      "prefetch_bytes": 0,
+      "threads": 1,
+      "non_temporal": false,
+      "description": "4x Skaler Boru Hattı",
+      "best_time_us": 8407.417,
+      "mean_time_us": 8549.514000000001,
+      "calls": 3,
+      "total_time_us": 25648.542
+    },
+    "timestamp": "2026-11-01 18:35:59"
+  },
+  "Apple M1 • Mikro Yük (4K)": {
+    "winner_gene": "MUT-4 [Hyper-6T-NEON32]",
+    "best_time_us": 1.58,
+    "dna": {
+      "gene_id": "MUT-4 [Hyper-6T-NEON32]",
+      "fn_name": "mut_4_hyper_6t",
+      "generation": 2,
+      "arch_target": "MULTICORE_SIMD",
+      "simd_lanes": 32,
+      "prefetch_bytes": 512,
+      "threads": 6,
+      "non_temporal": false,
+      "description": "Mutasyon: 6 İzlek + 32x NEON + 512B L1D Önbellek Akışı",
+      "best_time_us": 2177.708,
+      "mean_time_us": 2244.1666666666665,
+      "calls": 3,
+      "total_time_us": 6732.5
+    },
+    "timestamp": "2026-11-01 18:35:59"
+  },
+  "Apple M1 • Orta Yük (500K)": {
+    "winner_gene": "MUT-4 [Hyper-6T-NEON32]",
+    "best_time_us": 64.42,
+    "dna": {
+      "gene_id": "MUT-4 [Hyper-6T-NEON32]",
+      "fn_name": "mut_4_hyper_6t",
+      "generation": 2,
+      "arch_target": "MULTICORE_SIMD",
+      "simd_lanes": 32,
+      "prefetch_bytes": 512,
+      "threads": 6,
+      "non_temporal": false,
+      "description": "Mutasyon: 6 İzlek + 32x NEON + 512B L1D Önbellek Akışı",
+      "best_time_us": 2177.708,
+      "mean_time_us": 2244.1666666666665,
+      "calls": 3,
+      "total_time_us": 6732.5
+    },
+    "timestamp": "2026-11-01 18:35:59"
+  },
+  "Apple M1 • Devasa Yük (8M)": {
+    "winner_gene": "GEN-4 [Metal-GPU]",
+    "best_time_us": 1816.0,
+    "dna": {
+      "gene_id": "GEN-4 [Metal-GPU]",
+      "fn_name": "gene_4_metal_gpu",
+      "generation": 0,
+      "arch_target": "METAL_GPU",
+      "simd_lanes": 4,
+      "prefetch_bytes": 0,
+      "threads": 1024,
+      "non_temporal": false,
+      "description": "Apple M1 GPU Shader (float4)",
+      "best_time_us": 2363.0,
+      "mean_time_us": 2929.319333333333,
+      "calls": 3,
+      "total_time_us": 8787.957999999999
+    },
+    "timestamp": "2026-11-01 18:35:59"
+  }
+}

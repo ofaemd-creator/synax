@@ -1,0 +1,7 @@
+# dosya: derin_rezonans.sx
+# SYNAX v0.2 — Doğal Dil Niyet Dosyası (Sözdizimi Yok, Saf Niyet!)
+
+niyet: Gelen iki sinyal vektörünü 4 katmanlı derin doğrusal olmayan polinom rezonansından geçir ve ReLU uygula.
+kural: Bozuk sinyallere (NaN/Sonsuz) karşı bağışıklık kalkanını aç, sıfır çökme garantisi ver.
+hedef: Apple M1 CPU, NEON SIMD, 8-Çekirdek ve M1 GPU genlerini yarıştırıp en hızlısını Miyelin Hafızasına kaydet.
+

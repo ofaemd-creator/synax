@@ -1,0 +1,16 @@
+{
+  "learned_concepts": {
+    "kinetik enerji": "0.5 * a * (b * b) + bias",
+    "kinetic energy": "0.5 * a * (b * b) + bias",
+    "serebral perfüzyon": "relu(a - b) / (2.2 - 0.04 * relu(a - b))",
+    "cpr hemodinami": "relu(a - b) / (2.2 - 0.04 * relu(a - b))",
+    "harmonik osilasyon": "sin(a) * cos(b) + bias",
+    "nöral kapı": "sigmoid(a * b + bias)",
+    "neural gate": "sigmoid(a * b + bias)",
+    "öklid enerjisi": "sqrt((a - b) * (a - b)) + bias",
+    "manhattan mesafesi": "abs(a - b) + bias",
+    "logaritmik kazanç": "log(abs(a * b) + 1.0) + bias",
+    "kardiyak perfüzyon indeksi": "sqrt(abs(a - b)) / (a + b) + bias"
+  },
+  "evolution_generation": 3
+}
