@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNAXCODE: Kodlama Bilmeden Anlamak — Başlangıç Düzeyi Rehberi</title>
+  <meta name="description" content="Kodlama nedir, programlama dili nedir ve SYNAXCODE neyi değiştirmeye çalışıyor? 16 sayfalık başlangıç düzeyi mimari ve vizyon rehberi." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bgdark: '#080c14',
+            carddark: '#0f172a',
+            borderdark: '#1e293b'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .gradient-text {
+      background: linear-gradient(135deg, #38bdf8 0%, #34d399 50%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-[#080c14] text-slate-100 antialiased selection:bg-cyan-500/30 font-sans">
+
+  <!-- TOP ECOSYSTEM BAR -->
+  <div class="bg-[#04070e] border-b border-slate-800 text-xs py-2 px-6 sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2 font-mono text-slate-400">
+        <span class="text-emerald-400 font-bold">● SYNAXCODE REHBERİ:</span>
+        <a href="https://synaxcode.com" class="hover:text-white transition">🌐 synaxcode.com (Ana Platform)</a>
+        <span>•</span>
+        <a href="https://synaxcode.org" class="text-cyan-400 font-bold transition">📖 synaxcode.org (Dokümantasyon)</a>
+        <span>•</span>
+        <a href="https://synaxcode.online" class="hover:text-white transition">💻 synaxcode.online (Bulut IDE)</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/ofaemd-creator/synax" target="_blank" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO SECTION (KAPAK - SAYFA 1) -->
+  <header class="border-b border-slate-800 bg-gradient-to-b from-[#0c1424] via-[#080c14] to-[#080c14] py-16 px-6 relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(56,189,248,0.1),transparent_60%)] pointer-events-none"></div>
+    <div class="max-w-4xl mx-auto text-center space-y-6 relative z-10">
+      
+      <!-- LOGO İKONU -->
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 shadow-2xl shadow-cyan-500/20 mb-2">
+        <span class="text-4xl font-black text-white">⚡</span>
+      </div>
+
+      <h1 class="text-5xl sm:text-7xl font-black tracking-tight text-white leading-none">
+        SYNAX<span class="gradient-text">CODE</span>
+      </h1>
+      
+      <p class="text-2xl sm:text-3xl font-extrabold text-slate-100">
+        Kodlama Bilmeden Anlamak
+      </p>
+
+      <p class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        Kodlama nedir, programlama dili nedir ve SYNAXCODE neyi değiştirmeye çalışıyor?
+      </p>
+
+      <!-- 3 ADIMLI AKIŞ ŞEMASI -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto pt-4 text-left">
+        <div class="p-5 rounded-2xl bg-[#0f172a] border border-cyan-500/40 relative">
+          <span class="w-6 h-6 rounded-full bg-cyan-500 text-slate-900 font-mono font-bold text-xs flex items-center justify-center mb-2">1</span>
+          <div class="font-bold text-sm text-cyan-400">NİYET</div>
+          <div class="text-xs text-slate-300 mt-1">Ne yapmak istediğini söylersin.</div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-[#0f172a] border border-blue-500/40 relative">
+          <span class="w-6 h-6 rounded-full bg-blue-500 text-white font-mono font-bold text-xs flex items-center justify-center mb-2">2</span>
+          <div class="font-bold text-sm text-blue-400">ANLAMLANDIRMA</div>
+          <div class="text-xs text-slate-300 mt-1">Sistem amacı yapısal bir plana çevirir.</div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-[#0f172a] border border-emerald-500/40 relative">
+          <span class="w-6 h-6 rounded-full bg-emerald-500 text-slate-900 font-mono font-bold text-xs flex items-center justify-center mb-2">3</span>
+          <div class="font-bold text-sm text-emerald-400">ÇALIŞTIRMA</div>
+          <div class="text-xs text-slate-300 mt-1">Hedef cihaza uygun şekilde çalıştırır.</div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 max-w-2xl mx-auto shadow-2xl backdrop-blur-sm mt-4">
+        <p class="text-2xl font-black text-cyan-400 mb-1">“Önce ne istiyorum?”</p>
+        <p class="text-xl font-bold text-emerald-400">sonra “bunu en iyi nasıl çalıştırırım?”</p>
+        <p class="text-xs font-mono text-slate-400 mt-3 uppercase tracking-wider">Başlangıç düzeyi açıklama dokümanı (Tam Metin)</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT GRID (STICKY NAVIGATION + MAIN BODY) -->
+  <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-12 gap-10">
+
+    <!-- SOL KENAR: İÇİNDEKİLER (14 BÖLÜMÜN TAMAMI) -->
+    <aside class="lg:col-span-4 xl:col-span-3">
+      <div class="sticky top-16 bg-[#0f172a] border border-slate-800 rounded-2xl p-5 space-y-3 text-xs shadow-xl">
+        <div class="font-mono font-bold uppercase tracking-wider text-cyan-400 pb-2 border-b border-slate-800 flex items-center justify-between">
+          <span>📑 İÇİNDEKİLER</span>
+          <span class="text-[10px] bg-cyan-500/10 px-2 py-0.5 rounded text-cyan-300">14 Bölüm</span>
+        </div>
+        <nav class="space-y-1 text-slate-300 max-h-[75vh] overflow-y-auto pr-1">
+          <a href="#sec-01" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">01. Önce 1 dakikalık özet</a>
+          <a href="#sec-02" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">02. Bilgisayar aslında ne yapar?</a>
+          <a href="#sec-03" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">03. Kodlama ve programlama dili nedir?</a>
+          <a href="#sec-04" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">04. Bugün bir yazılım nasıl ortaya çıkıyor?</a>
+          <a href="#sec-05" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">05. SYNAXCODE hangi problemi çözüyor?</a>
+          <a href="#sec-06" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition font-bold text-cyan-400">06. Sistem adım adım nasıl çalışabilir?</a>
+          <a href="#sec-07" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">07. “Niyet odaklı” programlama ne demek?</a>
+          <a href="#sec-08" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">08. “Donanıma uyumlu” olmak ne demek?</a>
+          <a href="#sec-09" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">09. “Öğrenen sistem” neyi öğrenir?</a>
+          <a href="#sec-10" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-rose-400 transition font-bold text-rose-400">10. SYNAXCODE ne değildir?</a>
+          <a href="#sec-11" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">11. Bir örnek üzerinden baştan sona</a>
+          <a href="#sec-12" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">12. Fikirden ürüne yol haritası</a>
+          <a href="#sec-13" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">13. Mini sözlük (12 Terim)</a>
+          <a href="#sec-14" class="block py-1 px-2 rounded hover:bg-slate-800 hover:text-cyan-300 transition">14. Sık sorulan sorular (SSS)</a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- SAĞ ANA METİN (BÜTÜN SAYFALAR EKSİKSİZ) -->
+    <main class="lg:col-span-8 xl:col-span-9 space-y-16">
+
+      <!-- BÖLÜM 1 (SAYFA 2) -->
+      <section id="sec-01" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">01</span>
+          <h2 class="text-2xl font-black text-white">Önce 1 dakikalık özet</h2>
+        </div>
+        <p class="text-slate-300 leading-relaxed text-base">
+          Bir bilgisayar, niyetimizi kendiliğinden anlamaz. Ona adım adım talimat veririz. 
+          <strong class="text-cyan-400">Programlama dili</strong> bu talimatları ifade etme biçimidir.
+        </p>
+
+        <div class="p-5 rounded-2xl bg-cyan-950/20 border border-cyan-800/40 space-y-2">
+          <div class="text-sm font-bold text-cyan-300 uppercase tracking-wider font-mono">SYNAXCODE'un Temel Fikri</div>
+          <p class="text-slate-200 text-sm leading-relaxed">
+            İnsanın “nasıl yazacağından” önce <strong>“ne yapmak istediğini”</strong> ifade etmesini sağlamak; bu niyeti 
+            doğrulanabilir bir yapıya çevirmek, uygun kodu üretmek, çalıştığı donanıma göre optimize etmek ve işe yarayan ayarları sonraki çalışmalarda hatırlamak.
+          </p>
+        </div>
+
+        <ul class="space-y-2.5 text-sm text-slate-300">
+          <li class="flex items-start gap-2.5"><span class="text-cyan-400 font-bold">•</span> <span><strong>Kodlama:</strong> Bilgisayara yapılacak işi kurallı biçimde tarif etmek.</span></li>
+          <li class="flex items-start gap-2.5"><span class="text-cyan-400 font-bold">•</span> <span><strong>Programlama dili:</strong> Bu tarifin grameri ve kelime dağarcığı.</span></li>
+          <li class="flex items-start gap-2.5"><span class="text-cyan-400 font-bold">•</span> <span><strong>Derleyici:</strong> İnsanın yazdığı ifadeyi bilgisayarın çalıştırabileceği biçime dönüştüren üretim hattı.</span></li>
+          <li class="flex items-start gap-2.5"><span class="text-cyan-400 font-bold">•</span> <span><strong>SYNAXCODE:</strong> Niyeti merkeze alan, donanıma uyum sağlamayı ve optimizasyon bilgisini saklamayı hedefleyen bir dil/sistem yaklaşımı.</span></li>
+          <li class="flex items-start gap-2.5 text-amber-300"><span class="text-amber-400 font-bold">•</span> <span>Bu dokümandaki bazı modüller vizyon ve mimari hedeftir; tamamlanmış ve doğrulanmış ürün özelliği olarak okunmamalıdır.</span></li>
+        </ul>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+          <span class="font-bold text-cyan-400">En kısa cümleyle:</span> Bugünkü modelde geliştirici hem hedefi hem de yöntemi ayrıntılı biçimde anlatır. SYNAXCODE, hedefi insandan alıp yöntem ayrıntılarının daha büyük bölümünü sistemin üstlenmesini hedefler.
+        </div>
+      </section>
+
+      <!-- BÖLÜM 2 (SAYFA 3) -->
+      <section id="sec-02" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">02</span>
+          <h2 class="text-2xl font-black text-white">Bilgisayar aslında ne yapar?</h2>
+        </div>
+        <p class="text-slate-300 leading-relaxed text-sm">
+          Bilgisayarı çok hızlı ama son derece kelimesi kelimesine çalışan bir aşçı gibi düşünün. <em>“Güzel bir yemek yap”</em> demek yetmez. Malzemeyi, sırayı, süreyi ve koşulları tarif etmek gerekir.
+        </p>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-800">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-800/60 font-mono text-cyan-400 uppercase">
+              <tr>
+                <th class="p-3.5">İnsan Cümlesi</th>
+                <th class="p-3.5">Bilgisayarın İhtiyacı</th>
+                <th class="p-3.5">Neden?</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-300">
+              <tr>
+                <td class="p-3.5 font-medium text-white">“Fotoğrafı güzelleştir.”</td>
+                <td class="p-3.5">Hangi fotoğraf? Ne kadar parlaklık? Hangi filtre? Hangi çıktı biçimi?</td>
+                <td class="p-3.5 text-slate-400">Bilgisayar “güzel” kavramını tek başına kesin bir işlem olarak bilmez.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-800/30 text-xs space-y-1">
+          <div class="font-bold text-cyan-300 uppercase font-mono">İlk önemli ayrım</div>
+          <p class="text-slate-300">İnsan niyetle düşünür: <em>“ne istiyorum?”</em> Bilgisayar ise kesin işlemlerle çalışır: <em>“hangi veri, hangi sıra, hangi koşul, hangi sonuç?”</em> Programlama bu iki dünya arasındaki köprüdür.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1.5">
+            <div class="font-bold text-cyan-400">🍲 Yemek Tarifi</div>
+            <p class="text-slate-400">“Çorba yap” niyettir; tarif, uygulanabilir talimattır.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1.5">
+            <div class="font-bold text-emerald-400">🧭 Navigasyon</div>
+            <p class="text-slate-400">“Ankara’ya git” hedeftir; rota, uygulanabilir plandır.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1.5">
+            <div class="font-bold text-purple-400">📐 Mimari Proje</div>
+            <p class="text-slate-400">“İki katlı ev istiyorum” niyettir; çizim ve statik hesaplar uygulanabilir tanımdır.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BÖLÜM 3 (SAYFA 4) -->
+      <section id="sec-03" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">03</span>
+          <h2 class="text-2xl font-black text-white">Kodlama ve programlama dili nedir?</h2>
+        </div>
+        <p class="text-slate-300 leading-relaxed text-sm">
+          <strong>Kod</strong>, bilgisayara verilen kurallı talimatların yazılı halidir. <strong>Programlama dili</strong> ise bu talimatları yazarken kullandığımız kurallar bütünüdür.
+        </p>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1">
+          <span class="font-bold text-cyan-400">Basit bir örnek:</span>
+          <p class="text-slate-300"><em>“Eğer oda sıcaklığı 25 derecenin üstündeyse klimayı aç.”</em> Bu cümle günlük dilde anlaşılır. Programlama dili aynı fikri bilgisayarın kesin olarak yorumlayacağı biçimde ifade eder.</p>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-800">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-800/60 font-mono text-cyan-400 uppercase">
+              <tr>
+                <th class="p-3.5 w-1/3">Kavram</th>
+                <th class="p-3.5">Tanımı</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-300">
+              <tr><td class="p-3.5 font-bold text-white font-mono">Sözdizimi (syntax)</td><td class="p-3.5">Cümlenin/dilin nasıl yazılacağı.</td></tr>
+              <tr><td class="p-3.5 font-bold text-white font-mono">Anlam (semantics)</td><td class="p-3.5">Yazılan ifadenin ne yapacağı.</td></tr>
+              <tr><td class="p-3.5 font-bold text-white font-mono">Değişken</td><td class="p-3.5">Bilginin geçici olarak saklandığı isimli kutu.</td></tr>
+              <tr><td class="p-3.5 font-bold text-white font-mono">Fonksiyon</td><td class="p-3.5">Belirli bir işi yapan tekrar kullanılabilir tarif.</td></tr>
+              <tr><td class="p-3.5 font-bold text-white font-mono">Derleyici / yorumlayıcı</td><td class="p-3.5">Yazılan kodu bilgisayarın çalıştırabileceği biçime dönüştüren araç.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1">
+          <span class="font-bold text-emerald-400">Neden Python, C, Rust gibi farklı diller var?</span>
+          <p class="text-slate-300">Çünkü her araç farklı önceliklere göre tasarlanır. Tornavida ile çekiç aynı işi yapmaz; programlama dilleri de okunabilirlik, hız, güvenlik, donanım kontrolü veya geliştirme kolaylığı gibi farklı alanlarda güçlenir.</p>
+        </div>
+      </section>
+
+      <!-- BÖLÜM 4 (SAYFA 5) -->
+      <section id="sec-04" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-6">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">04</span>
+          <h2 class="text-2xl font-black text-white">Bugün bir yazılım nasıl ortaya çıkıyor?</h2>
+        </div>
+
+        <p class="text-slate-300 text-sm">Geleneksel yaklaşım yanlış değildir. Modern dünyanın neredeyse tamamı bu yöntemlerle inşa edildi. Sorun, özellikle yüksek performans ve farklı cihazlara uyum gerektiğinde sürecin çok fazla ayrıntı ve uzmanlık istemesidir.</p>
+
+        <div class="space-y-4">
+          <div class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">Bugün:</div>
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs font-mono">
+            <div class="p-3 rounded-xl bg-slate-800 border border-slate-700">Amaç</div>
+            <div class="p-3 rounded-xl bg-slate-800 border border-slate-700">Dili seç</div>
+            <div class="p-3 rounded-xl bg-slate-800 border border-slate-700">Sözdizimini yaz</div>
+            <div class="p-3 rounded-xl bg-slate-800 border border-slate-700">Test et</div>
+            <div class="p-3 rounded-xl bg-slate-800 border border-slate-700">Cihaza göre ayarla</div>
+            <div class="p-3 rounded-xl bg-slate-800 border border-slate-700">Tekrar optimize et</div>
+          </div>
+          <p class="text-xs text-slate-400 italic">İnsan hem amacı hem de uygulama ayrıntılarını elle tarif eder.</p>
+        </div>
+
+        <div class="space-y-4 pt-4 border-t border-slate-800">
+          <div class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">SYNAXCODE Hedefi:</div>
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs font-mono">
+            <div class="p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/40 text-cyan-300 font-bold">Niyeti belirt</div>
+            <div class="p-3 rounded-xl bg-blue-950/40 border border-blue-500/40 text-blue-300 font-bold">Anlamlandır</div>
+            <div class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 font-bold">Doğrula</div>
+            <div class="p-3 rounded-xl bg-purple-950/40 border border-purple-500/40 text-purple-300 font-bold">Uygun kodu üret</div>
+            <div class="p-3 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-300 font-bold">Donanıma göre optimize et</div>
+            <div class="p-3 rounded-xl bg-rose-950/40 border border-rose-500/40 text-rose-300 font-bold">En iyi sonucu hatırla</div>
+          </div>
+          <p class="text-xs text-slate-400 italic">İnsan amacı tarif eder; sistem uygulama ayrıntılarının daha büyük bölümünü üstlenmeyi hedefler.</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-2">
+          <div class="font-bold text-slate-300">Geliştiricinin tipik olarak yaptığı işler:</div>
+          <ul class="space-y-1 text-slate-400 list-disc list-inside">
+            <li>İhtiyacı anlamak ve algoritmayı tasarlamak.</li>
+            <li>Bir dil ve kütüphane seçmek.</li>
+            <li>Sözdizimi kurallarına uygun kod yazmak.</li>
+            <li>Hataları bulmak ve test etmek.</li>
+            <li>CPU, GPU veya hedef cihaza göre performansı ayarlamak.</li>
+            <li>Yeni cihaz veya veri türü geldiğinde yeniden düzenlemek.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- BÖLÜM 5 (SAYFA 6) -->
+      <section id="sec-05" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">05</span>
+          <h2 class="text-2xl font-black text-white">SYNAXCODE hangi problemi çözmeye çalışıyor?</h2>
+        </div>
+
+        <div class="p-4 rounded-xl bg-cyan-950/20 border border-cyan-800/30 text-xs space-y-1">
+          <span class="font-bold text-cyan-400">Temel soru:</span>
+          <p class="text-slate-300 italic">“İnsan bilgisayara her ayrıntıyı tek tek nasıl yapacağını söylemek zorunda mı, yoksa önce ne istediğini söyleyip güvenli uygulama ayrıntılarının bir bölümünü sisteme bırakabilir mi?”</p>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-800">
+          <table class="w-full text-left text-xs">
+            <tbody class="divide-y divide-slate-800 text-slate-300">
+              <tr>
+                <td class="p-3.5 font-bold text-white w-1/3">Sözdizimi yükü</td>
+                <td class="p-3.5">Kullanıcı asıl probleme değil, dilin kurallarına fazla zaman harcayabilir.</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold text-white">Donanım farkları</td>
+                <td class="p-3.5">Aynı iş CPU, GPU veya küçük bir cihazda farklı biçimde daha verimli çalışabilir.</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold text-white">Optimizasyon tekrarları</td>
+                <td class="p-3.5">Aynı tür performans ayarları farklı projelerde tekrar tekrar yapılabilir.</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold text-white">Bilginin kaybolması</td>
+                <td class="p-3.5">Bir cihazda bulunan iyi ayar, sonraki çalışmada veya başka projede unutulabilir.</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold text-white">Niyet ile uygulama arasındaki mesafe</td>
+                <td class="p-3.5">“Ne istiyorum?” ile “bunu hangi teknik ayrıntılarla yapacağım?” arasında büyük bir boşluk vardır.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-emerald-500/30 text-xs">
+          <span class="font-bold text-emerald-400">SYNAXCODE’un önerdiği yön:</span> Niyeti daha yüksek seviyede tanımla → niyeti kesin ve doğrulanabilir bir yapıya dönüştür → hedef donanım için uygun çalıştırma biçimini üret → performansı ölç → iyi sonuçları sakla.
+        </div>
+      </section>
+
+      <!-- BÖLÜM 6 (SAYFA 7) -->
+      <section id="sec-06" class="p-8 rounded-3xl bg-[#0f172a] border border-cyan-500/30 space-y-6 shadow-2xl">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500 text-slate-900 font-mono font-black flex items-center justify-center text-sm">06</span>
+          <h2 class="text-2xl font-black text-white">Sistem adım adım nasıl çalışabilir?</h2>
+        </div>
+        <p class="text-xs text-slate-400 italic">SYNAXCODE'un hedeflenen işlem hattı: Bir restoran siparişinden üretim hattına: amaç > plan > kontrol > üretim > ayar > hafıza</p>
+
+        <!-- 5 KATMAN KARTLARI -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-5 rounded-2xl bg-slate-900 border border-cyan-500/30 space-y-2">
+            <span class="text-sm font-bold text-cyan-400 font-mono">Synapse: Yorumlayıcı / Planlayıcı</span>
+            <p class="text-xs text-slate-300 leading-relaxed">“Ne istendiğini” anlamlandıran planlayıcı. Günlük dil veya daha üst düzey ifadeyi, sistemin işleyebileceği yapısal tanıma çevirir.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900 border border-rose-500/30 space-y-2">
+            <span class="text-sm font-bold text-rose-400 font-mono">Immune: Kalite ve Güvenlik Kontrolü</span>
+            <p class="text-xs text-slate-300 leading-relaxed">Kalite ve güvenlik kontrolü. Kuralların, sınırların, veri tiplerinin ve tanımlanmış güvenlik koşullarının sağlanıp sağlanmadığını denetler.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900 border border-blue-500/30 space-y-2">
+            <span class="text-sm font-bold text-blue-400 font-mono">Axon: Üretim Katmanı</span>
+            <p class="text-xs text-slate-300 leading-relaxed">Üretim katmanı. Doğrulanmış yapıyı çalıştırılabilir koda veya hedef sisteme uygun daha düşük seviyeli temsile çevirir.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-900 border border-amber-500/30 space-y-2">
+            <span class="text-sm font-bold text-amber-400 font-mono">Tycon: Performans Mühendisi</span>
+            <p class="text-xs text-slate-300 leading-relaxed">Performans mühendisi. Aynı işi farklı yollarla deneyebilir; hedef cihaza ve amaca göre daha iyi çalışan varyantı seçmeyi hedefler.</p>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-gradient-to-r from-purple-950/40 via-indigo-950/30 to-slate-900 border border-purple-500/40 space-y-2">
+          <span class="text-sm font-bold text-purple-400 font-mono">Myelin: Hafıza</span>
+          <p class="text-xs text-slate-300 leading-relaxed">Hafıza. Daha önce hangi donanım ve veri koşulunda hangi yaklaşımın iyi sonuç verdiğini saklar. Sık kullanılan yolları çalışma anında sıçramalı iletime bağlar.</p>
+        </div>
+      </section>
+
+      <!-- BÖLÜM 7 (SAYFA 8) -->
+      <section id="sec-07" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">07</span>
+          <h2 class="text-2xl font-black text-white">“Niyet odaklı” programlama ne demek?</h2>
+        </div>
+        <p class="text-slate-300 text-sm">Niyet odaklı yaklaşımda başlangıç sorusu <em>“Bu kodu nasıl yazacağım?”</em> değil, <strong>“Hangi sonucu istiyorum?”</strong> olur.</p>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-800">
+          <table class="w-full text-left text-xs">
+            <tbody class="divide-y divide-slate-800 text-slate-300">
+              <tr><td class="p-3.5 font-bold text-white w-1/3">Günlük niyet</td><td class="p-3.5">“İki sensörün ölçümleri arasındaki farkın karesini hesapla.”</td></tr>
+              <tr><td class="p-3.5 font-bold text-white">Ek koşul</td><td class="p-3.5">“Dizilerin boyutu aynı olmalı; sınır dışı erişim olmamalı.”</td></tr>
+              <tr><td class="p-3.5 font-bold text-white">Performans hedefi</td><td class="p-3.5">“Bu cihazda gecikme mümkün olduğunca düşük olsun.”</td></tr>
+              <tr><td class="p-3.5 font-bold text-emerald-400">Sistem işi</td><td class="p-3.5 text-emerald-300">Bu isteği kesin işlemlere dönüştürmek, doğrulamak ve uygun çalıştırma biçimini seçmek.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1">
+          <span class="font-bold text-rose-400">Bu “sihir” değildir</span>
+          <p class="text-slate-400">Doğal dil tek başına yeterince kesin değildir. Güvenilir bir sistem, insan cümlesini önce açık kurallara sahip ara bir temsile dönüştürmeli; belirsiz noktaları sınırlamalı ve sonuçları doğrulamalıdır.</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300 space-y-1">
+          <div class="text-slate-500 text-[10px] uppercase">Kavramsal bir SYNAXCODE ifadesi şöyle görünebilir:</div>
+          <div class="text-cyan-400">niyet: iki sinyal arasındaki farkın karesini hesapla</div>
+          <div class="text-blue-400">koşul: boyutlar aynı olmalı</div>
+          <div class="text-rose-400">güvenlik: sınır kontrolü zorunlu</div>
+          <div class="text-emerald-400">hedef: en düşük gecikme</div>
+        </div>
+      </section>
+
+      <!-- BÖLÜM 8 (SAYFA 9) -->
+      <section id="sec-08" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">08</span>
+          <h2 class="text-2xl font-black text-white">“Donanıma uyumlu” olmak ne demek?</h2>
+        </div>
+        <p class="text-slate-300 text-sm">Aynı matematiksel iş farklı donanımlarda farklı yöntemlerle daha hızlı veya daha verimli olabilir. SYNAXCODE’un hedeflerinden biri bu farkı kullanıcıya mümkün olduğunca az yük bindirerek yönetmektir.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1.5">
+            <div class="font-bold text-cyan-400 font-mono">CPU (Şehir İçi Araç)</div>
+            <p class="text-slate-400">Genel amaçlı ve esnek. Çok çeşitli işleri esnek biçimde yürütür.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1.5">
+            <div class="font-bold text-blue-400 font-mono">GPU (Çok Şeritli Otoyol)</div>
+            <p class="text-slate-400">Aynı anda çok sayıda işlem. Birbirine benzeyen binlerce işlemi paralel yürütmede güçlüdür.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1.5">
+            <div class="font-bold text-amber-400 font-mono">EDGE (Ekonomik Araç)</div>
+            <p class="text-slate-400">Az enerji, sınırlı kaynak. Enerji, bellek ve işlem gücü sınırlıdır; farklı strateji (Q16.16) ister.</p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-amber-500/30 text-xs text-amber-300">
+          <strong>Önemli:</strong> “Donanıma uyum” aynı kodun her cihazda otomatik olarak en hızlı olacağı anlamına gelmez. Bunun gerçek performansı ancak ölçülebilir benchmarklarla gösterilebilir.
+        </div>
+      </section>
+
+      <!-- BÖLÜM 9 (SAYFA 10) -->
+      <section id="sec-09" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">09</span>
+          <h2 class="text-2xl font-black text-white">“Öğrenen sistem” neyi öğrenir?</h2>
+        </div>
+        <p class="text-slate-300 text-sm">Buradaki “öğrenme” ifadesini bir insan gibi yeni kavramlar öğrenmek şeklinde düşünmek zorunda değiliz. <strong>Daha somut anlamı: hangi koşulda hangi teknik ayarın iyi çalıştığını hatırlamak.</strong></p>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
+          <span class="font-bold text-cyan-400">Örnek:</span> Bir GPU’da 16×16 blok boyutu hızlı, başka bir cihazda 32×8 daha hızlı olabilir. Tycon birkaç güvenli seçeneği ölçer; Myelin cihaz, veri boyutu ve sonuçla birlikte en iyi seçimi saklar. Aynı koşul tekrar geldiğinde aramaya sıfırdan başlamak zorunda kalmayabilir.
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-800">
+          <table class="w-full text-left text-xs">
+            <tbody class="divide-y divide-slate-800 text-slate-300">
+              <tr><td class="p-3.5 font-bold text-white w-1/3">Niyet özeti</td><td class="p-3.5">Hangi iş yapılıyor?</td></tr>
+              <tr><td class="p-3.5 font-bold text-white">Donanım kimliği</td><td class="p-3.5">Hangi CPU/GPU/cihaz?</td></tr>
+              <tr><td class="p-3.5 font-bold text-white">Veri biçimi ve boyutu</td><td class="p-3.5">İş yükü ne büyüklükte?</td></tr>
+              <tr><td class="p-3.5 font-bold text-white">Denetlenen varyant</td><td class="p-3.5">Hangi güvenli yöntem denendi?</td></tr>
+              <tr><td class="p-3.5 font-bold text-white">Ölçüm</td><td class="p-3.5">Süre, bellek, enerji vb.</td></tr>
+              <tr><td class="p-3.5 font-bold text-emerald-400">Kazanan strateji</td><td class="p-3.5 text-emerald-300">Hangi seçenek en iyi sonucu verdi?</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+          <span class="font-bold text-rose-400">Güvenlik sınırı:</span> Sistem “daha hızlı” olmak uğruna istediği her şeyi serbestçe değiştirmemelidir. Optimizasyon, doğruluğu koruyan ve önceden izin verilen dönüşüm alanı içinde yapılmalıdır.
+        </div>
+      </section>
+
+      <!-- BÖLÜM 10 (SAYFA 11) -->
+      <section id="sec-10" class="p-8 rounded-3xl bg-[#0f172a] border border-rose-500/30 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 font-mono font-bold flex items-center justify-center text-sm">10</span>
+          <h2 class="text-2xl font-black text-white">Yanlış anlaşılmaları önleyelim: SYNAXCODE ne değildir?</h2>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <div class="font-bold text-rose-400">❌ “Kod bilmeye artık gerek yok” iddiası değildir</div>
+            <p class="text-slate-300">İyi yazılım geliştirmek; problemi modellemeyi, test etmeyi, veri ve güvenlik düşünmeyi hâlâ gerektirir. Ama bazı mekanik ayrıntıların sistem tarafından üstlenilmesi hedeflenebilir.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <div class="font-bold text-rose-400">❌ “Yapay zekâ ne yazarsa doğrudur” yaklaşımı değildir</div>
+            <p class="text-slate-300">Doğal dil veya yapay zekâ yalnızca giriş katmanı olabilir. Güvenilirlik için resmi yapı, tipler, kurallar, testler ve doğrulama gerekir.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <div class="font-bold text-rose-400">❌ “Her cihazda otomatik olarak en hızlı dil” garantisi değildir</div>
+            <p class="text-slate-300">Performans karşılaştırması iş yüküne, derleyiciye, donanıma ve ölçüm yöntemine bağlıdır. İddia yerine tekrarlanabilir benchmark gerekir.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <div class="font-bold text-rose-400">❌ “Kendi kendine sınırsız kod değiştiren sistem” değildir</div>
+            <p class="text-slate-300">Adaptasyon; belirlenmiş, doğrulanabilir ve geri alınabilir seçenekler arasında kontrollü arama olarak tasarlanmalıdır.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+            <div class="font-bold text-rose-400">❌ “Programcıyı ortadan kaldıran ürün” değildir</div>
+            <p class="text-slate-300">Daha doğru hedef, insanı sözdizimi ve tekrar eden optimizasyon işlerinden bir ölçüde kurtarıp problem tanımına yaklaştırmaktır.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BÖLÜM 11 (SAYFA 12) -->
+      <section id="sec-11" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">11</span>
+          <h2 class="text-2xl font-black text-white">Bir örnek üzerinden baştan sona</h2>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/40 text-xs font-mono text-cyan-300">
+          <strong>İstek:</strong> “Bu klasördeki çok karanlık fotoğrafları bul, ayrıntıları bozmadan aydınlat ve hızlı çalış.”
+        </div>
+
+        <ol class="space-y-3 text-xs text-slate-300 list-decimal list-inside">
+          <li class="p-3 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-cyan-400 font-mono">1. Niyet:</strong> Kullanıcı hedefi söyler. Teknik filtre veya paralelleştirme ayrıntısını bilmek zorunda değildir.</li>
+          <li class="p-3 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-cyan-400 font-mono">2. Synapse:</strong> “Karanlık” için ölçülebilir bir ölçüt, “ayrıntıyı bozma” için kalite sınırı ve “hızlı” için performans hedefi oluşturur.</li>
+          <li class="p-3 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-rose-400 font-mono">3. Immune:</strong> Girdilerin geçerli olduğundan, bellek ve sınır kurallarının ihlal edilmediğinden ve tanımlı kalite koşullarının korunabildiğinden emin olur.</li>
+          <li class="p-3 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-blue-400 font-mono">4. Axon:</strong> İşlem adımlarını hedef sistemde çalışacak koda/çekirdeğe dönüştürür.</li>
+          <li class="p-3 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-amber-400 font-mono">5. Tycon:</strong> CPU mu GPU mu daha uygun, hangi blok/vektör ayarı daha iyi gibi güvenli seçenekleri dener.</li>
+          <li class="p-3 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-emerald-400 font-mono">6. Çalıştırma:</strong> Fotoğraflar işlenir; doğruluk ve kalite kontrolleri yapılır.</li>
+          <li class="p-3 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-purple-400 font-mono">7. Myelin:</strong> Bu cihaz ve benzer fotoğraf boyutlarında iyi sonuç veren ayarı saklar.</li>
+        </ol>
+
+        <div class="p-4 rounded-xl bg-cyan-950/20 border border-cyan-800/30 text-xs space-y-1">
+          <div class="font-bold text-cyan-300 font-mono uppercase">Aynı fikir tıbbi/sinyal verisine de uygulanabilir:</div>
+          <p class="text-slate-300">Örneğin iki fizyolojik sinyal arasındaki farkın karesini hesaplama, filtreleme veya görüntü dönüşümü gibi deterministik işlerde amaç; matematiksel sonucu değiştirmeden donanıma uygun çalıştırma stratejisi seçmektir.</p>
+        </div>
+      </section>
+
+      <!-- BÖLÜM 12 (SAYFA 13) -->
+      <section id="sec-12" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">12</span>
+          <h2 class="text-2xl font-black text-white">Projeyi gerçek bir dile dönüştürmek için yol haritası</h2>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-800 font-mono text-xs">
+          <table class="w-full text-left">
+            <tbody class="divide-y divide-slate-800 text-slate-300">
+              <tr><td class="p-3 font-bold text-cyan-400 w-1/3">0.1 — Dil çekirdeği</td><td class="p-3">Basit .sx sözdizimi, tip sistemi ve SYNAX ara temsili (SIR).</td></tr>
+              <tr><td class="p-3 font-bold text-cyan-400">0.2 — CPU çalıştırma</td><td class="p-3">Önce tek bir güvenilir backend ile doğru sonuç üretme.</td></tr>
+              <tr><td class="p-3 font-bold text-rose-400">0.3 — Doğrulama</td><td class="p-3">Immune: sınır, tip, sözleşme ve temel güvenlik kontrolleri.</td></tr>
+              <tr><td class="p-3 font-bold text-blue-400">0.4 — Çoklu donanım</td><td class="p-3">CPU + GPU gibi en az iki hedefe güvenilir lowering.</td></tr>
+              <tr><td class="p-3 font-bold text-amber-400">0.5 — Tycon</td><td class="p-3">Kontrollü optimizasyon seçenekleri ve ölçüm altyapısı.</td></tr>
+              <tr><td class="p-3 font-bold text-purple-400">0.6 — Myelin</td><td class="p-3">Donanım/iş yükü/sonuç tabanlı optimizasyon hafızası.</td></tr>
+              <tr><td class="p-3 font-bold text-cyan-400">0.7 — Doğal dil katmanı</td><td class="p-3">Günlük cümleleri güvenli biçimde SIR’a çevirmek; belirsizlikte kullanıcıdan açık bilgi istemek.</td></tr>
+              <tr><td class="p-3 font-bold text-emerald-400">1.0 — Kararlı spesifikasyon</td><td class="p-3 text-emerald-300 font-bold">Dil kuralları, test paketi, benchmark ve dokümantasyonun sabitlenmesi.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
+          <span class="font-bold text-cyan-400">Neden bu sıra?</span> Önce “doğru çalışan dil” kurulmalı; sonra “hızlı ve akıllı çalışan dil” eklenmelidir. Doğal dil arayüzü en görünür özellik olabilir, ancak güvenilir compiler çekirdeğinin yerine geçmemelidir.
+        </div>
+      </section>
+
+      <!-- BÖLÜM 13 (SAYFA 14): MİNİ SÖZLÜK (12 TERİM) -->
+      <section id="sec-13" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">13</span>
+          <h2 class="text-2xl font-black text-white">Teknik terimleri sadeleştirelim: Mini sözlük</h2>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-800 font-mono text-xs">
+          <table class="w-full text-left">
+            <tbody class="divide-y divide-slate-800 text-slate-300">
+              <tr><td class="p-3 font-bold text-white w-1/3">Algoritma</td><td class="p-3">Bir işi çözmek için izlenen adımlar.</td></tr>
+              <tr><td class="p-3 font-bold text-white">Syntax / Sözdizimi</td><td class="p-3">Bir programlama dilinde cümlelerin nasıl yazılacağı.</td></tr>
+              <tr><td class="p-3 font-bold text-white">Semantics / Anlam</td><td class="p-3">Yazılan kodun ne yaptığı.</td></tr>
+              <tr><td class="p-3 font-bold text-cyan-400">Compiler / Derleyici</td><td class="p-3">Yüksek seviyeli ifadeyi daha düşük seviyeli çalıştırılabilir biçime dönüştüren sistem.</td></tr>
+              <tr><td class="p-3 font-bold text-white">Runtime / Çalışma zamanı</td><td class="p-3">Program çalışırken hizmet veren altyapı.</td></tr>
+              <tr><td class="p-3 font-bold text-blue-400">IR / Ara temsil</td><td class="p-3">İnsan yazısı ile makine kodu arasındaki, compiler’ın işlem yapmasını kolaylaştıran standart iç biçim.</td></tr>
+              <tr><td class="p-3 font-bold text-white">Backend</td><td class="p-3">Compiler’ın belirli bir hedefe (ör. x86, ARM, GPU) kod üretmesini sağlayan katman.</td></tr>
+              <tr><td class="p-3 font-bold text-white">CPU</td><td class="p-3">Genel amaçlı ana işlemci.</td></tr>
+              <tr><td class="p-3 font-bold text-white">GPU</td><td class="p-3">Çok sayıda benzer işlemi paralel yapmada güçlü işlemci.</td></tr>
+              <tr><td class="p-3 font-bold text-amber-400">Benchmark</td><td class="p-3">Performansı kontrollü ve tekrarlanabilir biçimde ölçen test.</td></tr>
+              <tr><td class="p-3 font-bold text-purple-400">Optimization / Optimizasyon</td><td class="p-3">Aynı doğru sonucu daha hızlı, daha az bellekle veya daha az enerjiyle elde etmeye çalışma.</td></tr>
+              <tr><td class="p-3 font-bold text-rose-400">Verification / Doğrulama</td><td class="p-3">Programın tanımlı kuralları ve koşulları sağladığını sistematik olarak kontrol etme.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BÖLÜM 14 (SAYFA 15): SSS VE TEK CÜMLELİK KAPANIŞ -->
+      <section id="sec-14" class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-6">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 font-mono font-bold flex items-center justify-center text-sm">14</span>
+          <h2 class="text-2xl font-black text-white">Son kontrol: Sık sorulan sorular (SSS)</h2>
+        </div>
+
+        <div class="space-y-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+            <div class="font-bold text-cyan-400">S: SYNAXCODE bir programlama dili mi, yoksa yapay zekâ aracı mı?</div>
+            <p class="text-slate-300">C: Hedeflenen yapı bir <strong>dil + compiler + runtime</strong> ekosistemidir. Yapay zekâ/doğal dil, isteği anlamada yardımcı bir giriş katmanı olabilir; sistemin tamamı değildir.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+            <div class="font-bold text-cyan-400">S: Hiç kod bilmeyen biri kullanabilir mi?</div>
+            <p class="text-slate-300">C: Uzun vadede bazı görevlerde evet; ancak karmaşık yazılım için problem tanımı, veri, test ve güvenlik bilgisi yine gerekir.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+            <div class="font-bold text-cyan-400">S: Sistem kendi kendine kod mu değiştirir?</div>
+            <p class="text-slate-300">C: Daha doğru ifade: doğruluğu koruyan, izinli optimizasyon seçenekleri arasında kontrollü biçimde seçim yapar.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+            <div class="font-bold text-cyan-400">S: Neden Myelin önemli?</div>
+            <p class="text-slate-300">C: Çünkü aynı optimizasyon aramasını tekrar tekrar yapmak yerine, daha önce işe yarayan cihaz/iş yükü eşleşmelerini hatırlamak zaman kazandırabilir.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+            <div class="font-bold text-cyan-400">S: En önemli teknik risk nedir?</div>
+            <p class="text-slate-300">C: Doğal dildeki belirsizliği güvenilir ve kesin programa dönüştürmek; ayrıca optimizasyon yapılırken doğruluğu garanti etmek.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+            <div class="font-bold text-cyan-400">S: Başarı nasıl kanıtlanır?</div>
+            <p class="text-slate-300">C: Açık kaynak veya denetlenebilir testler, resmi dil spesifikasyonu ve GCC/Clang/Rust/NumPy/JAX/TVM gibi uygun rakiplerle tekrarlanabilir benchmarklar ile.</p>
+          </div>
+        </div>
+
+        <!-- TEK CÜMLELİK KAPANIŞ (SAYFA 15 ALTI) -->
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-cyan-950/40 via-slate-900 to-indigo-950/40 border border-cyan-500/40 text-center space-y-2 mt-6">
+          <div class="text-xs font-mono font-bold uppercase tracking-widest text-cyan-400">Tek Cümlelik Kapanış</div>
+          <p class="text-base sm:text-lg font-bold text-white leading-relaxed">
+            “SYNAXCODE’un iddiası ‘insanı koddan tamamen çıkarmak’ değil; insanın niyetini daha doğrudan ifade edebildiği, compiler’ın doğrulama ve donanım uyarlamasında daha fazla sorumluluk aldığı bir programlama modeli kurmaktır.”
+          </p>
+        </div>
+      </section>
+
+      <!-- SAYFA 16: EKOSİSTEM VE NOT -->
+      <section class="p-8 rounded-3xl bg-[#0f172a] border border-slate-800 space-y-5">
+        <h3 class="text-xl font-bold text-white font-mono">Ekosistem ve Yasal Bildirim</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <a href="https://synaxcode.com" class="p-4 rounded-xl bg-slate-900 border border-slate-800 block hover:border-emerald-500/50 transition">
+            <div class="font-bold text-emerald-400 font-mono">synaxcode.com</div>
+            <div class="text-slate-300 mt-1">Ürün ve vizyon</div>
+          </a>
+          <a href="https://synaxcode.org" class="p-4 rounded-xl bg-slate-900 border border-slate-800 block hover:border-cyan-500/50 transition">
+            <div class="font-bold text-cyan-400 font-mono">synaxcode.org</div>
+            <div class="text-slate-300 mt-1">Dil spesifikasyonu ve teknik çerçeve</div>
+          </a>
+          <a href="https://synaxcode.online" class="p-4 rounded-xl bg-slate-900 border border-slate-800 block hover:border-purple-500/50 transition">
+            <div class="font-bold text-purple-400 font-mono">synaxcode.online</div>
+            <div class="text-slate-300 mt-1">Studio / playground / çevrim içi deneyim</div>
+          </a>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400 leading-relaxed italic">
+          <strong>Not:</strong> Bu rehber, SYNAXCODE’un hedeflenen mimarisini başlangıç düzeyinde açıklar. Performans ve güvenlik iddiaları, ancak tamamlanmış uygulama ve tekrarlanabilir testlerle doğrulanmalıdır.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800 bg-[#05080e] py-10 px-6 text-center text-xs text-slate-500 space-y-3 font-mono">
+    <div class="flex flex-wrap justify-center gap-6 text-slate-400 font-semibold">
+      <a href="https://synaxcode.com" class="hover:text-cyan-400">synaxcode.com</a>
+      <a href="https://synaxcode.org" class="hover:text-cyan-400">synaxcode.org</a>
+      <a href="https://synaxcode.online" class="hover:text-cyan-400">synaxcode.online</a>
+      <a href="https://github.com/ofaemd-creator/synax" class="hover:text-cyan-400">GitHub: @ofaemd-creator/synax</a>
+    </div>
+    <p>© 2026 Ömer Faruk Aydın & SYNAX Contributors — Apache License 2.0. Akademik Araştırma Yazılımı.</p>
+  </footer>
+
+</body>
+</html>

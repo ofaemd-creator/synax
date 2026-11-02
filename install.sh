@@ -38,7 +38,7 @@ printf "\n🧬 Downloading SYNAX v2.0 Core from Sovereign Forge (${SRC_URL})...\
 
 # Pinned SHA-256 checksums: installation aborts if any file does not match.
 CHECKSUMS="91c4fc2b9ab3244084d25a06e9143eb9b06c33f1200f5b711e22cc96219b3816  synax_security.py
-9a68753561d2f797f552563d672d3a6f7cf899ed07970efb0fff16910cddbd94  synapse_neural_model.py
+6446a8fe0fddab8dca602cf57d2f84ca7a2ac3dab6e4a9ced6741ccaf3fc13ae  synapse_neural_model.py
 741552b6876a5a252d56573fffc1732130cdd73e789c2b311d327cb66987afbb  synax_autopoiesis.py
 bbd1010524a69d148011c0fbe4e7ef2ac338a1d4df4773fd4ce280bdaff877cb  synax_core.py
 3f5379f9b1e97934abf46c70cd8d0cf1fcc855822fdd2138de403803cdfda73c  synaxc.py
