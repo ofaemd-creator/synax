@@ -1,25 +1,26 @@
-# ⚡ SYNAX (`.sx`) — The Self-Evolving Neuro-Symbolic Programming Language
+# ⚡ SYNAX (`.sx`) — Neuro-Symbolic Language & Biologically-Inspired Adaptive Engine
 
-[![Website](https://img.shields.io/badge/Platform-synaxcode.com-10b981?style=for-the-badge)](https://synaxcode.com)
-[![Foundation](https://img.shields.io/badge/Whitepaper-synaxcode.org-06b6d4?style=for-the-badge)](https://synaxcode.org)
+[![Platform](https://img.shields.io/badge/Platform-synaxcode.com-10b981?style=for-the-badge)](https://synaxcode.com)
+[![Whitepaper](https://img.shields.io/badge/Whitepaper-synaxcode.org-06b6d4?style=for-the-badge)](https://synaxcode.org)
 [![Cloud IDE](https://img.shields.io/badge/Cloud_IDE-synaxcode.online-a855f7?style=for-the-badge)](https://synaxcode.online)
-[![License](https://img.shields.io/badge/License-MIT_%2F_Apache_2.0-blue?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue?style=for-the-badge)](LICENSE)
 
-> **"Don't Write Syntax. Express Your Intent. Watch It Evolve & Accelerate Live."**  
-> **"Kod Yazmayın. Niyetinizi Söyleyin. Çalıştıkça Kendi Kendine Hızlansın."**
+> **"Don't Write Syntax. Express Your Intent. Watch It Adapt & Accelerate."**  
+> **"Kod Yazmayın. Niyetinizi Söyleyin. Çalıştıkça Donanıma Uyarlansın."**
 
-**SYNAX (`.sx`)** is the world's first **self-evolving neuro-symbolic programming language and genetic hardware superoptimizer**. Instead of compiling code into a static binary that never changes, SYNAX synthesizes a population of hardware DNA variants across **Universal Silicon** (from `16KB TinyMCUs` to `x86_64 AVX-512`, `ARM64 NEON`, `RISC-V`, `Apple Metal`, and `NVIDIA CUDA Tensor Clusters`) and uses real-time Multi-Armed Bandit Reinforcement Learning to lock the fastest gene into persistent **Myelin Memory**.
+**SYNAX (`.sx`)** is an experimental **neuro-symbolic programming language and adaptive runtime system**. Taking inspiration from biological neurobiology (action potential propagation, activity-dependent myelin plasticity, and saltatory conduction across Ranvier nodes), SYNAX translates declarative computational intents into verified symbolic ASTs and specializes hot paths into hardware-accelerated SIMD blocks across Universal Silicon (from TinyMCUs to ARM64 NEON, x86_64 AVX-512, and Apple Metal).
 
 ---
 
-## 🌌 Tri-Core Architecture (`Synapse` • `Axon` • `Tycon`)
+## 🌌 Core Architecture (`Synapse` • `Axon` • `Tycon` • `Myelin`)
 
-| Core Layer | Biological Role | Engineering Mechanism |
+| Core Layer | Biological Metaphor | Engineering Mechanism |
 | :--- | :--- | :--- |
-| **1. 🧠 SYNAPSE** | *Prefrontal Cortex (Intent)* | Trainable offline neuro-symbolic parser (`synapse_neural_model.py`). Converts natural language (English/Turkish) and mathematical rules into verified Symbolic ASTs without borrow-checker (`'a`) friction. |
-| **2. 🦎 AXON** | *Peripheral Nervous System* | Universal Silicon Chameleon. Probes hardware in `<1 ms` and synthesizes targets for **TinyMCU (Zero-Heap Stack)**, **ARM64 NEON**, **x86 AVX2/AVX-512**, **Asymmetric P-Cores**, and **Unified GPU Shaders**. |
-| **3. ⚡ TYCON** | *Myelin Sheath & Evolution* | Runtime Genetic Mutator (`synax_core.py` & `synaxc.py`). Mutates SIMD lane widths (`4x..32x`), L1D cache prefetch strides (`128B..512B`), and thread topologies, locking winners into `myelin_memory.json`. |
-| **4. 🛡️ IMMUNE SHIELD** | *Autonomous Immune System* | Hardware-level `NaN`, `±Infinity`, and voltage-spike quarantine. Scans and self-heals `8,000,000` signals in `~3.7 ms` with **Zero Crashes**. |
+| **1. 🧠 SYNAPSE** | *Intent Parser* | Trainable offline neuro-symbolic parser (`synapse_neural_model.py`). Converts natural language (English/Turkish) into verified Symbolic ASTs with algebraic reduction passes (`sqrt(u^2) -> abs(u)`). |
+| **2. 🛡️ IMMUNE SHIELD** | *Membrane Selectivity* | Hardware-level signal sanitizer. IEEE 754 bit-mask validation (`(abs_bits <= 0x447A0000)`) catching `NaN`, `±Infinity`, and out-of-range sensor spikes across both channels with branchless SIMD. |
+| **3. 🦎 AXON** | *Hardware Chameleon* | Probes hardware topology in `<1 ms` and synthesizes targets for **Tier-0 Q16.16 Fixed-Point (TinyMCU)**, **Tier-2 ARM64 NEON**, **Tier-3 x86 AVX2/AVX-512**, and **Tier-4 Apple Metal GPU**. |
+| **4. ⚡ TYCON / JIT** | *Adaptive Plasticity* | Activity-dependent runtime specialized kernel synthesis (`synax_myelin_engine.c`). Generates and hot-swaps vector kernels when invocation frequency crosses the threshold. |
+| **5. 🧬 MYELIN** | *Saltatory Conduction* | Persistent optimization cache (`myelin_memory.json`). Remembers winning hardware parameters, skipping generic dynamic dispatch and leaping directly across L1-aligned vector blocks. |
 
 ---
 
@@ -30,47 +31,51 @@
 curl -sSf https://synaxcode.com/install.sh | sh
 ```
 
-### 2. Compile Any Natural Language Intent into a Standalone Native Binary (`synaxc`)
+### 2. Standalone Unified CLI (`synax`)
 ```bash
-# Teach Synapse-Nano a new domain concept (persisted to synapse_brain.json):
-./synaxc.py "öğren: kardiyak perfüzyon indeksi = sqrt(abs(a - b)) / (a + b) + bias"
+# 1. Run a .sx intent script:
+./synax run examples/biyomedikal_kardiyo.sx
 
-# Compile & evolve into a zero-dependency native machine binary by name:
-./synaxc.py "niyet: hastalar için kardiyak perfüzyon indeksi hesapla"
-```
+# 2. Run the adaptive myelination differential test (Ranvier vs Scalar):
+./synax myelin
 
-### 3. Use as a 300x Accelerator Inside Python (`synax_sdk.py`)
-```python
-from synax_sdk import compile_intent
+# 3. Stream real-time biomedical signals (ABP / CVP / CPP):
+./synax stream 3.0
 
-engine = compile_intent("""
-    niyet: İki veri serisi arasındaki farkın karesini (anomali enerjisini) hesapla.
-    kural: Bozuk verileri (NaN/Sonsuz) otomatik temizle.
-""")
-
-report = engine.run(signal_a, signal_b, bias=1.0)
-print(report["secilen_dna"])  # e.g., MUT-4 [Hyper-6T-NEON32]
-print(report["sure_us"])      # 35.92 µs (for 500,000 elements!)
+# 4. View hardware profile and status:
+./synax status
 ```
 
 ---
 
-## 📊 Experimental Benchmarks ($N = 8,000,000$ Synaptic Signals)
+## 📊 Hardware Benchmarks (Apple Silicon M1, Clang 21 Native)
 
-| Hardware / Gene Variant | DNA Chromosome | Best Execution Time | Speedup vs Python |
+Measurements conducted under controlled, warm-cache conditions (median of 201 runs, $N = 32,768$ float elements):
+
+| Implementation | Latency (Median) | Acceleration | Method |
 | :--- | :--- | :--- | :--- |
-| **Standard Python Loop** | `Interpreter` | `~494,000.0 µs` | `1.0x` |
-| **`GEN-0 [TinyMCU]`** | `SIMD:1x \| PF:0B \| T:1` | `14,513.9 µs` | `34.0x` |
-| **`GEN-1 [Unrolled-4x]`** | `SIMD:4x \| PF:0B \| T:1` | `8,407.4 µs` | `58.7x` |
-| **`GEN-3 [Tycon-8Core]`** | `SIMD:8x \| PF:0B \| T:8 (4P+4E)` | `2,128.2 µs` | `232.1x` |
-| **`MUT-3 [Firestorm-4P-Only]`** | `SIMD:16x \| PF:256B \| T:4 (P-Only)` | **`1,885.2 µs`** | **`262.0x`** *(Fastest CPU DNA)* |
-| **`GEN-4 [Metal-GPU]`** | `Unified float4 Shader` | **`1,816.0 µs`** | **`~1.3x - 8.0x`** (Skaler C99 loop disable bazlı) |
+| **Interpreted Scalar Loop (Baseline)** | `~420 µs` | `1.0x` | Scalar element-by-element branch checks |
+| **Native Clang `-O3` (Auto-vectorized)** | `~120 µs` | `~3.5x` | Standard compiler vectorization |
+| **SYNAX Ranvier Saltatory JIT (NEON)** | `~100 µs` | `~4.2x` | 128-bit NEON unrolled + bitwise Immune Shield |
+
+*Note: Speedups against pure Python interpreted loops range between 50x–250x, but rigorous systems benchmarks compare directly against native compiled C (`clang -O3`).*
+
+---
+
+## ⚖️ License & Policies
+
+- **License:** Open source under the [Apache License, Version 2.0](LICENSE).
+- **Attribution & Notice:** See [NOTICE](NOTICE).
+- **Trademark Policy:** The names SYNAX, SYNAXCODE, and associated logos are reserved trademarks. See [TRADEMARKS.md](TRADEMARKS.md).
+- **Medical Research Disclaimer:** SYNAX biomedical modules are for retrospective academic research only and are **not** clinically validated medical devices. See [MEDICAL_RESEARCH_DISCLAIMER.md](MEDICAL_RESEARCH_DISCLAIMER.md).
 
 ---
 
 ## 🌐 Official Ecosystem
-- **Main Platform & Playground:** [https://synaxcode.com](https://synaxcode.com)
-- **Foundation, Book & Whitepaper:** [https://synaxcode.org](https://synaxcode.org)
-- **Full-Screen Cloud Studio IDE:** [https://synaxcode.online](https://synaxcode.online)
-- **Contact:** `dev@synaxcode.com`
 
+- **Main Platform & Web:** [synaxcode.com](https://synaxcode.com)
+- **Documentation & Whitepaper:** [synaxcode.org](https://synaxcode.org)
+- **Beginner Guide:** [synaxcode.org/guide.html](https://synaxcode.org/guide.html)
+- **Cloud Studio IDE:** [synaxcode.online](https://synaxcode.online)
+- **GitHub Repository:** [github.com/ofaemd-creator/synax](https://github.com/ofaemd-creator/synax)
+- **Contact:** `dev@synaxcode.com` | `ofaemd@gmail.com`
