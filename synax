@@ -1,3 +1,2 @@
 #!/bin/zsh
-exec /Users/o.farukaydin/.local/bin/python3.11 /Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_core.py "$@"
-
+exec /Users/o.farukaydin/.local/bin/python3 /Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_cli.py "$@"

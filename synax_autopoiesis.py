@@ -97,7 +97,7 @@ double bench_evolved_f32(const float* restrict a, const float* restrict b, float
     return now_us() - t0;
 }
 
-// 3. Tier-0: İlkel FPU'suz Mikrodenetleyici Çekirdeği (Q16.16 Sabit Noktalı Tam Sayı)
+// 3. Tier-0: Ultra-Düşük Güçlü FPU'suz Mikrodenetleyici Çekirdeği (Q16.16 Sabit Noktalı Tam Sayı)
 __attribute__((noinline))
 double bench_tier0_q16(const int32_t* restrict q_a, const int32_t* restrict q_b, int32_t* restrict q_out, int n, int32_t q_bias) {
     double t0 = now_us();
@@ -302,3 +302,4 @@ if __name__ == "__main__":
     print(f"   • synapse_brain.json   : {summary['brain_sha256'][:24]}...")
     print(f"   • myelin_memory.json   : {summary['myelin_sha256'][:24]}...")
     print("================================================================================")
+

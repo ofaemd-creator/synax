@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SYNAX: Technical Report & Architecture Specification</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 2.2cm 2.0cm;
+      @bottom-center {
+        content: counter(page);
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 9pt;
+        color: #666;
+      }
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.55;
+      color: #1a1a1a;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 20pt;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      color: #0b1528;
+    }
+    .subtitle {
+      font-size: 12pt;
+      font-weight: 600;
+      color: #0284c7;
+      margin-bottom: 14px;
+    }
+    .authors {
+      font-size: 9.5pt;
+      color: #4b5563;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid #e5e7eb;
+    }
+    .abstract {
+      background: #f8fafc;
+      border-left: 3.5px solid #0284c7;
+      padding: 14px 18px;
+      margin: 20px 0 28px 0;
+      font-size: 9.8pt;
+    }
+    .abstract strong { color: #0f172a; }
+    h2 {
+      font-size: 13.5pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 4px;
+    }
+    h3 {
+      font-size: 11pt;
+      font-weight: 600;
+      color: #1e293b;
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+    p { margin-bottom: 10px; text-align: justify; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 9pt;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 10px;
+      text-align: left;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+      color: #0f172a;
+    }
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+      font-size: 8.5pt;
+      overflow-x: auto;
+      line-height: 1.4;
+      margin: 14px 0;
+    }
+    code {
+      font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+      font-size: 9pt;
+      background: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 4px;
+      color: #0369a1;
+    }
+    pre code { background: none; color: inherit; padding: 0; }
+    .badge {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 8pt;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    @media print {
+      body { padding: 0; }
+      pre { white-space: pre-wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>SYNAX: A Self-Evolving Neuro-Symbolic Runtime and Hardware Superoptimization Framework</h1>
+  <div class="subtitle">Technical Report & Architecture Specification (v0.3-Draft)</div>
+  
+  <div class="authors">
+    <strong>Author:</strong> SYNAX Core Research Team &bull; 
+    <strong>Contact:</strong> <code>dev@synaxcode.com</code> &bull; 
+    <strong>Repository:</strong> <code>https://synaxcode.org</code> &bull; 
+    <strong>Date:</strong> November 2026
+  </div>
+
+  <div class="abstract">
+    <strong>Abstract &mdash;</strong> Traditional systems programming languages compile high-level source representations into static machine code binaries at compile-time. Consequently, binaries remain rigid post-deployment, unable to dynamically exploit runtime data topologies, asymmetric core topologies (such as ARM big.LITTLE architectures), or subtle microarchitectural caching behavior. In this report, we introduce <strong>SYNAX (<code>.sx</code>)</strong>, an experimental self-evolving neuro-symbolic language and compilation pipeline designed around three complementary subsystems: (1) <em>Synapse</em>, an offline-capable neuro-symbolic intent parser that maps natural language intents and algebraic formulations into a verifiable Abstract Syntax Tree (AST); (2) <em>Axon</em>, a universal silicon lowering engine providing target-specific translation tiers spanning resource-constrained microcontrollers without floating-point units (Q16.16 integer fixed-point C89) up to Apple Metal unified GPU shaders; and (3) <em>Tycon</em>, a dynamic multi-armed bandit (MAB) runtime mutator that benchmarks alternative hardware parameterizations (prefetch stride, loop unrolling, SIMD width) under real silicon execution. Microbenchmarks executed natively on Apple M1 silicon confirm that autonomous AST simplification coupled with vectorized execution yields verifiable runtime gains (1.05x &ndash; 1.25x against optimized scalar C99, and up to 8.0x against unvectorized baselines) with zero numerical drift, while maintaining strict zero-trust AST verification constraints.
+  </div>
+
+  <h2>1. Introduction & Motivation</h2>
+  <p>
+    System performance on modern heterogeneous compute platforms is increasingly constrained by memory latency, thermal throttling, and cache hierarchy mismatches rather than raw arithmetic ALU throughput. Traditional compilers rely on profile-guided optimization (PGO), which requires a priori representative execution traces that frequently diverge from real production workloads.
+  </p>
+  <p>
+    Furthermore, emerging workloads require seamless portability across an extreme spectrum of silicon: from edge microcontrollers lacking Floating-Point Units (FPUs) to multi-threaded server CPUs and unified GPU accelerators. SYNAX addresses these challenges through a closed-loop neuro-symbolic framework where declarative intent is algebraically simplified at the AST level, lowered into hardware-specific tiers, and optimized using empirical silicon feedback (RLSF).
+  </p>
+
+  <h2>2. Core Subsystems</h2>
+  
+  <h3>2.1 Synapse: Neuro-Symbolic Intent Parsing & Algebraic Reduction</h3>
+  <p>
+    Synapse parses natural language formulations (Turkish/English) or explicit mathematical statements into an Abstract Syntax Tree (<code>ASTNode</code>). Prior to code emission, the AST undergoes an autonomous reduction pass implementing algebraic identities:
+  </p>
+  <ul>
+    <li><strong>Norm simplification:</strong> &radic;(u&sup2;) &rarr; |u| (eliminates square root and square operations)</li>
+    <li><strong>Idempotence:</strong> ||u|| &rarr; |u|, ReLU(ReLU(u)) &rarr; ReLU(u)</li>
+    <li><strong>Identity elements:</strong> u + 0 &rarr; u, u &times; 1 &rarr; u, u &times; 0 &rarr; 0</li>
+  </ul>
+
+  <h3>2.2 Axon: Multi-Tier Silicon Lowering</h3>
+  <p>
+    The reduced AST is translated into target-specific intermediate code:
+  </p>
+  <ul>
+    <li><strong>Tier-0 (Q16.16 Fixed-Point C89):</strong> For FPU-less microcontrollers, real numbers are represented as signed 32-bit integers with a 16-bit fractional part. Non-linear functions (e.g. sigmoid) use Pad&eacute; integer approximations: <code>32768 + (x &lt;&lt; 15) / (65536 + |x|)</code>.</li>
+    <li><strong>Tier-1 (Scalar ANSI C99):</strong> Standard single-precision float32 scalar loops with strict bounds.</li>
+    <li><strong>Tier-2 (ARM64 NEON SIMD):</strong> 128-bit hardware vector intrinsics (<code>vaddq_f32</code>, <code>vmulq_f32</code>, <code>vsqrtq_f32</code>).</li>
+    <li><strong>Tier-4 (Apple Metal GPU):</strong> Zero-copy unified memory compute shaders executing <code>float4</code> operations.</li>
+  </ul>
+
+  <h2>3. Empirical Silicon Benchmarks</h2>
+  <p>
+    Microbenchmarks were conducted natively on Apple M1 silicon (4 Firestorm P-cores @ 3.2 GHz, 4 Icestorm E-cores @ 2.0 GHz, Darwin 24.1.0, Apple Clang 16.0.0 <code>-O3</code>) across buffers of N = 2,000,000 elements.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Kernel Name</th>
+        <th>Original AST</th>
+        <th>Reduced AST</th>
+        <th>Nodes</th>
+        <th>Raw Scalar (&mu;s)</th>
+        <th>Reduced SIMD (&mu;s)</th>
+        <th>Tier-0 Q16 (&mu;s)</th>
+        <th>Speedup</th>
+        <th>Max Error</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>otonom_kuantum_darbe</code></td>
+        <td>&sigma;(&radic;((a-b)&sup2;) &times; 1.0 + b)</td>
+        <td>&sigma;(|a-b| + b)</td>
+        <td>13 &rarr; 7</td>
+        <td>4,474.0</td>
+        <td><strong>3,573.0</strong></td>
+        <td>1,282.0</td>
+        <td><strong>1.252x</strong></td>
+        <td>0.00</td>
+      </tr>
+      <tr>
+        <td><code>otonom_oklid_normu</code></td>
+        <td>&sigma;(&radic;((a-b)&sup2;) + b)</td>
+        <td>&sigma;(|a-b| + b)</td>
+        <td>8 &rarr; 7</td>
+        <td>4,345.0</td>
+        <td><strong>3,585.0</strong></td>
+        <td>1,281.0</td>
+        <td><strong>1.212x</strong></td>
+        <td>0.00</td>
+      </tr>
+      <tr>
+        <td><code>otonom_enerji_kapisi</code></td>
+        <td>ReLU(ReLU(&radic;((a&times;b)&sup2;) + b))</td>
+        <td>ReLU(|a&times;b| + b)</td>
+        <td>9 &rarr; 7</td>
+        <td>428.0</td>
+        <td><strong>383.0</strong></td>
+        <td>412.0</td>
+        <td><strong>1.117x</strong></td>
+        <td>0.00</td>
+      </tr>
+      <tr>
+        <td><code>otonom_mutlak_akt</code></td>
+        <td>||a - b|| + 0.0</td>
+        <td>|a - b|</td>
+        <td>7 &rarr; 4</td>
+        <td>410.0</td>
+        <td><strong>390.0</strong></td>
+        <td>411.0</td>
+        <td><strong>1.051x</strong></td>
+        <td>0.00</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. Zero-Trust Security & Memory Integrity</h2>
+  <p>
+    Every lowered C expression is statically verified against a token whitelist by <code>SynaxSecurityGuard</code>, blocking arbitrary shell and inline assembly injection vectors (<code>system</code>, <code>popen</code>, <code>exec</code>, <code>__asm__</code>). Persistent state files (<code>synapse_brain.json</code>, <code>synapse_weights.json</code>) are signed with canonical SHA-256 digests.
+  </p>
+
+  <h2>5. Availability & References</h2>
+  <p>
+    Full source code, reproducible benchmarks, and installation scripts are accessible via the sovereign repository at <strong>https://synaxcode.org/repos.html</strong>. Correspondence should be directed to <code>dev@synaxcode.com</code>.
+  </p>
+
+</body>
+</html>
+

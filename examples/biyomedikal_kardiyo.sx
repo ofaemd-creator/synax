@@ -1,0 +1,6 @@
+# dosya: biyomedikal_kardiyo.sx
+# SYNAX v1.0 — Biyomedikal Kardiyovasküler & Miyelin Sinyal Akışı
+
+niyet: Arteriyel kan basıncı (ABP) ile santral venöz basınç (CVP) farkından koroner perfüzyon basıncını (CPP) ve hemodinamik enerjiyi hesapla.
+kural: Sıfır bellek sızıntısı, elektrot kopması ve parazit gürültülerini (NaN/Inf) Ranvier düğümlerinde sıfır-çökme garantisiyle onar.
+hedef: Apple Silicon M1 donanımında ham akson iletiminden sıçramalı (saltatory) miyelinli iletime otonom evrimleş.

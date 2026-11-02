@@ -83,10 +83,10 @@ class ASTNode:
 
         return node
 
-    # ── Tier-0: Primitive No-FPU Microcontroller (Q16.16 Fixed-Point Integer C89) ──
+    # ── Tier-0: Embedded Ultra-Low-Power Microcontroller (Q16.16 Fixed-Point Integer C89) ──
     def to_q16_fixed_point(self) -> str:
         """
-        FPU (Kayan Nokta Birimi) bile olmayan en ilkel 8/16/32-bit işlemciler için
+        FPU (Kayan Nokta Birimi) bile olmayan ultra-düşük güçlü ve FPU ünitesi bulunmayan 8/16/32-bit gömülü işlemciler için
         saf tam sayı (Q16.16 Fixed-Point: 1.0 == 65536) C89 aritmetiği üretir.
         """
         if self.op == "VAR":

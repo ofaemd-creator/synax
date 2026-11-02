@@ -20,3 +20,4 @@ Any unauthorized tampering or disk corruption is immediately detected by `SynaxS
 
 ## 4. Reporting a Vulnerability
 To report a security issue, please contact the SYNAX Core Security Team at **`dev@synaxcode.com`**.
+

@@ -1,0 +1,22 @@
+{
+  "learned_concepts": {
+    "kinetik enerji": "0.5 * a * (b * b) + bias",
+    "kinetic energy": "0.5 * a * (b * b) + bias",
+    "serebral perfüzyon": "relu(a - b) / (2.2 - 0.04 * relu(a - b))",
+    "cpr hemodinami": "relu(a - b) / (2.2 - 0.04 * relu(a - b))",
+    "harmonik osilasyon": "sin(a) * cos(b) + bias",
+    "nöral kapı": "sigmoid(a * b + bias)",
+    "neural gate": "sigmoid(a * b + bias)",
+    "öklid enerjisi": "sqrt((a - b) * (a - b)) + bias",
+    "manhattan mesafesi": "abs(a - b) + bias",
+    "logaritmik kazanç": "log(abs(a * b) + 1.0) + bias",
+    "kardiyak perfüzyon indeksi": "sqrt(abs(a - b)) / (a + b) + bias",
+    "otonom_oklid_normu": "(1.0f / (1.0f + expf(-((fabsf((a - b)) + bias)))))",
+    "otonom_mutlak_aktivasyon": "fabsf((a - b))",
+    "otonom_enerji_kapisi": "(((fabsf((a * b)) + bias)) > 0.0f ? ((fabsf((a * b)) + bias)) : 0.0f)",
+    "otonom_kuantum_darbe": "(1.0f / (1.0f + expf(-((fabsf((a - b)) + bias)))))"
+  },
+  "evolution_generation": 11,
+  "_integrity_sha256": "86bb4303a592260d640f73376f783b2a826614c621c711b51d575466f9f2b29c",
+  "algebraic_optimizations_applied": 6
+}

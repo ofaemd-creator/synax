@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-01 18:35:59",
+  "timestamp": "2026-11-02 23:22:06",
   "hardware": {
     "arch": "arm64",
     "cpu_brand": "Apple M1",
@@ -13,18 +13,18 @@
     "tier": "APPLE_SILICON_BEAST"
   },
   "intent": {
-    "name": "deep_resonance_kernel",
-    "intent_hash": "e10ae8b0f3",
-    "raw_prompt": "# dosya: derin_rezonans.sx\n    niyet: Gelen iki sinyal vektörünü 4 katmanlı derin doğrusal olmayan polinom rezonansından geçir ve ReLU uygula.\n    kural: Bozuk sinyallere (NaN/Sonsuz) karşı bağışıklık kalkanını aç, sıfır çökme garantisi ver.\n    hedef: Genleri mutasyona uğrat (SIMD 8x/16x/32x, L1D Prefetch, 4 P-Core vs 8 Core, M1 GPU) ve en hızlı DNA'yı bul!",
-    "operation": "DEEP_NONLINEAR_RESONANCE",
-    "formula_desc": "y[i] = ReLU(P_4(a[i] * b[i] + bias)) [4-Stage Non-Linear Gate]",
-    "c_scalar_expr": "\n                float x = a[i] * b[i] + bias;\n                x = x * 0.95f + 0.05f * (x * x);\n                x = x * 0.95f - 0.02f * (x * x);\n                x = x * 0.98f + 0.01f * (x * x);\n            ",
-    "neon_step_macro": "\n            #define SYNAX_NEON_OP(va, vb, vout) \\\n                do { \\\n                    float32x4_t x = vfmaq_f32(vbias, va, vb); \\\n                    x = vfmaq_f32(vmulq_f32(x, c95), vmulq_f32(x, x), c05); \\\n                    x = vfmaq_f32(vmulq_f32(x, c95), vmulq_f32(x, x), cm02); \\\n                    x = vfmaq_f32(vmulq_f32(x, c98), vmulq_f32(x, x), c01); \\\n                    vout = vminq_f32(vmax_clamp, vmaxq_f32(vzero, x)); \\\n                } while(0)\n            ",
-    "metal_vec4_expr": "float4 x = fma(va, vb, bias); x = fma(x * x, 0.05f, x * 0.95f); x = fma(x * x, -0.02f, x * 0.95f); x = fma(x * x, 0.01f, x * 0.98f);"
+    "name": "anomaly_energy_kernel",
+    "intent_hash": "ef8b5006cb",
+    "raw_prompt": "# dosya: biyomedikal_kardiyo.sx\n# SYNAX v1.0 — Biyomedikal Kardiyovasküler & Miyelin Sinyal Akışı\n\nniyet: Arteriyel kan basıncı (ABP) ile santral venöz basınç (CVP) farkından koroner perfüzyon basıncını (CPP) ve hemodinamik enerjiyi hesapla.\nkural: Sıfır bellek sızıntısı, elektrot kopması ve parazit gürültülerini (NaN/Inf) Ranvier düğümlerinde sıfır-çökme garantisiyle onar.\nhedef: Apple Silicon M1 donanımında ham akson iletiminden sıçramalı (saltatory) miyelinli iletime otonom evrimleş.",
+    "operation": "SYNAPTIC_ANOMALY_ENERGY",
+    "formula_desc": "y[i] = clamp((a[i] - b[i])^2 + bias, 0, MAX)",
+    "c_scalar_expr": "float d = a[i] - b[i]; float x = d * d + bias;",
+    "neon_step_macro": "\n            #define SYNAX_NEON_OP(va, vb, vout) \\\n                do { \\\n                    float32x4_t d = vsubq_f32(va, vb); \\\n                    float32x4_t x = vfmaq_f32(vbias, d, d); \\\n                    vout = vminq_f32(vmax_clamp, vmaxq_f32(vzero, x)); \\\n                } while(0)\n            ",
+    "metal_vec4_expr": "float4 d = va - vb; float4 x = fma(d, d, bias);"
   },
   "immune_shield": {
     "scanned_signals": 8000000,
-    "scan_time_ms": 10.12,
+    "scan_time_ms": 17.11,
     "corrupted_injected": 6,
     "healed_signals": 6,
     "status": "ZERO_CRASH_VERIFIED"
@@ -40,10 +40,10 @@
       "threads": 1,
       "non_temporal": false,
       "description": "Saf skaler döngü (16MB MCU)",
-      "best_time_us": 14513.875,
-      "mean_time_us": 14575.624666666665,
+      "best_time_us": 18737.083,
+      "mean_time_us": 18823.833,
       "calls": 3,
-      "total_time_us": 43726.873999999996
+      "total_time_us": 56471.498999999996
     },
     {
       "gene_id": "GEN-1 [Unrolled-4x]",
@@ -55,10 +55,10 @@
       "threads": 1,
       "non_temporal": false,
       "description": "4x Skaler Boru Hattı",
-      "best_time_us": 8407.417,
-      "mean_time_us": 8549.514000000001,
+      "best_time_us": 1766.291,
+      "mean_time_us": 1914.4859999999999,
       "calls": 3,
-      "total_time_us": 25648.542
+      "total_time_us": 5743.458
     },
     {
       "gene_id": "GEN-2 [Axon-NEON-8x]",
@@ -70,10 +70,10 @@
       "threads": 1,
       "non_temporal": false,
       "description": "128-bit NEON (2x4 Float)",
-      "best_time_us": 2075.917,
-      "mean_time_us": 2143.083666666667,
+      "best_time_us": 1709.167,
+      "mean_time_us": 1782.0969999999998,
       "calls": 3,
-      "total_time_us": 6429.251
+      "total_time_us": 5346.290999999999
     },
     {
       "gene_id": "GEN-3 [Tycon-8Core]",
@@ -85,10 +85,10 @@
       "threads": 8,
       "non_temporal": false,
       "description": "8 Çekirdek (4P+4E) + NEON",
-      "best_time_us": 2128.208,
-      "mean_time_us": 2282.388666666667,
+      "best_time_us": 2012.333,
+      "mean_time_us": 2076.0833333333335,
       "calls": 3,
-      "total_time_us": 6847.166000000001
+      "total_time_us": 6228.25
     },
     {
       "gene_id": "GEN-4 [Metal-GPU]",
@@ -100,10 +100,10 @@
       "threads": 1024,
       "non_temporal": false,
       "description": "Apple M1 GPU Shader (float4)",
-      "best_time_us": 2363.0,
-      "mean_time_us": 2929.319333333333,
+      "best_time_us": 2462.292,
+      "mean_time_us": 3034.778,
       "calls": 3,
-      "total_time_us": 8787.957999999999
+      "total_time_us": 9104.333999999999
     },
     {
       "gene_id": "MUT-1 [NEON-16x-Prefetch]",
@@ -115,10 +115,10 @@
       "threads": 1,
       "non_temporal": false,
       "description": "Mutasyon: 4x NEON Register (16 Float) + L1D Prefetch(256B)",
-      "best_time_us": 2286.458,
-      "mean_time_us": 2621.347,
+      "best_time_us": 2174.583,
+      "mean_time_us": 2710.847333333333,
       "calls": 3,
-      "total_time_us": 7864.041000000001
+      "total_time_us": 8132.5419999999995
     },
     {
       "gene_id": "MUT-2 [NEON-32x-Deep]",
@@ -130,10 +130,10 @@
       "threads": 1,
       "non_temporal": false,
       "description": "Mutasyon: 8x NEON Register (32 Float) + L1D Prefetch(512B)",
-      "best_time_us": 2214.25,
-      "mean_time_us": 2297.736333333333,
+      "best_time_us": 2010.375,
+      "mean_time_us": 2047.1946666666665,
       "calls": 3,
-      "total_time_us": 6893.208999999999
+      "total_time_us": 6141.584
     },
     {
       "gene_id": "MUT-3 [Firestorm-4P-Only]",
@@ -145,10 +145,10 @@
       "threads": 4,
       "non_temporal": false,
       "description": "Mutasyon: Sadece 4 Performans Çekirdeği (E-Core darboğazı yok!)",
-      "best_time_us": 1885.167,
-      "mean_time_us": 1944.7776666666668,
+      "best_time_us": 1871.375,
+      "mean_time_us": 2066.6946666666663,
       "calls": 3,
-      "total_time_us": 5834.3330000000005
+      "total_time_us": 6200.083999999999
     },
     {
       "gene_id": "MUT-4 [Hyper-6T-NEON32]",
@@ -160,38 +160,38 @@
       "threads": 6,
       "non_temporal": false,
       "description": "Mutasyon: 6 İzlek + 32x NEON + 512B L1D Önbellek Akışı",
-      "best_time_us": 2177.708,
-      "mean_time_us": 2244.1666666666665,
+      "best_time_us": 2007.666,
+      "mean_time_us": 2048.6800000000003,
       "calls": 3,
-      "total_time_us": 6732.5
+      "total_time_us": 6146.040000000001
     }
   ],
   "champion": {
-    "gene_id": "MUT-3 [Firestorm-4P-Only]",
-    "fn_name": "mut_3_pcores_4t",
-    "generation": 2,
-    "arch_target": "MULTICORE_SIMD",
-    "simd_lanes": 16,
-    "prefetch_bytes": 256,
-    "threads": 4,
+    "gene_id": "GEN-2 [Axon-NEON-8x]",
+    "fn_name": "gene_2_neon_8x",
+    "generation": 0,
+    "arch_target": "NEON_SIMD",
+    "simd_lanes": 8,
+    "prefetch_bytes": 0,
+    "threads": 1,
     "non_temporal": false,
-    "description": "Mutasyon: Sadece 4 Performans Çekirdeği (E-Core darboğazı yok!)",
-    "best_time_us": 1885.167,
-    "mean_time_us": 1944.7776666666668,
+    "description": "128-bit NEON (2x4 Float)",
+    "best_time_us": 1709.167,
+    "mean_time_us": 1782.0969999999998,
     "calls": 3,
-    "total_time_us": 5834.3330000000005
+    "total_time_us": 5346.290999999999
   },
-  "speedup_vs_gen0": 7.7,
+  "speedup_vs_gen0": 10.96,
   "chameleon_matrix": [
     {
       "scenario": "TinyMCU (16MB RAM / 1 Core)",
       "signals": 4096,
       "winner": "GEN-1 [Unrolled-4x]",
-      "best_us": 5.08,
+      "best_us": 1.71,
       "dna": "SIMD:4x | Prefetch:0B | Threads:1",
       "all_scores_us": {
-        "GEN-0 [TinyMCU]": 8.42,
-        "GEN-1 [Unrolled-4x]": 5.08
+        "GEN-0 [TinyMCU]": 10.79,
+        "GEN-1 [Unrolled-4x]": 1.71
       }
     },
     {
@@ -201,13 +201,13 @@
       "best_us": 1.58,
       "dna": "SIMD:32x | Prefetch:512B | Threads:6",
       "all_scores_us": {
-        "GEN-0 [TinyMCU]": 8.38,
-        "GEN-1 [Unrolled-4x]": 5.12,
-        "GEN-2 [Axon-NEON-8x]": 1.62,
-        "GEN-3 [Tycon-8Core]": 2.08,
-        "GEN-4 [Metal-GPU]": 183.12,
-        "MUT-1 [NEON-16x-Prefetch]": 1.62,
-        "MUT-2 [NEON-32x-Deep]": 1.62,
+        "GEN-0 [TinyMCU]": 10.67,
+        "GEN-1 [Unrolled-4x]": 1.75,
+        "GEN-2 [Axon-NEON-8x]": 1.79,
+        "GEN-3 [Tycon-8Core]": 1.75,
+        "GEN-4 [Metal-GPU]": 222.21,
+        "MUT-1 [NEON-16x-Prefetch]": 1.71,
+        "MUT-2 [NEON-32x-Deep]": 1.67,
         "MUT-3 [Firestorm-4P-Only]": 1.67,
         "MUT-4 [Hyper-6T-NEON32]": 1.58
       }
@@ -215,37 +215,37 @@
     {
       "scenario": "Apple M1 • Orta Yük (500K)",
       "signals": 500000,
-      "winner": "MUT-4 [Hyper-6T-NEON32]",
-      "best_us": 64.42,
-      "dna": "SIMD:32x | Prefetch:512B | Threads:6",
+      "winner": "GEN-3 [Tycon-8Core]",
+      "best_us": 54.5,
+      "dna": "SIMD:8x | Prefetch:0B | Threads:8",
       "all_scores_us": {
-        "GEN-0 [TinyMCU]": 889.21,
-        "GEN-1 [Unrolled-4x]": 521.92,
-        "GEN-2 [Axon-NEON-8x]": 126.96,
-        "GEN-3 [Tycon-8Core]": 78.29,
-        "GEN-4 [Metal-GPU]": 282.04,
-        "MUT-1 [NEON-16x-Prefetch]": 124.58,
-        "MUT-2 [NEON-32x-Deep]": 124.04,
-        "MUT-3 [Firestorm-4P-Only]": 65.08,
-        "MUT-4 [Hyper-6T-NEON32]": 64.42
+        "GEN-0 [TinyMCU]": 1174.54,
+        "GEN-1 [Unrolled-4x]": 103.0,
+        "GEN-2 [Axon-NEON-8x]": 102.79,
+        "GEN-3 [Tycon-8Core]": 54.5,
+        "GEN-4 [Metal-GPU]": 318.0,
+        "MUT-1 [NEON-16x-Prefetch]": 105.54,
+        "MUT-2 [NEON-32x-Deep]": 106.5,
+        "MUT-3 [Firestorm-4P-Only]": 72.96,
+        "MUT-4 [Hyper-6T-NEON32]": 66.17
       }
     },
     {
       "scenario": "Apple M1 • Devasa Yük (8M)",
       "signals": 8000000,
-      "winner": "GEN-4 [Metal-GPU]",
-      "best_us": 1816.0,
-      "dna": "SIMD:4x | Prefetch:0B | Threads:1024",
+      "winner": "MUT-3 [Firestorm-4P-Only]",
+      "best_us": 1688.96,
+      "dna": "SIMD:16x | Prefetch:256B | Threads:4",
       "all_scores_us": {
-        "GEN-0 [TinyMCU]": 14600.71,
-        "GEN-1 [Unrolled-4x]": 8365.58,
-        "GEN-2 [Axon-NEON-8x]": 2184.38,
-        "GEN-3 [Tycon-8Core]": 2102.33,
-        "GEN-4 [Metal-GPU]": 1816.0,
-        "MUT-1 [NEON-16x-Prefetch]": 2123.21,
-        "MUT-2 [NEON-32x-Deep]": 2083.33,
-        "MUT-3 [Firestorm-4P-Only]": 2175.96,
-        "MUT-4 [Hyper-6T-NEON32]": 2058.88
+        "GEN-0 [TinyMCU]": 18436.67,
+        "GEN-1 [Unrolled-4x]": 1713.08,
+        "GEN-2 [Axon-NEON-8x]": 1755.88,
+        "GEN-3 [Tycon-8Core]": 2013.33,
+        "GEN-4 [Metal-GPU]": 1880.5,
+        "MUT-1 [NEON-16x-Prefetch]": 1755.58,
+        "MUT-2 [NEON-32x-Deep]": 1720.33,
+        "MUT-3 [Firestorm-4P-Only]": 1688.96,
+        "MUT-4 [Hyper-6T-NEON32]": 1922.92
       }
     }
   ],
@@ -254,163 +254,163 @@
       "step": 1,
       "gene_id": "GEN-0 [TinyMCU]",
       "generation": 0,
-      "elapsed_us": 14637.1
+      "elapsed_us": 18863.8
     },
     {
       "step": 2,
       "gene_id": "GEN-0 [TinyMCU]",
       "generation": 0,
-      "elapsed_us": 14513.9
+      "elapsed_us": 18737.1
     },
     {
       "step": 3,
       "gene_id": "GEN-0 [TinyMCU]",
       "generation": 0,
-      "elapsed_us": 14575.9
+      "elapsed_us": 18870.6
     },
     {
       "step": 4,
       "gene_id": "GEN-1 [Unrolled-4x]",
       "generation": 0,
-      "elapsed_us": 8584.2
+      "elapsed_us": 2006.3
     },
     {
       "step": 5,
       "gene_id": "GEN-1 [Unrolled-4x]",
       "generation": 0,
-      "elapsed_us": 8407.4
+      "elapsed_us": 1766.3
     },
     {
       "step": 6,
       "gene_id": "GEN-1 [Unrolled-4x]",
       "generation": 0,
-      "elapsed_us": 8656.9
+      "elapsed_us": 1970.9
     },
     {
       "step": 7,
       "gene_id": "GEN-2 [Axon-NEON-8x]",
       "generation": 0,
-      "elapsed_us": 2168.2
+      "elapsed_us": 1853.5
     },
     {
       "step": 8,
       "gene_id": "GEN-2 [Axon-NEON-8x]",
       "generation": 0,
-      "elapsed_us": 2075.9
+      "elapsed_us": 1783.7
     },
     {
       "step": 9,
       "gene_id": "GEN-2 [Axon-NEON-8x]",
       "generation": 0,
-      "elapsed_us": 2185.2
+      "elapsed_us": 1709.2
     },
     {
       "step": 10,
       "gene_id": "GEN-3 [Tycon-8Core]",
       "generation": 0,
-      "elapsed_us": 2439.5
+      "elapsed_us": 2032.4
     },
     {
       "step": 11,
       "gene_id": "GEN-3 [Tycon-8Core]",
       "generation": 0,
-      "elapsed_us": 2279.4
+      "elapsed_us": 2012.3
     },
     {
       "step": 12,
       "gene_id": "GEN-3 [Tycon-8Core]",
       "generation": 0,
-      "elapsed_us": 2128.2
+      "elapsed_us": 2183.5
     },
     {
       "step": 13,
       "gene_id": "GEN-4 [Metal-GPU]",
       "generation": 0,
-      "elapsed_us": 3833.7
+      "elapsed_us": 2880.8
     },
     {
       "step": 14,
       "gene_id": "GEN-4 [Metal-GPU]",
       "generation": 0,
-      "elapsed_us": 2363.0
+      "elapsed_us": 3761.2
     },
     {
       "step": 15,
       "gene_id": "GEN-4 [Metal-GPU]",
       "generation": 0,
-      "elapsed_us": 2591.3
+      "elapsed_us": 2462.3
     },
     {
       "step": 16,
       "gene_id": "MUT-1 [NEON-16x-Prefetch]",
       "generation": 1,
-      "elapsed_us": 3199.0
+      "elapsed_us": 3158.8
     },
     {
       "step": 17,
       "gene_id": "MUT-1 [NEON-16x-Prefetch]",
       "generation": 1,
-      "elapsed_us": 2378.6
+      "elapsed_us": 2799.2
     },
     {
       "step": 18,
       "gene_id": "MUT-1 [NEON-16x-Prefetch]",
       "generation": 1,
-      "elapsed_us": 2286.5
+      "elapsed_us": 2174.6
     },
     {
       "step": 19,
       "gene_id": "MUT-2 [NEON-32x-Deep]",
       "generation": 1,
-      "elapsed_us": 2235.5
+      "elapsed_us": 2046.5
     },
     {
       "step": 20,
       "gene_id": "MUT-2 [NEON-32x-Deep]",
       "generation": 1,
-      "elapsed_us": 2214.2
+      "elapsed_us": 2010.4
     },
     {
       "step": 21,
       "gene_id": "MUT-2 [NEON-32x-Deep]",
       "generation": 1,
-      "elapsed_us": 2443.4
+      "elapsed_us": 2084.7
     },
     {
       "step": 22,
       "gene_id": "MUT-3 [Firestorm-4P-Only]",
       "generation": 2,
-      "elapsed_us": 1885.2
+      "elapsed_us": 2446.9
     },
     {
       "step": 23,
       "gene_id": "MUT-3 [Firestorm-4P-Only]",
       "generation": 2,
-      "elapsed_us": 1988.1
+      "elapsed_us": 1871.4
     },
     {
       "step": 24,
       "gene_id": "MUT-3 [Firestorm-4P-Only]",
       "generation": 2,
-      "elapsed_us": 1961.1
+      "elapsed_us": 1881.8
     },
     {
       "step": 25,
       "gene_id": "MUT-4 [Hyper-6T-NEON32]",
       "generation": 2,
-      "elapsed_us": 2209.3
+      "elapsed_us": 2007.7
     },
     {
       "step": 26,
       "gene_id": "MUT-4 [Hyper-6T-NEON32]",
       "generation": 2,
-      "elapsed_us": 2177.7
+      "elapsed_us": 2048.2
     },
     {
       "step": 27,
       "gene_id": "MUT-4 [Hyper-6T-NEON32]",
       "generation": 2,
-      "elapsed_us": 2345.5
+      "elapsed_us": 2090.2
     }
   ]
 }

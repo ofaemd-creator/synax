@@ -1,7 +1,7 @@
 {
   "TinyMCU (16MB RAM / 1 Core)": {
     "winner_gene": "GEN-1 [Unrolled-4x]",
-    "best_time_us": 5.08,
+    "best_time_us": 1.71,
     "dna": {
       "gene_id": "GEN-1 [Unrolled-4x]",
       "fn_name": "gene_1_unrolled",
@@ -12,12 +12,12 @@
       "threads": 1,
       "non_temporal": false,
       "description": "4x Skaler Boru Hattı",
-      "best_time_us": 8407.417,
-      "mean_time_us": 8549.514000000001,
+      "best_time_us": 1766.291,
+      "mean_time_us": 1914.4859999999999,
       "calls": 3,
-      "total_time_us": 25648.542
+      "total_time_us": 5743.458
     },
-    "timestamp": "2026-11-01 18:35:59"
+    "timestamp": "2026-11-02 23:22:06"
   },
   "Apple M1 • Mikro Yük (4K)": {
     "winner_gene": "MUT-4 [Hyper-6T-NEON32]",
@@ -32,52 +32,51 @@
       "threads": 6,
       "non_temporal": false,
       "description": "Mutasyon: 6 İzlek + 32x NEON + 512B L1D Önbellek Akışı",
-      "best_time_us": 2177.708,
-      "mean_time_us": 2244.1666666666665,
+      "best_time_us": 2007.666,
+      "mean_time_us": 2048.6800000000003,
       "calls": 3,
-      "total_time_us": 6732.5
+      "total_time_us": 6146.040000000001
     },
-    "timestamp": "2026-11-01 18:35:59"
+    "timestamp": "2026-11-02 23:22:06"
   },
   "Apple M1 • Orta Yük (500K)": {
-    "winner_gene": "MUT-4 [Hyper-6T-NEON32]",
-    "best_time_us": 64.42,
+    "winner_gene": "GEN-3 [Tycon-8Core]",
+    "best_time_us": 54.5,
     "dna": {
-      "gene_id": "MUT-4 [Hyper-6T-NEON32]",
-      "fn_name": "mut_4_hyper_6t",
-      "generation": 2,
+      "gene_id": "GEN-3 [Tycon-8Core]",
+      "fn_name": "gene_3_gcd_8core",
+      "generation": 0,
       "arch_target": "MULTICORE_SIMD",
-      "simd_lanes": 32,
-      "prefetch_bytes": 512,
-      "threads": 6,
+      "simd_lanes": 8,
+      "prefetch_bytes": 0,
+      "threads": 8,
       "non_temporal": false,
-      "description": "Mutasyon: 6 İzlek + 32x NEON + 512B L1D Önbellek Akışı",
-      "best_time_us": 2177.708,
-      "mean_time_us": 2244.1666666666665,
+      "description": "8 Çekirdek (4P+4E) + NEON",
+      "best_time_us": 2012.333,
+      "mean_time_us": 2076.0833333333335,
       "calls": 3,
-      "total_time_us": 6732.5
+      "total_time_us": 6228.25
     },
-    "timestamp": "2026-11-01 18:35:59"
+    "timestamp": "2026-11-02 23:22:06"
   },
   "Apple M1 • Devasa Yük (8M)": {
-    "winner_gene": "GEN-4 [Metal-GPU]",
-    "best_time_us": 1816.0,
+    "winner_gene": "MUT-3 [Firestorm-4P-Only]",
+    "best_time_us": 1688.96,
     "dna": {
-      "gene_id": "GEN-4 [Metal-GPU]",
-      "fn_name": "gene_4_metal_gpu",
-      "generation": 0,
-      "arch_target": "METAL_GPU",
-      "simd_lanes": 4,
-      "prefetch_bytes": 0,
-      "threads": 1024,
+      "gene_id": "MUT-3 [Firestorm-4P-Only]",
+      "fn_name": "mut_3_pcores_4t",
+      "generation": 2,
+      "arch_target": "MULTICORE_SIMD",
+      "simd_lanes": 16,
+      "prefetch_bytes": 256,
+      "threads": 4,
       "non_temporal": false,
-      "description": "Apple M1 GPU Shader (float4)",
-      "best_time_us": 2363.0,
-      "mean_time_us": 2929.319333333333,
+      "description": "Mutasyon: Sadece 4 Performans Çekirdeği (E-Core darboğazı yok!)",
+      "best_time_us": 1871.375,
+      "mean_time_us": 2066.6946666666663,
       "calls": 3,
-      "total_time_us": 8787.957999999999
+      "total_time_us": 6200.083999999999
     },
-    "timestamp": "2026-11-01 18:35:59"
-  },
-  "_integrity_sha256": "492b0c2ad49f4d7572388e9165acd20b444de710f3b662b129e57902449ca2d1"
+    "timestamp": "2026-11-02 23:22:06"
+  }
 }
