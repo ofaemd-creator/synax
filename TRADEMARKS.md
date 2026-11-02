@@ -15,3 +15,4 @@ While the source code and documentation of SYNAX are freely licensed under the *
 - Using the SYNAX name, logo, or confusingly similar variations as the primary name of your commercial product, service, or organization.
 - Registering domain names or trademarks containing the word `synax` or `synaxcode`.
 - Implying endorsement, sponsorship, or official affiliation by the SYNAX Project or its founder where none exists.
+

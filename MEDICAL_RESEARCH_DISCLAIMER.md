@@ -16,3 +16,4 @@ Any cardiac rhythm analysis or signal quality assessment implemented within SYNA
 
 ## 3. Limitation of Liability
 Pursuant to Section 8 of the Apache License 2.0, the authors, contributors, and copyright holders disclaim all liability for any medical, clinical, direct, indirect, or consequential damages resulting from the use or misuse of this software.
+
