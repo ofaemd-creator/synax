@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SYNAX Sovereign Code Forge (v2.0 Autopoiesis) — Open Source & Zero-Trust Hub</title>
+  <title>SYNAX Sovereign Code Forge (v0.5.0) — Independent Git & Verified Source Hub</title>
   <style>
     :root {
       --bg: #060911;
@@ -34,13 +34,15 @@
       top: 0;
       z-index: 100;
       backdrop-filter: blur(12px);
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
     .brand {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       font-weight: 800;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       color: #fff;
       text-decoration: none;
     }
@@ -53,12 +55,12 @@
       font-size: 0.75rem;
       font-family: monospace;
     }
-    nav { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
     nav a {
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.9rem;
-      padding: 0.4rem 0.8rem;
+      font-size: 0.88rem;
+      padding: 0.4rem 0.75rem;
       border-radius: 6px;
       transition: 0.2s;
     }
@@ -74,8 +76,8 @@
       padding: 2rem;
       margin-bottom: 2rem;
     }
-    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-    .subtitle { color: var(--muted); max-width: 850px; margin-bottom: 1.25rem; }
+    h1 { font-size: 1.9rem; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--muted); max-width: 900px; margin-bottom: 1.25rem; }
     .hash-bar {
       background: #050811;
       border: 1px solid #1e293b;
@@ -91,7 +93,7 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 1.25rem;
       margin-bottom: 2.5rem;
     }
@@ -107,15 +109,16 @@
     }
     .repo-card:hover { border-color: var(--cyan); }
     .repo-title {
-      font-size: 1.15rem;
+      font-size: 1.08rem;
       font-weight: 700;
       color: var(--cyan);
       margin-bottom: 0.4rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 0.5rem;
     }
-    .repo-desc { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+    .repo-desc { font-size: 0.88rem; color: var(--muted); margin-bottom: 1rem; }
     .file-links {
       display: flex;
       flex-wrap: wrap;
@@ -129,7 +132,7 @@
       border: 1px solid rgba(0, 242, 254, 0.35);
       padding: 0.35rem 0.75rem;
       border-radius: 6px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-family: monospace;
       text-decoration: none;
       cursor: pointer;
@@ -143,10 +146,10 @@
       border-radius: 10px;
       overflow: hidden;
       margin-bottom: 2.5rem;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
     }
     th, td {
-      padding: 0.85rem 1rem;
+      padding: 0.8rem 1rem;
       border-bottom: 1px solid var(--border);
       text-align: left;
     }
@@ -160,7 +163,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.82rem;
       color: #cbd5e1;
-      max-height: 520px;
+      max-height: 540px;
     }
   </style>
 </head>
@@ -168,102 +171,48 @@
   <header>
     <a href="https://synaxcode.org" class="brand">
       <span>🧬 SYNAX SOVEREIGN FORGE</span>
-      <span class="badge">v2.0-AUTOPOIESIS</span>
-      <span class="badge" style="color:#00f2fe;border-color:rgba(0,242,254,0.4);">SHA-256 VERIFIED</span>
+      <span class="badge">v0.5.0 • APACHE-2.0</span>
+      <span class="badge" style="color:#00f2fe;border-color:rgba(0,242,254,0.4);">8-LAYER VERIFIED</span>
     </a>
     <nav>
       <a href="https://synaxcode.com">Ana Platform (.com)</a>
-      <a href="https://synaxcode.org">Teknik Belge & Dokümantasyon (.org)</a>
-      <a href="https://synaxcode.org/repos.html" class="active">Sovereign Code Forge</a>
-      <a href="https://synaxcode.online">Cloud Studio IDE (.online)</a>
+      <a href="https://synaxcode.org">Dil Spesifikasyonu (.org)</a>
+      <a href="https://synaxcode.org/guide.html">16s Rehber</a>
+      <a href="https://synaxcode.org/repos.html" class="active">Sovereign Git</a>
+      <a href="https://synaxcode.online">Studio IDE (.online)</a>
+      <a href="https://github.com/ofaemd-creator/synax" target="_blank">🐙 GitHub</a>
     </nav>
   </header>
 
   <div class="container">
     <div class="hero-box">
-      <h1>SYNAX Bağımsız Kod & Git Depoları (Sovereign Code Forge)</h1>
+      <h1>SYNAX Egemen Git Sunucusu &amp; Doğrulanmış Kaynak Merkezi (v0.5.0)</h1>
       <p class="subtitle">
-        Üçüncü parti platformlardan (GitHub vb.) %100 bağımsız olarak doğrudan kendi sunucumuzda barındırılan
-        resmi <strong>SYNAX Git Depoları</strong>. Dünyanın her yerinden standart <code>git clone</code> ile indirilebilir ve incelenebilir.
+        Hem resmi GitHub depomuzla (<code>github.com/ofaemd-creator/synax</code>) hem de doğrudan kendi sunucumuzda barındırılan
+        bağımsız dumb-HTTP Git depomuzla %100 senkronize çalışan 8-katmanlı <strong>SYNAX v0.5.0</strong> kaynak kodu merkezi.
       </p>
       <div class="hash-bar">
-        <span>📦 Sovereign Git: <strong>git clone https://synaxcode.org/git/synax.git</strong></span>
-        <span>🐙 GitHub Repo: <a href="https://github.com/ofaemd-creator/synax" target="_blank" style="color:var(--cyan);text-decoration:underline;"><strong>github.com/ofaemd-creator/synax</strong></a></span>
+        <span>📦 Egemen Git: <strong>git clone https://synaxcode.org/git/synax.git</strong></span>
+        <span>🐙 GitHub Release: <a href="https://github.com/ofaemd-creator/synax/releases" target="_blank" style="color:var(--cyan);text-decoration:underline;"><strong>github.com/ofaemd-creator/synax/releases</strong></a></span>
         <span>⚡ Kurulum: <strong>curl -fsSL https://synaxcode.com/install.sh | sh</strong></span>
       </div>
     </div>
 
-    <h2 style="margin-bottom: 1rem;">📂 Resmi SYNAX Çekirdek Modülleri & Doğrudan Kaynak İndirme</h2>
+    <h2 style="margin-bottom: 1rem;">📂 SYNAX v0.5.0 Çekirdek Modülleri &amp; Doğrudan İnceleme</h2>
     <div class="grid">
       <div class="repo-card">
         <div>
           <div class="repo-title">
-            <span>1. synax-autopoiesis (v2.0 RLSF)</span>
-            <span class="badge">Self-Evolving</span>
+            <span>1. synaxc &amp; Multi-Target Backends</span>
+            <span class="badge">C11 • NEON • AVX2 • LLVM</span>
           </div>
           <p class="repo-desc">
-            İnsan müdahalesi olmadan kendi kendine cebirsel özdeşlikleri keşfeden (<code>√(u²) → |u|</code>),
-            2.000.000 sinyalde gerçek silikon hızını ölçen ve sıfır sayısal hata ile yeni kuralları kalıcı hafızaya işleyen otonom evrim motoru.
+            Statik tip denetimli <code>SynaxIR</code> ağacını C11 Skaler, ARM64 NEON, x86_64 AVX2+FMA, Apple GCD ve doğrudan SSA LLVM IR (<code>.ll</code>) hedeflerine indiren birleşik derleyici.
           </p>
         </div>
         <div class="file-links">
-          <a class="btn" href="/src/synax_autopoiesis.py" target="_blank">📄 synax_autopoiesis.py</a>
-          <a class="btn" href="/src/synapse_weights.json" target="_blank">📊 synapse_weights.json</a>
-          <button class="btn" onclick="loadCode('/src/synax_autopoiesis.py')">🔍 Kodu İncele</button>
-        </div>
-      </div>
-
-      <div class="repo-card">
-        <div>
-          <div class="repo-title">
-            <span>2. synapse-nano (v2.0 AST Brain)</span>
-            <span class="badge">Tier-0..Tier-5</span>
-          </div>
-          <p class="repo-desc">
-            Türkçe/İngilizce doğal dil niyetlerini ve matematiksel denklemleri Sembolik AST ağacına dönüştüren;
-            <strong>Tier-0 Q16.16 Tam Sayı (FPU'suz MCU)</strong>, C99, ARM64 NEON, x86 AVX-512 ve Apple Metal GPU hedeflerine indiren dil modeli.
-          </p>
-        </div>
-        <div class="file-links">
-          <a class="btn" href="/src/synapse_neural_model.py" target="_blank">📄 synapse_neural_model.py</a>
-          <a class="btn" href="/src/synapse_brain.json" target="_blank">🧠 synapse_brain.json</a>
-          <button class="btn" onclick="loadCode('/src/synapse_neural_model.py')">🔍 Kodu İncele</button>
-        </div>
-      </div>
-
-      <div class="repo-card">
-        <div>
-          <div class="repo-title">
-            <span>3. synax-security (Zero-Trust Guard)</span>
-            <span class="badge">SHA-256 Guard</span>
-          </div>
-          <p class="repo-desc">
-            Derleme öncesi AST ve C ifadelerini kabuk/bellek enjeksiyonlarına karşı tarayan güvenlik duvarı ve
-            tüm otonom hafıza dosyalarını (<code>_integrity_sha256</code>) kriptografik olarak doğrulayan koruma kalkanı.
-          </p>
-        </div>
-        <div class="file-links">
-          <a class="btn" href="/src/synax_security.py" target="_blank">🔒 synax_security.py</a>
-          <a class="btn" href="/src/SECURITY.md" target="_blank">🛡️ SECURITY.md</a>
-          <button class="btn" onclick="loadCode('/src/synax_security.py')">🔍 Kodu İncele</button>
-        </div>
-      </div>
-
-      <div class="repo-card">
-        <div>
-          <div class="repo-title">
-            <span>4. synax-core & synaxc (Compiler)</span>
-            <span class="badge">9-Gene Mutator</span>
-          </div>
-          <p class="repo-desc">
-            9 donanım kromozomlu genetik süper-optimize edici (<code>Tycon</code>), UCB1 Miyelin Hafıza,
-            Otonom <code>NaN/Inf</code> Bağışıklık Kalkanı ve bağımsız <code>clang -O3</code> ikili derleyicisi (<code>synaxc</code>).
-          </p>
-        </div>
-        <div class="file-links">
-          <a class="btn" href="/src/synax_core.py" target="_blank">⚙️ synax_core.py</a>
           <a class="btn" href="/src/synaxc.py" target="_blank">🚀 synaxc.py</a>
-          <a class="btn" href="/install.sh" target="_blank">📦 install.sh</a>
+          <a class="btn" href="/src/synax_ir.py" target="_blank">📐 synax_ir.py</a>
           <button class="btn" onclick="loadCode('/src/synaxc.py')">🔍 Kodu İncele</button>
         </div>
       </div>
@@ -271,81 +220,149 @@
       <div class="repo-card">
         <div>
           <div class="repo-title">
-            <span>5. synax-myelin (Saltatory JIT)</span>
-            <span class="badge">Adaptive SIMD</span>
+            <span>2. Differential Verifier &amp; Immune Gate</span>
+            <span class="badge">19 Adversarial Suites</span>
           </div>
           <p class="repo-desc">
-            Biyolojik nöron miyelinleşmesinden esinlenen, Ranvier boğumları önbellek prefetch ve ARM64 NEON vektörizasyonu ile çalışan, NaN/Inf korumalı dinamik C/JIT çekirdeği.
+            <code>optimization must never change semantics</code> değişmezini koruyan çift-referans doğrulayıcı, 12x12 IEEE-754 özel çift testi ve ısınmış önbellek medyan benchmark koşucusu.
+          </p>
+        </div>
+        <div class="file-links">
+          <a class="btn" href="/src/synax_verifier.py" target="_blank">🛡️ synax_verifier.py</a>
+          <a class="btn" href="/src/BENCHMARK_REPORT.md" target="_blank">📊 BENCHMARK_REPORT.md</a>
+          <button class="btn" onclick="loadCode('/src/synax_verifier.py')">🔍 Kodu İncele</button>
+        </div>
+      </div>
+
+      <div class="repo-card">
+        <div>
+          <div class="repo-title">
+            <span>3. Saltatory Myelin C11/SIMD Engine</span>
+            <span class="badge">Dual-Channel Guard</span>
+          </div>
+          <p class="repo-desc">
+            Hem Kanal A hem Kanal B üzerinde bit-maskeli (<code>abs_bits &lt;= 0x447A0000</code>) NaN/Inf onarımı yapan, O(1) fonksiyon işaretçisi hot-swap destekli yerleşik C11/NEON çalışma zamanı.
           </p>
         </div>
         <div class="file-links">
           <a class="btn" href="/src/synax_myelin_engine.c" target="_blank">📄 synax_myelin_engine.c</a>
           <a class="btn" href="/src/synax_myelin.py" target="_blank">⚡ synax_myelin.py</a>
-          <a class="btn" href="/src/test_differential_myelin.py" target="_blank">🧪 test_differential_myelin.py</a>
           <button class="btn" onclick="loadCode('/src/synax_myelin_engine.c')">🔍 Kodu İncele</button>
+        </div>
+      </div>
+
+      <div class="repo-card">
+        <div>
+          <div class="repo-title">
+            <span>4. Unified CLI, Debugger &amp; Studio</span>
+            <span class="badge">Developer Tools</span>
+          </div>
+          <p class="repo-desc">
+            <code>synax check | fmt | inspect | lock | debug | profile | bench | test | studio | update</code> alt komutlarını sunan birleşik geliştirici arayüzü.
+          </p>
+        </div>
+        <div class="file-links">
+          <a class="btn" href="/src/synax_cli.py" target="_blank">🧰 synax_cli.py</a>
+          <a class="btn" href="/install.sh" target="_blank">📦 install.sh</a>
+          <button class="btn" onclick="loadCode('/src/synax_cli.py')">🔍 Kodu İncele</button>
+        </div>
+      </div>
+
+      <div class="repo-card">
+        <div>
+          <div class="repo-title">
+            <span>5. Zero-Trust Security &amp; Governance</span>
+            <span class="badge">Apache-2.0</span>
+          </div>
+          <p class="repo-desc">
+            SHA-256 imzalı Miyelin önbellek doğrulaması (<code>synax_security.py</code>), resmi Apache-2.0 lisansı ve AB MDR / IEC 60601-2-4 uyumlu klinik-dışı araştırma sınırları.
+          </p>
+        </div>
+        <div class="file-links">
+          <a class="btn" href="/src/synax_security.py" target="_blank">🔒 synax_security.py</a>
+          <a class="btn" href="/src/LICENSE" target="_blank">⚖️ LICENSE</a>
+          <a class="btn" href="/src/MEDICAL_RESEARCH_DISCLAIMER.md" target="_blank">🏥 DISCLAIMER</a>
+          <button class="btn" onclick="loadCode('/src/MEDICAL_RESEARCH_DISCLAIMER.md')">🔍 Beyanı İncele</button>
+        </div>
+      </div>
+
+      <div class="repo-card">
+        <div>
+          <div class="repo-title">
+            <span>6. EBNF Grammar &amp; Formal Spec</span>
+            <span class="badge">ISO/IEC 14977</span>
+          </div>
+          <p class="repo-desc">
+            Resmi SYNAX v0.5.0 dil grameri (<code>synax.ebnf</code>) ve iki dilli semantik dil spesifikasyonu (<code>LANGUAGE_SPEC.md</code>).
+          </p>
+        </div>
+        <div class="file-links">
+          <a class="btn" href="/src/synax.ebnf" target="_blank">📜 synax.ebnf</a>
+          <a class="btn" href="/src/LANGUAGE_SPEC.md" target="_blank">📖 LANGUAGE_SPEC.md</a>
+          <button class="btn" onclick="loadCode('/src/synax.ebnf')">🔍 Grameri İncele</button>
         </div>
       </div>
     </div>
 
-    <h2 style="margin-bottom: 1rem;">⚡ Gerçek Silikon Öz-Evrim (RLSF v2.0) Ölçüm Tablosu (N = 2,000,000 Sinyal)</h2>
+    <h2 style="margin-bottom: 1rem;">📊 Doğrulanmış Sıcak-Önbellek Benchmark Özeti (N = 4,000,000 float32 • Apple M1)</h2>
     <table>
       <thead>
         <tr>
-          <th>Otonom Keşfedilen Kavram</th>
-          <th>Ham AST Formülü</th>
-          <th>Evrimleşen AST Formülü</th>
-          <th>Düğüm Budama</th>
-          <th>Ham Silikon (µs)</th>
-          <th>Evrimleşen (µs)</th>
-          <th>Tier-0 Q16.16 MCU (µs)</th>
-          <th>RLSF Hızlanma / Hata</th>
+          <th>Çekirdek (.sx)</th>
+          <th>Güvenlik Politikası</th>
+          <th>Skaler -O1 (ms)</th>
+          <th>clang -O3 (ms)</th>
+          <th>SYNAX Kazanan</th>
+          <th>Medyan ± IQR (ms)</th>
+          <th>Bant Genişliği</th>
+          <th>vs clang -O3 / Sapma</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><code>otonom_kuantum_darbe</code></td>
-          <td><code>σ(((√|((a-b)*(a-b))| * 1.0) + bias))</code></td>
-          <td><code>σ((|(a - b)| + bias))</code></td>
-          <td>13 → 7</td>
-          <td>4,474.0 µs</td>
-          <td><strong>3,573.0 µs</strong></td>
-          <td><strong>1,282.0 µs</strong></td>
-          <td style="color:var(--green);"><strong>1.252x (Err: 0.0)</strong></td>
+          <td><code>kapili_aktivasyon.sx</code></td>
+          <td><code>preserve</code></td>
+          <td>7.495 ms</td>
+          <td>6.911 ms</td>
+          <td><strong>v4_gcd_multicore_neon</strong></td>
+          <td><strong>1.010 ± 0.048 ms</strong></td>
+          <td>47.5 GB/s</td>
+          <td style="color:var(--green);"><strong>6.84x (Diff: 0.0)</strong></td>
         </tr>
         <tr>
-          <td><code>otonom_oklid_normu</code></td>
-          <td><code>σ((√|((a - b))²| + bias))</code></td>
-          <td><code>σ((|(a - b)| + bias))</code></td>
-          <td>8 → 7</td>
-          <td>4,345.0 µs</td>
-          <td><strong>3,585.0 µs</strong></td>
-          <td><strong>1,281.0 µs</strong></td>
-          <td style="color:var(--green);"><strong>1.212x (Err: 0.0)</strong></td>
+          <td><code>normalized_difference.sx</code></td>
+          <td><code>reject + clamp</code></td>
+          <td>6.181 ms</td>
+          <td>1.481 ms</td>
+          <td><strong>v2_neon_simd</strong></td>
+          <td><strong>0.995 ± 0.068 ms</strong></td>
+          <td>48.2 GB/s</td>
+          <td style="color:var(--green);"><strong>1.49x (Diff: 0.0)</strong></td>
         </tr>
         <tr>
-          <td><code>otonom_enerji_kapisi</code></td>
-          <td><code>ReLU(ReLU((√|((a*b))²| + bias)))</code></td>
-          <td><code>ReLU((|(a * b)| + bias))</code></td>
-          <td>9 → 7</td>
-          <td>428.0 µs</td>
-          <td><strong>383.0 µs</strong></td>
-          <td><strong>412.0 µs</strong></td>
-          <td style="color:var(--green);"><strong>1.117x (Err: 0.0)</strong></td>
+          <td><code>biyomedikal_kardiyo.sx</code></td>
+          <td><code>heal_inputs</code></td>
+          <td>6.467 ms</td>
+          <td>1.327 ms</td>
+          <td><strong>v5_llvm_ssa_ir_o3</strong></td>
+          <td><strong>1.324 ± 0.243 ms</strong></td>
+          <td>36.2 GB/s</td>
+          <td style="color:var(--green);"><strong>1.00x (Diff: 0.0)</strong></td>
         </tr>
         <tr>
-          <td><code>otonom_mutlak_aktivasyon</code></td>
-          <td><code>(||(a - b)|| + 0.0)</code></td>
-          <td><code>|(a - b)|</code></td>
-          <td>7 → 4</td>
-          <td>410.0 µs</td>
-          <td><strong>390.0 µs</strong></td>
-          <td><strong>411.0 µs</strong></td>
-          <td style="color:var(--green);"><strong>1.051x (Err: 0.0)</strong></td>
+          <td><code>hemodynamic_cpp.sx</code></td>
+          <td><code>heal_inputs</code></td>
+          <td>5.476 ms</td>
+          <td>1.106 ms</td>
+          <td><strong>v0_clang_o3_scalar</strong></td>
+          <td><strong>1.106 ± 0.099 ms</strong></td>
+          <td>43.4 GB/s</td>
+          <td style="color:var(--green);"><strong>1.00x (Diff: 0.0)</strong></td>
         </tr>
       </tbody>
     </table>
 
-    <h2 style="margin-bottom: 0.75rem;">🔍 Canlı Kaynak Kodu İnceleyici (<span id="code-title">/src/synax_autopoiesis.py</span>)</h2>
+    <h2 style="margin-bottom: 0.75rem;">🔍 Canlı Kaynak Kodu İnceleyici (<span id="code-title">/src/synaxc.py</span>)</h2>
     <pre id="code-viewer">Yükleniyor...</pre>
   </div>
 
@@ -353,17 +370,16 @@
     async function loadCode(path) {
       document.getElementById('code-title').textContent = path;
       const viewer = document.getElementById('code-viewer');
-      viewer.textContent = 'Kaynak kodu sunucudan okunuyor (' + path + ')...';
+      viewer.textContent = 'Yükleniyor: ' + path + ' ...';
       try {
         const res = await fetch(path);
-        const txt = await res.text();
-        viewer.textContent = txt;
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        viewer.textContent = await res.text();
       } catch (e) {
-        viewer.textContent = 'Dosya okunamadı: ' + e;
+        viewer.textContent = 'Dosya yüklenemedi (' + e.message + '). GitHub üzerinden inceleyebilirsiniz: https://github.com/ofaemd-creator/synax';
       }
     }
-    loadCode('/src/synax_autopoiesis.py');
+    loadCode('/src/synaxc.py');
   </script>
 </body>
 </html>
-

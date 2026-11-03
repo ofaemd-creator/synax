@@ -14,6 +14,10 @@ on:
 permissions:
   contents: write
 
+env:
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: "utf-8"
+
 jobs:
   build-python-dist:
     name: Build Python sdist & wheel
@@ -92,18 +96,32 @@ jobs:
             RAW_VER="${{ inputs.version_label }}"
           fi
           BUNDLE_NAME="synax-${RAW_VER}-${{ matrix.target }}"
-          STAGE_DIR="release_stage/${BUNDLE_NAME}"
-          mkdir -p "${STAGE_DIR}/include" "${STAGE_DIR}/examples"
+          STAGE_DIR="release_stage"
+          SHARE_DIR="${STAGE_DIR}/share/synax"
+          mkdir -p "${STAGE_DIR}/bin" "${STAGE_DIR}/lib" "${STAGE_DIR}/include" "${SHARE_DIR}/examples" "${SHARE_DIR}/spec"
 
-          cp "${{ matrix.shared_lib }}" "${STAGE_DIR}/"
+          cp "${{ matrix.shared_lib }}" "${STAGE_DIR}/lib/"
+          cp "${{ matrix.shared_lib }}" "${SHARE_DIR}/libsynax_myelin.dylib"
+          if [ "${{ matrix.shared_lib }}" = "libsynax_myelin.so" ]; then
+            cp "${{ matrix.shared_lib }}" "${SHARE_DIR}/libsynax_myelin.so"
+          fi
           cp include/synax.h include/synax.hpp "${STAGE_DIR}/include/"
-          cp synax synax*.py synapse_brain.json "${STAGE_DIR}/"
-          cp -R src "${STAGE_DIR}/"
-          cp examples/*.sx "${STAGE_DIR}/examples/"
-          cp LICENSE NOTICE LICENSING.md TRADEMARKS.md MEDICAL_RESEARCH_DISCLAIMER.md README.md "${STAGE_DIR}/"
+          cp synax*.py synapse_brain.json "${SHARE_DIR}/"
+          cp -R src "${SHARE_DIR}/"
+          cp examples/*.sx examples/*.sx.lock "${SHARE_DIR}/examples/"
+          cp spec/* "${SHARE_DIR}/spec/"
+          cp LICENSE NOTICE LICENSING.md TRADEMARKS.md MEDICAL_RESEARCH_DISCLAIMER.md README.md "${SHARE_DIR}/"
+
+          cat << 'WRAPPER' > "${STAGE_DIR}/bin/synax"
+          #!/usr/bin/env sh
+          SELF_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+          exec python3 "${SELF_DIR}/../share/synax/synax_cli.py" "$@"
+          WRAPPER
+          chmod +x "${STAGE_DIR}/bin/synax"
 
           mkdir -p bundle_out
-          tar -C release_stage -czf "bundle_out/${BUNDLE_NAME}.tar.gz" "${BUNDLE_NAME}"
+          tar -C "${STAGE_DIR}" -czf "bundle_out/synax-${{ matrix.target }}.tar.gz" bin lib include share
+          cp "bundle_out/synax-${{ matrix.target }}.tar.gz" "bundle_out/${BUNDLE_NAME}.tar.gz"
 
       - name: Upload Native Bundle Artifact
         uses: actions/upload-artifact@v4

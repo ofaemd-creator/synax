@@ -1,78 +1,134 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # =============================================================================
-# SYNAXCODE.COM — Official Sovereign Installer (v2.0-AUTOPOIESIS)
-# Usage: curl -fsSL https://synaxcode.com/install.sh | sh
+# SYNAX Official Installer (v0.5.0 — macOS & Linux — ARM64 / x86_64)
+# SPDX-License-Identifier: Apache-2.0
+#
+# Usage:
+#   curl -fsSL https://synaxcode.com/install.sh | sh
+#   SYNAX_VERSION=v0.5.0 sh install.sh
 # =============================================================================
-set -e
+set -eu
 
-BOLD="\033[1m"
-GREEN="\033[0;32m"
-CYAN="\033[0;36m"
-YELLOW="\033[0;33m"
-RESET="\033[0m"
+REPO="ofaemd-creator/synax"
+SOVEREIGN_GIT="https://synaxcode.org/git/synax.git"
+INSTALL_PREFIX="${SYNAX_INSTALL_DIR:-$HOME/.local}"
+BIN_DIR="$INSTALL_PREFIX/bin"
+LIB_DIR="$INSTALL_PREFIX/lib"
+INCLUDE_DIR="$INSTALL_PREFIX/include"
+SHARE_DIR="$INSTALL_PREFIX/share"
+VERSION="${SYNAX_VERSION:-latest}"
 
-printf "${BOLD}${GREEN}⚡ SYNAX (v2.0-AUTOPOIESIS) — Sovereign Zero-Trust Installer [synaxcode.com]${RESET}\n"
-printf "${CYAN}   [Synapse: Self-Evolving AST] + [Axon: Tier-0..5 Silicon] + [Tycon: RLSF Mutator]${RESET}\n\n"
+log() {
+    printf "\033[1;36m[SYNAX]\033[0m %s\n" "$1"
+}
 
-OS="$(uname -s)"
-ARCH="$(uname -m)"
-SYNAX_HOME="${HOME}/.synax"
-BIN_DIR="${SYNAX_HOME}/bin"
-SRC_URL="https://synaxcode.org/src"
-
-printf "🔍 Detecting hardware nerve profile...\n"
-printf "   • OS           : ${BOLD}${OS}${RESET}\n"
-printf "   • Architecture : ${BOLD}${ARCH}${RESET}\n"
-
-mkdir -p "${BIN_DIR}" "${SYNAX_HOME}/src"
-
-if command -v clang >/dev/null 2>&1; then
-    printf "   • Native Backend: ${GREEN}LLVM/Clang Detected (Tier-0 Q16.16, SIMD & GPU Ready)${RESET}\n"
-elif command -v gcc >/dev/null 2>&1; then
-    printf "   • Native Backend: ${GREEN}GCC Detected${RESET}\n"
-else
-    printf "   • Native Backend: ${YELLOW}No C compiler found (AST Fallback mode)${RESET}\n"
-fi
-
-printf "\n🧬 Downloading SYNAX v2.0 Core from Sovereign Forge (${SRC_URL})...\n"
-
-# Pinned SHA-256 checksums: installation aborts if any file does not match.
-CHECKSUMS="91c4fc2b9ab3244084d25a06e9143eb9b06c33f1200f5b711e22cc96219b3816  synax_security.py
-6446a8fe0fddab8dca602cf57d2f84ca7a2ac3dab6e4a9ced6741ccaf3fc13ae  synapse_neural_model.py
-741552b6876a5a252d56573fffc1732130cdd73e789c2b311d327cb66987afbb  synax_autopoiesis.py
-bbd1010524a69d148011c0fbe4e7ef2ac338a1d4df4773fd4ce280bdaff877cb  synax_core.py
-3f5379f9b1e97934abf46c70cd8d0cf1fcc855822fdd2138de403803cdfda73c  synaxc.py
-e7a880f5782368f5e63649a10a554c378386a32714fdb5375da72a3fcde05fcd  synapse_brain.json
-cdfb9a370752345d6cc32321285c3724eaf378b6d227c66f6092e26f44cf41bd  synapse_weights.json"
-
-if command -v shasum >/dev/null 2>&1; then
-    SHA_CMD="shasum -a 256"
-elif command -v sha256sum >/dev/null 2>&1; then
-    SHA_CMD="sha256sum"
-else
-    printf "${YELLOW}✗ No SHA-256 tool found (shasum/sha256sum). Aborting for safety.${RESET}\n"
+err() {
+    printf "\033[1;31m[SYNAX ERROR]\033[0m %s\n" "$1" >&2
     exit 1
-fi
+}
 
-echo "${CHECKSUMS}" | while read -r expected f; do
-    curl -fsSL "${SRC_URL}/${f}" -o "${SYNAX_HOME}/src/${f}"
-    actual="$(${SHA_CMD} "${SYNAX_HOME}/src/${f}" | awk '{print $1}')"
-    if [ "${actual}" != "${expected}" ]; then
-        printf "${YELLOW}✗ Checksum mismatch for ${f}. Removing and aborting.${RESET}\n"
-        rm -f "${SYNAX_HOME}/src/${f}"
-        exit 1
+detect_platform() {
+    OS_RAW="$(uname -s)"
+    ARCH_RAW="$(uname -m)"
+
+    case "$OS_RAW" in
+        Darwin) OS="macos" ;;
+        Linux)  OS="linux" ;;
+        *)      err "Unsupported OS: $OS_RAW (use pip install git+https://github.com/ofaemd-creator/synax.git)" ;;
+    esac
+
+    case "$ARCH_RAW" in
+        arm64|aarch64) ARCH="arm64" ;;
+        x86_64|amd64)  ARCH="x86_64" ;;
+        *)             err "Unsupported CPU architecture: $ARCH_RAW" ;;
+    esac
+
+    ASSET_TAR="synax-${OS}-${ARCH}.tar.gz"
+}
+
+verify_sha256() {
+    FILE_PATH="$1"
+    SUMS_PATH="$2"
+    EXPECTED="$(grep " $(basename "$FILE_PATH")\$" "$SUMS_PATH" | head -n 1 | awk '{print $1}')"
+    if [ -z "$EXPECTED" ]; then
+        EXPECTED="$(grep "$(basename "$FILE_PATH")" "$SUMS_PATH" | head -n 1 | awk '{print $1}')"
     fi
-    printf "   ✓ ${f}\n"
-done
+    if [ -z "$EXPECTED" ]; then
+        err "Checksum entry for $(basename "$FILE_PATH") not found in SHA256SUMS.txt"
+    fi
 
-cat << 'EOF' > "${BIN_DIR}/synax"
-#!/bin/sh
-exec python3 "$HOME/.synax/src/synaxc.py" "$@"
-EOF
-chmod +x "${BIN_DIR}/synax"
+    if command -v shasum >/dev/null 2>&1; then
+        ACTUAL="$(shasum -a 256 "$FILE_PATH" | awk '{print $1}')"
+    elif command -v sha256sum >/dev/null 2>&1; then
+        ACTUAL="$(sha256sum "$FILE_PATH" | awk '{print $1}')"
+    else
+        err "Neither shasum nor sha256sum found; refusing unverified binary installation."
+    fi
 
-printf "${GREEN}✓ SYNAX v2.0-AUTOPOIESIS installed successfully!${RESET}\n\n"
-printf "Add SYNAX to your PATH:\n"
-printf "  ${BOLD}export PATH=\"\$HOME/.synax/bin:\$PATH\"${RESET}\n\n"
-printf "🌐 Sovereign Code Forge : ${BOLD}https://synaxcode.org/repos.html${RESET}\n"
-printf "🌐 Live Cloud Studio IDE: ${BOLD}https://synaxcode.online${RESET}\n"
+    if [ "$EXPECTED" != "$ACTUAL" ]; then
+        err "SHA-256 mismatch! Expected $EXPECTED, got $ACTUAL"
+    fi
+    log "SHA-256 cryptographic checksum verified ($ACTUAL)"
+}
+
+install_from_release() {
+    detect_platform
+    TMP_DIR="$(mktemp -d)"
+    trap 'rm -rf "$TMP_DIR"' EXIT INT TERM
+
+    if [ "$VERSION" = "latest" ]; then
+        BASE_URL="https://github.com/${REPO}/releases/latest/download"
+    else
+        BASE_URL="https://github.com/${REPO}/releases/download/${VERSION}"
+    fi
+
+    log "Detected platform: ${OS}-${ARCH}"
+    log "Downloading SHA-256 verified native release from ${BASE_URL}/${ASSET_TAR} ..."
+
+    if curl -fsSL "${BASE_URL}/${ASSET_TAR}" -o "${TMP_DIR}/${ASSET_TAR}" 2>/dev/null && \
+       curl -fsSL "${BASE_URL}/SHA256SUMS.txt" -o "${TMP_DIR}/SHA256SUMS.txt" 2>/dev/null; then
+        verify_sha256 "${TMP_DIR}/${ASSET_TAR}" "${TMP_DIR}/SHA256SUMS.txt"
+        mkdir -p "$BIN_DIR" "$LIB_DIR" "$INCLUDE_DIR" "$SHARE_DIR"
+        tar -xzf "${TMP_DIR}/${ASSET_TAR}" -C "${TMP_DIR}"
+        if [ -f "${TMP_DIR}/bin/synax" ]; then
+            cp "${TMP_DIR}/bin/synax"* "$BIN_DIR/"
+            chmod +x "$BIN_DIR/synax"*
+        fi
+        if [ -d "${TMP_DIR}/lib" ]; then
+            cp -R "${TMP_DIR}/lib/"* "$LIB_DIR/" 2>/dev/null || true
+        fi
+        if [ -d "${TMP_DIR}/include" ]; then
+            cp -R "${TMP_DIR}/include/"* "$INCLUDE_DIR/" 2>/dev/null || true
+        fi
+        if [ -d "${TMP_DIR}/share/synax" ]; then
+            rm -rf "$SHARE_DIR/synax"
+            cp -R "${TMP_DIR}/share/synax" "$SHARE_DIR/"
+        fi
+        log "Installed SYNAX native bundle into ${INSTALL_PREFIX}"
+        return 0
+    fi
+    return 1
+}
+
+install_from_pip_fallback() {
+    log "Binary archive unavailable for ${OS:-host}-${ARCH:-arch}; installing via Python pip..."
+    if ! command -v python3 >/dev/null 2>&1; then
+        err "python3 is required for source installation."
+    fi
+    if ! python3 -m pip install --user --upgrade "git+https://github.com/${REPO}.git"; then
+        log "GitHub unreachable; falling back to Sovereign Git (${SOVEREIGN_GIT})..."
+        python3 -m pip install --user --upgrade "git+${SOVEREIGN_GIT}"
+    fi
+    log "Installed 'synax' CLI and Python SDK via pip (--user)."
+}
+
+main() {
+    if ! install_from_release; then
+        install_from_pip_fallback
+    fi
+
+    log "Installation complete! Ensure '${BIN_DIR}' is in your PATH, then run: synax version"
+    log "Docs: https://synaxcode.org | Studio: https://synaxcode.online | GitHub: https://github.com/${REPO}"
+}
+
+main "$@"

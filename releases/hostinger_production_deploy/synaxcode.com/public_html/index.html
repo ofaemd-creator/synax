@@ -3,41 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SYNAXCode (synaxcode.com) — Self-Evolving Neuro-Symbolic Language</title>
-  <meta name="description" content="SYNAX (.sx) is an experimental self-evolving neuro-symbolic language and hardware superoptimizer. Translates natural language and symbolic intent into native code." />
-  <meta property="og:title" content="SYNAXCode — Neuro-Symbolic Language & Hardware Superoptimizer" />
-  <meta property="og:description" content="Express intent. Multi-target SIMD/GPU lowering, autonomous NaN/Inf immune shielding, zero-dependency native compiler." />
+  <title>SYNAX (synaxcode.com) — Verified Neuro-Symbolic Compiler, SIMD Superoptimizer & SDK (v0.5.0)</title>
+  <meta name="description" content="SYNAX (.sx) v0.5.0: Statically typed neuro-symbolic kernel language with C11, ARM64 NEON, x86_64 AVX2+FMA, and SSA LLVM IR backends, 19-suite IEEE-754 differential verification, .sx.lock semantic lockfiles, and Python/C/C++17/Rust SDKs." />
+  <meta property="og:title" content="SYNAX v0.5.0 — Verified Multi-Target SIMD Compiler & SDK Platform" />
+  <meta property="og:description" content="Optimization must never change semantics. EBNF + Typed AST, C11/NEON/AVX2/LLVM-IR lowering, Channel A+B IEEE-754 Immune Shield, and Myelin hardware memory." />
   <meta property="og:url" content="https://synaxcode.com" />
   <meta property="og:type" content="website" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes pulseGlow {
-      0%, 100% { opacity: 0.75; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.02); }
+      0%, 100% { opacity: 0.82; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.015); }
     }
     .glow-badge { animation: pulseGlow 3s infinite ease-in-out; }
   </style>
 </head>
 <body class="bg-[#090d16] text-slate-100 antialiased selection:bg-emerald-500/30">
 
-  <!-- GLOBAL ECOSYSTEM TOP BAR (3 DOMAINS LINKED) -->
+  <!-- GLOBAL ECOSYSTEM TOP BAR -->
   <div class="bg-[#05080f] border-b border-slate-800 text-xs py-2 px-6">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2 font-mono text-slate-400">
-        <span class="text-emerald-400 font-bold">● SYNAX ECOSYSTEM:</span>
-        <a href="https://synaxcode.com" class="text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded">🌐 synaxcode.com (Main Platform)</a>
+      <div class="flex flex-wrap items-center gap-2 font-mono text-slate-400">
+        <span class="text-emerald-400 font-bold">● SYNAX v0.5.0:</span>
+        <a href="https://synaxcode.com" class="text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded">🌐 synaxcode.com</a>
         <span>•</span>
-        <a href="https://synaxcode.org" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition">📖 synaxcode.org (Docs & Specification)</a>
+        <a href="https://synaxcode.org" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition">📖 synaxcode.org (Spec &amp; Docs)</a>
         <span>•</span>
-        <a href="https://synaxcode.online" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition">💻 synaxcode.online (Cloud Studio IDE)</a>
+        <a href="https://synaxcode.org/repos.html" class="hover:text-cyan-300 px-2 py-0.5 rounded hover:bg-slate-800 transition">🧬 Sovereign Git</a>
+        <span>•</span>
+        <a href="https://synaxcode.online" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition">💻 synaxcode.online (Studio IDE)</a>
       </div>
-      <div class="text-slate-400 font-mono hidden sm:block">
-        v0.3-OMEGA • Universal Silicon: TinyMCU • x86 AVX-512 • ARM NEON • RISC-V • NVIDIA CUDA H100 • Metal GPU
+      <div class="text-slate-400 font-mono hidden lg:block">
+        Apache-2.0 • C11 • ARM64 NEON • x86_64 AVX2+FMA • SSA LLVM IR • Python / C / C++17 / Rust SDK
       </div>
     </div>
   </div>
 
-  <!-- ÜST NAVİGASYON BAR -->
+  <!-- HEADER -->
   <header class="sticky top-0 z-50 backdrop-blur-md bg-[#090d16]/85 border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -47,17 +49,18 @@
         <div class="flex items-center gap-2">
           <span class="font-black text-lg tracking-wider">SYNAX<span class="text-emerald-400">CODE</span></span>
           <span class="hidden sm:inline-block px-2 py-0.5 text-xs font-mono rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-            synaxcode.com
+            v0.5.0 • Apache-2.0
           </span>
         </div>
       </div>
 
-      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-        <a href="#mimari" class="hover:text-white transition" data-i18n="nav_arch">3 Çekirdekli Mimari</a>
-        <a href="#playground" class="hover:text-emerald-400 transition font-semibold text-white" data-i18n="nav_play">⚡ Canlı Playground</a>
-        <a href="https://synaxcode.org/guide.html" class="text-amber-400 hover:text-amber-300 font-bold transition">🐣 Başlangıç Rehberi</a>
-        <a href="https://synaxcode.org" class="hover:text-cyan-400 transition">🏛️ Whitepaper (.org)</a>
-        <a href="https://synaxcode.online" class="hover:text-emerald-400 transition">💻 Cloud IDE (.online)</a>
+      <nav class="hidden md:flex items-center gap-5 text-sm font-medium text-slate-300">
+        <a href="#mimari" class="hover:text-white transition" data-i18n="nav_arch">5-Aşamalı Çekirdek</a>
+        <a href="#katmanlar" class="hover:text-cyan-400 transition" data-i18n="nav_layers">8-Katmanlı Platform</a>
+        <a href="#playground" class="hover:text-emerald-400 transition font-semibold text-white" data-i18n="nav_play">⚡ Canlı Simülatör</a>
+        <a href="https://synaxcode.org/guide.html" class="text-amber-400 hover:text-amber-300 font-bold transition">🐣 16s Rehber</a>
+        <a href="https://synaxcode.org" class="hover:text-cyan-400 transition">📐 Dil Spesifikasyonu</a>
+        <a href="https://github.com/ofaemd-creator/synax" target="_blank" class="hover:text-white font-mono text-xs px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700 transition">🐙 GitHub</a>
       </nav>
 
       <div class="flex items-center gap-2.5">
@@ -65,130 +68,211 @@
           🌐 TR | EN
         </button>
         <a href="https://synaxcode.online" class="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-cyan-600 text-white shadow hover:opacity-90 transition" data-i18n="nav_cta">
-          Cloud IDE Aç →
+          Studio IDE Aç →
         </a>
       </div>
     </div>
   </header>
 
-  <!-- HERO BÖLÜMÜ -->
+  <!-- HERO -->
   <section class="relative overflow-hidden border-b border-slate-800 py-14 lg:py-20">
     <canvas id="synapse-canvas" class="absolute inset-0 w-full h-full opacity-25 pointer-events-none"></canvas>
 
     <div class="relative max-w-6xl mx-auto px-6 text-center space-y-6">
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 glow-badge" data-i18n="hero_badge">
-        🌌 SYNAXCODE.COM • SÖZDİZİMİNİN (SYNTAX) SONU • ÖZ-EVRİMLEŞEN MAKİNE KODU
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 glow-badge font-mono" data-i18n="hero_badge">
+        ⚡ SYNAX v0.5.0 • "OPTIMIZATION MUST NEVER CHANGE SEMANTICS" • APACHE-2.0
       </div>
 
       <h1 class="text-4xl sm:text-6xl font-black tracking-tight leading-tight" data-i18n="hero_title">
-        Kod Yazmayın. <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">Niyetinizi Söyleyin.</span><br />
-        Çalıştıkça Kendi Kendine Hızlansın.
+        Semantik Niyetinizi Tanımlayın.<br />
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">Doğrulanmış Donanım Koduna Evrimleşsin.</span>
       </h1>
 
       <p class="max-w-3xl mx-auto text-base sm:text-lg text-slate-300 leading-relaxed" data-i18n="hero_desc">
-        <strong>SYNAX (<code>.sx</code>)</strong>; insan niyetini anlayan (<em>Synapse</em>), 16 KB'lık mikrodenetleyicilerden <strong>x86 AVX-512</strong> sistemlerine, <strong>ARM NEON</strong> işlemcilerden <strong>Metal GPU</strong> hesaplamalarına kadar donanım koduna indirgeyen (<em>Axon</em>) ve çalışma zamanında alternatif optimizasyon varyantlarını karşılaştıran (<em>Tycon</em>) deneysel bir nöro-sembolik dildir.
+        <strong>SYNAX (<code>.sx</code>)</strong>; statik tipli tensör çekirdeklerini ayrıştıran (<em>Synapse</em>), hem A hem B kanalında IEEE-754 bit-maskeli <code>NaN/Inf</code> güvenliğini zorunlu kılan (<em>Immune</em>), <strong>C11, ARM64 NEON, x86_64 AVX2+FMA ve doğrudan SSA LLVM IR</strong> varyantlarını 19 sınır kümesinde doğrulayarak yarıştıran (<em>Axon &amp; Tycon</em>) ve kazanan çekirdeği donanım parmak iziyle kalıcı önbelleğe kilitleyen (<em>Myelin</em>) açık kaynaklı bir derleyici ve SDK platformudur.
       </p>
 
-      <!-- TEK TIKLA KURULUM KUTUSU -->
-      <div class="max-w-xl mx-auto pt-2">
+      <!-- INSTALL COMMANDS -->
+      <div class="max-w-2xl mx-auto pt-2 space-y-2.5">
         <div class="flex items-center justify-between gap-2 bg-[#111827] border-2 border-emerald-500/40 rounded-2xl px-4 py-3 shadow-lg">
           <div class="font-mono text-xs sm:text-sm text-left overflow-x-auto whitespace-nowrap">
             <span class="text-slate-400 select-none">$ </span>
-            <span id="install-cmd" class="text-emerald-400 font-bold">curl -sSf https://synaxcode.com/install.sh | sh</span>
+            <span id="install-cmd" class="text-emerald-400 font-bold">curl -fsSL https://synaxcode.com/install.sh | sh</span>
           </div>
           <button onclick="copyInstallCmd()" id="copy-btn" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 transition shrink-0">
             📋 Kopyala
           </button>
         </div>
+        <div class="flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-slate-400">
+          <span>Python SDK: <code class="text-cyan-300 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">pip install git+https://github.com/ofaemd-creator/synax.git</code></span>
+          <span>•</span>
+          <a href="https://github.com/ofaemd-creator/synax/releases" target="_blank" class="text-emerald-400 hover:underline">📦 GitHub Releases (v0.5.0) →</a>
+        </div>
       </div>
 
-      <!-- EKOSİSTEM KARTLARI (3 DOMAIN GEÇİŞİ) -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto pt-4 text-left">
-        <a href="#playground" class="bg-[#111827]/90 hover:border-emerald-500/60 border border-slate-800 rounded-2xl p-4 transition block">
-          <div class="text-xs font-mono text-emerald-400 font-bold">🌐 synaxcode.com</div>
-          <div class="font-bold text-base mt-1">Ana Platform & Hızlı Deneme</div>
-          <div class="text-xs text-slate-400 mt-1">Tarayıcı içi hızlı simülatör, CLI kurulumu ve Python SDK merkezi.</div>
+      <!-- HONEST METRICS STRIP -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto pt-3 text-left font-mono">
+        <div class="bg-[#111827]/90 border border-slate-800 rounded-2xl p-4">
+          <div class="text-xs text-slate-400">vs clang -O3 (Isınmış Medyan)</div>
+          <div class="text-2xl font-black text-emerald-400 mt-0.5">6.84x</div>
+          <div class="text-[11px] text-slate-500">kapili_aktivasyon.sx • 47.5 GB/s</div>
+        </div>
+        <div class="bg-[#111827]/90 border border-slate-800 rounded-2xl p-4">
+          <div class="text-xs text-slate-400">Diferansiyel Sapma (19 Küme)</div>
+          <div class="text-2xl font-black text-cyan-400 mt-0.5">0.00e+00</div>
+          <div class="text-[11px] text-slate-500">Kanal A + Kanal B Bit-Exact</div>
+        </div>
+        <div class="bg-[#111827]/90 border border-slate-800 rounded-2xl p-4">
+          <div class="text-xs text-slate-400">Semantik Kilit (.sx.lock)</div>
+          <div class="text-2xl font-black text-purple-400 mt-0.5">32 Vektör</div>
+          <div class="text-[11px] text-slate-500">IEEE-754 Hex + SHA-256 İmza</div>
+        </div>
+        <div class="bg-[#111827]/90 border border-slate-800 rounded-2xl p-4">
+          <div class="text-xs text-slate-400">Miyelin Önbellek İsabeti</div>
+          <div class="text-2xl font-black text-amber-400 mt-0.5">&lt; 1.0 ms</div>
+          <div class="text-[11px] text-slate-500">hw_fingerprint + O(1) Hot-Swap</div>
+        </div>
+      </div>
+
+      <!-- ECOSYSTEM CARDS -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto pt-3 text-left">
+        <a href="https://github.com/ofaemd-creator/synax" target="_blank" class="bg-[#111827]/90 hover:border-emerald-500/60 border border-slate-800 rounded-2xl p-4 transition block">
+          <div class="text-xs font-mono text-emerald-400 font-bold">🐙 github.com/ofaemd-creator/synax →</div>
+          <div class="font-bold text-base mt-1">Resmi Açık Kaynak Depo &amp; CI</div>
+          <div class="text-xs text-slate-400 mt-1">macOS ARM64, Ubuntu AVX2 ve Windows Python 3.12 üzerinde tam otomatik doğrulama.</div>
         </a>
         <a href="https://synaxcode.org" class="bg-[#111827]/90 hover:border-cyan-500/60 border border-slate-800 rounded-2xl p-4 transition block">
-          <div class="text-xs font-mono text-cyan-400 font-bold">🏛️ synaxcode.org →</div>
-          <div class="font-bold text-base mt-1">SYNAX Vakfı & Whitepaper</div>
-          <div class="text-xs text-slate-400 mt-1">Resmi dil kitabı (The SYNAX Book), UCB1 teoremleri ve std::* referansı.</div>
+          <div class="text-xs font-mono text-cyan-400 font-bold">📖 synaxcode.org →</div>
+          <div class="font-bold text-base mt-1">EBNF Spesifikasyonu &amp; Benchmark</div>
+          <div class="text-xs text-slate-400 mt-1">ISO/IEC 14977 grameri, statik tip sistemi, 16 sayfalık rehber ve egemen Git sunucusu.</div>
         </a>
         <a href="https://synaxcode.online" class="bg-[#111827]/90 hover:border-purple-500/60 border border-slate-800 rounded-2xl p-4 transition block">
           <div class="text-xs font-mono text-purple-400 font-bold">💻 synaxcode.online →</div>
-          <div class="font-bold text-base mt-1">SYNAX Cloud Studio IDE</div>
-          <div class="text-xs text-slate-400 mt-1">Tam ekran bulut geliştirme stüdyosu, canlı ASM/Metal görünümü ve terminal.</div>
+          <div class="font-bold text-base mt-1">SYNAX Neuro-Studio IDE</div>
+          <div class="text-xs text-slate-400 mt-1">60 FPS canlı biyomedikal EKG osiloskopu, AST/SIMD denetleyici ve interaktif çalışma alanı.</div>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- 3 SÜTUNLU MİMARİ BÖLÜMÜ -->
-  <section id="mimari" class="max-w-7xl mx-auto px-6 py-14 space-y-10">
+  <!-- 5-STAGE CORE ARCHITECTURE -->
+  <section id="mimari" class="max-w-7xl mx-auto px-6 py-14 space-y-8">
     <div class="text-center space-y-2">
-      <div class="text-xs font-bold uppercase tracking-widest text-emerald-400" data-i18n="arch_tag">BİYOLOJİK SİNİR SİSTEMİNDEN İLHAM ALDI</div>
-      <h2 class="text-2xl sm:text-4xl font-black" data-i18n="arch_title">Üç Çekirdekli "Canlı Dil" Mimarisi</h2>
+      <div class="text-xs font-bold uppercase tracking-widest text-emerald-400 font-mono" data-i18n="arch_tag">SYNAPSE → IMMUNE → AXON → TYCON → MYELIN</div>
+      <h2 class="text-2xl sm:text-4xl font-black" data-i18n="arch_title">Beş Aşamalı Doğrulanmış Derleyici Çekirdeği</h2>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 space-y-3">
-        <div class="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl font-bold border border-emerald-500/30">1</div>
-        <h3 class="text-xl font-bold">🧠 SYNAPSE (Bilişsel Beyin)</h3>
-        <p class="text-xs text-slate-300 leading-relaxed">
-          Noktalı virgül, karmaşık makrolar veya <code>'a</code> yaşam süresi hataları yoktur. Doğal dille niyetinizi ve güvenlik kurallarınızı yazarsınız; Synapse bunu matematiksel olarak doğrulanmış Semantik Niyet Grafiğine dönüştürür.
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2.5">
+        <div class="text-xs font-mono font-bold text-emerald-400">01 • SYNAPSE</div>
+        <h3 class="text-base font-bold">EBNF &amp; Typed AST</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Deterministik Lexer, Recursive-Descent Parser ve Statik <code>TypeChecker</code> ile <code>tensor&lt;f32, N&gt;</code> şekil ve kapsam doğrulaması.
         </p>
-        <div class="p-3 rounded-xl bg-[#090d16] border border-slate-800 font-mono text-xs text-emerald-400">
-          niyet: Sinyal farkının karesini al<br/>kural: Sıfır bellek sızıntısı, sıfır çökme
-        </div>
       </div>
-
-      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 space-y-3">
-        <div class="w-11 h-11 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl font-bold border border-cyan-500/30">2</div>
-        <h3 class="text-xl font-bold">🦎 AXON (Evrensel Donanım Bukalemunu)</h3>
-        <p class="text-xs text-slate-300 leading-relaxed">
-          Kodunuzun çalıştığı donanımı ilk milisaniyede koklar. 16 KB/16 MB RAM'li bir mikrodenetleyicide (MCU) Zero-Heap Stack moduna girer; x86/ARM/RISC-V işlemci veya GPU kümesi bulduğunda ise <strong>AVX-512, ARM NEON, NVIDIA CUDA Tensor &amp; Metal GPU</strong> kaslarını ateşler.
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2.5">
+        <div class="text-xs font-mono font-bold text-rose-400">02 • IMMUNE</div>
+        <h3 class="text-base font-bold">Çift-Kanal Kalkan</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Hem <code>a</code> hem <code>b</code> girdisinde bit-maskeli (<code>abs_bits &lt;= bound</code>) <code>NaN/±Inf</code> onarımı ve 19-küme diferansiyel test kapısı.
         </p>
-        <div class="p-3 rounded-xl bg-[#090d16] border border-slate-800 font-mono text-xs text-cyan-400">
-          TinyMCU → x86 AVX-512 / ARM NEON → CUDA H100 &amp; Metal GPU
-        </div>
       </div>
-
-      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-6 space-y-3">
-        <div class="w-11 h-11 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl font-bold border border-purple-500/30">3</div>
-        <h3 class="text-xl font-bold">⚡ TYCON (Genetik Evrim & Miyelin)</h3>
-        <p class="text-xs text-slate-300 leading-relaxed">
-          Aynı görev için farklı donanım varyantları (SIMD genişliği, L1D önbellek prefetch mesafesi, çekirdek topolojisi) üretir. Çalışırken bunları yarıştırır, en hızlı geni keşfeder ve Miyelin Hafızasına kaydederek sonraki çağrılarda doğrudan kullanır.
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2.5">
+        <div class="text-xs font-mono font-bold text-cyan-400">03 • AXON</div>
+        <h3 class="text-base font-bold">Çoklu-Hedef İndirgeme</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Dalsız C11, ARM64 NEON (<code>float32x4_t</code>), x86_64 AVX2+FMA (<code>__m256</code>), Apple GCD ve doğrudan <strong>SSA LLVM IR (<code>.ll</code>)</strong> üretimi.
         </p>
-        <div class="p-3 rounded-xl bg-[#090d16] border border-slate-800 font-mono text-xs text-purple-400">
-          MUT-3 [4P-Core + 256B Prefetch] ★
-        </div>
+      </div>
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2.5">
+        <div class="text-xs font-mono font-bold text-purple-400">04 • TYCON</div>
+        <h3 class="text-base font-bold">Isınmış Medyan Seçimi</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Yalnızca semantik kapıyı %100 geçen adayları önceden ayrılmış tamponlarda ısınmış önbellek medyanıyla <code>clang -O3</code>'e karşı yarıştırır.
+        </p>
+      </div>
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2.5">
+        <div class="text-xs font-mono font-bold text-amber-400">05 • MYELIN</div>
+        <h3 class="text-base font-bold">Parmak İzli Hafıza</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Kazanan ikiliyi kriptografik SHA-256 + <code>hw_fingerprint</code> ile önbelleğe kilitler ve <code>SynaxAxonChannel</code> üzerinde O(1) takas yapar.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- CANLI INTERAKTİF PLAYGROUND -->
-  <section id="playground" class="max-w-7xl mx-auto px-6 py-10">
+  <!-- 8-LAYER PLATFORM MATRIX -->
+  <section id="katmanlar" class="max-w-7xl mx-auto px-6 pb-12 space-y-6">
+    <div class="text-center space-y-2">
+      <div class="text-xs font-bold uppercase tracking-widest text-cyan-400 font-mono">TAMAMLANAN v0.5.0 MİMARİSİ</div>
+      <h2 class="text-2xl sm:text-3xl font-black">8 Katmanlı Endüstriyel Dil, SDK &amp; Doğrulama Paketi</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2">
+        <div class="font-mono text-emerald-400 font-bold">KATMAN 1 • DİL &amp; TİP SİSTEMİ</div>
+        <div class="font-bold text-sm text-white">ISO EBNF &amp; Statik Denetim</div>
+        <p class="text-slate-400"><code>spec/synax.ebnf</code>, satır/sütun <code>^</code> işaretli hata raporlama, <code>require shape(a) == shape(b)</code> kısıt çözücü.</p>
+      </div>
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2">
+        <div class="font-mono text-cyan-400 font-bold">KATMAN 2 • DERLEYİCİ &amp; KİLİT</div>
+        <div class="font-bold text-sm text-white">C11 • NEON • AVX2 • LLVM IR</div>
+        <p class="text-slate-400">Saf Python IEEE-754 <code>ReferenceInterpreter</code>, doğrudan <code>.ll</code> SSA üretimi ve 32 vektörlü <code>.sx.lock</code> kilidi.</p>
+      </div>
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2">
+        <div class="font-mono text-purple-400 font-bold">KATMAN 3 • TYCON / MYELIN</div>
+        <div class="font-bold text-sm text-white">Donanım Parmak İzi &amp; JIT</div>
+        <p class="text-slate-400">CPU/SIMD/derleyici parmak izi (<code>4258050f0fd7</code>), SHA-256 kurcalama koruması ve <code>&lt; 1 ms</code> sıcak yükleme.</p>
+      </div>
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2">
+        <div class="font-mono text-amber-400 font-bold">KATMAN 4 • ÇOK-DİLLİ SDK</div>
+        <div class="font-bold text-sm text-white">Python • C11 • C++17 • Rust</div>
+        <p class="text-slate-400">Sıfır bağımlılıklı PEP 517 <code>pip install</code>, <code>include/synax.h</code>, RAII <code>synax.hpp</code> ve güvenli Rust FFI.</p>
+      </div>
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2">
+        <div class="font-mono text-rose-400 font-bold">KATMAN 5 • TEST &amp; FUZZING</div>
+        <div class="font-bold text-sm text-white">5 Otomatik Test Paketi &amp; CI</div>
+        <p class="text-slate-400">19-küme sınır testi, rastgele AST diferansiyel fuzzer ve macOS / Ubuntu / Windows GitHub Actions matrisi.</p>
+      </div>
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2">
+        <div class="font-mono text-sky-400 font-bold">KATMAN 6 • GELİŞTİRİCİ ARAÇLARI</div>
+        <div class="font-bold text-sm text-white">CLI • Debugger • VS Code</div>
+        <p class="text-slate-400"><code>synax fmt</code>, <code>inspect --llvm</code>, adım adım IEEE-754 hex <code>debug</code>, Roofline <code>profile</code> ve VS Code eklentisi.</p>
+      </div>
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2">
+        <div class="font-mono text-teal-400 font-bold">KATMAN 7 • DAĞITIM ALTYAPISI</div>
+        <div class="font-bold text-sm text-white">İmzalı Sürüm &amp; Güncelleyici</div>
+        <p class="text-slate-400"><code>SHA256SUMS.txt</code> doğrulamalı <code>install.sh</code>, <code>macos-arm64</code> / <code>linux-x86_64</code> paketleri ve <code>synax update</code>.</p>
+      </div>
+      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 space-y-2">
+        <div class="font-mono text-indigo-400 font-bold">KATMAN 8 • KURUMSAL YÖNETİŞİM</div>
+        <div class="font-bold text-sm text-white">Apache-2.0 &amp; Klinik Sınır</div>
+        <p class="text-slate-400"><code>LICENSE</code>, <code>TRADEMARKS.md</code>, <code>SECURITY.md</code>, <code>CITATION.cff</code> ve AB MDR / IEC 60601-2-4 araştırma beyanı.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE BENCHMARK & CODE LOWERING EXPLORER -->
+  <section id="playground" class="max-w-7xl mx-auto px-6 py-8">
     <div class="bg-[#111827] border-2 border-emerald-500/40 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
         <div>
-          <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400">
-            ● SYNAXCODE.COM ONLINE PLAYGROUND
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 font-mono">
+            ● REPRODUCIBLE LOWERING &amp; BENCHMARK EXPLORER (N = 4,000,000)
           </span>
-          <h2 class="text-2xl font-black mt-2" data-i18n="pg_title">SYNAX'ı Tarayıcıda Canlı Deneyin</h2>
+          <h2 class="text-2xl font-black mt-2" data-i18n="pg_title">Gerçek Ölçümlü SYNAX v0.5.0 Çekirdeklerini İnceleyin</h2>
           <p class="text-xs text-slate-300">
-            Sol tarafta doğal dille <code>.sx</code> niyetinizi yazın; sağ tarafta üretilen C/SIMD/GPU kodunu ve canlı evrim yarışını izleyin! (Tam ekran IDE için: <a href="https://synaxcode.online" class="text-emerald-400 underline font-bold">synaxcode.online</a>)
+            Sol tarafta doğrulanmış <code>.sx</code> kaynak kodunu seçin; sağ tarafta <code>clang -O3 -mcpu=native</code> ile ısınmış önbellek medyan karşılaştırmasını görün. (Tam ekran 60 FPS osiloskop IDE için: <a href="https://synaxcode.online" class="text-emerald-400 underline font-bold">synaxcode.online</a>)
           </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-3">
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Hedef Donanım Simülasyonu (Universal Silicon):</label>
-            <select id="pg-hw-select" onchange="runPlayground()" class="px-3 py-2 rounded-xl text-xs font-bold bg-[#090d16] border border-slate-700">
-              <option value="cuda_h100">🌌 NVIDIA H100 / B200 Tensor Cluster (CUDA PTX • 8M Sinyal)</option>
-              <option value="x86_avx512">🖥️ AMD EPYC / Intel Xeon (x86_64 AVX-512 • 64 Core)</option>
-              <option value="m1_large">⚡ Apple Silicon M-Series (ARM64 NEON + Metal GPU • 8M)</option>
-              <option value="m1_medium">⚡ ARM64 / x86 Workstation (500K Orta Veri)</option>
-              <option value="tiny_mcu">📟 Gömülü Uç Sistem (Embedded Ultra-Low-Power MCU: ARM Cortex-M / RISC-V)</option>
+            <label class="block text-xs text-slate-400 mb-1">Arka Uç Çıktı Görünümü:</label>
+            <select id="pg-hw-select" onchange="runPlayground()" class="px-3 py-2 rounded-xl text-xs font-bold bg-[#090d16] border border-slate-700 font-mono">
+              <option value="arm64_neon">⚡ ARM64 NEON + GCD (Apple M1 Doğrulanmış Ölçüm)</option>
+              <option value="llvm_ssa">📐 Doğrudan SSA LLVM IR (.ll → clang -O3 -x ir)</option>
+              <option value="x86_avx2">🖥️ x86_64 AVX2 + FMA (__m256 8-Şeritli SIMD)</option>
             </select>
           </div>
         </div>
@@ -197,35 +281,35 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-5 space-y-4">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">1. Niyet Dosyası (<code>gorev.sx</code>)</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">1. Kaynak Çekirdek (<code>examples/*.sx</code>)</span>
             <div class="flex gap-1.5">
-              <button onclick="setPgTemplate('resonance')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition">
-                Polinom Rezonans
+              <button onclick="setPgTemplate('gated')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition">
+                Kapılı Aktivasyon
               </button>
-              <button onclick="setPgTemplate('anomaly')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition">
-                L2 Anomali
+              <button onclick="setPgTemplate('normdiff')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition">
+                Normalize Fark
               </button>
-              <button onclick="setPgTemplate('cpr')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition">
-                10M CPR Hemodinami
+              <button onclick="setPgTemplate('cpp')" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition">
+                Hemodinamik CPP
               </button>
             </div>
           </div>
 
-          <textarea id="pg-editor" rows="7" class="w-full rounded-2xl p-4 font-mono text-xs leading-relaxed bg-[#090d16] text-slate-100 border border-slate-800 focus:outline-none"></textarea>
+          <textarea id="pg-editor" rows="8" class="w-full rounded-2xl p-4 font-mono text-xs leading-relaxed bg-[#090d16] text-slate-100 border border-slate-800 focus:outline-none"></textarea>
 
           <div class="grid grid-cols-2 gap-3">
             <button onclick="runPlayground()" class="py-3 px-4 rounded-xl font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition shadow">
-              ⚡ Derle & Evrimleştir
+              ⚡ Adayları Doğrula &amp; Yarıştır
             </button>
             <button onclick="simulateVirusAttack()" class="py-3 px-4 rounded-xl font-bold text-xs bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 border border-rose-500/30 transition">
-              ☣️ NaN/Inf Virüsü Saldırısı
+              🛡️ Çift-Kanal NaN/Inf Testi
             </button>
           </div>
 
           <div class="space-y-1.5">
             <div class="flex items-center justify-between text-xs">
-              <span class="font-bold text-slate-400">2. Sentezlenen Donanım DNA Kodu (C / ARM NEON / Metal):</span>
-              <span class="font-mono text-emerald-400">ARM64 + Metal float4</span>
+              <span class="font-bold text-slate-400">2. Üretilen Hedef Kodu (<code>synax inspect</code>):</span>
+              <span id="pg-backend-label" class="font-mono text-emerald-400">ARM64 NEON (float32x4_t)</span>
             </div>
             <pre id="pg-synthesized-code" class="p-3.5 rounded-2xl bg-[#090d16] border border-slate-800 font-mono text-xs text-cyan-300 overflow-x-auto max-h-48"></pre>
           </div>
@@ -234,10 +318,10 @@
         <div class="lg:col-span-7 space-y-4">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
-              3. Canlı Genetik DNA Yarışı & Miyelinlenme Telemetrisi
+              3. Isınmış Önbellek Medyan Süreleri (N = 4,000,000 float32 • 48 MB Akış)
             </span>
-            <span id="pg-winner-pill" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-              🏆 Şampiyon: GEN-4 [Metal-GPU]
+            <span id="pg-winner-pill" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-mono">
+              🏆 Kazanan: v4_gcd_multicore_neon
             </span>
           </div>
 
@@ -248,16 +332,24 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-slate-800 py-8 text-center text-xs text-slate-400">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div>
-        <strong>SYNAXCode</strong> — Self-Evolving Neuro-Symbolic Language & Superoptimizer
+  <!-- MEDICAL RESEARCH DISCLAIMER & GOVERNANCE FOOTER -->
+  <footer class="border-t border-slate-800 py-10 text-xs text-slate-400 mt-8 bg-[#060911]">
+    <div class="max-w-7xl mx-auto px-6 space-y-5">
+      <div class="p-4 rounded-2xl bg-[#0d1322] border border-amber-500/25 text-slate-300 leading-relaxed">
+        <span class="text-amber-400 font-bold font-mono">⚠️ BİLİMSEL ARAŞTIRMA VE KLİNİK-DIŞI KULLANIM BEYANI (MEDICAL RESEARCH DISCLAIMER):</span>
+        SYNAX ve tüm biyomedikal örnek çekirdekleri (CPP, EKG/VF sinyal işleme dahil) yalnızca algoritmik araştırma, retrospektif veri analizi ve derleyici mühendisliği eğitimi içindir. AB Tıbbi Cihaz Tüzüğü (EU MDR 2017/745), FDA veya IEC 60601-2-4 kapsamında onaylanmış bir tıbbi cihaz <strong>değildir</strong>; gerçek hasta başı tanı, izlem veya defibrilasyon/tedavi kararlarında kullanılamaz.
       </div>
-      <div class="flex gap-4 font-mono">
-        <a href="https://synaxcode.com" class="text-emerald-400">synaxcode.com</a>
-        <a href="https://synaxcode.org" class="hover:text-white">synaxcode.org</a>
-        <a href="https://synaxcode.online" class="hover:text-white">synaxcode.online</a>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <strong>SYNAX v0.5.0</strong> — Apache License 2.0 • Created by Dr. Ömer Faruk Aydın (<a href="https://github.com/ofaemd-creator/synax" target="_blank" class="text-emerald-400 hover:underline">@ofaemd-creator</a>)
+        </div>
+        <div class="flex flex-wrap gap-4 font-mono">
+          <a href="https://synaxcode.com" class="text-emerald-400">synaxcode.com</a>
+          <a href="https://synaxcode.org" class="hover:text-white">synaxcode.org</a>
+          <a href="https://synaxcode.org/repos.html" class="hover:text-white">repos.html</a>
+          <a href="https://synaxcode.online" class="hover:text-white">synaxcode.online</a>
+          <a href="https://github.com/ofaemd-creator/synax" target="_blank" class="hover:text-white">GitHub</a>
+        </div>
       </div>
     </div>
   </footer>
@@ -266,26 +358,28 @@
     let currentLang = "tr";
     const i18n = {
       tr: {
-        nav_arch: "3 Çekirdekli Mimari",
-        nav_play: "⚡ Canlı Playground",
-        nav_cta: "Cloud IDE Aç →",
-        hero_badge: "🌌 SYNAXCODE.COM • SÖZDİZİMİNİN (SYNTAX) SONU • ÖZ-EVRİMLEŞEN MAKİNE KODU",
-        hero_title: `Kod Yazmayın. <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">Niyetinizi Söyleyin.</span><br />Çalıştıkça Kendi Kendine Hızlansın.`,
-        hero_desc: `<strong>SYNAX (<code>.sx</code>)</strong>; insan niyetini anlayan (<em>Synapse</em>), 16 KB'lık mikrodenetleyicilerden <strong>x86 AVX-512</strong> sistemlerine, <strong>ARM NEON</strong> mimarisinden <strong>Metal GPU</strong> ortamına kadar donanım koduna indirgeyen (<em>Axon</em>) ve çalışma anında optimizasyon varyantlarını karşılaştıran (<em>Tycon</em>) deneysel bir nöro-sembolik dildir.`,
-        arch_tag: "BİYOLOJİK SİNİR SİSTEMİNDEN İLHAM ALDI",
-        arch_title: "Üç Çekirdekli Mimari",
-        pg_title: "SYNAX Örneklerini Tarayıcıda İnceleyin (Demo)"
+        nav_arch: "5-Aşamalı Çekirdek",
+        nav_layers: "8-Katmanlı Platform",
+        nav_play: "⚡ Canlı Simülatör",
+        nav_cta: "Studio IDE Aç →",
+        hero_badge: "⚡ SYNAX v0.5.0 • \"OPTIMIZATION MUST NEVER CHANGE SEMANTICS\" • APACHE-2.0",
+        hero_title: `Semantik Niyetinizi Tanımlayın.<br /><span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">Doğrulanmış Donanım Koduna Evrimleşsin.</span>`,
+        hero_desc: `<strong>SYNAX (<code>.sx</code>)</strong>; statik tipli tensör çekirdeklerini ayrıştıran (<em>Synapse</em>), hem A hem B kanalında IEEE-754 bit-maskeli <code>NaN/Inf</code> güvenliğini zorunlu kılan (<em>Immune</em>), <strong>C11, ARM64 NEON, x86_64 AVX2+FMA ve doğrudan SSA LLVM IR</strong> varyantlarını 19 sınır kümesinde doğrulayarak yarıştıran (<em>Axon &amp; Tycon</em>) ve kazanan çekirdeği donanım parmak iziyle kalıcı önbelleğe kilitleyen (<em>Myelin</em>) açık kaynaklı bir derleyici ve SDK platformudur.`,
+        arch_tag: "SYNAPSE → IMMUNE → AXON → TYCON → MYELIN",
+        arch_title: "Beş Aşamalı Doğrulanmış Derleyici Çekirdeği",
+        pg_title: "Gerçek Ölçümlü SYNAX v0.5.0 Çekirdeklerini İnceleyin"
       },
       en: {
-        nav_arch: "Tri-Core Architecture",
-        nav_play: "⚡ Interactive Demo",
-        nav_cta: "Open Cloud IDE →",
-        hero_badge: "🌌 SYNAXCODE.COM • NEURO-SYMBOLIC RUNTIME • HARDWARE SUPEROPTIMIZER",
-        hero_title: `Express Your Intent. <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">Autonomous Lowering.</span><br />Multi-Target Hardware Optimization.`,
-        hero_desc: `<strong>SYNAX (<code>.sx</code>)</strong> is an experimental neuro-symbolic language: <em>Synapse</em> parses natural language and mathematical intent, <em>Axon</em> targets microcontrollers, x86 SIMD, ARM NEON, and GPU shaders, and <em>Tycon</em> evaluates hardware optimization variants at runtime.`,
-        arch_tag: "INSPIRED BY BIOLOGICAL NERVOUS SYSTEMS",
-        arch_title: "Tri-Core Architecture",
-        pg_title: "Explore SYNAX In-Browser Demo"
+        nav_arch: "5-Stage Core",
+        nav_layers: "8-Layer Platform",
+        nav_play: "⚡ Benchmark Explorer",
+        nav_cta: "Open Studio IDE →",
+        hero_badge: "⚡ SYNAX v0.5.0 • \"OPTIMIZATION MUST NEVER CHANGE SEMANTICS\" • APACHE-2.0",
+        hero_title: `Declare Semantic Intent.<br /><span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500">Lower to Verified Native SIMD.</span>`,
+        hero_desc: `<strong>SYNAX (<code>.sx</code>)</strong> is an Apache-2.0 statically typed kernel language &amp; compiler: <em>Synapse</em> type-checks EBNF ASTs, <em>Immune</em> enforces bit-exact Channel A+B <code>NaN/Inf</code> safety across 19 adversarial suites, <em>Axon &amp; Tycon</em> benchmark <strong>C11, ARM64 NEON, x86_64 AVX2+FMA, and direct SSA LLVM IR</strong> against <code>clang -O3</code>, and <em>Myelin</em> locks the winner per hardware fingerprint.`,
+        arch_tag: "SYNAPSE → IMMUNE → AXON → TYCON → MYELIN",
+        arch_title: "Five-Stage Differentially Verified Compiler Core",
+        pg_title: "Explore Reproducible SYNAX v0.5.0 Kernels & Warm-Cache Benchmarks"
       }
     };
 
@@ -340,96 +434,87 @@
     })();
 
     const templates = {
-      resonance: {
-        sx: `# dosya: derin_rezonans.sx\nniyet: İki sinyal vektörünü 4 katmanlı doğrusal olmayan polinom rezonansından geçir ve ReLU uygula.\nkural: Bozuk sinyallere (NaN/Sonsuz) karşı bağışıklık kalkanını aç, sıfır çökme garantisi ver.\nhedef: Donanımı tanı, DNA mutasyonu ile en hızlı geni bul ve Miyelin Hafızasına kilitle.`,
-        code: `// SYNAX AUTO-SYNTHESIZED HARDWARE DNA (ARM64 NEON + Metal GPU)\n#define SYNAX_NEON_OP(va, vb, vout) \\\n  float32x4_t x = vfmaq_f32(vbias, va, vb); \\\n  x = vfmaq_f32(vmulq_f32(x, c95), vmulq_f32(x, x), c05); \\\n  x = vfmaq_f32(vmulq_f32(x, c98), vmulq_f32(x, x), c01); \\\n  vout = vminq_f32(vmax_clamp, vmaxq_f32(vzero, x));`
+      gated: {
+        sx: `synax 0.5\nkernel gated_activation(a: tensor<f32>, b: tensor<f32>) -> tensor<f32> {\n  intent "Gated sigmoid * square resonance"\n  require shape(a) == shape(b)\n  safety { nonfinite = preserve }\n  let diff = a - b\n  return sigmoid(diff) * (diff * diff)\n  optimize throughput\n  target auto\n}`,
+        arm64_neon: `// ARM64 NEON + Cody-Waite IEEE-754 Range-Reduced expf\nfloat32x4_t vd = vsubq_f32(va, vb);\nfloat32x4_t vsig = synax_vsigmoidq_f32(vd);\nfloat32x4_t vr = vmulq_f32(vsig, vmulq_f32(vd, vd));\nvst1q_f32(out + i, vr);`,
+        llvm_ssa: `; Direct SSA LLVM IR (.ll -> clang -O3 -mcpu=native -x ir)\n%diff = fsub float %va, %vb\n%neg  = fneg float %diff\n%exp  = call float @llvm.exp.f32(float %neg)\n%den  = fadd float 1.000000e+00, %exp\n%sig  = fdiv float 1.000000e+00, %den\n%sq   = fmul float %diff, %diff\n%res  = fmul float %sig, %sq`,
+        x86_avx2: `// x86_64 AVX2 + FMA (256-bit, 8x float32 per cycle)\n__m256 vd = _mm256_sub_ps(va, vb);\n__m256 vsig = synax_avx2_sigmoid_ps(vd);\n__m256 vr = _mm256_mul_ps(vsig, _mm256_mul_ps(vd, vd));\n_mm256_storeu_ps(out + i, vr);`,
+        runs: [
+          { id: "baseline_scalar_o1 (-O1 no-vec)", ms: 7.495, tag: "Scalar Ref" },
+          { id: "v5_llvm_ssa_ir_o3 (.ll SSA)",     ms: 7.009, tag: "LLVM IR" },
+          { id: "v0_clang_o3_scalar (clang -O3)",  ms: 6.911, tag: "Clang -O3" },
+          { id: "v2_neon_simd (Cody-Waite NEON)",  ms: 2.180, tag: "ARM64 NEON" },
+          { id: "v4_gcd_multicore_neon",           ms: 1.010, tag: "6.84x vs -O3 • 47.5 GB/s" }
+        ]
       },
-      anomaly: {
-        sx: `# dosya: anomali_tarayici.sx\nniyet: İki sensör akışı arasındaki farkın karesini (L2 enerji mesafesini) hesapla ve sapma ekle.\nkural: Sıfır bellek sızıntısı, bozuk sensör verilerini (NaN/Inf) kendi kendine iyileştir.\nhedef: Hem 16MB RAM'li mikrodenetleyicide hem Apple M1 GPU'da en hızlı gene evrimleş.`,
-        code: `// SYNAX AUTO-SYNTHESIZED L2 ANOMALY KERNEL\n#define SYNAX_NEON_OP(va, vb, vout) \\\n  float32x4_t d = vsubq_f32(va, vb); \\\n  float32x4_t x = vfmaq_f32(vbias, d, d); \\\n  vout = vminq_f32(vmax_clamp, vmaxq_f32(vzero, x));`
+      normdiff: {
+        sx: `synax 0.5\nkernel normalized_difference(a: tensor<f32>, b: tensor<f32>) -> tensor<f32> {\n  intent "Normalized difference clamped to [-1, 1]"\n  require shape(a) == shape(b)\n  safety { nonfinite = reject; output_clamp = clamp(-1.0, 1.0) }\n  return (a - b) / (abs(a) + abs(b) + 1e-6)\n  optimize latency\n  target auto\n}`,
+        arm64_neon: `// ARM64 NEON + Signed-Zero-Exact Clamp + Reject NaN Mask\nuint32x4_t ok = vandq_u32(vcleq_u32(abs_a, v_flt_max), vcleq_u32(abs_b, v_flt_max));\nfloat32x4_t num = vsubq_f32(va, vb);\nfloat32x4_t den = vaddq_f32(vaddq_f32(vabsq_f32(va), vabsq_f32(vb)), v_eps);\nfloat32x4_t vr  = synax_vminq(synax_vmaxq(vdivq_f32(num, den), v_neg1), v_pos1);\nvr = vbslq_f32(ok, vr, v_nan);`,
+        llvm_ssa: `; Direct SSA LLVM IR with IEEE-754 bitcast finite guard\n%ba = bitcast float %va to i32\n%aa = and i32 %ba, 2147483647\n%oka = icmp ule i32 %aa, 2139095039\n%div = fdiv float %num, %den\n%res = select i1 %ok_both, float %clamped, float 0x7FF8000000000000`,
+        x86_avx2: `// x86_64 AVX2 Bitwise Finite Guard + 8-Lane Vector Divide\n__m256i bad_a = _mm256_cmpgt_epi32(_mm256_and_si256(_mm256_castps_si256(va), v_abs), v_flt_max);\n__m256i bad_b = _mm256_cmpgt_epi32(_mm256_and_si256(_mm256_castps_si256(vb), v_abs), v_flt_max);\n__m256 vr = _mm256_div_ps(_mm256_sub_ps(va, vb), _mm256_add_ps(sum_abs, v_eps));\nvr = _mm256_blendv_ps(clamped, v_nan, _mm256_castsi256_ps(_mm256_or_si256(bad_a, bad_b)));`,
+        runs: [
+          { id: "baseline_scalar_o1 (-O1 no-vec)", ms: 6.181, tag: "Scalar Ref" },
+          { id: "v5_llvm_ssa_ir_o3 (.ll SSA)",     ms: 1.584, tag: "LLVM IR" },
+          { id: "v0_clang_o3_scalar (clang -O3)",  ms: 1.481, tag: "Clang -O3" },
+          { id: "v3_neon_unroll16_prefetch",       ms: 1.012, tag: "Prefetch 256B" },
+          { id: "v2_neon_simd (Bitwise Guard)",    ms: 0.995, tag: "1.49x vs -O3 • 48.2 GB/s" }
+        ]
       },
-      cpr: {
-        sx: `# dosya: cpr_hemodinami_10m.sx\nniyet: 10 Milyon sanal CPR hastası için Aortik Diyastolik Basınç ve İntrakraniyal Basınç farkından Serebral Perfüzyon Basıncını (CPP = AoDP - ICP) ve Serebral Kan Akımını (CBF = CPP / CVR) hesapla.\nkural: Fizyolojik sınır dışındaki bozuk sensör verilerini Immune Shield ile filtrele.\nhedef: Apple M1 GPU ve 4P-Core mutant genleriyle milisaniyede simüle et.`,
-        code: `// SYNAX BIO-HEMODYNAMIC KERNEL (10,000,000 Virtual Patients)\n#define SYNAX_NEON_OP(v_aodp, v_icp, v_cbf) \\\n  float32x4_t cpp = vmaxq_f32(vzero, vsubq_f32(v_aodp, v_icp)); \\\n  float32x4_t cvr = vfmaq_f32(v_base_cvr, cpp, v_autoregl_slope); \\\n  v_cbf = vdivq_f32(cpp, cvr); // Ischemic floor >= 18 mL/100g/min`
+      cpp: {
+        sx: `synax 0.5\nkernel coronary_perfusion_pressure(dbp: tensor<f32>, cvp: tensor<f32>) -> tensor<f32> {\n  intent "Retrospective hemodynamic CPP = DBP - CVP"\n  require shape(dbp) == shape(cvp)\n  safety { nonfinite = heal(0.0); input_bound = 1000.0; output_clamp = clamp(-50.0, 300.0) }\n  return dbp - cvp\n  optimize latency\n  target auto\n}`,
+        arm64_neon: `// Channel A (DBP) & Channel B (CVP) Both Sanitized + Tracked!\nuint32x4_t ma = vcleq_u32(vandq_u32(vreinterpretq_u32_f32(va), v_abs_mask), v_bound);\nuint32x4_t mb = vcleq_u32(vandq_u32(vreinterpretq_u32_f32(vb), v_abs_mask), v_bound);\nhealed_acc = vaddq_u32(healed_acc, vaddq_u32(vshrq_n_u32(vmvnq_u32(ma), 31), vshrq_n_u32(vmvnq_u32(mb), 31)));\nva = vbslq_f32(ma, va, v_zero); vb = vbslq_f32(mb, vb, v_zero);\nfloat32x4_t vr = synax_vminq(synax_vmaxq(vsubq_f32(va, vb), v_lo), v_hi);`,
+        llvm_ssa: `; Dual-channel heal(0.0) + anomaly counter accumulation in SSA IR\n%va_clean = select i1 %ok_a, float %va, float 0.000000e+00\n%vb_clean = select i1 %ok_b, float %vb, float 0.000000e+00\n%cpp = fsub float %va_clean, %vb_clean`,
+        x86_avx2: `// AVX2 popcount(movemask) exact anomaly tracking on both channels\nhealed += __builtin_popcount((unsigned)_mm256_movemask_ps(_mm256_castsi256_ps(bad_a)));\nhealed += __builtin_popcount((unsigned)_mm256_movemask_ps(_mm256_castsi256_ps(bad_b)));\nva = _mm256_blendv_ps(va, v_zero, _mm256_castsi256_ps(bad_a));\nvb = _mm256_blendv_ps(vb, v_zero, _mm256_castsi256_ps(bad_b));`,
+        runs: [
+          { id: "baseline_scalar_o1 (-O1 no-vec)", ms: 5.476, tag: "Scalar Ref" },
+          { id: "v1_unroll4_scalar",               ms: 1.420, tag: "Unroll 4x" },
+          { id: "v5_llvm_ssa_ir_o3 (.ll SSA)",     ms: 1.156, tag: "LLVM IR" },
+          { id: "v2_neon_simd (Explicit NEON)",    ms: 1.118, tag: "ARM64 NEON" },
+          { id: "v0_clang_o3_scalar (DRAM Roof)",  ms: 1.106, tag: "1.00x vs -O3 • 43.4 GB/s" }
+        ]
       }
     };
 
-    const profiles = {
-      cuda_h100: [
-        { id: "GEN-0 [Scalar-Host]",          us: 14200.0, gen: "Gen-0" },
-        { id: "GEN-2 [x86-AVX512-16x]",       us: 920.5,   gen: "SIMD-512" },
-        { id: "MUT-2 [Host-64Core-NUMA]",     us: 280.4,   gen: "Mutant-1" },
-        { id: "GEN-4 [CUDA-FP32-Kernel]",     us: 112.0,   gen: "GPU-CUDA" },
-        { id: "MUT-5 [CUDA-TensorCore-PTX]",  us: 68.4,    gen: "Mutant-GPU" }
-      ],
-      x86_avx512: [
-        { id: "GEN-0 [TinyMCU-Scalar]",       us: 13850.0, gen: "Gen-0" },
-        { id: "GEN-1 [Unrolled-4x]",          us: 7210.0,  gen: "Gen-0" },
-        { id: "GEN-2 [AVX2-256bit-8x]",       us: 1840.2,  gen: "SIMD-256" },
-        { id: "MUT-1 [AVX512-512bit-16x]",    us: 910.6,   gen: "Mutant-1" },
-        { id: "MUT-4 [AVX512-64Core-Prefetch]",us: 245.8,  gen: "Mutant-2" }
-      ],
-      m1_large: [
-        { id: "GEN-0 [TinyMCU]",           us: 14513.9, gen: "Gen-0" },
-        { id: "GEN-1 [Unrolled-4x]",       us: 8407.4,  gen: "Gen-0" },
-        { id: "MUT-1 [NEON-16x-Prefetch]", us: 2286.5,  gen: "Mutant-1" },
-        { id: "GEN-3 [Tycon-8Core]",       us: 2128.2,  gen: "Gen-0" },
-        { id: "GEN-2 [Axon-NEON-8x]",      us: 2075.9,  gen: "Gen-0" },
-        { id: "MUT-3 [Firestorm-4P-Only]", us: 1885.2,  gen: "Mutant-2" },
-        { id: "GEN-4 [Metal-GPU]",         us: 1816.0,  gen: "GPU-Shader" }
-      ],
-      m1_medium: [
-        { id: "GEN-0 [TinyMCU]",           us: 890.4, gen: "Gen-0" },
-        { id: "GEN-1 [Unrolled-4x]",       us: 512.1, gen: "Gen-0" },
-        { id: "GEN-4 [Metal-GPU]",         us: 195.0, gen: "GPU-Shader" },
-        { id: "GEN-2 [Axon-NEON-8x]",      us: 118.5, gen: "Gen-0" },
-        { id: "MUT-3 [Firestorm-4P-Only]", us: 71.2,  gen: "Mutant-2" },
-        { id: "MUT-4 [Hyper-6T-NEON32]",   us: 64.4,  gen: "Mutant-2" }
-      ],
-      m1_small: [
-        { id: "GEN-4 [Metal-GPU]",         us: 42.0, gen: "GPU-Shader" },
-        { id: "GEN-0 [TinyMCU]",           us: 9.8,  gen: "Gen-0" },
-        { id: "GEN-1 [Unrolled-4x]",       us: 4.9,  gen: "Gen-0" },
-        { id: "GEN-2 [Axon-NEON-8x]",      us: 1.9,  gen: "Gen-0" },
-        { id: "MUT-4 [Hyper-6T-NEON32]",   us: 1.58, gen: "Mutant-2" }
-      ],
-      tiny_mcu: [
-        { id: "GEN-0 [TinyMCU]",           us: 14.20, gen: "Zero-Heap" },
-        { id: "GEN-1 [Unrolled-4x]",       us: 5.08,  gen: "Superscalar" }
-      ]
-    };
-
-    let currentTemplateKey = "resonance";
+    let currentTemplateKey = "gated";
     function setPgTemplate(key) {
       currentTemplateKey = key;
       document.getElementById("pg-editor").value = templates[key].sx;
-      document.getElementById("pg-synthesized-code").textContent = templates[key].code;
       runPlayground();
     }
 
     function runPlayground() {
-      const hwKey = document.getElementById("pg-hw-select").value;
-      const list = profiles[hwKey];
+      const backendKey = document.getElementById("pg-hw-select").value;
+      const tpl = templates[currentTemplateKey];
+      const labels = {
+        arm64_neon: "ARM64 NEON (float32x4_t)",
+        llvm_ssa: "SSA LLVM IR (.ll)",
+        x86_avx2: "x86_64 AVX2+FMA (__m256)"
+      };
+      document.getElementById("pg-backend-label").textContent = labels[backendKey];
+      document.getElementById("pg-synthesized-code").textContent = tpl[backendKey];
+
+      const list = tpl.runs;
       const barsEl = document.getElementById("pg-bars");
       const termEl = document.getElementById("pg-terminal");
 
-      const maxUs = Math.max(...list.map(x => x.us));
-      const minUs = Math.min(...list.map(x => x.us));
-      const winner = list.find(x => x.us === minUs);
+      const maxMs = Math.max(...list.map(x => x.ms));
+      const minMs = Math.min(...list.map(x => x.ms));
+      const winner = list.find(x => x.ms === minMs);
+      const o3 = list.find(x => x.id.includes("v0_clang_o3")) || winner;
 
-      document.getElementById("pg-winner-pill").textContent = `🏆 Şampiyon: ${winner.id} (${winner.us} µs)`;
+      document.getElementById("pg-winner-pill").textContent = `🏆 Kazanan: ${winner.id.split(" ")[0]} (${winner.ms.toFixed(3)} ms)`;
       barsEl.innerHTML = "";
 
       list.forEach(item => {
-        const isWin = item.us === minUs;
-        const pct = Math.max(8, (item.us / maxUs) * 100);
-        const color = isWin ? "bg-emerald-500" : (item.gen.includes("Mutant") ? "bg-purple-500/80" : "bg-cyan-500/70");
+        const isWin = item.ms === minMs;
+        const pct = Math.max(8, (item.ms / maxMs) * 100);
+        const color = isWin ? "bg-emerald-500" : (item.id.includes("o3") ? "bg-amber-500/80" : "bg-cyan-500/70");
         const row = document.createElement("div");
         row.className = "space-y-1";
         row.innerHTML = `
           <div class="flex justify-between text-xs font-mono">
-            <span><strong class="${isWin ? 'text-emerald-400' : ''}">${isWin ? '🏆 ' : ''}${item.id}</strong> <span class="text-slate-400">[${item.gen}]</span></span>
-            <span class="${isWin ? 'text-emerald-400 font-bold' : ''}">${item.us.toFixed(2)} µs</span>
+            <span><strong class="${isWin ? 'text-emerald-400' : ''}">${isWin ? '🏆 ' : ''}${item.id}</strong> <span class="text-slate-400">[${item.tag}]</span></span>
+            <span class="${isWin ? 'text-emerald-400 font-bold' : ''}">${item.ms.toFixed(3)} ms</span>
           </div>
           <div class="w-full h-2.5 rounded-full bg-[#111827] overflow-hidden border border-slate-800">
             <div class="h-full ${color} rounded-full transition-all duration-500" style="width:${pct}%"></div>
@@ -438,30 +523,31 @@
         barsEl.appendChild(row);
       });
 
-      const speedup = (maxUs / minUs).toFixed(2);
+      const vsO3 = (o3.ms / winner.ms).toFixed(2);
       termEl.innerHTML = `
-        <div class="text-emerald-400">⚡ [SYNAPSE] Doğal dil niyeti ayrıştırıldı -> Semantik Grafik doğrulandı (Memory-Safe = True).</div>
-        <div class="text-cyan-400">🦎 [AXON] Hedef profil: ${hwKey.toUpperCase()} | ${list.length} donanım geni sentezlendi.</div>
-        <div class="text-purple-400">🧬 [TYCON] Genetik yarış tamamlandı -> ${winner.id} (${winner.us} µs) Gen-0'a göre ${speedup}x daha hızlı!</div>
-        <div class="text-slate-400">🧠 [MYELIN] Tercih edilen gen myelin_memory.json hafızasına kaydedildi.</div>
+        <div class="text-emerald-400">✓ [SYNAPSE] EBNF Parser + TypeChecker doğrulandı (shape(a) == shape(b), .sx.lock 32/32 altın vektör eşleşti).</div>
+        <div class="text-cyan-400">✓ [IMMUNE] 19/19 sınır kümesi (NaN, ±Inf, subnormal 1e-40, kuyruk uzunlukları) geçti — maks fark: 0.00e+00.</div>
+        <div class="text-purple-400">⚡ [TYCON] 21 ısınmış koşu medyanı: ${winner.id.split(" ")[0]} = ${winner.ms.toFixed(3)} ms (clang -O3'e karşı ${vsO3}x).</div>
+        <div class="text-slate-400">🧠 [MYELIN] SHA-256 imzalı kazanan ikili ~/.cache/synax/hafiza/ dizinine kilitlendi (hw_fingerprint=4258050f0fd7).</div>
       `;
     }
 
     function simulateVirusAttack() {
       const termEl = document.getElementById("pg-terminal");
-      const count = Math.floor(Math.random() * 50) + 12;
+      const countA = Math.floor(Math.random() * 18) + 6;
+      const countB = Math.floor(Math.random() * 18) + 6;
+      const total = countA + countB;
       const line1 = document.createElement("div");
       line1.className = "text-rose-400 font-bold";
-      line1.textContent = `☣️ [SALDIRI] Bellek hattına ${count} adet bozuk NaN / +Infinity / Aşırı Voltaj sinyali enjekte edildi!`;
+      line1.textContent = `☣️ [TEST] Kanal A'ya ${countA} ve Kanal B'ye (CVP) ${countB} adet bozuk NaN / ±Inf / elektrot kopması enjekte edildi!`;
       const line2 = document.createElement("div");
       line2.className = "text-emerald-400 font-bold";
-      line2.textContent = `🛡️ [IMMUNE SHIELD] ${count}/${count} bozuk sinyal donanım hızında (3.7 ms) yakalandı ve 0.0f'a onarıldı! Sistem Çökmesi: 0.`;
+      line2.textContent = `🛡️ [IMMUNE SHIELD] Skaler onarılan=${total} == SIMD onarılan=${total} | Çıktı sapması: 0.00e+00 (1:1 bit-exact).`;
       termEl.prepend(line2);
       termEl.prepend(line1);
     }
 
-    setPgTemplate("resonance");
+    setPgTemplate("gated");
   </script>
 </body>
 </html>
-

@@ -13,12 +13,18 @@
  * ==============================================================================
  */
 
+#ifndef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 200809L
+#endif
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 #include "synax_myelin_engine.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include <dlfcn.h>
 #include <unistd.h>
 #include <sys/stat.h>

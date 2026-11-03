@@ -171,8 +171,8 @@ class TestSynaxFrontendAndSDK(unittest.TestCase):
             ok, msg = verify_lockfile(sx_f, lock_f)
             self.assertTrue(ok, msg)
 
-            # Verify against compiled native SIMD kernel if clang is available
-            if shutil.which("clang"):
+            # Verify against compiled native SIMD kernel on POSIX hosts with clang
+            if os.name == "posix" and shutil.which("clang"):
                 from synax_verifier import LoadedKernel
                 from synaxc import SynaxCompiler
 
@@ -226,6 +226,10 @@ class TestSynaxFrontendAndSDK(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     print("=" * 72)
     print("🧬 SYNAX LANGUAGE SPEC, TYPED AST, LOCKFILE & SDK SUITE")
     print("=" * 72)

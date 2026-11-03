@@ -46,16 +46,16 @@ static inline __m256 synax_avx2_cbe_ps(__m256 x) {
     return _mm256_mul_ps(_mm256_mul_ps(x, x), x);
 }
 
-/* IEEE-754 NaN-propagating min/max/relu in AVX2 (_CMP_UNORD_Q preserves NaN on either operand) */
+/* IEEE-754 NaN-propagating & signed-zero-exact min/max/relu in AVX2 */
 static inline __m256 synax_avx2_min_ps(__m256 x, __m256 y) {
     __m256 unord = _mm256_cmp_ps(x, y, _CMP_UNORD_Q);
-    __m256 m = _mm256_min_ps(x, y);
+    __m256 m = _mm256_or_ps(_mm256_min_ps(x, y), _mm256_min_ps(y, x));
     return _mm256_blendv_ps(m, _mm256_set1_ps(NAN), unord);
 }
 
 static inline __m256 synax_avx2_max_ps(__m256 x, __m256 y) {
     __m256 unord = _mm256_cmp_ps(x, y, _CMP_UNORD_Q);
-    __m256 m = _mm256_max_ps(x, y);
+    __m256 m = _mm256_and_ps(_mm256_max_ps(x, y), _mm256_max_ps(y, x));
     return _mm256_blendv_ps(m, _mm256_set1_ps(NAN), unord);
 }
 
