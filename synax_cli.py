@@ -463,6 +463,7 @@ def cmd_test() -> None:
         os.path.join(BASE_DIR, "test_differential_myelin.py"),
         os.path.join(BASE_DIR, "test_unified_compiler.py"),
         os.path.join(BASE_DIR, "tests", "test_fuzz_differential.py"),
+        os.path.join(BASE_DIR, "tests", "test_biomedical_wfdb.py"),
     ]
     ran = 0
     for sf in suite_files:

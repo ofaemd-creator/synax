@@ -123,6 +123,12 @@ jobs:
       - name: Run Lexer, Parser & Typechecker Suite (All OSes)
         run: python tests/test_lexer_parser_types.py
 
+      - name: Run Biomedical WFDB Reader Suite (All OSes)
+        run: python tests/test_biomedical_wfdb.py
+
+      - name: Build VS Code VSIX package (All OSes)
+        run: python scripts/build_vsix.py
+
       - name: Run Differential Myelin Engine Suite (macOS & Linux)
         if: matrix.is_posix
         run: python test_differential_myelin.py

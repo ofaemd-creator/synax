@@ -1,0 +1,23 @@
+synax 0.1
+
+kernel vf_bandpass_sanitizer(
+  raw_ecg: tensor<f32>,
+  baseline_drift: tensor<f32>
+) -> tensor<f32> {
+  intent "Sanitize raw clinical ECG telemetry (WFDB invalid-sample NaN dropouts and >10 mV rail artifacts) and remove baseline wander."
+
+  require shape(raw_ecg) == shape(baseline_drift)
+
+  safety {
+    nonfinite = heal(0.0)
+    input_bound = abs_max(10.0)
+    range_check = clamp(-10.0, 10.0)
+  }
+
+  // Baseline-wander removal after hardware IMMUNE sanitization (Non-Clinical Research Kernel)
+  let clean_ecg = raw_ecg - baseline_drift
+  return clean_ecg
+
+  optimize latency
+  target auto
+}

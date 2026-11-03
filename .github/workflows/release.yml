@@ -35,7 +35,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip build twine
           python -m build
-          twine check dist/*
+          twine check dist/*.whl dist/*.tar.gz
+          python scripts/build_vsix.py vsix_out
+          cp vsix_out/*.vsix dist/
 
       - name: Upload Python package artifacts
         uses: actions/upload-artifact@v4
@@ -190,4 +192,4 @@ jobs:
             exit 0
           fi
           python -m pip install --upgrade pip twine
-          TWINE_PASSWORD="${PYPI_API_TOKEN}" twine upload --non-interactive dist/*
+          TWINE_PASSWORD="${PYPI_API_TOKEN}" twine upload --non-interactive dist/*.whl dist/*.tar.gz

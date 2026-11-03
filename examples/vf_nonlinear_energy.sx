@@ -1,0 +1,25 @@
+synax 0.1
+
+kernel vf_nonlinear_energy(
+  clean_ecg: tensor<f32>,
+  slope_dx: tensor<f32>
+) -> tensor<f32> {
+  intent "Compute instantaneous phase-space slope-amplitude nonlinear energy envelope for retrospective ventricular arrhythmia feature extraction."
+
+  require shape(clean_ecg) == shape(slope_dx)
+
+  safety {
+    nonfinite = heal(0.0)
+    input_bound = abs_max(15.0)
+    range_check = clamp(0.0, 250.0)
+  }
+
+  // Coupled slope energy + phase-space amplitude-velocity product
+  let slope_energy = slope_dx * slope_dx
+  let phase_coupling = abs(clean_ecg * slope_dx)
+  let energy_env = slope_energy + phase_coupling
+  return energy_env
+
+  optimize latency
+  target auto
+}

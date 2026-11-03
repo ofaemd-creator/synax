@@ -1,0 +1,481 @@
+{
+  "title": "SYNAX Issue #6 \u2014 Retrospective VF/VT signal-processing evaluation (NON-CLINICAL)",
+  "generated_utc": "2026-11-03T02:27:45.581249+00:00",
+  "host": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "python": "3.12.15"
+  },
+  "protocol": {
+    "databases": [
+      "PhysioNet CUDB 1.0.0 (35 records)",
+      "PhysioNet VFDB 1.0.0 (22 records)"
+    ],
+    "channel": 0,
+    "window_sec": 8.0,
+    "max_invalid_fraction": 0.05,
+    "outer_cv": "5-fold record-grouped",
+    "inner_cv": "4-fold record-grouped",
+    "threshold_rule": "inner NSR specificity >= 0.99",
+    "features": [
+      "ptp_2s_med_mv",
+      "rms_mv",
+      "vf_leak_mean",
+      "vf_leak_min",
+      "tcsc",
+      "kurtosis",
+      "dx_kurtosis",
+      "dx_spikiness",
+      "crest_p98",
+      "spec_vf_ratio",
+      "spec_hf_ratio",
+      "spec_lf_ratio",
+      "dom_freq_hz",
+      "spec_conc",
+      "psr_density",
+      "synax_energy_duty"
+    ]
+  },
+  "dataset": {
+    "windows_total": 6869,
+    "windows_excluded_invalid": 43,
+    "category_counts": {
+      "coarse_vf": 750,
+      "fine_vf": 3,
+      "rapid_vt": 431,
+      "other_vt": 183,
+      "nsr": 3690,
+      "other_nonshock": 1720,
+      "asystole": 92
+    },
+    "records": 57
+  },
+  "synax_kernel_integrity": {
+    "records_processed": 57,
+    "samples_processed": 16003120,
+    "immune_healed_samples": 35662,
+    "max_abs_diff_native_vs_scalar_sanitizer": 0.0,
+    "max_abs_diff_native_vs_scalar_energy": 1.52587890625e-05,
+    "native_total_ms": 15.230666,
+    "scalar_o3_total_ms": 413.120951
+  },
+  "results": {
+    "synax_full_model": {
+      "per_category": {
+        "coarse_vf": {
+          "metric": "sensitivity",
+          "value": 0.7346666666666667,
+          "k": 551,
+          "n": 750,
+          "ci95": [
+            0.7019302320153609,
+            0.7650113642032612
+          ],
+          "records": 41,
+          "aha_goal": 0.9,
+          "meets_goal_point": false,
+          "meets_goal_lower_ci": false
+        },
+        "fine_vf": {
+          "metric": "sensitivity",
+          "value": 0.0,
+          "k": 0,
+          "n": 3,
+          "ci95": [
+            0.0,
+            0.5615060804490177
+          ],
+          "records": 1
+        },
+        "rapid_vt": {
+          "metric": "sensitivity",
+          "value": 0.8816705336426914,
+          "k": 380,
+          "n": 431,
+          "ci95": [
+            0.8477528099289093,
+            0.9088445349433385
+          ],
+          "records": 16,
+          "aha_goal": 0.75,
+          "meets_goal_point": true,
+          "meets_goal_lower_ci": true
+        },
+        "other_vt": {
+          "metric": "sensitivity",
+          "value": 0.8469945355191257,
+          "k": 155,
+          "n": 183,
+          "ci95": [
+            0.7877499570199856,
+            0.891970190955626
+          ],
+          "records": 8
+        },
+        "nsr": {
+          "metric": "specificity",
+          "value": 0.9899728997289973,
+          "k": 3653,
+          "n": 3690,
+          "ci95": [
+            0.9862101293760571,
+            0.9927165251940792
+          ],
+          "records": 50,
+          "aha_goal": 0.99,
+          "meets_goal_point": false,
+          "meets_goal_lower_ci": false
+        },
+        "other_nonshock": {
+          "metric": "specificity",
+          "value": 0.9976744186046511,
+          "k": 1716,
+          "n": 1720,
+          "ci95": [
+            0.9940354101071625,
+            0.9990952812510228
+          ],
+          "records": 16,
+          "aha_goal": 0.95,
+          "meets_goal_point": true,
+          "meets_goal_lower_ci": true
+        },
+        "asystole": {
+          "metric": "specificity",
+          "value": 0.9782608695652174,
+          "k": 90,
+          "n": 92,
+          "ci95": [
+            0.9241635822539244,
+            0.9940180841623291
+          ],
+          "records": 6,
+          "aha_goal": 0.95,
+          "meets_goal_point": true,
+          "meets_goal_lower_ci": false
+        }
+      },
+      "auc_shockable_vs_nonshockable": 0.982269244868543,
+      "outer_fold_thresholds": [
+        0.9216541884796324,
+        0.8049287299064662,
+        0.8647423306134119,
+        0.9803168976148545,
+        0.9046511271148626
+      ]
+    },
+    "ablation_without_synax_energy": {
+      "per_category": {
+        "coarse_vf": {
+          "metric": "sensitivity",
+          "value": 0.748,
+          "k": 561,
+          "n": 750,
+          "ci95": [
+            0.7157171797287856,
+            0.7777551890022583
+          ],
+          "records": 41,
+          "aha_goal": 0.9,
+          "meets_goal_point": false,
+          "meets_goal_lower_ci": false
+        },
+        "fine_vf": {
+          "metric": "sensitivity",
+          "value": 0.0,
+          "k": 0,
+          "n": 3,
+          "ci95": [
+            0.0,
+            0.5615060804490177
+          ],
+          "records": 1
+        },
+        "rapid_vt": {
+          "metric": "sensitivity",
+          "value": 0.8863109048723898,
+          "k": 382,
+          "n": 431,
+          "ci95": [
+            0.8528673266413755,
+            0.9129287701442126
+          ],
+          "records": 16,
+          "aha_goal": 0.75,
+          "meets_goal_point": true,
+          "meets_goal_lower_ci": true
+        },
+        "other_vt": {
+          "metric": "sensitivity",
+          "value": 0.8579234972677595,
+          "k": 157,
+          "n": 183,
+          "ci95": [
+            0.7999647158011475,
+            0.9011639407721209
+          ],
+          "records": 8
+        },
+        "nsr": {
+          "metric": "specificity",
+          "value": 0.989430894308943,
+          "k": 3651,
+          "n": 3690,
+          "ci95": [
+            0.9855850009253982,
+            0.9922587701772932
+          ],
+          "records": 50,
+          "aha_goal": 0.99,
+          "meets_goal_point": false,
+          "meets_goal_lower_ci": false
+        },
+        "other_nonshock": {
+          "metric": "specificity",
+          "value": 0.9976744186046511,
+          "k": 1716,
+          "n": 1720,
+          "ci95": [
+            0.9940354101071625,
+            0.9990952812510228
+          ],
+          "records": 16,
+          "aha_goal": 0.95,
+          "meets_goal_point": true,
+          "meets_goal_lower_ci": true
+        },
+        "asystole": {
+          "metric": "specificity",
+          "value": 0.9782608695652174,
+          "k": 90,
+          "n": 92,
+          "ci95": [
+            0.9241635822539244,
+            0.9940180841623291
+          ],
+          "records": 6,
+          "aha_goal": 0.95,
+          "meets_goal_point": true,
+          "meets_goal_lower_ci": false
+        }
+      },
+      "auc_shockable_vs_nonshockable": 0.9825374869457062,
+      "outer_fold_thresholds": [
+        0.9093571265625999,
+        0.7673128992418256,
+        0.8381346029302982,
+        0.9686621624296743,
+        0.8917513644163545
+      ]
+    },
+    "baseline_tcsc_only": {
+      "per_category": {
+        "coarse_vf": {
+          "metric": "sensitivity",
+          "value": 0.37733333333333335,
+          "k": 283,
+          "n": 750,
+          "ci95": [
+            0.3433503849396366,
+            0.4125665079460837
+          ],
+          "records": 41,
+          "aha_goal": 0.9,
+          "meets_goal_point": false,
+          "meets_goal_lower_ci": false
+        },
+        "fine_vf": {
+          "metric": "sensitivity",
+          "value": 0.0,
+          "k": 0,
+          "n": 3,
+          "ci95": [
+            0.0,
+            0.5615060804490177
+          ],
+          "records": 1
+        },
+        "rapid_vt": {
+          "metric": "sensitivity",
+          "value": 0.4037122969837587,
+          "k": 174,
+          "n": 431,
+          "ci95": [
+            0.3584388052855785,
+            0.4506870925126083
+          ],
+          "records": 16,
+          "aha_goal": 0.75,
+          "meets_goal_point": false,
+          "meets_goal_lower_ci": false
+        },
+        "other_vt": {
+          "metric": "sensitivity",
+          "value": 0.6939890710382514,
+          "k": 127,
+          "n": 183,
+          "ci95": [
+            0.6238011558730948,
+            0.7561998717353179
+          ],
+          "records": 8
+        },
+        "nsr": {
+          "metric": "specificity",
+          "value": 0.9883468834688347,
+          "k": 3647,
+          "n": 3690,
+          "ci95": [
+            0.9843410065821258,
+            0.9913369975856762
+          ],
+          "records": 50,
+          "aha_goal": 0.99,
+          "meets_goal_point": false,
+          "meets_goal_lower_ci": false
+        },
+        "other_nonshock": {
+          "metric": "specificity",
+          "value": 0.9988372093023256,
+          "k": 1718,
+          "n": 1720,
+          "ci95": [
+            0.9957700205812314,
+            0.9996810695885383
+          ],
+          "records": 16,
+          "aha_goal": 0.95,
+          "meets_goal_point": true,
+          "meets_goal_lower_ci": true
+        },
+        "asystole": {
+          "metric": "specificity",
+          "value": 0.9565217391304348,
+          "k": 88,
+          "n": 92,
+          "ci95": [
+            0.8934815767361862,
+            0.9829645593884194
+          ],
+          "records": 6,
+          "aha_goal": 0.95,
+          "meets_goal_point": true,
+          "meets_goal_lower_ci": false
+        }
+      },
+      "auc_shockable_vs_nonshockable": 0.9631082500674837,
+      "outer_fold_thresholds": [
+        0.9024179115684375,
+        0.8860005031842345,
+        0.8345792363631857,
+        0.8579594685236378,
+        0.8654001605805464
+      ]
+    },
+    "baseline_vf_leak_only": {
+      "per_category": {
+        "coarse_vf": {
+          "metric": "sensitivity",
+          "value": 0.4493333333333333,
+          "k": 337,
+          "n": 750,
+          "ci95": [
+            0.4140810790405237,
+            0.4851019854122738
+          ],
+          "records": 41,
+          "aha_goal": 0.9,
+          "meets_goal_point": false,
+          "meets_goal_lower_ci": false
+        },
+        "fine_vf": {
+          "metric": "sensitivity",
+          "value": 0.0,
+          "k": 0,
+          "n": 3,
+          "ci95": [
+            0.0,
+            0.5615060804490177
+          ],
+          "records": 1
+        },
+        "rapid_vt": {
+          "metric": "sensitivity",
+          "value": 0.6102088167053364,
+          "k": 263,
+          "n": 431,
+          "ci95": [
+            0.5633847172260132,
+            0.6550856407158213
+          ],
+          "records": 16,
+          "aha_goal": 0.75,
+          "meets_goal_point": false,
+          "meets_goal_lower_ci": false
+        },
+        "other_vt": {
+          "metric": "sensitivity",
+          "value": 0.36065573770491804,
+          "k": 66,
+          "n": 183,
+          "ci95": [
+            0.29460655626861115,
+            0.43243495911126156
+          ],
+          "records": 8
+        },
+        "nsr": {
+          "metric": "specificity",
+          "value": 0.9579945799457995,
+          "k": 3535,
+          "n": 3690,
+          "ci95": [
+            0.9510315454195641,
+            0.9640049845713268
+          ],
+          "records": 50,
+          "aha_goal": 0.99,
+          "meets_goal_point": false,
+          "meets_goal_lower_ci": false
+        },
+        "other_nonshock": {
+          "metric": "specificity",
+          "value": 1.0,
+          "k": 1720,
+          "n": 1720,
+          "ci95": [
+            0.9977714889813543,
+            1.0
+          ],
+          "records": 16,
+          "aha_goal": 0.95,
+          "meets_goal_point": true,
+          "meets_goal_lower_ci": true
+        },
+        "asystole": {
+          "metric": "specificity",
+          "value": 1.0,
+          "k": 92,
+          "n": 92,
+          "ci95": [
+            0.9599171967079014,
+            1.0
+          ],
+          "records": 6,
+          "aha_goal": 0.95,
+          "meets_goal_point": true,
+          "meets_goal_lower_ci": true
+        }
+      },
+      "auc_shockable_vs_nonshockable": 0.9655606721103034,
+      "outer_fold_thresholds": [
+        0.7871798711785742,
+        0.9389242603845821,
+        0.9138231276014359,
+        0.9434281120417974,
+        0.9255612607537115
+      ]
+    }
+  },
+  "runtime_sec": 5.648952007293701
+}
