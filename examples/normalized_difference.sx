@@ -1,0 +1,21 @@
+synax 0.1
+
+kernel normalized_difference(
+  a: tensor<f32>,
+  b: tensor<f32>
+) -> tensor<f32> {
+
+  intent "İki sensör kanalının mutlak farkını hesapla ve 0 ile 1 arasına sınırla."
+
+  require shape(a) == shape(b)
+
+  safety {
+    nonfinite = reject
+  }
+
+  let diff = abs(a - b)
+  return clamp(diff, 0.0, 1.0)
+
+  optimize latency
+  target auto
+}

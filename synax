@@ -1,2 +1,4 @@
-#!/bin/zsh
-exec /Users/o.farukaydin/.local/bin/python3 /Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_cli.py "$@"
+#!/usr/bin/env bash
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec python3 "${SCRIPT_DIR}/synax_cli.py" "$@"

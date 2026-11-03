@@ -67,6 +67,45 @@ class SynaxSecurityGuard:
         return True, "OK_VERIFIED"
 
     @staticmethod
+    def verify_c_module_source(c_source: str) -> Tuple[bool, str]:
+        """Verify a complete generated or LLM-mutated C kernel translation unit before compilation."""
+        if not c_source or len(c_source) > 65536:
+            return False, "C module source length out of safe bounds."
+
+        allowed_headers = {
+            "stddef.h", "stdint.h", "stdbool.h", "float.h",
+            "math.h", "arm_neon.h", "immintrin.h",
+            "dispatch/dispatch.h", "unistd.h", "string.h",
+        }
+        for m in re.finditer(r"#\s*include\s*[<\"]([^>\"]+)[>\"]", c_source):
+            hdr = m.group(1).strip()
+            if hdr not in allowed_headers:
+                return False, f"Disallowed header include: {hdr}"
+
+        forbidden_module_patterns = [
+            r"\bsystem\s*\(",
+            r"\bpopen\s*\(",
+            r"\bexec[lv][pe]?\s*\(",
+            r"\bfork\s*\(",
+            r"\bdlopen\s*\(",
+            r"\bfopen\s*\(",
+            r"\bfreopen\s*\(",
+            r"\bsocket\s*\(",
+            r"\bconnect\s*\(",
+            r"\bunlink\s*\(",
+            r"\bremove\s*\(",
+            r"\brename\s*\(",
+            r"\b__asm__\b",
+            r"\basm\s*\(",
+            r"\bgets\s*\(",
+        ]
+        for pat in forbidden_module_patterns:
+            if re.search(pat, c_source):
+                return False, f"Forbidden syscall/unsafe construct in C module: {pat}"
+
+        return True, "OK_MODULE_VERIFIED"
+
+    @staticmethod
     def compute_canonical_sha256(payload: Dict[str, Any]) -> str:
         """Compute deterministic SHA-256 hash of a dictionary (excluding '_integrity_sha256')."""
         clean = {k: v for k, v in payload.items() if k != "_integrity_sha256"}

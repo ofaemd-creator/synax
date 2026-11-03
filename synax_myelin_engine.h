@@ -48,6 +48,11 @@ typedef void (*AxonKernelFunc)(const float* __restrict src_a,
                               size_t count,
                               size_t* out_healed);
 
+typedef void (*AxonBasicKernelFunc)(const float* a,
+                                    const float* b,
+                                    float* out,
+                                    size_t count);
+
 typedef struct SynaxAxonChannel {
     char name[64];
     AxonMyelinState state;
@@ -55,12 +60,23 @@ typedef struct SynaxAxonChannel {
     AxonKernelFunc active_kernel;
     AxonStats stats;
     void* dylib_handle;
+    void* ref_dylib_handle;
+    AxonKernelFunc custom_unmyelinated_kernel;
+    AxonKernelFunc custom_myelinated_kernel;
+    AxonBasicKernelFunc custom_unmyelinated_basic;
+    AxonBasicKernelFunc custom_myelinated_basic;
     char specialized_kernel_name[64];
 } SynaxAxonChannel;
 
 /* API */
 SynaxAxonChannel* synax_axon_create(const char* name, size_t fixed_length, uint64_t myelin_threshold);
 void synax_axon_destroy(SynaxAxonChannel* channel);
+
+/* Bind synaxc-verified reference & optimized dylibs for function-pointer hot-swapping */
+int synax_axon_bind_compiled_kernels(SynaxAxonChannel* channel,
+                                     const char* ref_dylib_path,
+                                     const char* myelinated_dylib_path,
+                                     const char* kernel_label);
 
 /* Ana sinyal iletim fonksiyonu (Action Potential Transmission) */
 int synax_axon_transmit(SynaxAxonChannel* channel,
@@ -75,6 +91,7 @@ int synax_axon_myelinate(SynaxAxonChannel* channel);
 /* Durum ve istatistik sorgulama */
 AxonStats synax_axon_get_stats(const SynaxAxonChannel* channel);
 AxonMyelinState synax_axon_get_state(const SynaxAxonChannel* channel);
+const char* synax_axon_get_kernel_name(const SynaxAxonChannel* channel);
 
 #ifdef __cplusplus
 }

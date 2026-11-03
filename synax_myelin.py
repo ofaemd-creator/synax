@@ -80,6 +80,21 @@ class BiologicalMyelinEngine:
         self.lib.synax_axon_get_state.argtypes = [ctypes.POINTER(SynaxAxonChannel)]
         self.lib.synax_axon_get_state.restype = ctypes.c_int
 
+        # synax_axon_bind_compiled_kernels
+        if hasattr(self.lib, "synax_axon_bind_compiled_kernels"):
+            self.lib.synax_axon_bind_compiled_kernels.argtypes = [
+                ctypes.POINTER(SynaxAxonChannel),
+                ctypes.c_char_p,
+                ctypes.c_char_p,
+                ctypes.c_char_p,
+            ]
+            self.lib.synax_axon_bind_compiled_kernels.restype = ctypes.c_int
+
+        # synax_axon_get_kernel_name
+        if hasattr(self.lib, "synax_axon_get_kernel_name"):
+            self.lib.synax_axon_get_kernel_name.argtypes = [ctypes.POINTER(SynaxAxonChannel)]
+            self.lib.synax_axon_get_kernel_name.restype = ctypes.c_char_p
+
     def create_channel(self, name: str, fixed_length: int, myelin_threshold: int = 25) -> "AxonChannel":
         ptr = self.lib.synax_axon_create(name.encode("utf-8"), fixed_length, myelin_threshold)
         if not ptr:
@@ -112,7 +127,20 @@ class AxonChannel:
             arr_a = array('f', signal_a)
 
         count = len(arr_a)
-        arr_dst = array('f', [0.0] * count)
+        arr_dst = array('f', [0.0]) * count if count > 0 else array('f')
+        if count == 0:
+            stats = self.get_stats()
+            state = self.get_state()
+            return arr_dst, {
+                "state_code": state,
+                "state_label": self.STATE_NAMES.get(state, "UNKNOWN"),
+                "active_kernel": self.get_kernel_name(),
+                "transmissions": stats.total_transmissions,
+                "unmyelinated_avg_us": stats.unmyelinated_avg_ns / 1000.0,
+                "myelinated_avg_us": stats.myelinated_avg_ns / 1000.0,
+                "velocity_ratio": stats.conduction_velocity_ratio,
+                "healed_anomalies": stats.healed_anomalies_count,
+            }
 
         addr_a, _ = arr_a.buffer_info()
         ptr_a = ctypes.cast(addr_a, ctypes.POINTER(ctypes.c_float))
@@ -138,12 +166,31 @@ class AxonChannel:
         return arr_dst, {
             "state_code": state,
             "state_label": self.STATE_NAMES.get(state, "UNKNOWN"),
+            "active_kernel": self.get_kernel_name(),
             "transmissions": stats.total_transmissions,
             "unmyelinated_avg_us": stats.unmyelinated_avg_ns / 1000.0,
             "myelinated_avg_us": stats.myelinated_avg_ns / 1000.0,
             "velocity_ratio": stats.conduction_velocity_ratio,
             "healed_anomalies": stats.healed_anomalies_count
         }
+
+    def bind_compiled_kernels(self, ref_dylib_path: str, myelinated_dylib_path: str, kernel_label: str = "SynaxC_SIMD"):
+        if not hasattr(self.engine.lib, "synax_axon_bind_compiled_kernels"):
+            raise RuntimeError("Native library does not expose synax_axon_bind_compiled_kernels; recompile libsynax_myelin.dylib")
+        rc = self.engine.lib.synax_axon_bind_compiled_kernels(
+            self.handle,
+            str(ref_dylib_path).encode("utf-8"),
+            str(myelinated_dylib_path).encode("utf-8"),
+            str(kernel_label).encode("utf-8"),
+        )
+        if rc != 0:
+            raise RuntimeError(f"Failed to bind compiled dylibs to axon '{self.name}' (error code {rc})")
+
+    def get_kernel_name(self) -> str:
+        if hasattr(self.engine.lib, "synax_axon_get_kernel_name"):
+            raw = self.engine.lib.synax_axon_get_kernel_name(self.handle)
+            return raw.decode("utf-8") if raw else "UNKNOWN"
+        return "Builtin"
 
     def force_myelination(self):
         self.engine.lib.synax_axon_myelinate(self.handle)

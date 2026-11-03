@@ -6,5 +6,6 @@ build/
 *.o
 *_bin
 .DS_Store
+.synax_cache/
 synaxcode_live_bundle.zip
 

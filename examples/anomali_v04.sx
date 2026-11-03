@@ -1,0 +1,4 @@
+# SYNAX v0.4 -> v0.5 Birleştirilmiş Test Örneği (L2 Anomali ve Sıfır Çıktı Kalkanı)
+niyet: İki sensör akışı arasındaki farkın karesini (L2 enerji mesafesini) hesapla ve 0.5 sapma ekle.
+kural: Girdilerden biri NaN ya da sonsuz ise o eleman için çıktı 0 olsun.
+hedef: Apple M1, en hızlı sürüm.

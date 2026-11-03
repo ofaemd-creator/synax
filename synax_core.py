@@ -23,7 +23,7 @@ import subprocess
 from dataclasses import dataclass, asdict
 from typing import List, Dict, Optional, Tuple
 
-BASE_DIR = "/Users/o.farukaydin/.gemini/antigravity/scratch/synax"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BUILD_DIR = os.path.join(BASE_DIR, "build")
 MYELIN_MEMORY_PATH = os.path.join(BASE_DIR, "myelin_memory.json")
 TELEMETRY_PATH = os.path.join(BASE_DIR, "telemetry_stream.json")

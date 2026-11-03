@@ -16,11 +16,11 @@
 
 | Core Layer | Biological Metaphor | Engineering Mechanism |
 | :--- | :--- | :--- |
-| **1. 🧠 SYNAPSE** | *Intent Parser* | Trainable offline neuro-symbolic parser (`synapse_neural_model.py`). Converts natural language (English/Turkish) into verified Symbolic ASTs with algebraic reduction passes (`sqrt(u^2) -> abs(u)`). |
-| **2. 🛡️ IMMUNE SHIELD** | *Membrane Selectivity* | Hardware-level signal sanitizer. IEEE 754 bit-mask validation (`(abs_bits <= 0x447A0000)`) catching `NaN`, `±Infinity`, and out-of-range sensor spikes across both channels with branchless SIMD. |
-| **3. 🦎 AXON** | *Hardware Chameleon* | Probes hardware topology in `<1 ms` and synthesizes targets for **Tier-0 Q16.16 Fixed-Point (TinyMCU)**, **Tier-2 ARM64 NEON**, **Tier-3 x86 AVX2/AVX-512**, and **Tier-4 Apple Metal GPU**. |
-| **4. ⚡ TYCON / JIT** | *Adaptive Plasticity* | Activity-dependent runtime specialized kernel synthesis (`synax_myelin_engine.c`). Generates and hot-swaps vector kernels when invocation frequency crosses the threshold. |
-| **5. 🧬 MYELIN** | *Saltatory Conduction* | Persistent optimization cache (`myelin_memory.json`). Remembers winning hardware parameters, skipping generic dynamic dispatch and leaping directly across L1-aligned vector blocks. |
+| **1. 🧠 SYNAPSE** | *Intent & Kernel Frontend* | Unified dual-format frontend (`synax_ir.py`). Lowers both structured `synax 0.1 kernel` blocks and declarative `niyet:/kural:` files into a canonical IEEE-754 `SynaxIR`. |
+| **2. 🛡️ IMMUNE SHIELD** | *Membrane Selectivity* | Dual-Reference Semantic Gate + 19-suite differential verifier (`synax_verifier.py`) + branchless bitwise IEEE-754 validation (`preserve`, `heal_inputs`, `zero_output`, `reject`). |
+| **3. 🦎 AXON** | *Hardware Chameleon* | Probes hardware topology and synthesizes targets for **Tier-0 Q16.16 Fixed-Point (TinyMCU)**, **C11 Scalar**, **ARM64 NEON (`float32x4_t`)**, **x86 AVX-512**, and **Apple GCD Multicore**. |
+| **4. ⚡ TYCON** | *Candidate Synthesis & Elimination* | Unified compiler (`synaxc.py`) generating scalar, unrolled, NEON, 4-accumulator prefetch, and multicore variants; eliminates any candidate failing 19 adversarial test suites (`rtol=1e-5`, exact `NaN`/`±Inf` parity). |
+| **5. 🧬 MYELIN** | *Saltatory Hot-Swap & Cache* | Cryptographically signed cache (`~/.cache/synax/hafiza/<ir_hash>/`) + O(1) C function-pointer hot-swap (`synax_myelin_engine.c`) transitioning live `SynaxAxonChannel` streams from scalar to verified SIMD. |
 
 ---
 
@@ -33,32 +33,36 @@ curl -sSf https://synaxcode.com/install.sh | sh
 
 ### 2. Standalone Unified CLI (`synax`)
 ```bash
-# 1. Run a .sx intent script:
+# 1. Statically inspect canonical IR, C11/NEON lowering & Dual-Reference check:
+./synax check examples/hemodynamic_cpp.sx
+
+# 2. Compile, verify across 19 adversarial suites, benchmark & cache winner:
+./synax compile examples/kapili_aktivasyon.sx
+
+# 3. Stream bursts through C SynaxAxonChannel with automatic function-pointer hot-swap:
 ./synax run examples/biyomedikal_kardiyo.sx
 
-# 2. Run the adaptive myelination differential test (Ranvier vs Scalar):
-./synax myelin
+# 4. Run full differential & unified compiler regression test suites:
+./synax test
 
-# 3. Stream real-time biomedical signals (ABP / CVP / CPP):
-./synax stream 3.0
-
-# 4. View hardware profile and status:
+# 5. View hardware profile and cryptographically signed Myelin cache:
 ./synax status
 ```
 
 ---
 
-## 📊 Hardware Benchmarks (Apple Silicon M1, Clang 21 Native)
+## 📊 Hardware Benchmarks (Apple Silicon M1, Apple Clang 21, `N = 4,000,000` float32)
 
-Measurements conducted under controlled, warm-cache conditions (median of 201 runs, $N = 32,768$ float elements):
+All candidates are compiled **without `-ffast-math`** (preserving exact IEEE-754 `NaN`/`±Inf` semantics), verified across 19 edge-case suites (`n=0..100,003`, subnormals `1e-40`, `±3.4e38`, `12x12` special-value Cartesian product), and timed with pre-allocated warm-cache buffers (median of 15 runs):
 
-| Implementation | Latency (Median) | Acceleration | Method |
-| :--- | :--- | :--- | :--- |
-| **Interpreted Scalar Loop (Baseline)** | `~420 µs` | `1.0x` | Scalar element-by-element branch checks |
-| **Native Clang `-O3` (Auto-vectorized)** | `~120 µs` | `~3.5x` | Standard compiler vectorization |
-| **SYNAX Ranvier Saltatory JIT (NEON)** | `~100 µs` | `~4.2x` | 128-bit NEON unrolled + bitwise Immune Shield |
+| `.sx` Workload | Safety Policy | Scalar C11 (`-O1`) | `clang -O3` Baseline | SYNAX Verified Winner | vs `clang -O3` |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `kapili_aktivasyon.sx` (`sigmoid(a) * b`) | `preserve` | `7.92 ms` | `7.10 ms` | **`3.39 ms`** (1C NEON) / **`1.10 ms`** (GCD+NEON) | **`2.10x` (1C) / `6.48x` (MC)** |
+| `biyomedikal_kardiyo.sx` (`sqrt(Δ²+ε)+0.5(a+b)`) | `heal_inputs (±1000)` | `6.18 ms` | `1.70 ms` | **`1.57 ms`** (1C NEON) / **`1.30 ms`** (GCD+NEON) | **`1.31x`** |
+| `hemodynamic_cpp.sx` (`clamp(dbp - cvp)`) | `heal_inputs + clamp` | `5.30 ms` | `1.05 ms` | **`0.97 ms`** (`v2_neon_simd`) | **`1.09x`** |
+| `normalized_difference.sx` (`clamp(\|a-b\|, 0, 1)`) | `reject` | `5.57 ms` | `1.58 ms` | **`1.33 ms`** (`v4_gcd_multicore_neon`) | **`1.18x`** |
 
-*Note: Speedups against pure Python interpreted loops range between 50x–250x, but rigorous systems benchmarks compare directly against native compiled C (`clang -O3`).*
+*Engineering Invariant: `optimization must never change semantics`. Memory-bandwidth-bound kernels saturate Apple M1 DRAM near ~1.0 ms for 4M floats (48 MB traffic), where `TYCON` honestly selects whichever verified candidate wins empirically.*
 
 ---
 

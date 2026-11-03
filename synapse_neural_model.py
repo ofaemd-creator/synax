@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Tuple
 from synax_security import SynaxSecurityGuard
 
-BASE_DIR = "/Users/o.farukaydin/.gemini/antigravity/scratch/synax"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BRAIN_PATH = os.path.join(BASE_DIR, "synapse_brain.json")
 
 

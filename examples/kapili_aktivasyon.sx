@@ -1,0 +1,4 @@
+# SYNAX v0.4 -> v0.5 Birleştirilmiş Test Örneği (Kapılı Aktivasyon / GLU)
+niyet: a'nın sigmoidini al ve b ile çarp (kapılı aktivasyon, GLU). sigmoid(x) = 1 / (1 + e^-x).
+kural: NaN girdi NaN çıktı versin. Çok büyük negatif a için taşma olmasın, sonuç 0'a gitsin.
+hedef: Apple M1, en hızlı sürüm.

@@ -223,6 +223,8 @@ SynaxAxonChannel* synax_axon_create(const char* name, size_t fixed_length, uint6
     channel->stats.myelinated_avg_ns = 0.0;
     channel->stats.conduction_velocity_ratio = 1.0;
     channel->dylib_handle = NULL;
+    channel->ref_dylib_handle = NULL;
+    strncpy(channel->specialized_kernel_name, "Builtin_Scalar_Ref", sizeof(channel->specialized_kernel_name) - 1);
 
     return channel;
 }
@@ -233,17 +235,80 @@ void synax_axon_destroy(SynaxAxonChannel* channel) {
         dlclose(channel->dylib_handle);
         channel->dylib_handle = NULL;
     }
+    if (channel->ref_dylib_handle && channel->ref_dylib_handle != channel->dylib_handle) {
+        dlclose(channel->ref_dylib_handle);
+        channel->ref_dylib_handle = NULL;
+    }
     free(channel);
 }
 
+int synax_axon_bind_compiled_kernels(SynaxAxonChannel* channel,
+                                     const char* ref_dylib_path,
+                                     const char* myelinated_dylib_path,
+                                     const char* kernel_label) {
+    if (!channel || !ref_dylib_path || !myelinated_dylib_path) return -1;
+
+    void* ref_h = dlopen(ref_dylib_path, RTLD_NOW | RTLD_LOCAL);
+    if (!ref_h) return -2;
+
+    void* opt_h = (strcmp(ref_dylib_path, myelinated_dylib_path) == 0)
+        ? ref_h
+        : dlopen(myelinated_dylib_path, RTLD_NOW | RTLD_LOCAL);
+    if (!opt_h) {
+        dlclose(ref_h);
+        return -3;
+    }
+
+    AxonKernelFunc ref_tracked = (AxonKernelFunc)dlsym(ref_h, "synax_kernel_tracked");
+    AxonBasicKernelFunc ref_basic = (AxonBasicKernelFunc)dlsym(ref_h, "synax_kernel");
+    AxonKernelFunc opt_tracked = (AxonKernelFunc)dlsym(opt_h, "synax_kernel_tracked");
+    AxonBasicKernelFunc opt_basic = (AxonBasicKernelFunc)dlsym(opt_h, "synax_kernel");
+
+    if ((!ref_tracked && !ref_basic) || (!opt_tracked && !opt_basic)) {
+        if (opt_h != ref_h) dlclose(opt_h);
+        dlclose(ref_h);
+        return -4;
+    }
+
+    if (channel->dylib_handle) {
+        dlclose(channel->dylib_handle);
+    }
+    if (channel->ref_dylib_handle && channel->ref_dylib_handle != channel->dylib_handle) {
+        dlclose(channel->ref_dylib_handle);
+    }
+
+    channel->ref_dylib_handle = ref_h;
+    channel->dylib_handle = opt_h;
+    channel->custom_unmyelinated_kernel = ref_tracked;
+    channel->custom_myelinated_kernel = opt_tracked;
+    channel->custom_unmyelinated_basic = ref_basic;
+    channel->custom_myelinated_basic = opt_basic;
+    channel->state = AXON_STATE_UNMYELINATED;
+    channel->active_kernel = ref_tracked;
+
+    if (kernel_label && kernel_label[0] != '\0') {
+        strncpy(channel->specialized_kernel_name, kernel_label, sizeof(channel->specialized_kernel_name) - 1);
+    } else {
+        strncpy(channel->specialized_kernel_name, "SynaxC_Verified_SIMD", sizeof(channel->specialized_kernel_name) - 1);
+    }
+    return 0;
+}
+
 /* ─────────────────────────────────────────────────────────────────
- * 4. GÜVENLİ MİYELİNLEŞTİRME (SECURE ADAPTIVE JIT)
+ * 4. GÜVENLİ MİYELİNLEŞTİRME (SECURE ADAPTIVE JIT / HOT-SWAP)
  * ───────────────────────────────────────────────────────────────── */
 int synax_axon_myelinate(SynaxAxonChannel* channel) {
     if (!channel) return -1;
     if (channel->state == AXON_STATE_MYELINATED) return 0;
 
     channel->state = AXON_STATE_MYELINATING;
+
+    /* synaxc tarafından doğrulanmış dinamik çekirdek bağlıysa O(1) fonksiyon işaretçisi takası yap */
+    if (channel->custom_myelinated_kernel || channel->custom_myelinated_basic) {
+        channel->active_kernel = channel->custom_myelinated_kernel;
+        channel->state = AXON_STATE_MYELINATED;
+        return 0;
+    }
 
     /* Güvenli önbellek dizini oluştur */
     const char* home = getenv("HOME");
@@ -386,12 +451,22 @@ int synax_axon_transmit(SynaxAxonChannel* channel,
                         const float* src_b,
                         float* dst,
                         size_t count) {
-    if (!channel || !src_a || !dst || count == 0) return -1;
+    if (!channel) return -1;
+    if (count == 0) return 0;
+    if (!src_a || !dst) return -1;
 
     size_t healed = 0;
     double t0 = get_time_ns();
 
-    channel->active_kernel(src_a, src_b, dst, count, &healed);
+    if (channel->active_kernel) {
+        channel->active_kernel(src_a, src_b, dst, count, &healed);
+    } else if (channel->state == AXON_STATE_MYELINATED && channel->custom_myelinated_basic) {
+        channel->custom_myelinated_basic(src_a, src_b, dst, count);
+    } else if (channel->custom_unmyelinated_basic) {
+        channel->custom_unmyelinated_basic(src_a, src_b, dst, count);
+    } else {
+        return -1;
+    }
 
     double t1 = get_time_ns();
     double duration_ns = t1 - t0;
@@ -435,4 +510,9 @@ AxonStats synax_axon_get_stats(const SynaxAxonChannel* channel) {
 AxonMyelinState synax_axon_get_state(const SynaxAxonChannel* channel) {
     if (!channel) return AXON_STATE_UNMYELINATED;
     return channel->state;
+}
+
+const char* synax_axon_get_kernel_name(const SynaxAxonChannel* channel) {
+    if (!channel) return "NULL";
+    return channel->specialized_kernel_name;
 }
