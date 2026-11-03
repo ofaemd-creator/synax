@@ -1104,6 +1104,8 @@ def parse_sx(source_or_path: str) -> SynaxIR:
         p = Path(source_or_path)
         default_name = p.stem
         raw_text = p.read_text(encoding="utf-8")
+    elif "\n" not in source_or_path and source_or_path.strip().lower().endswith(".sx"):
+        raise FileNotFoundError(f".sx kaynak dosyası bulunamadı: {source_or_path}")
     else:
         raw_text = source_or_path
 

@@ -1,8 +1,12 @@
 __pycache__/
 *.pyc
 build/
+dist/
+*.egg-info/
+bindings/rust/target/
 *.dylib
 *.so
+*.dll
 *.o
 *_bin
 .DS_Store

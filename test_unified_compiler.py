@@ -100,7 +100,7 @@ def test_2_pure_python_and_numpy_19_suites():
 
 
 def test_3_all_safety_policies_and_candidates():
-    print("\n[3/6] 4 IMMUNE Güvenlik Politikası & 5 C11/NEON/GCD Adayının Tam Doğrulaması...")
+    print("\n[3/6] 4 IMMUNE Güvenlik Politikası & Tüm C11/SIMD/GCD/LLVM-IR Adaylarının Doğrulaması...")
     with tempfile.TemporaryDirectory() as tmp_cache:
         compiler = SynaxCompiler(cache_root=Path(tmp_cache))
         targets = [
@@ -122,8 +122,11 @@ def test_3_all_safety_policies_and_candidates():
             assert res.dual_ref_verified
             assert res.suites_count == 19
             verified_names = [c.name for c in res.candidates if c.verified]
-            assert len(verified_names) == 5, (
-                f"{fname}: 5 adayın tamamı 19 kümeyi geçmeliydi, geçenler: {verified_names}"
+            assert len(verified_names) == len(res.candidates) and len(verified_names) >= 4, (
+                f"{fname}: tüm adaylar ({len(res.candidates)}) 19 kümeyi geçmeliydi, geçenler: {verified_names}"
+            )
+            assert "v5_llvm_ssa_ir_o3" in verified_names, (
+                f"{fname}: SSA LLVM IR adayı (v5_llvm_ssa_ir_o3) doğrulanmalıydı!"
             )
 
             # Spot-check semantic edge behavior on winning dylib
@@ -160,8 +163,8 @@ def test_3_all_safety_policies_and_candidates():
             assert rep_pure.passed, f"Pure-Python doğrulayıcı hatası: {rep_pure.failure_reason}"
 
             print(
-                f"  ✓ {fname:<26} | mod={expected_mode:<11} | 5/5 aday doğrulandı | "
-                f"kazanan={res.winner_name}"
+                f"  ✓ {fname:<26} | mod={expected_mode:<11} | "
+                f"{len(verified_names)}/{len(res.candidates)} aday doğrulandı | kazanan={res.winner_name}"
             )
 
 

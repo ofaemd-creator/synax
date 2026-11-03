@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "SYNAX (.sx): A Neuro-Symbolic Compiler and Differentially Verified Adaptive SIMD Runtime"
+message: "If you use SYNAX (.sx) or its Myelin runtime in academic or computational research, please cite this software using the metadata below."
+type: software
+authors:
+  - family-names: "Aydın"
+    given-names: "Ömer Faruk"
+    email: "ofaemd@gmail.com"
+version: "0.5.0"
+date-released: "2026-11-03"
+license: Apache-2.0
+repository-code: "https://github.com/ofaemd-creator/synax"
+url: "https://synaxcode.org"
+abstract: >-
+  SYNAX (.sx) is an open-source neuro-symbolic compiler and adaptive runtime
+  system that lowers declarative and structured numerical kernels into
+  differentially verified C11, ARM64 NEON, and multicore native code without
+  -ffast-math semantic compromises, featuring bitwise IEEE-754 non-finite
+  sanitization and O(1) function-pointer hot-swapping.
+keywords:
+  - neuro-symbolic compiler
+  - differential verification
+  - IEEE-754
+  - SIMD
+  - ARM64 NEON
+  - adaptive runtime
+  - biomedical signal processing

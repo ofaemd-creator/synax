@@ -1,0 +1,20 @@
+[package]
+name = "synax-rs"
+version = "0.5.0"
+edition = "2021"
+rust-version = "1.70"
+authors = ["Dr. Ömer Faruk Aydın <dev@synaxcode.com>"]
+license = "Apache-2.0"
+description = "Safe, idiomatic Rust FFI bindings for the SYNAX (.sx) Biological Myelination & IEEE-754 SIMD Runtime (libsynax_myelin)."
+homepage = "https://synaxcode.com"
+documentation = "https://synaxcode.org"
+repository = "https://github.com/ofaemd-creator/synax"
+readme = "README.md"
+keywords = ["synax", "simd", "neon", "ieee754", "biomedical-research"]
+categories = ["api-bindings", "science", "mathematics", "hardware-support"]
+
+[lib]
+name = "synax_rs"
+path = "src/lib.rs"
+
+[dependencies]

@@ -60,9 +60,19 @@ from synax_verifier import (
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_DIR = os.path.join(BASE_DIR, "src")
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
 BUILD_DIR = os.path.join(BASE_DIR, "build")
 
-SHARED_CFLAGS_O3 = ["-O3", "-mcpu=native", "-shared", "-fPIC", "-std=c11", "-Wall", "-Wno-unused-function"]
+import platform as _platform
+
+_NATIVE_CPU_FLAG = (
+    "-mcpu=native"
+    if _platform.machine().lower() in ("arm64", "aarch64")
+    else "-march=native"
+)
+SHARED_CFLAGS_O3 = ["-O3", _NATIVE_CPU_FLAG, "-shared", "-fPIC", "-std=c11", "-Wall", "-Wno-unused-function"]
 SHARED_CFLAGS_O1_SCALAR = [
     "-O1", "-fno-vectorize", "-fno-slp-vectorize",
     "-shared", "-fPIC", "-std=c11", "-Wall", "-Wno-unused-function",
@@ -629,7 +639,11 @@ class SynaxCompiler:
         verbose: bool = True,
     ) -> CompilationResult:
         t_start = time.perf_counter()
-        ir = parse_sx(source_or_path)
+        from synax.hardware import detect_hardware_fingerprint, fingerprint_to_dict
+        from synax.parser import lower_to_synax_ir
+
+        ir = lower_to_synax_ir(source_or_path)
+        hw_fp = detect_hardware_fingerprint()
         cache_dir = self.cache_root / ir.ir_hash
         rapor_path = cache_dir / "rapor.json"
         ref_dylib = cache_dir / "referans.dylib"
@@ -639,14 +653,14 @@ class SynaxCompiler:
 
         if verbose:
             p0, p1 = ir.param_names
-            print(f"⚡ SYNAXC v0.5 — Modül: {ir.name} [IR #{ir.ir_hash}]")
+            print(f"⚡ SYNAXC v0.5 — Modül: {ir.name} [IR #{ir.ir_hash} | HW #{hw_fp.fingerprint_id}]")
             print(f"   • Biçim / Niyet : {ir.syntax_format} | {ir.intent_text}")
             print(f"   • Kanonik AST   : out = {ir.expr.to_human_formula(p0, p1)}")
             print(f"   • IMMUNE Kuralı : nonfinite={ir.safety.nonfinite_mode}"
                   + (f", bound=±{ir.safety.input_abs_bound:g}" if ir.safety.input_abs_bound else "")
                   + (f", clamp={ir.safety.output_clamp}" if ir.safety.output_clamp else ""))
 
-        # 1. MYELIN PERSISTENT CACHE CHECK
+        # 1. MYELIN PERSISTENT CACHE CHECK (IR hash + Hardware Fingerprint + SHA-256 signature)
         if (
             not force_rebuild
             and rapor_path.exists()
@@ -657,31 +671,33 @@ class SynaxCompiler:
             ok_sig, _ = SynaxSecurityGuard.verify_json_file(str(rapor_path))
             if ok_sig:
                 rapor = json.loads(rapor_path.read_text(encoding="utf-8"))
-                dt_ms = (time.perf_counter() - t_start) * 1000.0
-                if verbose:
-                    print(
-                        f"\n🧠 [MYELIN HAFIZA İSABETİ] {dt_ms:.2f} ms içinde doğrulandı:\n"
-                        f"   • Kazanan Çekirdek : {rapor['kazanan']} ({rapor['kazanan_ms']:.3f} ms)\n"
-                        f"   • Hızlanma         : Skaler C'ye göre {rapor['hizlanma_skaler']:.2f}x | "
-                        f"clang -O3'e göre {rapor['hizlanma_clang_o3']:.2f}x"
+                cached_hw = rapor.get("hw_fingerprint", hw_fp.fingerprint_id)
+                if cached_hw == hw_fp.fingerprint_id:
+                    dt_ms = (time.perf_counter() - t_start) * 1000.0
+                    if verbose:
+                        print(
+                            f"\n🧠 [MYELIN HAFIZA İSABETİ] {dt_ms:.2f} ms içinde doğrulandı:\n"
+                            f"   • Kazanan Çekirdek : {rapor['kazanan']} ({rapor['kazanan_ms']:.3f} ms)\n"
+                            f"   • Hızlanma         : Skaler C'ye göre {rapor['hizlanma_skaler']:.2f}x | "
+                            f"clang -O3'e göre {rapor['hizlanma_clang_o3']:.2f}x"
+                        )
+                    return CompilationResult(
+                        ir=ir,
+                        cache_hit=True,
+                        cache_dir=cache_dir,
+                        ref_dylib_path=ref_dylib,
+                        baseline_o1_dylib_path=base_o1_dylib,
+                        winner_dylib_path=win_dylib,
+                        winner_c_path=win_c,
+                        winner_name=rapor["kazanan"],
+                        ref_o1_median_ms=rapor["referans_o1_ms"],
+                        clang_o3_median_ms=rapor["clang_o3_ms"],
+                        winner_median_ms=rapor["kazanan_ms"],
+                        speedup_vs_scalar=rapor["hizlanma_skaler"],
+                        speedup_vs_clang_o3=rapor["hizlanma_clang_o3"],
+                        dual_ref_verified=True,
+                        suites_count=rapor.get("test_kumesi_sayisi", 19),
                     )
-                return CompilationResult(
-                    ir=ir,
-                    cache_hit=True,
-                    cache_dir=cache_dir,
-                    ref_dylib_path=ref_dylib,
-                    baseline_o1_dylib_path=base_o1_dylib,
-                    winner_dylib_path=win_dylib,
-                    winner_c_path=win_c,
-                    winner_name=rapor["kazanan"],
-                    ref_o1_median_ms=rapor["referans_o1_ms"],
-                    clang_o3_median_ms=rapor["clang_o3_ms"],
-                    winner_median_ms=rapor["kazanan_ms"],
-                    speedup_vs_scalar=rapor["hizlanma_skaler"],
-                    speedup_vs_clang_o3=rapor["hizlanma_clang_o3"],
-                    dual_ref_verified=True,
-                    suites_count=rapor.get("test_kumesi_sayisi", 19),
-                )
 
         cache_dir.mkdir(parents=True, exist_ok=True)
         suites = build_adversarial_suites(input_abs_bound=ir.safety.input_abs_bound)
@@ -739,11 +755,15 @@ class SynaxCompiler:
         if verbose:
             print(f"\n② [AXON + TYCON] Aday Çekirdek Sentezi & {len(suites)} Kümeli Diferansiyel Eleme…")
 
+        from synax.backends.avx2_backend import AVX2Backend
+        from synax.backends.llvm_ir_backend import LLVMIRBackend
+
+        scalar_o3_code = SynaxCodeGenerator.emit_scalar_variant(ir)
         specs: List[Tuple[str, str, str, List[str]]] = [
             (
                 "v0_clang_o3_scalar",
                 "Düz C11 + clang -O3 otomatik vektörleme (adil derleyici temeli)",
-                SynaxCodeGenerator.emit_scalar_variant(ir),
+                scalar_o3_code,
                 SHARED_CFLAGS_O3,
             ),
             (
@@ -754,34 +774,66 @@ class SynaxCompiler:
                 ),
                 SHARED_CFLAGS_O3,
             ),
-            (
-                "v2_neon_simd",
-                "Açık ARM64 NEON (float32x4_t) + bit-seviyesi IMMUNE maskesi",
-                SynaxCodeGenerator.emit_neon_variant(ir, unroll_4x=False),
-                SHARED_CFLAGS_O3,
-            ),
-            (
-                "v3_neon_4acc_prefetch",
-                "4x ARM64 NEON (16 float/adım) + Ranvier __builtin_prefetch",
-                SynaxCodeGenerator.emit_neon_variant(ir, unroll_4x=True),
-                SHARED_CFLAGS_O3,
-            ),
-            (
-                "v4_gcd_multicore_neon",
-                "Apple GCD çok çekirdek (dispatch_apply_f) + 4x NEON Sıçramalı",
-                SynaxCodeGenerator.emit_gcd_multicore_variant(ir),
-                SHARED_CFLAGS_O3,
-            ),
         ]
 
-        # Respect explicit scalar-only target hint if requested
+        if hw_fp.simd_isa.startswith("x86_64"):
+            avx_flags = [*SHARED_CFLAGS_O3, "-mavx2", "-mfma"]
+            specs.append(
+                (
+                    "v2_avx2_fma_simd",
+                    "Açık x86_64 AVX2+FMA (__m256, 8 float/adım) + bit-seviyesi IMMUNE maskesi",
+                    AVX2Backend.emit_c_source(ir),
+                    avx_flags,
+                )
+            )
+        else:
+            specs.extend([
+                (
+                    "v2_neon_simd",
+                    "Açık ARM64 NEON (float32x4_t) + bit-seviyesi IMMUNE maskesi",
+                    SynaxCodeGenerator.emit_neon_variant(ir, unroll_4x=False),
+                    SHARED_CFLAGS_O3,
+                ),
+                (
+                    "v3_neon_4acc_prefetch",
+                    "4x ARM64 NEON (16 float/adım) + Ranvier __builtin_prefetch",
+                    SynaxCodeGenerator.emit_neon_variant(ir, unroll_4x=True),
+                    SHARED_CFLAGS_O3,
+                ),
+                (
+                    "v4_gcd_multicore_neon",
+                    "Apple GCD çok çekirdek (dispatch_apply_f) + 4x NEON Sıçramalı",
+                    SynaxCodeGenerator.emit_gcd_multicore_variant(ir),
+                    SHARED_CFLAGS_O3,
+                ),
+            ])
+
+        include_llvm = ir.target_hint in ("auto", "llvm", "multicore")
         if ir.target_hint == "scalar":
             specs = specs[:2]
+            include_llvm = False
         elif ir.target_hint == "neon":
-            specs = specs[:4]
+            specs = [s for s in specs if s[0] != "v4_gcd_multicore_neon"]
+            include_llvm = False
+        elif ir.target_hint == "avx2":
+            specs = [
+                specs[0],
+                (
+                    "v2_avx2_fma_simd",
+                    "Açık x86_64 AVX2+FMA (__m256) + bit-seviyesi IMMUNE maskesi",
+                    AVX2Backend.emit_c_source(ir),
+                    SHARED_CFLAGS_O3 + (["-mavx2", "-mfma"] if hw_fp.simd_isa.startswith("x86_64") else []),
+                ),
+            ]
+            include_llvm = False
+        elif ir.target_hint == "llvm":
+            specs = specs[:1]
+            include_llvm = True
 
         candidate_results: List[CandidateResult] = []
         verified_pool: List[Tuple[CandidateResult, str]] = []
+        best_c_fallback: str = scalar_o3_code
+        best_c_ms: float = float("inf")
         clang_o3_ms: Optional[float] = None
 
         for v_name, v_desc, v_code, v_flags in specs:
@@ -816,6 +868,9 @@ class SynaxCompiler:
             ms = benchmark_kernel(cand_k, n=bench_n, repeats=bench_repeats)
             if v_name == "v0_clang_o3_scalar":
                 clang_o3_ms = ms
+            if ms < best_c_ms:
+                best_c_ms = ms
+                best_c_fallback = v_code
 
             cr = CandidateResult(
                 name=v_name,
@@ -834,6 +889,55 @@ class SynaxCompiler:
                 print(
                     f"   ✓ {v_name:<24} {ms:8.3f} ms | maks fark: {v_rep.max_abs_diff:.2e} | {v_desc}"
                 )
+
+        # Direct SSA LLVM IR Candidate (`v5_llvm_ssa_ir_o3`)
+        if include_llvm:
+            ll_name = "v5_llvm_ssa_ir_o3"
+            ll_desc = "Doğrudan SSA LLVM IR (.ll -> clang -O3 -x ir, C ara katmansız)"
+            ll_file = cache_dir / f"{ll_name}.ll"
+            ll_so = cache_dir / f"{ll_name}.dylib"
+            ok_ll, err_ll = LLVMIRBackend.compile_ll_to_dylib(ir, ll_file, ll_so)
+            if not ok_ll:
+                if verbose:
+                    print(f"   ✗ {ll_name:<24} DERLENMEDİ — {err_ll[:80]}")
+                candidate_results.append(
+                    CandidateResult(name=ll_name, description=ll_desc, compiled=False, verified=False, note=err_ll)
+                )
+            else:
+                ll_k = LoadedKernel(str(ll_so), name=ll_name)
+                v_ll_rep = verify_against_reference(ll_k, ref_kernel, suites)
+                if not v_ll_rep.passed:
+                    if verbose:
+                        print(f"   ✗ {ll_name:<24} ELENDİ (Semantik Sapma) — {v_ll_rep.failure_reason}")
+                    candidate_results.append(
+                        CandidateResult(
+                            name=ll_name,
+                            description=ll_desc,
+                            compiled=True,
+                            verified=False,
+                            max_abs_diff=v_ll_rep.max_abs_diff,
+                            note=v_ll_rep.failure_reason,
+                        )
+                    )
+                else:
+                    ll_ms = benchmark_kernel(ll_k, n=bench_n, repeats=bench_repeats)
+                    ll_cr = CandidateResult(
+                        name=ll_name,
+                        description=ll_desc,
+                        compiled=True,
+                        verified=True,
+                        median_ms=ll_ms,
+                        max_abs_diff=v_ll_rep.max_abs_diff,
+                        note=f"{v_ll_rep.suites_tested}/{len(suites)} küme geçti",
+                        dylib_path=str(ll_so),
+                        c_path=str(ll_file),
+                    )
+                    candidate_results.append(ll_cr)
+                    verified_pool.append((ll_cr, best_c_fallback))
+                    if verbose:
+                        print(
+                            f"   ✓ {ll_name:<24} {ll_ms:8.3f} ms | maks fark: {v_ll_rep.max_abs_diff:.2e} | {ll_desc}"
+                        )
 
         # Optional LLM evolutionary mutation rounds (v0.4 `--nesil N --llm claude`)
         if evolve_generations > 0 and llm_provider == "claude" and verified_pool:
@@ -897,6 +1001,8 @@ class SynaxCompiler:
         rapor_payload: Dict[str, Any] = {
             "modul": ir.name,
             "ir_hash": ir.ir_hash,
+            "hw_fingerprint": hw_fp.fingerprint_id,
+            "donanim": fingerprint_to_dict(hw_fp),
             "bicim": ir.syntax_format,
             "niyet": ir.intent_text,
             "kural": ir.rule_text,
@@ -994,7 +1100,7 @@ int main(int argc, char** argv) {{
         )
         Path(driver_c).write_text(standalone_src, encoding="utf-8")
         subprocess.run(
-            ["clang", "-O3", "-mcpu=native", "-std=c11", driver_c, "-lm", "-o", bin_path],
+            ["clang", "-O3", _NATIVE_CPU_FLAG, "-std=c11", driver_c, "-lm", "-o", bin_path],
             check=True,
         )
         return bin_path

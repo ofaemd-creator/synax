@@ -1,0 +1,67 @@
+{
+  "name": "synax-lang",
+  "displayName": "SYNAX (.sx) Language Support",
+  "description": "Official syntax highlighting, safety-policy grammar, and biomedical/SIMD kernel snippets for the SYNAX (.sx) neuro-symbolic language.",
+  "version": "0.5.0",
+  "publisher": "synaxcode",
+  "author": {
+    "name": "Dr. Ömer Faruk Aydın",
+    "email": "dev@synaxcode.com",
+    "url": "https://synaxcode.com"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://synaxcode.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ofaemd-creator/synax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ofaemd-creator/synax/issues",
+    "email": "dev@synaxcode.com"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "keywords": [
+    "synax",
+    "sx",
+    "simd",
+    "neon",
+    "ieee754",
+    "neuro-symbolic",
+    "compiler"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "synax",
+        "aliases": [
+          "SYNAX",
+          "synax",
+          "Synax (.sx)"
+        ],
+        "extensions": [
+          ".sx"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "synax",
+        "scopeName": "source.synax",
+        "path": "./syntaxes/synax.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "synax",
+        "path": "./snippets/synax.code-snippets"
+      }
+    ]
+  }
+}

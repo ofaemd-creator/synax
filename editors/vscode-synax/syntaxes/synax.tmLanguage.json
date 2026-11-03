@@ -1,0 +1,222 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "SYNAX",
+  "scopeName": "source.synax",
+  "fileTypes": [
+    "sx"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#declarative-directives"
+    },
+    {
+      "include": "#version-header"
+    },
+    {
+      "include": "#kernel-declaration"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#types"
+    },
+    {
+      "include": "#safety-policies"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#math-builtins"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#identifiers"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.synax",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.line.number-sign.synax",
+          "match": "#.*$"
+        },
+        {
+          "name": "comment.block.synax",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "declarative-directives": {
+      "patterns": [
+        {
+          "match": "^\\s*(niyet|kural|hedef|formül|formul|intent|rule|target|formula)\\s*(:)",
+          "captures": {
+            "1": {
+              "name": "keyword.control.directive.synax"
+            },
+            "2": {
+              "name": "punctuation.separator.key-value.synax"
+            }
+          }
+        }
+      ]
+    },
+    "version-header": {
+      "patterns": [
+        {
+          "match": "\\b(synax)\\s+([0-9]+\\.[0-9]+(?:\\.[0-9]+)?)\\b",
+          "captures": {
+            "1": {
+              "name": "keyword.other.version.synax"
+            },
+            "2": {
+              "name": "constant.numeric.version.synax"
+            }
+          }
+        }
+      ]
+    },
+    "kernel-declaration": {
+      "patterns": [
+        {
+          "match": "\\b(kernel|neuron)\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.kernel.synax"
+            },
+            "2": {
+              "name": "entity.name.function.kernel.synax"
+            }
+          }
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.synax",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.synax",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "match": "\\b(tensor)\\s*(<)\\s*(f32|f64|i32|bool)\\s*(>)",
+          "captures": {
+            "1": {
+              "name": "storage.type.tensor.synax"
+            },
+            "2": {
+              "name": "punctuation.definition.typeparameters.begin.synax"
+            },
+            "3": {
+              "name": "storage.type.primitive.synax"
+            },
+            "4": {
+              "name": "punctuation.definition.typeparameters.end.synax"
+            }
+          }
+        },
+        {
+          "name": "storage.type.primitive.synax",
+          "match": "\\b(tensor|f32|f64|i32|bool)\\b"
+        }
+      ]
+    },
+    "safety-policies": {
+      "patterns": [
+        {
+          "name": "variable.language.safety-property.synax",
+          "match": "\\b(nonfinite|range_check|input_bound)\\b"
+        },
+        {
+          "name": "constant.language.safety-mode.synax",
+          "match": "\\b(heal|heal_inputs|preserve|reject|zero_output)\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.synax",
+          "match": "\\b(synax|kernel|intent|require|safety|let|return|optimize|target|neuron|pulse|channel|immune|myelin)\\b"
+        },
+        {
+          "name": "constant.language.target.synax",
+          "match": "\\b(latency|throughput|auto|true|false|NaN|Inf)\\b"
+        }
+      ]
+    },
+    "math-builtins": {
+      "patterns": [
+        {
+          "name": "support.function.math.synax",
+          "match": "\\b(sqrt|square|cube|abs|clamp|min|max|sigmoid|tanh|relu|exp|log|sin|cos|shape)\\b"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.synax",
+          "match": "\\b0[xX][0-9a-fA-F]+\\b"
+        },
+        {
+          "name": "constant.numeric.float.synax",
+          "match": "(?<![A-Za-z0-9_])(?:[0-9]+\\.[0-9]*(?:[eE][+-]?[0-9]+)?|[0-9]+[eE][+-]?[0-9]+)[fF]?\\b"
+        },
+        {
+          "name": "constant.numeric.integer.synax",
+          "match": "\\b[0-9]+\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.arrow.synax",
+          "match": "->"
+        },
+        {
+          "name": "keyword.operator.comparison.synax",
+          "match": "==|!=|<=|>=|<|>"
+        },
+        {
+          "name": "keyword.operator.arithmetic.synax",
+          "match": "\\+|-|\\*|/|%|="
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.synax",
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+        }
+      ]
+    }
+  }
+}

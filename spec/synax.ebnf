@@ -1,0 +1,323 @@
+(* ========================================================================= *)
+(* SYNAX (.sx) Formal Language Grammar Specification                         *)
+(* Standard: ISO/IEC 14977 EBNF (with W3C character-range annotations)       *)
+(* Language Versions Covered: synax 0.1, synax 0.5, and v0.2/v0.4 Compat     *)
+(* Core Invariant: optimization must never change semantics                  *)
+(* ========================================================================= *)
+(* Metasyntax Summary (ISO/IEC 14977):                                       *)
+(*   lhs = rhs ;        Production definition                                *)
+(*   a , b              Concatenation (a followed by b)                      *)
+(*   a | b              Ordered / disjoint alternation                       *)
+(*   [ a ]              Optional occurrence (0 or 1 time; W3C: a?)           *)
+(*   { a }              Zero or more repetitions (W3C: a*)                   *)
+(*   ( a )              Grouping                                             *)
+(*   "..."              Terminal literal string                              *)
+(*   a - b              Set difference (a excluding b)                       *)
+(*   (* ... *)          Grammar commentary                                   *)
+(* ========================================================================= *)
+
+(* ------------------------------------------------------------------------- *)
+(* 1. Top-Level Translation Unit                                             *)
+(* ------------------------------------------------------------------------- *)
+
+synax_module =
+      structured_module
+    | declarative_module ;
+
+structured_module =
+    [ version_decl ] , kernel_decl ;
+
+version_decl =
+    "synax" , version_literal , [ ";" ] ;
+
+version_literal =
+      "0.1"
+    | "0.5"
+    | ( digit , { digit } , "." , digit , { digit } ) ;
+
+
+(* ------------------------------------------------------------------------- *)
+(* 2. Structured Kernel Declaration                                          *)
+(* ------------------------------------------------------------------------- *)
+
+kernel_decl =
+    "kernel" , identifier , "(" , [ param_list ] , ")" ,
+    "->" , return_type ,
+    "{" , { kernel_body_item } , "}" ;
+
+param_list =
+    param_decl , { "," , param_decl } , [ "," ] ;
+
+param_decl =
+    identifier , ":" , type_spec ;
+
+return_type =
+    type_spec ;
+
+
+(* ------------------------------------------------------------------------- *)
+(* 3. Static Type System                                                     *)
+(* ------------------------------------------------------------------------- *)
+
+type_spec =
+      scalar_type
+    | tensor_type ;
+
+scalar_type =
+      "f32"
+    | "f64"
+    | "i32"
+    | "bool" ;
+
+tensor_type =
+    "tensor" , "<" , scalar_type , [ "," , dimension_literal ] , ">" ;
+
+dimension_literal =
+    non_zero_digit , { digit } ;
+
+
+(* ------------------------------------------------------------------------- *)
+(* 4. Kernel Body Items & Safety Policy                                      *)
+(* ------------------------------------------------------------------------- *)
+
+kernel_body_item =
+      intent_decl
+    | require_decl
+    | safety_decl
+    | let_stmt
+    | return_stmt
+    | optimize_decl
+    | target_decl ;
+
+intent_decl =
+    "intent" , string_literal , [ ";" ] ;
+
+require_decl =
+    "require" , shape_expr , "==" , shape_expr , [ ";" ] ;
+
+shape_expr =
+      ( "shape" , "(" , identifier , ")" )
+    | dimension_literal ;
+
+safety_decl =
+    "safety" , "{" , { safety_clause , [ ";" | "," ] } , "}" ;
+
+safety_clause =
+      nonfinite_clause
+    | range_check_clause
+    | input_bound_clause ;
+
+nonfinite_clause =
+    "nonfinite" , "=" , nonfinite_policy ;
+
+nonfinite_policy =
+      ( "heal" , "(" , signed_number , ")" )
+    | "preserve"
+    | "reject"
+    | "zero_output" ;
+
+range_check_clause =
+    "range_check" , "=" , "clamp" , "(" , signed_number , "," , signed_number , ")" ;
+
+input_bound_clause =
+    "input_bound" , "=" , "abs_max" , "(" , signed_number , ")" ;
+
+let_stmt =
+    "let" , identifier , [ ":" , type_spec ] , "=" , expr , [ ";" ] ;
+
+return_stmt =
+    "return" , expr , [ ";" ] ;
+
+optimize_decl =
+    "optimize" , optimize_goal , [ ";" ] ;
+
+optimize_goal =
+      "latency"
+    | "throughput"
+    | "size" ;
+
+target_decl =
+    "target" , target_arch , [ ";" ] ;
+
+target_arch =
+      "auto"
+    | "neon"
+    | "avx2"
+    | "llvm"
+    | "scalar"
+    | "multicore" ;
+
+
+(* ------------------------------------------------------------------------- *)
+(* 5. Expressions & Operator Precedence (Lowest to Highest)                  *)
+(* ------------------------------------------------------------------------- *)
+(* Precedence Hierarchy:                                                     *)
+(*   Level 1 (Lowest) : Binary additive       `+`, `-`   (left-associative)  *)
+(*   Level 2          : Binary multiplicative `*`, `/`   (left-associative)  *)
+(*   Level 3          : Prefix unary          `+`, `-`   (right-associative) *)
+(*   Level 4          : Exponentiation        `^`, `**`  (base ^ const_exp)  *)
+(*   Level 5 (Highest): Primary atoms, calls, parenthesized `( expr )`       *)
+(* Note: `-x^2` parses as `-(x^2)` because `unary_expr` wraps `power_expr`.  *)
+(* ------------------------------------------------------------------------- *)
+
+expr =
+    add_expr ;
+
+add_expr =
+    mul_expr , { ( "+" | "-" ) , mul_expr } ;
+
+mul_expr =
+    unary_expr , { ( "*" | "/" ) , unary_expr } ;
+
+unary_expr =
+      ( ( "+" | "-" ) , unary_expr )
+    | power_expr ;
+
+power_expr =
+    primary_expr , [ ( "^" | "**" ) , exponent_const ] ;
+
+exponent_const =
+    number_literal ; (* Statically restricted to exact integer values 2 or 3 *)
+
+primary_expr =
+      number_literal
+    | bool_literal
+    | call_expr
+    | identifier
+    | ( "(" , expr , ")" ) ;
+
+call_expr =
+    builtin_func , "(" , [ arg_list ] , ")" ;
+
+arg_list =
+    expr , { "," , expr } ;
+
+builtin_func =
+      unary_builtin
+    | binary_builtin
+    | ternary_builtin ;
+
+unary_builtin =
+      "sqrt"
+    | "square"
+    | "pow2"
+    | "cube"
+    | "pow3"
+    | "abs"
+    | "fabs"
+    | "sin"
+    | "cos"
+    | "exp"
+    | "log"
+    | "ln"
+    | "sigmoid"
+    | "tanh"
+    | "relu" ;
+
+binary_builtin =
+      "min"
+    | "max" ;
+
+ternary_builtin =
+    "clamp" ;
+
+signed_number =
+    [ "+" | "-" ] , number_literal ;
+
+
+(* ------------------------------------------------------------------------- *)
+(* 6. Declarative `.sx` Compatibility Grammar (v0.2 / v0.4 / v0.5 Bridge)    *)
+(* ------------------------------------------------------------------------- *)
+
+declarative_module =
+    declarative_line , { newline , [ declarative_line ] } ;
+
+declarative_line =
+      line_comment
+    | declarative_directive
+    | freeform_intent_line ;
+
+declarative_directive =
+      ( ( "niyet" | "intent" ) , ":" , text_payload )
+    | ( ( "kural" | "rule" ) , ":" , text_payload )
+    | ( ( "hedef" | "target" ) , ":" , text_payload )
+    | ( ( "formül" | "formul" | "formula" | "akis" | "flow" | "expr" ) , ":" , expr_or_text_payload ) ;
+
+expr_or_text_payload =
+      expr
+    | text_payload ;
+
+freeform_intent_line =
+    text_payload ;
+
+text_payload =
+    non_newline_char , { non_newline_char } ;
+
+
+(* ------------------------------------------------------------------------- *)
+(* 7. Lexical Structure (Tokens, Literals, Comments, Whitespace)             *)
+(* ------------------------------------------------------------------------- *)
+
+identifier =
+    ident_start , { ident_continue } ;
+
+ident_start =
+    ascii_letter | "_" ;
+
+ident_continue =
+    ascii_letter | digit | "_" ;
+
+bool_literal =
+      "true"
+    | "false" ;
+
+number_literal =
+      float_literal
+    | integer_literal ;
+
+integer_literal =
+    digit , { digit } ;
+
+float_literal =
+      ( digit , { digit } , "." , digit , { digit } , [ exponent_part ] )
+    | ( digit , { digit } , exponent_part ) ;
+
+exponent_part =
+    ( "e" | "E" ) , [ "+" | "-" ] , digit , { digit } ;
+
+string_literal =
+    '"' , { string_char | escape_seq } , '"' ;
+
+string_char =
+    any_unicode_char - ( '"' | "\" | "\n" | "\r" ) ;
+
+escape_seq =
+    "\" , ( '"' | "\" | "n" | "r" | "t" ) ;
+
+line_comment =
+      ( "//" , { non_newline_char } )
+    | ( "#" , { non_newline_char } ) ;
+
+whitespace =
+    " " | "\t" | "\r" | "\n" ;
+
+newline =
+    [ "\r" ] , "\n" ;
+
+ascii_letter =
+      "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M"
+    | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
+    | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m"
+    | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" ;
+
+non_zero_digit =
+    "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+digit =
+    "0" | non_zero_digit ;
+
+non_newline_char =
+    any_unicode_char - ( "\n" | "\r" ) ;
+
+any_unicode_char =
+    ? Any valid UTF-8 scalar value U+0000..U+10FFFF ? ;

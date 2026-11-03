@@ -1,0 +1,76 @@
+[build-system]
+requires = []
+build-backend = "_pep517_backend"
+backend-path = ["."]
+
+[project]
+name = "synax"
+version = "0.5.0"
+description = "SYNAX (.sx) — Neuro-Symbolic Kernel Language, Differential Verifier & Adaptive Myelin Compiler"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Dr. Ömer Faruk Aydın", email = "dev@synaxcode.com" }
+]
+keywords = [
+  "compiler",
+  "simd",
+  "neon",
+  "avx2",
+  "llvm",
+  "ieee754",
+  "neuro-symbolic",
+  "biomedical-dsp",
+  "differential-testing"
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: MacOS :: MacOS X",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: C",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Software Development :: Compilers",
+]
+dependencies = []
+
+[project.optional-dependencies]
+fast = ["numpy>=1.24"]
+dev = ["numpy>=1.24", "pytest>=7.4"]
+
+[project.urls]
+Homepage = "https://synaxcode.com"
+Documentation = "https://synaxcode.org"
+Studio = "https://synaxcode.online"
+Repository = "https://github.com/ofaemd-creator/synax"
+Issues = "https://github.com/ofaemd-creator/synax/issues"
+
+[project.scripts]
+synax = "synax_cli:main"
+synaxc = "synaxc:main"
+
+[tool.setuptools]
+include-package-data = true
+packages = ["synax", "synax.backends"]
+package-dir = { "" = ".", "synax" = "src/synax", "synax.backends" = "src/synax/backends" }
+py-modules = [
+  "synax_ir",
+  "synax_verifier",
+  "synaxc",
+  "synax_cli",
+  "synax_myelin",
+  "synax_security",
+  "synapse_neural_model",
+  "synax_core",
+  "synax_biomedical_stream",
+  "synax_sdk",
+  "synax_web_server",
+]

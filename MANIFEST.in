@@ -1,0 +1,19 @@
+include LICENSE
+include LICENSING.md
+include NOTICE
+include TRADEMARKS.md
+include MEDICAL_RESEARCH_DISCLAIMER.md
+include SECURITY.md
+include CONTRIBUTING.md
+include CODE_OF_CONDUCT.md
+include GOVERNANCE.md
+include ROADMAP.md
+include CITATION.cff
+include README.md
+include synax_myelin_engine.c
+include synax_myelin_engine.h
+include synapse_brain.json
+recursive-include include *.h *.hpp
+recursive-include spec *.ebnf *.md
+recursive-include examples *.sx *.lock
+recursive-include src/synax *.py

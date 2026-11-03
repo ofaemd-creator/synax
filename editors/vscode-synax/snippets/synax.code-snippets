@@ -1,0 +1,79 @@
+{
+  "SYNAX Structured Kernel": {
+    "prefix": "kernel",
+    "description": "Create a structured SYNAX 0.1 verified SIMD kernel with IEEE-754 safety block",
+    "body": [
+      "synax 0.1",
+      "",
+      "kernel ${1:signal_kernel}(",
+      "  ${2:a}: tensor<f32>,",
+      "  ${3:b}: tensor<f32>",
+      ") -> tensor<f32> {",
+      "",
+      "  intent \"${4:Compute elementwise signal transformation with IEEE-754 protection.}\"",
+      "",
+      "  require shape(${2:a}) == shape(${3:b})",
+      "",
+      "  safety {",
+      "    nonfinite = ${5|heal(0.0),preserve,reject,zero_output|}",
+      "  }",
+      "",
+      "  let result = ${6:${2:a} + ${3:b}}",
+      "  return result",
+      "",
+      "  optimize latency",
+      "  target auto",
+      "}"
+    ]
+  },
+  "Coronary Perfusion Pressure Research Kernel": {
+    "prefix": "cpp",
+    "description": "Retrospective research kernel computing CPP = DBP - CVP with electrode-dropout healing",
+    "body": [
+      "synax 0.1",
+      "",
+      "kernel ${1:coronary_perfusion_pressure}(",
+      "  dbp: tensor<f32>,",
+      "  cvp: tensor<f32>",
+      ") -> tensor<f32> {",
+      "",
+      "  intent \"Retrospective research calculation of CPP = DBP - CVP with electrode-dropout healing.\"",
+      "",
+      "  require shape(dbp) == shape(cvp)",
+      "",
+      "  safety {",
+      "    nonfinite = heal(${2:0.0})",
+      "    range_check = clamp(${3:-50.0}, ${4:300.0})",
+      "  }",
+      "",
+      "  // Retrospective academic research signal — NOT for clinical use",
+      "  let cpp = dbp - cvp",
+      "  return cpp",
+      "",
+      "  optimize latency",
+      "  target auto",
+      "}"
+    ]
+  },
+  "IEEE-754 Immune Shield Safety Block": {
+    "prefix": "safety",
+    "description": "Insert a SYNAX IEEE-754 Immune Shield safety policy block",
+    "body": [
+      "safety {",
+      "  nonfinite = ${1|heal(0.0),preserve,reject,zero_output|}",
+      "  input_bound = ${2:1000.0}",
+      "  range_check = clamp(${3:-100.0}, ${4:100.0})",
+      "}"
+    ]
+  },
+  "Declarative Intent Kernel (niyet/kural/hedef)": {
+    "prefix": "niyet",
+    "description": "Create a declarative SYNAX v0.4/v0.5 intent specification (niyet/kural/hedef)",
+    "body": [
+      "# SYNAX Bildirimsel Niyet Tanımı",
+      "niyet: ${1:a'nın sigmoidini al ve b ile çarp (kapılı aktivasyon, GLU). sigmoid(x) = 1 / (1 + e^-x).}",
+      "kural: ${2:NaN girdi NaN çıktı versin. Çok büyük negatif a için taşma olmasın, sonuç 0'a gitsin.}",
+      "hedef: ${3:auto, en hızlı doğrulanmış sürüm.}"
+    ]
+  }
+}

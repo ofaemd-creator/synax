@@ -1,0 +1,140 @@
+name: SYNAX Cross-Platform CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-matrix:
+    name: Verify (${{ matrix.label }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            label: macos-14 ARM64 NEON
+            is_posix: true
+            shared_ext: dylib
+            extra_cflags: "-mcpu=apple-m1"
+          - os: ubuntu-latest
+            label: ubuntu-latest x86_64 Clang + AVX2
+            is_posix: true
+            shared_ext: so
+            extra_cflags: "-mavx2 -mfma"
+          - os: windows-latest
+            label: windows-latest Python 3.12 SDK
+            is_posix: false
+            shared_ext: dll
+            extra_cflags: ""
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Ensure Clang toolchain (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          if ! command -v clang >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y clang
+          fi
+          clang --version
+
+      - name: Compile native Myelin Engine (POSIX)
+        if: matrix.is_posix
+        shell: bash
+        run: |
+          rm -f libsynax_myelin.dylib libsynax_myelin.so
+          clang -O3 ${{ matrix.extra_cflags }} -shared -fPIC -std=c11 \
+            synax_myelin_engine.c -lm -ldl \
+            -o "libsynax_myelin.${{ matrix.shared_ext }}"
+          if [ "${{ matrix.shared_ext }}" = "so" ]; then
+            ln -sf libsynax_myelin.so libsynax_myelin.dylib
+          fi
+
+      - name: Verify Public C11 & C++17 SDK Headers (POSIX)
+        if: matrix.is_posix
+        shell: bash
+        run: |
+          cat << 'EOF' > /tmp/ci_sdk_check.c
+          #include "synax.h"
+          #include <assert.h>
+          int main(void) {
+              SynaxAxonChannel* ch = synax_axon_create("ci_c", 64, 2);
+              assert(ch != NULL);
+              float a[64] = {0}, b[64] = {0}, out[64] = {0};
+              assert(synax_axon_transmit(ch, a, b, out, 64) == 0);
+              synax_axon_destroy(ch);
+              return 0;
+          }
+          EOF
+          clang -std=c11 -Wall -Wextra -pedantic -Iinclude /tmp/ci_sdk_check.c \
+            -L. -lsynax_myelin -Wl,-rpath,"$(pwd)" -o /tmp/ci_sdk_check_c
+          /tmp/ci_sdk_check_c
+
+          cat << 'EOF' > /tmp/ci_sdk_check.cpp
+          #include "synax.hpp"
+          #include <cassert>
+          #include <vector>
+          int main() {
+              synax::AxonChannel ch("ci_cpp", 64, 2);
+              std::vector<float> a(64, 80.0f), b(64, 10.0f);
+              auto out = ch.transmit(a, b);
+              assert(out.size() == 64);
+              return 0;
+          }
+          EOF
+          clang++ -std=c++17 -Wall -Wextra -pedantic -Iinclude /tmp/ci_sdk_check.cpp \
+            -L. -lsynax_myelin -Wl,-rpath,"$(pwd)" -o /tmp/ci_sdk_check_cpp
+          /tmp/ci_sdk_check_cpp
+          rm -f /tmp/ci_sdk_check*
+
+      - name: Install SYNAX Python SDK (editable)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Validate VS Code Extension JSON manifests
+        run: |
+          python -c "import subprocess, sys; [subprocess.run([sys.executable, '-m', 'json.tool', f], stdout=subprocess.DEVNULL, check=True) for f in ['editors/vscode-synax/package.json', 'editors/vscode-synax/language-configuration.json', 'editors/vscode-synax/syntaxes/synax.tmLanguage.json', 'editors/vscode-synax/snippets/synax.code-snippets']]"
+
+      - name: Run Lexer, Parser & Typechecker Suite (All OSes)
+        run: python tests/test_lexer_parser_types.py
+
+      - name: Run Differential Myelin Engine Suite (macOS & Linux)
+        if: matrix.is_posix
+        run: python test_differential_myelin.py
+
+      - name: Run Unified Compiler 19-Suite Verification (macOS & Linux)
+        if: matrix.is_posix
+        run: python test_unified_compiler.py
+
+      - name: Run Adversarial Differential Fuzz Suite (macOS & Linux)
+        if: matrix.is_posix
+        run: python tests/test_fuzz_differential.py
+
+      - name: Run Public C11 & C++17 SDK Integration Suite (macOS & Linux)
+        if: matrix.is_posix
+        shell: bash
+        run: |
+          if [ -f tests/test_c_cpp_sdk.py ]; then
+            python tests/test_c_cpp_sdk.py
+          fi

@@ -1,19 +1,31 @@
 #!/usr/bin/env python3
 """
-SYNAX CLI (v0.5) — Unified Neuro-Symbolic Compiler & Myelin Runtime Interface
+SYNAX CLI (v0.5.0) — Unified Neuro-Symbolic Compiler, Tooling & Myelin Runtime
 =============================================================================
 Usage:
-  synax compile <file.sx> [--yeniden] [--n 4000000]   Compile, verify (19 suites) & cache
-  synax run <file.sx> [--n 32768] [--atim 10]         Compile & stream via Axon hot-swap
-  synax check <file.sx>                               Inspect IR, AST & Dual-Reference check
-  synax test                                          Run full differential & compiler suites
-  synax myelin                                        Run Builtin Ranvier Myelin demo
-  synax stream [seconds]                              Run 100 kS/s Biomedical Stream demo
-  synax benchmark                                     Run Hardware Axon/Tycon Evolution Matrix
-  synax status                                        Inspect hardware & signed Myelin cache
-  synax version                                       Show version & repository details
+  synax compile <file.sx> [--yeniden] [--n 4000000]        Compile, verify (19 suites) & cache
+  synax run <file.sx> [--n 32768] [--atim 10]              Compile & stream via Axon hot-swap
+  synax check <file.sx>                                    Typed AST, TypeChecker & Dual-Reference check
+  synax fmt <file.sx> [--check] [--write]                  Canonical idempotent .sx formatter
+  synax inspect <file.sx> [--ast|--ir|--c|--neon|--avx2|--llvm]
+                                                           Inspect any frontend or backend lowering stage
+  synax lock <file.sx> [-o out.sx.lock]                    Generate cryptographic .sx.lock (32 golden vectors)
+  synax verify-lock <file.sx> [-l file.sx.lock]            Verify .sx + native kernel against .sx.lock
+  synax debug <file.sx> [--a 90] [--b 10] [--corrupt]      Step-by-step IEEE-754 hex AST & SIMD debugger
+  synax profile <file.sx> [--n 4000000]                    Warm-cache Roofline profiler (IQR, P95, GB/s)
+  synax fuzz [count]                                       Run randomized AST & IEEE-754 differential fuzzer
+  synax bench                                              Run reproducible cross-backend benchmark suite
+  synax studio [--port 8080]                               Launch local SYNAX Studio IDE & REST server
+  synax update [--check]                                   Check GitHub Releases / upgrade package
+  synax test                                               Run all 5 unit, SDK, compiler & fuzz suites
+  synax myelin                                             Run Builtin Ranvier Myelin demo
+  synax stream [seconds]                                   Run 100 kS/s Biomedical Stream demo
+  synax status                                             Inspect hardware fingerprint & signed Myelin cache
+  synax version                                            Show version & repository details
 =============================================================================
 """
+
+from __future__ import annotations
 
 import argparse
 import json
@@ -23,9 +35,15 @@ import random
 import subprocess
 import sys
 import tempfile
-import time
 from array import array
 from pathlib import Path
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_DIR = os.path.join(BASE_DIR, "src")
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
 
 from synax_ir import parse_sx
 from synax_security import SynaxSecurityGuard
@@ -37,10 +55,8 @@ from synax_verifier import (
 )
 from synaxc import SHARED_CFLAGS_O0_REF, SynaxCodeGenerator, SynaxCompiler, get_hafiza_root
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-
-def print_banner():
+def print_banner() -> None:
     banner = """
    ███████╗██╗   ██╗███╗   ██╗ █████╗ ██╗  ██╗
    ██╔════╝╚██╗ ██╔╝████╗  ██║██╔══██╗╚██╗██╔╝
@@ -48,44 +64,63 @@ def print_banner():
    ╚════██║  ╚██╔╝  ██║╚██╗██║██╔══██║ ██╔██╗ 
    ███████║   ██║   ██║ ╚████║██║  ██║██╔╝ ██╗
    ╚══════╝   ╚═╝   ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝
-   Neuro-Symbolic Compiler & Adaptive Myelin Runtime (v0.5-Unified)
+   Neuro-Symbolic Compiler, Verification Gate & Adaptive Myelin Runtime (v0.5.0)
    GitHub: https://github.com/ofaemd-creator/synax | Cloud IDE: https://synaxcode.online
 """
     print(banner)
 
 
-def cmd_help():
+def cmd_help() -> None:
     print_banner()
     print(
-        """KOMUTLAR:
+        """DERLEYİCİ & ÇALIŞMA ZAMANI KOMUTLARI:
   synax compile <dosya.sx> [--yeniden] : .sx dosyasını IR'a indirger, 19 test kümesiyle doğrular ve derler
   synax run <dosya.sx> [--yeniden]     : .sx dosyasını derler ve SynaxAxonChannel fonksiyon işaretçisi takasıyla yürütür
-  synax check <dosya.sx>               : .sx sözdizimi, kanonik IR, C11/NEON çıktısı ve çift-referans denetimini yapar
-  synax test                           : Tüm diferansiyel denklik ve birleşik derleyici regresyon testlerini koşar
+  synax check <dosya.sx>               : Statik tip sistemi (TypeChecker), kanonik IR ve çift-referans denetimini yapar
+
+GELİŞTİRİCİ ARAÇLARI (DEVELOPER TOOLS):
+  synax fmt <dosya.sx> [--check|--write]: .sx kodunu kanonik biçime sokar (idempotent)
+  synax inspect <dosya.sx> [--llvm|...]: AST, IR, C11, ARM64 NEON, x86 AVX2 veya SSA LLVM IR çıktısını gösterir
+  synax lock <dosya.sx>                : 32 altın IEEE-754 vektörlü kriptografik .sx.lock kilidi üretir
+  synax verify-lock <dosya.sx>         : Kaynak kodu ve derlenmiş çekirdeği .sx.lock kilidine karşı doğrular
+  synax debug <dosya.sx> [--corrupt]   : Adım adım IEEE-754 bit (hex) AST izleyici ve SIMD karşılaştırıcı
+  synax profile <dosya.sx> [--n N]     : Tüm aday çekirdekler için medyan, IQR, P95 ve GB/s bellek bant genişliği analizi
+  synax studio [--port 8080]           : Yerel SYNAX Studio IDE ve REST derleyici sunucusunu başlatır
+
+TEST, BENCHMARK & DAĞITIM:
+  synax test                           : Birim, SDK (C11/C++17), 19-küme diferansiyel ve fuzz testlerinin tamamını koşar
+  synax fuzz [adet]                    : Rastgele AST + IEEE-754 diferansiyel fuzzing motorunu çalıştırır
+  synax bench                          : Tekrarlanabilir çoklu-backend benchmark raporunu üretir
+  synax update [--check]               : Resmi GitHub sürümlerini ve SHA-256 özetlerini denetler / günceller
   synax myelin                         : Yerleşik Ranvier Düğümleri ve Miyelin JIT deneyini yürütür
   synax stream [süre_sn]               : 100,000 örnek/sn Biyomedikal Hemodinamik sinyal akışını başlatır
-  synax benchmark                      : Apple Silicon donanım evrim matrisini çalıştırır
-  synax status                         : Donanım profilini ve kriptografik Miyelin hafıza önbelleğini listeler
+  synax status                         : Donanım parmak izini (hw_fingerprint) ve imzalı Miyelin önbelleğini listeler
   synax version                        : Sürüm, lisans (Apache-2.0) ve ekosistem bilgilerini gösterir
 """
     )
 
 
-def cmd_version():
-    print("SYNAX Unified Compiler & Runtime v0.5.0 (Apache License 2.0)")
-    print("Resmi GitHub Deposu : https://github.com/ofaemd-creator/synax")
-    print("Egemen Git Sunucusu : https://synaxcode.org/git/synax.git")
-    print("Cloud Studio IDE    : https://synaxcode.online")
-    print("Teknik Dokümantasyon: https://synaxcode.org")
+def cmd_version() -> None:
+    from synax.hardware import detect_hardware_fingerprint
+
+    fp = detect_hardware_fingerprint()
+    print("SYNAX Unified Compiler, SDK & Myelin Runtime v0.5.0 (Apache License 2.0)")
+    print(f"AXON Donanım Parmak İzi : {fp.fingerprint_id} ({fp.cpu_brand} | {fp.simd_isa})")
+    print("Resmi GitHub Deposu     : https://github.com/ofaemd-creator/synax")
+    print("Cloud Studio IDE        : https://synaxcode.online")
+    print("Teknik Dokümantasyon    : https://synaxcode.org")
 
 
-def cmd_status():
+def cmd_status() -> None:
+    from synax.hardware import detect_hardware_fingerprint
     from synax_core import AxonProfiler
 
     hw = AxonProfiler.probe()
-    print("\n🖥️  AXON DONANIM PROFİLİ:")
+    fp = detect_hardware_fingerprint()
+    print("\n🖥️  AXON DONANIM PROFİLİ & KRİPTOGRAFİK PARMAK İZİ:")
     print(f"  • İşlemci / Mimari : {hw.cpu_brand} ({hw.arch}) — {hw.cores} çekirdek ({hw.p_cores}P + {hw.e_cores}E)")
-    print(f"  • Bellek / SIMD    : {hw.ram_mb} MB RAM | ARM64 NEON: {'Aktif' if hw.has_neon else 'Yok'}")
+    print(f"  • Bellek / SIMD    : {hw.ram_mb} MB RAM | SIMD ISA: {fp.simd_isa} | Önbellek Satırı: {fp.cacheline_bytes} B")
+    print(f"  • Donanım Özeti    : #{fp.fingerprint_id} ({fp.compiler_id[:60]})")
 
     hafiza_root = get_hafiza_root()
     print(f"\n🧠 BİRLEŞİK MİYELİN HAFIZASI ({hafiza_root}):")
@@ -96,8 +131,9 @@ def cmd_status():
             try:
                 data = json.loads(rpath.read_text(encoding="utf-8"))
                 badge = "✓ İMZALI" if ok_sig else "✗ İMZA HATASI"
+                hw_tag = data.get("hw_fingerprint", "legacy")
                 print(
-                    f"  • [{data.get('ir_hash', '?')}] {data.get('modul', '?'):<28} -> "
+                    f"  • [{data.get('ir_hash', '?')}|hw:{hw_tag[:6]}] {data.get('modul', '?'):<26} -> "
                     f"{data.get('kazanan', '?'):<22} ({data.get('kazanan_ms')} ms | "
                     f"Skaler {data.get('hizlanma_skaler')}x, O3 {data.get('hizlanma_clang_o3')}x) [{badge}]"
                 )
@@ -107,17 +143,19 @@ def cmd_status():
         print("  (Henüz derlenmiş .sx önbelleği yok. 'synax compile examples/kapili_aktivasyon.sx' çalıştırın)")
 
 
-def cmd_check(argv):
+def cmd_check(argv: list[str]) -> None:
     ap = argparse.ArgumentParser(prog="synax check")
     ap.add_argument("sx", help="Denetlenecek .sx dosyası")
     args = ap.parse_args(argv)
 
-    ir = parse_sx(args.sx)
+    from synax.parser import lower_to_synax_ir
+
+    ir = lower_to_synax_ir(args.sx)
     p0, p1 = ir.param_names
     print("=" * 72)
-    print(f"🔍 SYNAX STATİK & SEMANTİK DENETİM — {ir.name} [IR #{ir.ir_hash}]")
+    print(f"🔍 SYNAX STATİK TİP & SEMANTİK DENETİM — {ir.name} [IR #{ir.ir_hash}]")
     print("=" * 72)
-    print(f"  • Kaynak Biçimi   : {ir.syntax_format} (v{ir.version})")
+    print(f"  • Kaynak Biçimi   : {ir.syntax_format} (v{ir.version}) [TypeChecker: ✓ GEÇTİ]")
     print(f"  • Parametreler    : ({p0}: tensor<f32>, {p1}: tensor<f32>) -> tensor<f32>")
     print(f"  • Niyet           : {ir.intent_text}")
     print(f"  • Kanonik Formül  : out = {ir.expr.to_human_formula(p0, p1)}")
@@ -147,7 +185,198 @@ def cmd_check(argv):
     print("=" * 72)
 
 
-def cmd_compile(argv):
+def cmd_fmt(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(prog="synax fmt")
+    ap.add_argument("sx", help="Biçimlendirilecek .sx dosyası")
+    ap.add_argument("--check", action="store_true", help="Dosyayı değiştirmeden kanonik biçimde olup olmadığını denetle")
+    ap.add_argument("--write", "-w", action="store_true", help="Kanonik biçimi doğrudan dosyanın üzerine yaz")
+    args = ap.parse_args(argv)
+
+    from synax.formatter import format_sx
+
+    path = Path(args.sx)
+    if not path.exists():
+        raise FileNotFoundError(f"Dosya bulunamadı: {path}")
+    original = path.read_text(encoding="utf-8")
+    formatted = format_sx(original)
+
+    if args.check:
+        if original != formatted:
+            print(f"✗ {path} kanonik biçimde değil ('synax fmt --write {path}' çalıştırın).", file=sys.stderr)
+            sys.exit(1)
+        print(f"✓ {path} kanonik biçimde.")
+        return
+
+    if args.write:
+        path.write_text(formatted, encoding="utf-8")
+        print(f"✓ {path} kanonik biçimde güncellendi.")
+    else:
+        sys.stdout.write(formatted)
+
+
+def cmd_inspect(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(prog="synax inspect")
+    ap.add_argument("sx", help="İncelenecek .sx dosyası veya ifadesi")
+    grp = ap.add_mutually_exclusive_group()
+    grp.add_argument("--ast", action="store_true", help="Tip denetimli AST ağacını göster")
+    grp.add_argument("--ir", action="store_true", help="Kanonik SynaxIR JSON temsilini göster")
+    grp.add_argument("--c", action="store_true", help="Üretilen C11 skaler kaynak kodunu göster")
+    grp.add_argument("--neon", action="store_true", help="Üretilen ARM64 NEON 4x prefetch kodunu göster")
+    grp.add_argument("--avx2", action="store_true", help="Üretilen x86_64 AVX2+FMA (__m256) kodunu göster")
+    grp.add_argument("--llvm", action="store_true", help="Üretilen SSA LLVM IR (.ll) modülünü göster")
+    args = ap.parse_args(argv)
+
+    from synax.backends.avx2_backend import AVX2Backend
+    from synax.backends.llvm_ir_backend import LLVMIRBackend
+    from synax.parser import lower_to_synax_ir, parse_module
+    from synax.type_system import TypeChecker
+
+    mod = parse_module(args.sx)
+    if mod.kernel is not None:
+        TypeChecker.check(mod.kernel)
+    ir = lower_to_synax_ir(mod)
+
+    if args.ast:
+        if mod.kernel is not None:
+            print(f"KernelDecl(name={mod.kernel.name!r}, version={mod.kernel.version!r})")
+            for p in mod.kernel.params:
+                print(f"  param {p.name}: {p.inferred_type}")
+            print(f"  return_type: {mod.kernel.return_type}")
+            for lt in mod.kernel.lets:
+                print(f"  let {lt.name}: {lt.inferred_type} = {lt.expr}")
+            print(f"  return: {mod.kernel.return_stmt.inferred_type} = {mod.kernel.return_stmt.expr}")
+        else:
+            print(json.dumps(ir.expr.to_dict(), indent=2, ensure_ascii=False))
+    elif args.c:
+        print(SynaxCodeGenerator.emit_scalar_variant(ir))
+    elif args.neon:
+        print(SynaxCodeGenerator.emit_neon_variant(ir, unroll_4x=True))
+    elif args.avx2:
+        print(AVX2Backend.emit_c_source(ir))
+    elif args.llvm:
+        print(LLVMIRBackend.emit_llvm_ir(ir))
+    else:
+        payload = ir.to_canonical_dict()
+        payload["ir_hash"] = ir.ir_hash
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
+
+
+def cmd_lock(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(prog="synax lock")
+    ap.add_argument("sx", help="Kilitlenecek .sx dosyası")
+    ap.add_argument("-o", "--output", default=None, help="Çıktı .sx.lock dosya yolu")
+    args = ap.parse_args(argv)
+
+    from synax.semantic_lock import write_lockfile
+
+    lock_path = write_lockfile(args.sx, lock_path=args.output)
+    data = json.loads(lock_path.read_text(encoding="utf-8"))
+    print(
+        f"🔒 Semantik Kilit Oluşturuldu: {lock_path}\n"
+        f"   • Çekirdek / IR Özeti : {data['kernel_name']} [#{data['ir_hash']}]\n"
+        f"   • Altın Vektör Sayısı : {data['golden_vector_count']} (beklenen şifa: {data['total_expected_healed']})\n"
+        f"   • SHA-256 Bütünlük    : {data['_integrity_sha256'][:24]}…"
+    )
+
+
+def cmd_verify_lock(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(prog="synax verify-lock")
+    ap.add_argument("sx", help="Doğrulanacak .sx dosyası")
+    ap.add_argument("-l", "--lock", default=None, help="İsteğe bağlı .sx.lock dosya yolu")
+    ap.add_argument("--native", action="store_true", help="Derlenmiş native SIMD çekirdeğini de kilide karşı doğrula")
+    args = ap.parse_args(argv)
+
+    from synax.semantic_lock import verify_lockfile
+
+    loaded_k = None
+    if args.native:
+        comp = SynaxCompiler().compile(args.sx, bench_n=65_536, bench_repeats=3, verbose=False)
+        loaded_k = LoadedKernel(str(comp.winner_dylib_path), name=comp.winner_name)
+
+    ok, msg = verify_lockfile(args.sx, lock_path=args.lock, kernel=loaded_k)
+    if not ok:
+        print(f"✗ [SEMANTİK KİLİT İHLALİ] {msg}", file=sys.stderr)
+        sys.exit(1)
+    print(f"✓ [SEMANTİK KİLİT DOĞRULANDI] {msg}")
+
+
+def cmd_debug(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(prog="synax debug")
+    ap.add_argument("sx", help="Hata ayıklanacak .sx dosyası")
+    ap.add_argument("--a", type=float, default=90.0, help="Kanal A test değeri (varsayılan: 90.0)")
+    ap.add_argument("--b", type=float, default=10.0, help="Kanal B test değeri (varsayılan: 10.0)")
+    ap.add_argument("--index", type=int, default=0, help="Örnek indeksi etiketi")
+    ap.add_argument("--corrupt", action="store_true", help="Kanal A'ya NaN enjekte ederek IMMUNE kalkanını izle")
+    args = ap.parse_args(argv)
+
+    from synax.profiler_debugger import SynaxDebugger
+
+    a_val = float("nan") if args.corrupt else args.a
+    comp = SynaxCompiler().compile(args.sx, bench_n=65_536, bench_repeats=3, verbose=False)
+    rep = SynaxDebugger.trace_element(
+        comp.ir,
+        a_val=a_val,
+        b_val=args.b,
+        index=args.index,
+        native_dylib=comp.winner_dylib_path,
+    )
+    print(rep.format_table())
+    if not rep.parity_ok:
+        sys.exit(1)
+
+
+def cmd_profile(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(prog="synax profile")
+    ap.add_argument("sx", help="Profillenecek .sx dosyası")
+    ap.add_argument("--n", type=int, default=4_000_000, help="Eleman sayısı (varsayılan: 4,000,000)")
+    ap.add_argument("--repeats", type=int, default=21, help="Isınmış önbellek tekrar sayısı (varsayılan: 21)")
+    args = ap.parse_args(argv)
+
+    from synax.profiler_debugger import SynaxProfiler
+
+    comp = SynaxCompiler().compile(args.sx, bench_n=args.n, bench_repeats=9, verbose=False)
+    dylibs = [("baseline_scalar_o1", comp.baseline_o1_dylib_path)]
+    for cand in sorted(comp.cache_dir.glob("v*.dylib")):
+        dylibs.append((cand.stem, cand))
+
+    entries = SynaxProfiler.profile_dylibs(dylibs, n=args.n, repeats=args.repeats)
+    print("=" * 94)
+    print(f"📊 SYNAX ROOFLINE & GECİKME PROFİLİ — {comp.ir.name} (N={args.n:,}, {args.repeats} tekrar)")
+    print("=" * 94)
+    print(
+        f"  {'ADAY ÇEKİRDEK':<26} {'MEDYAN (ms)':>11} {'IQR (ms)':>9} {'P95 (ms)':>9} "
+        f"{'ns/eleman':>10} {'GB/sn':>8} {'vs -O3':>8}"
+    )
+    print("-" * 94)
+    for e in entries:
+        print(
+            f"  {e.name:<26} {e.median_ms:11.3f} {e.iqr_ms:9.3f} {e.p95_ms:9.3f} "
+            f"{e.ns_per_elem:10.3f} {e.gb_per_sec:8.1f} {e.speedup_vs_o3:7.2f}x"
+        )
+    print("=" * 94)
+
+
+def cmd_update(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(prog="synax update")
+    ap.add_argument("--check", action="store_true", help="Yalnızca yeni sürüm kontrolü yap")
+    args = ap.parse_args(argv)
+
+    from synax.updater import check_for_updates, perform_pip_upgrade
+
+    res = check_for_updates(current_version="0.5.0")
+    print(f"🔄 SYNAX Sürüm Denetimi: {res.message}")
+    print(f"   • Mevcut Sürüm : v{res.current_version} | En Son Sürüm: v{res.latest_version}")
+    print(f"   • Sürüm Sayfası: {res.release_url}")
+    if not args.check and res.update_available:
+        ok, out = perform_pip_upgrade()
+        if ok:
+            print("✓ Güncelleme tamamlandı.")
+        else:
+            print(f"✗ Otomatik güncelleme başarısız: {out}", file=sys.stderr)
+            sys.exit(1)
+
+
+def cmd_compile(argv: list[str]) -> None:
     ap = argparse.ArgumentParser(prog="synax compile")
     ap.add_argument("sx", help="Derlenecek .sx dosyası veya ifade")
     ap.add_argument("--yeniden", action="store_true", help="Önbelleği yok say ve yeniden doğrula")
@@ -169,7 +398,7 @@ def cmd_compile(argv):
     )
 
 
-def cmd_run(argv):
+def cmd_run(argv: list[str]) -> None:
     ap = argparse.ArgumentParser(prog="synax run")
     ap.add_argument("sx", help="Çalıştırılacak .sx dosyası veya ifade")
     ap.add_argument("--yeniden", action="store_true", help="Önbelleği yok say")
@@ -227,19 +456,25 @@ def cmd_run(argv):
         )
 
 
-def cmd_test():
+def cmd_test() -> None:
     suite_files = [
+        os.path.join(BASE_DIR, "tests", "test_lexer_parser_types.py"),
+        os.path.join(BASE_DIR, "tests", "test_c_cpp_sdk.py"),
         os.path.join(BASE_DIR, "test_differential_myelin.py"),
         os.path.join(BASE_DIR, "test_unified_compiler.py"),
+        os.path.join(BASE_DIR, "tests", "test_fuzz_differential.py"),
     ]
+    ran = 0
     for sf in suite_files:
         if os.path.exists(sf):
+            ran += 1
             rc = subprocess.call([sys.executable, sf])
             if rc != 0:
                 sys.exit(rc)
+    print(f"\n✅ TÜM TEST PAKETLERİ ({ran}/{ran}) SIFIR HATA İLE GEÇTİ!")
 
 
-def main():
+def main() -> None:
     if len(sys.argv) < 2:
         cmd_help()
         sys.exit(0)
@@ -256,6 +491,36 @@ def main():
             cmd_status()
         elif subcmd == "check":
             cmd_check(rest)
+        elif subcmd in ("fmt", "format"):
+            cmd_fmt(rest)
+        elif subcmd == "inspect":
+            cmd_inspect(rest)
+        elif subcmd == "lock":
+            cmd_lock(rest)
+        elif subcmd in ("verify-lock", "verifylock"):
+            cmd_verify_lock(rest)
+        elif subcmd == "debug":
+            cmd_debug(rest)
+        elif subcmd == "profile":
+            cmd_profile(rest)
+        elif subcmd == "update":
+            cmd_update(rest)
+        elif subcmd == "fuzz":
+            fuzz_script = os.path.join(BASE_DIR, "tests", "test_fuzz_differential.py")
+            cmd = [sys.executable, fuzz_script]
+            if rest:
+                cmd.extend(["--count", rest[0]])
+            sys.exit(subprocess.call(cmd))
+        elif subcmd == "bench":
+            bench_script = os.path.join(BASE_DIR, "benchmarks", "run_benchmarks.py")
+            sys.exit(subprocess.call([sys.executable, bench_script, *rest]))
+        elif subcmd == "studio":
+            ap = argparse.ArgumentParser(prog="synax studio")
+            ap.add_argument("--host", default="127.0.0.1")
+            ap.add_argument("--port", type=int, default=8080)
+            s_args = ap.parse_args(rest)
+            from synax_web_server import run_studio_server
+            run_studio_server(host=s_args.host, port=s_args.port)
         elif subcmd == "compile":
             cmd_compile(rest)
         elif subcmd == "run":
@@ -273,7 +538,6 @@ def main():
             import synax_core
             synax_core.run_omega_evolution()
         else:
-            # Direct `.sx` file execution shorthand: `synax examples/kapili_aktivasyon.sx`
             if os.path.exists(sys.argv[1]):
                 cmd_run(sys.argv[1:])
             else:

@@ -1,0 +1,439 @@
+{
+  "timestamp": "2026-11-03T00:46:03Z",
+  "n_elements": 4000000,
+  "warm_runs": 21,
+  "cflags_o3": "-O3 -mcpu=native -shared -fPIC -std=c11 -Wall -Wno-unused-function",
+  "cflags_scalar_o1": "-O1 -fno-vectorize -fno-slp-vectorize -shared -fPIC -std=c11 -Wall -Wno-unused-function",
+  "hardware": {
+    "os_system": "Darwin",
+    "machine_arch": "arm64",
+    "cpu_brand": "Apple M1",
+    "logical_cores": 8,
+    "cacheline_bytes": 128,
+    "simd_isa": "arm64_neon",
+    "compiler_id": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
+    "fingerprint_id": "4258050f0fd7"
+  },
+  "results": [
+    {
+      "workload": "kapili_aktivasyon.sx",
+      "kernel_name": "kapili_aktivasyon",
+      "ir_hash": "76790523977a",
+      "formula": "(sigmoid(a) * b)",
+      "safety_mode": "preserve",
+      "scalar_o1": {
+        "median_ms": 7.4953,
+        "iqr_ms": 0.0624,
+        "p25_ms": 7.4576,
+        "p75_ms": 7.52,
+        "min_ms": 7.4323,
+        "effective_gbps": 6.4
+      },
+      "clang_o3": {
+        "median_ms": 6.9108,
+        "iqr_ms": 0.0466,
+        "p25_ms": 6.896,
+        "p75_ms": 6.9426,
+        "min_ms": 6.8878,
+        "effective_gbps": 6.95
+      },
+      "variants": {
+        "v0_clang_o3_scalar": {
+          "median_ms": 6.9108,
+          "iqr_ms": 0.0466,
+          "p25_ms": 6.896,
+          "p75_ms": 6.9426,
+          "min_ms": 6.8878,
+          "effective_gbps": 6.95
+        },
+        "v1_unroll4_scalar": {
+          "median_ms": 7.2168,
+          "iqr_ms": 0.0956,
+          "p25_ms": 7.1781,
+          "p75_ms": 7.2737,
+          "min_ms": 7.1456,
+          "effective_gbps": 6.65
+        },
+        "v2_neon_simd": {
+          "median_ms": 3.4195,
+          "iqr_ms": 0.2816,
+          "p25_ms": 3.3362,
+          "p75_ms": 3.6178,
+          "min_ms": 3.1768,
+          "effective_gbps": 14.04
+        },
+        "v3_neon_4acc_prefetch": {
+          "median_ms": 3.125,
+          "iqr_ms": 0.0268,
+          "p25_ms": 3.1103,
+          "p75_ms": 3.1371,
+          "min_ms": 3.0972,
+          "effective_gbps": 15.36
+        },
+        "v4_gcd_multicore_neon": {
+          "median_ms": 1.0103,
+          "iqr_ms": 0.0483,
+          "p25_ms": 1.001,
+          "p75_ms": 1.0493,
+          "min_ms": 0.9343,
+          "effective_gbps": 47.51
+        },
+        "v5_llvm_ssa_ir_o3": {
+          "median_ms": 7.0086,
+          "iqr_ms": 0.2001,
+          "p25_ms": 6.9133,
+          "p75_ms": 7.1134,
+          "min_ms": 6.8911,
+          "effective_gbps": 6.85
+        }
+      },
+      "winner": "v4_gcd_multicore_neon",
+      "winner_stats": {
+        "median_ms": 1.0103,
+        "iqr_ms": 0.0483,
+        "p25_ms": 1.001,
+        "p75_ms": 1.0493,
+        "min_ms": 0.9343,
+        "effective_gbps": 47.51
+      },
+      "speedup_vs_scalar_o1": 7.419,
+      "speedup_vs_clang_o3": 6.84
+    },
+    {
+      "workload": "biyomedikal_kardiyo.sx",
+      "kernel_name": "biyomedikal_kardiyo",
+      "ir_hash": "37c47450e417",
+      "formula": "(sqrt((((a - b))² + 1e-06)) + (0.5 * (a + b)))",
+      "safety_mode": "heal_inputs",
+      "scalar_o1": {
+        "median_ms": 6.4674,
+        "iqr_ms": 2.2018,
+        "p25_ms": 5.6234,
+        "p75_ms": 7.8252,
+        "min_ms": 5.3313,
+        "effective_gbps": 7.42
+      },
+      "clang_o3": {
+        "median_ms": 1.3275,
+        "iqr_ms": 0.135,
+        "p25_ms": 1.2374,
+        "p75_ms": 1.3724,
+        "min_ms": 1.1807,
+        "effective_gbps": 36.16
+      },
+      "variants": {
+        "v0_clang_o3_scalar": {
+          "median_ms": 1.3275,
+          "iqr_ms": 0.135,
+          "p25_ms": 1.2374,
+          "p75_ms": 1.3724,
+          "min_ms": 1.1807,
+          "effective_gbps": 36.16
+        },
+        "v1_unroll4_scalar": {
+          "median_ms": 5.2757,
+          "iqr_ms": 1.2189,
+          "p25_ms": 4.9639,
+          "p75_ms": 6.1828,
+          "min_ms": 4.7113,
+          "effective_gbps": 9.1
+        },
+        "v2_neon_simd": {
+          "median_ms": 1.5364,
+          "iqr_ms": 0.26,
+          "p25_ms": 1.4529,
+          "p75_ms": 1.7129,
+          "min_ms": 1.2758,
+          "effective_gbps": 31.24
+        },
+        "v3_neon_4acc_prefetch": {
+          "median_ms": 2.0861,
+          "iqr_ms": 0.6278,
+          "p25_ms": 1.7619,
+          "p75_ms": 2.3897,
+          "min_ms": 1.5083,
+          "effective_gbps": 23.01
+        },
+        "v4_gcd_multicore_neon": {
+          "median_ms": 1.4373,
+          "iqr_ms": 0.3126,
+          "p25_ms": 1.2835,
+          "p75_ms": 1.5961,
+          "min_ms": 1.1362,
+          "effective_gbps": 33.4
+        },
+        "v5_llvm_ssa_ir_o3": {
+          "median_ms": 1.3244,
+          "iqr_ms": 0.243,
+          "p25_ms": 1.2577,
+          "p75_ms": 1.5008,
+          "min_ms": 1.2038,
+          "effective_gbps": 36.24
+        }
+      },
+      "winner": "v5_llvm_ssa_ir_o3",
+      "winner_stats": {
+        "median_ms": 1.3244,
+        "iqr_ms": 0.243,
+        "p25_ms": 1.2577,
+        "p75_ms": 1.5008,
+        "min_ms": 1.2038,
+        "effective_gbps": 36.24
+      },
+      "speedup_vs_scalar_o1": 4.883,
+      "speedup_vs_clang_o3": 1.002
+    },
+    {
+      "workload": "hemodynamic_cpp.sx",
+      "kernel_name": "coronary_perfusion_pressure",
+      "ir_hash": "9e53598bbf81",
+      "formula": "(dbp - cvp)",
+      "safety_mode": "heal_inputs",
+      "scalar_o1": {
+        "median_ms": 5.4756,
+        "iqr_ms": 0.1361,
+        "p25_ms": 5.4048,
+        "p75_ms": 5.5409,
+        "min_ms": 5.3295,
+        "effective_gbps": 8.77
+      },
+      "clang_o3": {
+        "median_ms": 1.1056,
+        "iqr_ms": 0.0994,
+        "p25_ms": 1.0665,
+        "p75_ms": 1.1659,
+        "min_ms": 1.0342,
+        "effective_gbps": 43.42
+      },
+      "variants": {
+        "v0_clang_o3_scalar": {
+          "median_ms": 1.1056,
+          "iqr_ms": 0.0994,
+          "p25_ms": 1.0665,
+          "p75_ms": 1.1659,
+          "min_ms": 1.0342,
+          "effective_gbps": 43.42
+        },
+        "v1_unroll4_scalar": {
+          "median_ms": 4.802,
+          "iqr_ms": 0.3243,
+          "p25_ms": 4.7412,
+          "p75_ms": 5.0656,
+          "min_ms": 4.6171,
+          "effective_gbps": 10.0
+        },
+        "v2_neon_simd": {
+          "median_ms": 1.1274,
+          "iqr_ms": 0.2961,
+          "p25_ms": 0.9919,
+          "p75_ms": 1.288,
+          "min_ms": 0.909,
+          "effective_gbps": 42.58
+        },
+        "v3_neon_4acc_prefetch": {
+          "median_ms": 1.2143,
+          "iqr_ms": 0.2252,
+          "p25_ms": 1.1391,
+          "p75_ms": 1.3642,
+          "min_ms": 0.9968,
+          "effective_gbps": 39.53
+        },
+        "v4_gcd_multicore_neon": {
+          "median_ms": 1.2112,
+          "iqr_ms": 0.1335,
+          "p25_ms": 1.1269,
+          "p75_ms": 1.2604,
+          "min_ms": 1.0186,
+          "effective_gbps": 39.63
+        },
+        "v5_llvm_ssa_ir_o3": {
+          "median_ms": 1.1564,
+          "iqr_ms": 0.1894,
+          "p25_ms": 1.0555,
+          "p75_ms": 1.245,
+          "min_ms": 1.0412,
+          "effective_gbps": 41.51
+        }
+      },
+      "winner": "v0_clang_o3_scalar",
+      "winner_stats": {
+        "median_ms": 1.1056,
+        "iqr_ms": 0.0994,
+        "p25_ms": 1.0665,
+        "p75_ms": 1.1659,
+        "min_ms": 1.0342,
+        "effective_gbps": 43.42
+      },
+      "speedup_vs_scalar_o1": 4.953,
+      "speedup_vs_clang_o3": 1.0
+    },
+    {
+      "workload": "normalized_difference.sx",
+      "kernel_name": "normalized_difference",
+      "ir_hash": "14972af4d6fe",
+      "formula": "clamp(abs((a - b)), 0, 1)",
+      "safety_mode": "reject",
+      "scalar_o1": {
+        "median_ms": 6.1815,
+        "iqr_ms": 0.9293,
+        "p25_ms": 5.9023,
+        "p75_ms": 6.8316,
+        "min_ms": 5.435,
+        "effective_gbps": 7.77
+      },
+      "clang_o3": {
+        "median_ms": 1.481,
+        "iqr_ms": 0.1263,
+        "p25_ms": 1.4003,
+        "p75_ms": 1.5266,
+        "min_ms": 1.3444,
+        "effective_gbps": 32.41
+      },
+      "variants": {
+        "v0_clang_o3_scalar": {
+          "median_ms": 1.481,
+          "iqr_ms": 0.1263,
+          "p25_ms": 1.4003,
+          "p75_ms": 1.5266,
+          "min_ms": 1.3444,
+          "effective_gbps": 32.41
+        },
+        "v1_unroll4_scalar": {
+          "median_ms": 5.2084,
+          "iqr_ms": 0.1779,
+          "p25_ms": 5.1603,
+          "p75_ms": 5.3382,
+          "min_ms": 5.1357,
+          "effective_gbps": 9.22
+        },
+        "v2_neon_simd": {
+          "median_ms": 0.995,
+          "iqr_ms": 0.0679,
+          "p25_ms": 0.9578,
+          "p75_ms": 1.0257,
+          "min_ms": 0.9348,
+          "effective_gbps": 48.24
+        },
+        "v3_neon_4acc_prefetch": {
+          "median_ms": 1.3255,
+          "iqr_ms": 0.0227,
+          "p25_ms": 1.3151,
+          "p75_ms": 1.3378,
+          "min_ms": 1.3067,
+          "effective_gbps": 36.21
+        },
+        "v4_gcd_multicore_neon": {
+          "median_ms": 1.0974,
+          "iqr_ms": 0.1485,
+          "p25_ms": 1.052,
+          "p75_ms": 1.2005,
+          "min_ms": 0.9893,
+          "effective_gbps": 43.74
+        },
+        "v5_llvm_ssa_ir_o3": {
+          "median_ms": 1.5844,
+          "iqr_ms": 0.241,
+          "p25_ms": 1.5515,
+          "p75_ms": 1.7925,
+          "min_ms": 1.5098,
+          "effective_gbps": 30.3
+        }
+      },
+      "winner": "v2_neon_simd",
+      "winner_stats": {
+        "median_ms": 0.995,
+        "iqr_ms": 0.0679,
+        "p25_ms": 0.9578,
+        "p75_ms": 1.0257,
+        "min_ms": 0.9348,
+        "effective_gbps": 48.24
+      },
+      "speedup_vs_scalar_o1": 6.213,
+      "speedup_vs_clang_o3": 1.488
+    },
+    {
+      "workload": "anomali_v04.sx",
+      "kernel_name": "anomali_v04",
+      "ir_hash": "d6bc803a78ac",
+      "formula": "(((a - b))² + 0.5)",
+      "safety_mode": "zero_output",
+      "scalar_o1": {
+        "median_ms": 3.9353,
+        "iqr_ms": 0.3153,
+        "p25_ms": 3.7175,
+        "p75_ms": 4.0328,
+        "min_ms": 3.3869,
+        "effective_gbps": 12.2
+      },
+      "clang_o3": {
+        "median_ms": 0.9323,
+        "iqr_ms": 0.1805,
+        "p25_ms": 0.91,
+        "p75_ms": 1.0905,
+        "min_ms": 0.8727,
+        "effective_gbps": 51.49
+      },
+      "variants": {
+        "v0_clang_o3_scalar": {
+          "median_ms": 0.9323,
+          "iqr_ms": 0.1805,
+          "p25_ms": 0.91,
+          "p75_ms": 1.0905,
+          "min_ms": 0.8727,
+          "effective_gbps": 51.49
+        },
+        "v1_unroll4_scalar": {
+          "median_ms": 2.7508,
+          "iqr_ms": 0.2134,
+          "p25_ms": 2.7024,
+          "p75_ms": 2.9158,
+          "min_ms": 2.6825,
+          "effective_gbps": 17.45
+        },
+        "v2_neon_simd": {
+          "median_ms": 1.0361,
+          "iqr_ms": 0.1329,
+          "p25_ms": 1.0228,
+          "p75_ms": 1.1556,
+          "min_ms": 1.0072,
+          "effective_gbps": 46.33
+        },
+        "v3_neon_4acc_prefetch": {
+          "median_ms": 1.0462,
+          "iqr_ms": 0.1167,
+          "p25_ms": 1.0365,
+          "p75_ms": 1.1531,
+          "min_ms": 1.0294,
+          "effective_gbps": 45.88
+        },
+        "v4_gcd_multicore_neon": {
+          "median_ms": 1.0824,
+          "iqr_ms": 0.1097,
+          "p25_ms": 1.0384,
+          "p75_ms": 1.148,
+          "min_ms": 0.9975,
+          "effective_gbps": 44.35
+        },
+        "v5_llvm_ssa_ir_o3": {
+          "median_ms": 1.0498,
+          "iqr_ms": 0.1681,
+          "p25_ms": 0.9832,
+          "p75_ms": 1.1513,
+          "min_ms": 0.9337,
+          "effective_gbps": 45.72
+        }
+      },
+      "winner": "v0_clang_o3_scalar",
+      "winner_stats": {
+        "median_ms": 0.9323,
+        "iqr_ms": 0.1805,
+        "p25_ms": 0.91,
+        "p75_ms": 1.0905,
+        "min_ms": 0.8727,
+        "effective_gbps": 51.49
+      },
+      "speedup_vs_scalar_o1": 4.221,
+      "speedup_vs_clang_o3": 1.0
+    }
+  ]
+}
