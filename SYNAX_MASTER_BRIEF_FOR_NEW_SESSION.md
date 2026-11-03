@@ -41,4 +41,4 @@
 
 ## 3. SIRADAKİ BİLİMSEL ARAŞTIRMA PAKETİ (ISSUE #6)
 * **İş #1–#7:** **TAMAMLANDI (DONE)**. İş #6 sonuçları: `research/vf_retrospective/results/EVALUATION_REPORT.md` (kaba VF duyarlılığı %73.5 — AHA %90 hedefi karşılanmadı; dürüstçe raporlandı).
-* **İş #6 (AKTİF ARAŞTIRMA HEDEFİ):** PhysioNet açık veri tabanları (CU Ventricular Tachyarrhythmia `cudb` ve MIT-BIH Malignant Ventricular Ectopy `vfdb`) üzerinde retrospektif Ventriküler Fibrilasyon (VF) sinyal işleme çalışması, AHA AED performans hedeflerine göre duyarlılık/özgüllük raporu ve akademik makale taslağı.
+* **İş #6 (TAMAMLANDI — v0.1 bulgular, sonraki adım: harici doğrulama):** PhysioNet açık veri tabanları (CU Ventricular Tachyarrhythmia `cudb` ve MIT-BIH Malignant Ventricular Ectopy `vfdb`) üzerinde retrospektif Ventriküler Fibrilasyon (VF) sinyal işleme çalışması, AHA AED performans hedeflerine göre duyarlılık/özgüllük raporu ve akademik makale taslağı.
