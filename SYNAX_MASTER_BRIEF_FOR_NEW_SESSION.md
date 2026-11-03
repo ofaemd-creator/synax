@@ -7,10 +7,10 @@
 ---
 
 ## 1. EKOSİSTEM VE CANLI ALTYAPI DURUMU
-* **Ana Tanıtım Platformu:** https://synaxcode.com
-* **Teknik Dokümantasyon & Git:** https://synaxcode.org (`git clone https://synaxcode.org/git/synax.git`)
+* **Ana Tanıtım Platformu:** https://synaxcode.com (v0.5.0 — Apache-2.0)
+* **Teknik Dokümantasyon & Egemen Git:** https://synaxcode.org (`git clone https://synaxcode.org/git/synax.git`)
 * **Cloud Studio IDE:** https://synaxcode.online (Yerel sunucu: `./synax studio`)
-* **Resmi GitHub Deposu:** https://github.com/ofaemd-creator/synax
+* **Resmi GitHub Deposu & Sürümler:** https://github.com/ofaemd-creator/synax (`v0.5.0` etiketli resmi sürüm, macOS/Ubuntu/Windows Cross-Platform CI %100 Yeşil)
 * **GitHub Project Panosu:** https://github.com/users/ofaemd-creator/projects/1/views/1
 
 ---
