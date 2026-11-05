@@ -122,8 +122,7 @@ jobs:
           chmod +x "${STAGE_DIR}/bin/synax"
 
           mkdir -p bundle_out
-          tar -C "${STAGE_DIR}" -czf "bundle_out/synax-${{ matrix.target }}.tar.gz" bin lib include share
-          cp "bundle_out/synax-${{ matrix.target }}.tar.gz" "bundle_out/${BUNDLE_NAME}.tar.gz"
+          tar -C "${STAGE_DIR}" -czf "bundle_out/${BUNDLE_NAME}.tar.gz" bin lib include share
 
       - name: Upload Native Bundle Artifact
         uses: actions/upload-artifact@v4
