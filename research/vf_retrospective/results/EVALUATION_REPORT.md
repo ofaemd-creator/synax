@@ -3,7 +3,7 @@
 > [!CAUTION]
 > Research software only. Not a medical device; must not be used for diagnosis or shock/no-shock decisions. Results are retrospective on public data.
 
-Generated: `2026-11-03T02:27:45.581249+00:00` — Host: `macOS-27.0.1-arm64-arm-64bit`
+Generated: `2026-11-05T18:27:38.537857+00:00` — Host: `macOS-27.0.1-arm64-arm-64bit`
 
 ## Dataset
 
@@ -12,9 +12,10 @@ Generated: `2026-11-03T02:27:45.581249+00:00` — Host: `macOS-27.0.1-arm64-arm-
 
 ## SYNAX kernel integrity (semantic preservation on real ECG)
 
+- Active front-end conditioning: `ranvier_adaptive_filter.sx` (Ranvier Node adaptive depolarization filter)
 - Samples processed: 16,003,120; IMMUNE-healed invalid samples: 35,662
 - Max |native winner − C11 -O0 reference|: sanitizer `0.000e+00`, energy `1.526e-05`
-- Total kernel time: native 15.23 ms vs C11 -O0 reference 413.12 ms (the -O0 kernel is a correctness oracle, NOT a fair speed baseline; see benchmarks/ for -O3 comparisons)
+- Total kernel time: native 17.67 ms vs C11 -O0 reference 410.49 ms (the -O0 kernel is a correctness oracle, NOT a fair speed baseline; see benchmarks/ for -O3 comparisons)
 - IMMUNE heal counts of native and reference kernels were asserted equal on every record.
 
 ## Results (5-fold record-grouped CV, nested threshold selection)

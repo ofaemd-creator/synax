@@ -355,6 +355,7 @@ def verify_against_reference(
     reference: LoadedKernel,
     suites: List[Tuple[object, object]],
     rtol: float = 1e-5,
+    is_reduction: bool = False,
 ) -> VerificationReport:
     """Run all 19 adversarial test suites comparing `candidate` against `reference`."""
     overall_max_diff = 0.0
@@ -368,9 +369,15 @@ def verify_against_reference(
         if use_np:
             ref_out, ref_h = reference.run_numpy(a, b)
             cand_out, cand_h = candidate.run_numpy(a, b)
+            if is_reduction and n > 0:
+                ref_out = ref_out[:1]
+                cand_out = cand_out[:1]
         else:
             ref_out, ref_h = reference.run_pure(a, b)
             cand_out, cand_h = candidate.run_pure(a, b)
+            if is_reduction and n > 0:
+                ref_out = ref_out[:1]
+                cand_out = cand_out[:1]
 
         ok, reason, mdiff = check_equivalence(
             ref_out, cand_out, rtol=rtol, ref_healed=ref_h, cand_healed=cand_h
@@ -422,12 +429,15 @@ def verify_dual_reference_offline(
         tested_suites += 1
         total_elems += n
 
-        py_out = array("f")
-        py_healed = 0
-        for i in range(n):
-            v, h = ir.eval_element_f32(float(a[i]), float(b[i]))
-            py_out.append(v)
-            py_healed += h
+        if ir.is_reduction:
+            py_out, py_healed = ir.execute_array(a, b)
+        else:
+            py_out = array("f")
+            py_healed = 0
+            for i in range(n):
+                v, h = ir.eval_element_f32(float(a[i]), float(b[i]))
+                py_out.append(v)
+                py_healed += h
 
         if use_np:
             c_out_np, c_healed = c_ref_kernel.run_numpy(a, b)
@@ -435,6 +445,9 @@ def verify_dual_reference_offline(
         else:
             c_out_arr, c_healed = c_ref_kernel.run_pure(a, b)
             c_out = c_out_arr
+
+        if ir.is_reduction and n > 0:
+            c_out = c_out[:1]
 
         ok, reason, mdiff = check_equivalence_pure(
             py_out, c_out, rtol=rtol, ref_healed=py_healed, cand_healed=c_healed

@@ -1,0 +1,22 @@
+synax 0.5
+
+kernel dendritic_summation(
+  synaptic_signals: tensor<f32>,
+  synaptic_weights: tensor<f32>
+) -> f32 {
+  intent "Dendritic spatial summation: calculates total post-synaptic potential from converging neural branches."
+
+  require shape(synaptic_signals) == shape(synaptic_weights)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(-1000.0, 1000.0)
+  }
+
+  // Pre-synaptic signal-weight transmission dot-product
+  let net_potential = dot(synaptic_signals, synaptic_weights)
+  return net_potential
+
+  optimize latency
+  target auto
+}

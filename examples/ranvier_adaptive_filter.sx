@@ -1,0 +1,23 @@
+synax 0.5
+
+kernel ranvier_adaptive_filter(
+  raw_ecg: tensor<f32>,
+  drift_ref: tensor<f32>
+) -> tensor<f32> {
+  intent "Ranvier Node adaptive signal conditioning: suppresses low-frequency polarization wander (<0.67 Hz) and clamps non-physiological electrode dropouts."
+
+  require shape(raw_ecg) == shape(drift_ref)
+
+  safety {
+    nonfinite = heal(0.0)
+    input_bound = abs_max(10.0)
+    range_check = clamp(-8.0, 8.0)
+  }
+
+  // Action potential regeneration: clean depolarization potential
+  let clean_depol = raw_ecg - drift_ref
+  return clean_depol
+
+  optimize latency
+  target auto
+}

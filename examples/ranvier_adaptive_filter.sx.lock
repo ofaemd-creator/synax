@@ -1,0 +1,294 @@
+{
+  "lock_version": "1.0",
+  "synax_version": "0.5",
+  "kernel_name": "ranvier_adaptive_filter",
+  "syntax_format": "structured_v01",
+  "param_names": [
+    "raw_ecg",
+    "drift_ref"
+  ],
+  "ir_hash": "a0d4a44b83b6",
+  "canonical_ir": {
+    "version": "0.5",
+    "bias_default": 0.25,
+    "safety": {
+      "nonfinite_mode": "heal_inputs",
+      "heal_value": 0.0,
+      "input_abs_bound": 10.0,
+      "output_clamp": [
+        -8.0,
+        8.0
+      ]
+    },
+    "expr": {
+      "op": "SUB",
+      "value": null,
+      "children": [
+        {
+          "op": "VAR",
+          "value": "a",
+          "children": []
+        },
+        {
+          "op": "VAR",
+          "value": "b",
+          "children": []
+        }
+      ]
+    }
+  },
+  "safety_policy": {
+    "nonfinite_mode": "heal_inputs",
+    "heal_value": 0.0,
+    "input_abs_bound": 10.0,
+    "output_clamp": [
+      -8.0,
+      8.0
+    ]
+  },
+  "canonical_ast": {
+    "op": "SUB",
+    "value": null,
+    "children": [
+      {
+        "op": "VAR",
+        "value": "a",
+        "children": []
+      },
+      {
+        "op": "VAR",
+        "value": "b",
+        "children": []
+      }
+    ]
+  },
+  "golden_vector_count": 32,
+  "total_expected_healed": 26,
+  "golden_vectors": [
+    {
+      "index": 0,
+      "a_hex": "0x0.0p+0",
+      "b_hex": "0x0.0p+0",
+      "out_hex": "0x0.0p+0",
+      "healed": 0
+    },
+    {
+      "index": 1,
+      "a_hex": "-0x0.0p+0",
+      "b_hex": "0x0.0p+0",
+      "out_hex": "-0x0.0p+0",
+      "healed": 0
+    },
+    {
+      "index": 2,
+      "a_hex": "0x0.0p+0",
+      "b_hex": "-0x0.0p+0",
+      "out_hex": "0x0.0p+0",
+      "healed": 0
+    },
+    {
+      "index": 3,
+      "a_hex": "-0x0.0p+0",
+      "b_hex": "-0x0.0p+0",
+      "out_hex": "0x0.0p+0",
+      "healed": 0
+    },
+    {
+      "index": 4,
+      "a_hex": "0x1.0000000000000p+0",
+      "b_hex": "0x1.0000000000000p+0",
+      "out_hex": "0x0.0p+0",
+      "healed": 0
+    },
+    {
+      "index": 5,
+      "a_hex": "0x1.0000000000000p+0",
+      "b_hex": "-0x1.0000000000000p+0",
+      "out_hex": "0x1.0000000000000p+1",
+      "healed": 0
+    },
+    {
+      "index": 6,
+      "a_hex": "-0x1.0000000000000p+0",
+      "b_hex": "0x1.0000000000000p+0",
+      "out_hex": "-0x1.0000000000000p+1",
+      "healed": 0
+    },
+    {
+      "index": 7,
+      "a_hex": "0x1.4000000000000p+6",
+      "b_hex": "0x1.0000000000000p+3",
+      "out_hex": "-0x1.0000000000000p+3",
+      "healed": 1
+    },
+    {
+      "index": 8,
+      "a_hex": "0x1.0600000000000p+6",
+      "b_hex": "0x1.8800000000000p+3",
+      "out_hex": "0x0.0p+0",
+      "healed": 2
+    },
+    {
+      "index": 9,
+      "a_hex": "0x1.0000000000000p-2",
+      "b_hex": "0x1.8000000000000p-1",
+      "out_hex": "-0x1.0000000000000p-1",
+      "healed": 0
+    },
+    {
+      "index": 10,
+      "a_hex": "-0x1.4000000000000p+1",
+      "b_hex": "-0x1.0000000000000p-1",
+      "out_hex": "-0x1.0000000000000p+1",
+      "healed": 0
+    },
+    {
+      "index": 11,
+      "a_hex": "0x1.921fb60000000p+1",
+      "b_hex": "0x1.5bf0a80000000p+1",
+      "out_hex": "0x1.b178700000000p-2",
+      "healed": 0
+    },
+    {
+      "index": 12,
+      "a_hex": "0x1.e000000000000p+6",
+      "b_hex": "0x1.e000000000000p+6",
+      "out_hex": "0x0.0p+0",
+      "healed": 2
+    },
+    {
+      "index": 13,
+      "a_hex": "0x1.0c6f7a0000000p-20",
+      "b_hex": "-0x1.0c6f7a0000000p-20",
+      "out_hex": "0x1.0c6f7a0000000p-19",
+      "healed": 0
+    },
+    {
+      "index": 14,
+      "a_hex": "0x1.9000000000000p+6",
+      "b_hex": "0x1.0624de0000000p-10",
+      "out_hex": "-0x1.0624de0000000p-10",
+      "healed": 1
+    },
+    {
+      "index": 15,
+      "a_hex": "-0x1.5100000000000p+5",
+      "b_hex": "0x1.1e00000000000p+4",
+      "out_hex": "0x0.0p+0",
+      "healed": 2
+    },
+    {
+      "index": 16,
+      "a_hex": "0x1.16c2000000000p-133",
+      "b_hex": "0x1.0000000000000p+0",
+      "out_hex": "-0x1.0000000000000p+0",
+      "healed": 0
+    },
+    {
+      "index": 17,
+      "a_hex": "0x1.0000000000000p+0",
+      "b_hex": "0x1.16c2000000000p-133",
+      "out_hex": "0x1.0000000000000p+0",
+      "healed": 0
+    },
+    {
+      "index": 18,
+      "a_hex": "0x1.16c2000000000p-133",
+      "b_hex": "-0x1.16c2000000000p-133",
+      "out_hex": "0x1.16c2000000000p-132",
+      "healed": 0
+    },
+    {
+      "index": 19,
+      "a_hex": "0x1.ff933c0000000p+127",
+      "b_hex": "0x1.0000000000000p+0",
+      "out_hex": "-0x1.0000000000000p+0",
+      "healed": 1
+    },
+    {
+      "index": 20,
+      "a_hex": "0x1.0000000000000p+0",
+      "b_hex": "-0x1.ff933c0000000p+127",
+      "out_hex": "0x1.0000000000000p+0",
+      "healed": 1
+    },
+    {
+      "index": 21,
+      "a_hex": "0x1.ff933c0000000p+127",
+      "b_hex": "0x1.ff933c0000000p+127",
+      "out_hex": "0x0.0p+0",
+      "healed": 2
+    },
+    {
+      "index": 22,
+      "a_hex": "-0x1.f400000000000p+9",
+      "b_hex": "0x1.4000000000000p+3",
+      "out_hex": "-0x1.0000000000000p+3",
+      "healed": 1
+    },
+    {
+      "index": 23,
+      "a_hex": "0x1.4000000000000p+3",
+      "b_hex": "-0x1.f400000000000p+9",
+      "out_hex": "0x1.0000000000000p+3",
+      "healed": 1
+    },
+    {
+      "index": 24,
+      "a_hex": "0x1.3880000000000p+11",
+      "b_hex": "0x1.8000000000000p+3",
+      "out_hex": "0x0.0p+0",
+      "healed": 2
+    },
+    {
+      "index": 25,
+      "a_hex": "0x1.4000000000000p+6",
+      "b_hex": "0x1.3880000000000p+11",
+      "out_hex": "0x0.0p+0",
+      "healed": 2
+    },
+    {
+      "index": 26,
+      "a_hex": "nan",
+      "b_hex": "0x1.0000000000000p+0",
+      "out_hex": "-0x1.0000000000000p+0",
+      "healed": 1
+    },
+    {
+      "index": 27,
+      "a_hex": "0x1.0000000000000p+0",
+      "b_hex": "nan",
+      "out_hex": "0x1.0000000000000p+0",
+      "healed": 1
+    },
+    {
+      "index": 28,
+      "a_hex": "nan",
+      "b_hex": "nan",
+      "out_hex": "0x0.0p+0",
+      "healed": 2
+    },
+    {
+      "index": 29,
+      "a_hex": "inf",
+      "b_hex": "0x1.0000000000000p+0",
+      "out_hex": "-0x1.0000000000000p+0",
+      "healed": 1
+    },
+    {
+      "index": 30,
+      "a_hex": "0x1.0000000000000p+0",
+      "b_hex": "-inf",
+      "out_hex": "0x1.0000000000000p+0",
+      "healed": 1
+    },
+    {
+      "index": 31,
+      "a_hex": "inf",
+      "b_hex": "-inf",
+      "out_hex": "0x0.0p+0",
+      "healed": 2
+    }
+  ],
+  "_integrity_sha256": "6a74d31a8837fd52cd830fae0663189810fcdbed30abfb5d79baf01708d0ecf0"
+}

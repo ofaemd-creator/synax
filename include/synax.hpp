@@ -220,6 +220,25 @@ private:
     ::SynaxAxonChannel* handle_{nullptr};
 };
 
+/* ──────────────────────────────────────────────────────────────────────────
+ * Dendritic Reduction & Synaptic Ingestion (C++17)
+ * ────────────────────────────────────────────────────────────────────────── */
+inline float dendritic_sum(const float* data, std::size_t count) noexcept {
+    return ::synax_dendritic_sum(data, count);
+}
+
+inline float dendritic_mean(const float* data, std::size_t count) noexcept {
+    return ::synax_dendritic_mean(data, count);
+}
+
+inline float dendritic_l2_norm(const float* data, std::size_t count) noexcept {
+    return ::synax_dendritic_l2_norm(data, count);
+}
+
+inline float dendritic_dot(const float* a, const float* b, std::size_t count) noexcept {
+    return ::synax_dendritic_dot(a, b, count);
+}
+
 } // namespace synax
 
 #endif /* SYNAX_PUBLIC_SDK_HPP */

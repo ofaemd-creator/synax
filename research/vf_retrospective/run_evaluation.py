@@ -341,6 +341,7 @@ def main() -> int:
         },
         "synax_kernel_integrity": {
             "records_processed": len(telemetry),
+            "filter_kernel": telemetry[0].get("filter_kernel_name", "ranvier_adaptive_filter") if telemetry else "ranvier_adaptive_filter",
             "samples_processed": int(sum(t["num_samples"] for t in telemetry)),
             "immune_healed_samples": int(sum(t["healed_sanitizer"] for t in telemetry)),
             "max_abs_diff_native_vs_scalar_sanitizer": tel_max_san,
@@ -380,6 +381,8 @@ def render_markdown(r: Dict) -> str:
     L.append("- Category counts: " + ", ".join(f"`{k}`={v}" for k, v in d["category_counts"].items()) + "\n")
     k = r["synax_kernel_integrity"]
     L.append("## SYNAX kernel integrity (semantic preservation on real ECG)\n")
+    fk = k.get("filter_kernel", "ranvier_adaptive_filter")
+    L.append(f"- Active front-end conditioning: `{fk}.sx` (Ranvier Node adaptive depolarization filter)")
     L.append(f"- Samples processed: {k['samples_processed']:,}; IMMUNE-healed invalid samples: {k['immune_healed_samples']:,}")
     L.append(f"- Max |native winner − C11 -O0 reference|: sanitizer `{k['max_abs_diff_native_vs_scalar_sanitizer']:.3e}`, "
              f"energy `{k['max_abs_diff_native_vs_scalar_energy']:.3e}`")

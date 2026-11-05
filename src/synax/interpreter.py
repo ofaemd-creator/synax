@@ -14,7 +14,7 @@ import os
 import sys
 from array import array
 from dataclasses import dataclass
-from typing import Sequence, Tuple, Union
+from typing import Optional, Sequence, Tuple, Union
 
 _ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if _ROOT not in sys.path:
@@ -48,19 +48,34 @@ class ReferenceInterpreter:
     def execute(
         self,
         a: Sequence[float],
-        b: Sequence[float],
+        b: Optional[Sequence[float]] = None,
         strict_reject: bool = False,
     ) -> ExecutionResult:
-        if len(a) != len(b):
+        b_vals = b if b is not None else [0.0] * len(a)
+        if len(a) != len(b_vals):
             raise ValueError(
                 f"Kanal boyut uyuşmazlığı: shape({self.ir.param_names[0]})={len(a)} != "
-                f"shape({self.ir.param_names[1]})={len(b)}"
+                f"shape({self.ir.param_names[1]})={len(b_vals)}"
+            )
+
+        if self.ir.is_reduction:
+            out, total_healed = self.ir.execute_array(a, b_vals)
+            if strict_reject and self.ir.safety.nonfinite_mode == "reject" and total_healed > 0:
+                raise SafetyRejectError(
+                    f"[IMMUNE REJECT] '{self.ir.name}' çekirdeğinde {total_healed} adet sonlu-olmayan "
+                    f"(NaN/Inf) girdi tespit edildi ve yürütme reddedildi."
+                )
+            return ExecutionResult(
+                output=out,
+                healed_count=total_healed,
+                ir_hash=self.ir.ir_hash,
+                kernel_name=self.ir.name,
             )
 
         out = array("f")
         total_healed = 0
         for i in range(len(a)):
-            val, h = self.ir.eval_element_f32(float(a[i]), float(b[i]))
+            val, h = self.ir.eval_element_f32(float(a[i]), float(b_vals[i]))
             out.append(val)
             total_healed += h
 

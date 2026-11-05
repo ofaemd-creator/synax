@@ -154,6 +154,219 @@ static inline float synax_clampf(float x, float lo, float hi) {
     return synax_minf(synax_maxf(x, lo), hi);
 }
 
+/* Dendritic Summation & Reduction Primitives (Neumaier Compensated Accumulation) */
+static inline float synax_dendritic_sum(const float* __restrict src, size_t n) {
+    if (n == 0) return 0.0f;
+    float s = 0.0f;
+    float c = 0.0f;
+    for (size_t i = 0; i < n; ++i) {
+        float x = src[i];
+        if (isnan(x)) return NAN;
+        if (isinf(x)) { s += x; continue; }
+        float t = s + x;
+        if (fabsf(s) >= fabsf(x)) {
+            c += (s - t) + x;
+        } else {
+            c += (x - t) + s;
+        }
+        s = t;
+    }
+    return s + c;
+}
+
+static inline float synax_dendritic_mean(const float* __restrict src, size_t n) {
+    if (n == 0) return 0.0f;
+    float s = synax_dendritic_sum(src, n);
+    return s / (float)n;
+}
+
+static inline float synax_dendritic_l2_norm(const float* __restrict src, size_t n) {
+    if (n == 0) return 0.0f;
+    float s = 0.0f;
+    float c = 0.0f;
+    for (size_t i = 0; i < n; ++i) {
+        float x = src[i];
+        if (isnan(x)) return NAN;
+        if (isinf(x)) return INFINITY;
+        float sq = x * x;
+        float t = s + sq;
+        if (fabsf(s) >= fabsf(sq)) {
+            c += (s - t) + sq;
+        } else {
+            c += (sq - t) + s;
+        }
+        s = t;
+    }
+    return sqrtf(s + c);
+}
+
+static inline float synax_dendritic_dot(const float* __restrict a, const float* __restrict b, size_t n) {
+    if (n == 0) return 0.0f;
+    float s = 0.0f;
+    float c = 0.0f;
+    for (size_t i = 0; i < n; ++i) {
+        float bi = b ? b[i] : 0.0f;
+        float prod = a[i] * bi;
+        if (isnan(prod)) return NAN;
+        float t = s + prod;
+        if (fabsf(s) >= fabsf(prod)) {
+            c += (s - t) + prod;
+        } else {
+            c += (prod - t) + s;
+        }
+        s = t;
+    }
+    return s + c;
+}
+
+static inline float synax_dendritic_sum_tracked(
+    const float* __restrict src,
+    size_t n,
+    uint32_t bound_u32,
+    float heal_val,
+    int mode,
+    size_t* out_healed
+) {
+    if (n == 0) {
+        if (out_healed) *out_healed = 0;
+        return 0.0f;
+    }
+    size_t healed = 0;
+    float s = 0.0f;
+    float c = 0.0f;
+    for (size_t i = 0; i < n; ++i) {
+        float x = src[i];
+        bool bad = !synax_is_valid_f32(x, bound_u32);
+        if (bad) {
+            healed++;
+            if (mode == 2) { if (out_healed) *out_healed = healed; return heal_val; }
+            if (mode == 3) { if (out_healed) *out_healed = healed; return NAN; }
+            if (mode == 1) { x = heal_val; }
+        }
+        if (isnan(x)) {
+            if (out_healed) *out_healed = healed;
+            return NAN;
+        }
+        if (isinf(x)) { s += x; continue; }
+        float t = s + x;
+        if (fabsf(s) >= fabsf(x)) {
+            c += (s - t) + x;
+        } else {
+            c += (x - t) + s;
+        }
+        s = t;
+    }
+    if (out_healed) *out_healed = healed;
+    return s + c;
+}
+
+static inline float synax_dendritic_mean_tracked(
+    const float* __restrict src,
+    size_t n,
+    uint32_t bound_u32,
+    float heal_val,
+    int mode,
+    size_t* out_healed
+) {
+    if (n == 0) {
+        if (out_healed) *out_healed = 0;
+        return 0.0f;
+    }
+    float s = synax_dendritic_sum_tracked(src, n, bound_u32, heal_val, mode, out_healed);
+    if (isnan(s)) return NAN;
+    return s / (float)n;
+}
+
+static inline float synax_dendritic_l2_norm_tracked(
+    const float* __restrict src,
+    size_t n,
+    uint32_t bound_u32,
+    float heal_val,
+    int mode,
+    size_t* out_healed
+) {
+    if (n == 0) {
+        if (out_healed) *out_healed = 0;
+        return 0.0f;
+    }
+    size_t healed = 0;
+    float s = 0.0f;
+    float c = 0.0f;
+    for (size_t i = 0; i < n; ++i) {
+        float x = src[i];
+        bool bad = !synax_is_valid_f32(x, bound_u32);
+        if (bad) {
+            healed++;
+            if (mode == 2) { if (out_healed) *out_healed = healed; return heal_val; }
+            if (mode == 3) { if (out_healed) *out_healed = healed; return NAN; }
+            if (mode == 1) { x = heal_val; }
+        }
+        if (isnan(x)) {
+            if (out_healed) *out_healed = healed;
+            return NAN;
+        }
+        if (isinf(x)) return INFINITY;
+        float sq = x * x;
+        float t = s + sq;
+        if (fabsf(s) >= fabsf(sq)) {
+            c += (s - t) + sq;
+        } else {
+            c += (sq - t) + s;
+        }
+        s = t;
+    }
+    if (out_healed) *out_healed = healed;
+    return sqrtf(s + c);
+}
+
+static inline float synax_dendritic_dot_tracked(
+    const float* __restrict a,
+    const float* __restrict b,
+    size_t n,
+    uint32_t bound_u32,
+    float heal_val,
+    int mode,
+    size_t* out_healed
+) {
+    if (n == 0) {
+        if (out_healed) *out_healed = 0;
+        return 0.0f;
+    }
+    size_t healed = 0;
+    float s = 0.0f;
+    float c = 0.0f;
+    for (size_t i = 0; i < n; ++i) {
+        float ai = a[i];
+        float bi = b ? b[i] : 0.0f;
+        bool bad_a = !synax_is_valid_f32(ai, bound_u32);
+        bool bad_b = b ? !synax_is_valid_f32(bi, bound_u32) : false;
+        if (bad_a) healed++;
+        if (bad_b) healed++;
+        if (bad_a || bad_b) {
+            if (mode == 2) { if (out_healed) *out_healed = healed; return heal_val; }
+            if (mode == 3) { if (out_healed) *out_healed = healed; return NAN; }
+            if (mode == 1) {
+                if (bad_a) ai = heal_val;
+                if (bad_b) bi = heal_val;
+            }
+        }
+        float prod = ai * bi;
+        if (isnan(prod)) {
+            if (out_healed) *out_healed = healed;
+            return NAN;
+        }
+        float t = s + prod;
+        if (fabsf(s) >= fabsf(prod)) {
+            c += (s - t) + prod;
+        } else {
+            c += (prod - t) + s;
+        }
+        s = t;
+    }
+    if (out_healed) *out_healed = healed;
+    return s + c;
+}
+
 #if defined(__aarch64__) || defined(_M_ARM64)
 static inline float32x4_t synax_vsqq_f32(float32x4_t x) {
     return vmulq_f32(x, x);
@@ -279,6 +492,67 @@ class SynaxCodeGenerator:
     def emit_scalar_variant(cls, ir: SynaxIR, pragma_line: str = "") -> str:
         bias_lit = _format_c_float(ir.bias_default)
         bound_hex = cls._bound_u32_hex(ir.safety)
+        pragma = f"    {pragma_line}\n" if pragma_line else ""
+
+        if ir.is_reduction:
+            clamp_line = ""
+            if ir.safety.output_clamp is not None:
+                lo_s = _format_c_float(ir.safety.output_clamp[0])
+                hi_s = _format_c_float(ir.safety.output_clamp[1])
+                clamp_line = f"    res = synax_clampf(res, {lo_s}, {hi_s});\n"
+
+            mode_map = {"preserve": 0, "heal_inputs": 1, "zero_output": 2, "reject": 3}
+            mode_int = mode_map.get(ir.safety.nonfinite_mode, 0)
+            heal_lit = _format_c_float(ir.safety.heal_value)
+
+            op = ir.expr.op
+            use_b = bool(ir.expr.children and ir.expr.children[0].op == "VAR" and ir.expr.children[0].value == "b")
+            src_ptr = "b" if use_b else "a"
+            if op == "DENDRITIC_MEAN":
+                call_fn = f"synax_dendritic_mean_tracked({src_ptr}, n, bound_u32, heal_val, mode, &healed)"
+            elif op == "DENDRITIC_L2_NORM":
+                call_fn = f"synax_dendritic_l2_norm_tracked({src_ptr}, n, bound_u32, heal_val, mode, &healed)"
+            elif op == "DENDRITIC_DOT":
+                call_fn = f"synax_dendritic_dot_tracked(a, b, n, bound_u32, heal_val, mode, &healed)"
+            else:
+                call_fn = f"synax_dendritic_sum_tracked({src_ptr}, n, bound_u32, heal_val, mode, &healed)"
+
+            check_other = ""
+            if op != "DENDRITIC_DOT":
+                other_ptr = "b" if src_ptr == "a" else "a"
+                check_other = f"""    if ({other_ptr}) {{
+        for (size_t i = 0; i < n; ++i) {{
+            if (!synax_is_valid_f32({other_ptr}[i], bound_u32)) healed++;
+        }}
+    }}
+"""
+
+            return f"""{C_MATH_PREAMBLE}
+void synax_kernel_tracked(const float* __restrict a,
+                          const float* __restrict b,
+                          float* __restrict out,
+                          size_t n,
+                          size_t* out_healed) {{
+    const float bias = {bias_lit};
+    const uint32_t bound_u32 = {bound_hex};
+    const float heal_val = {heal_lit};
+    const int mode = {mode_int};
+    (void)bias;
+    if (n == 0) {{
+        if (out_healed) *out_healed = 0;
+        return;
+    }}
+    size_t healed = 0;
+    float res = {call_fn};
+{check_other}{clamp_line}    if (out) out[0] = res;
+    if (out_healed) *out_healed = healed;
+}}
+
+void synax_kernel(const float* a, const float* b, float* out, size_t n) {{
+    synax_kernel_tracked(a, b, out, n, NULL);
+}}
+"""
+
         body = cls._scalar_loop_body(ir, idx_var="i")
         pragma = f"    {pragma_line}\n" if pragma_line else ""
 
@@ -759,76 +1033,95 @@ class SynaxCompiler:
         from synax.backends.llvm_ir_backend import LLVMIRBackend
 
         scalar_o3_code = SynaxCodeGenerator.emit_scalar_variant(ir)
-        specs: List[Tuple[str, str, str, List[str]]] = [
-            (
-                "v0_clang_o3_scalar",
-                "Düz C11 + clang -O3 otomatik vektörleme (adil derleyici temeli)",
-                scalar_o3_code,
-                SHARED_CFLAGS_O3,
-            ),
-            (
-                "v1_unroll4_scalar",
-                "4x döngü açmalı süperskaler C11 boru hattı",
-                SynaxCodeGenerator.emit_scalar_variant(
-                    ir, pragma_line="#pragma clang loop vectorize(disable) unroll_count(4)"
-                ),
-                SHARED_CFLAGS_O3,
-            ),
-        ]
-
-        if hw_fp.simd_isa.startswith("x86_64"):
-            avx_flags = [*SHARED_CFLAGS_O3, "-mavx2", "-mfma"]
-            specs.append(
+        if ir.is_reduction:
+            specs: List[Tuple[str, str, str, List[str]]] = [
                 (
-                    "v2_avx2_fma_simd",
-                    "Açık x86_64 AVX2+FMA (__m256, 8 float/adım) + bit-seviyesi IMMUNE maskesi",
-                    AVX2Backend.emit_c_source(ir),
-                    avx_flags,
-                )
-            )
-        else:
-            specs.extend([
-                (
-                    "v2_neon_simd",
-                    "Açık ARM64 NEON (float32x4_t) + bit-seviyesi IMMUNE maskesi",
-                    SynaxCodeGenerator.emit_neon_variant(ir, unroll_4x=False),
+                    "v0_clang_o3_scalar",
+                    "Düz C11 + clang -O3 Neumaier dendritik indirgeme",
+                    scalar_o3_code,
                     SHARED_CFLAGS_O3,
                 ),
                 (
-                    "v3_neon_4acc_prefetch",
-                    "4x ARM64 NEON (16 float/adım) + Ranvier __builtin_prefetch",
-                    SynaxCodeGenerator.emit_neon_variant(ir, unroll_4x=True),
+                    "v1_unroll4_scalar",
+                    "4x döngü açmalı süperskaler dendritik boru hattı",
+                    SynaxCodeGenerator.emit_scalar_variant(
+                        ir, pragma_line="#pragma clang loop vectorize(disable) unroll_count(4)"
+                    ),
                     SHARED_CFLAGS_O3,
-                ),
-                (
-                    "v4_gcd_multicore_neon",
-                    "Apple GCD çok çekirdek (dispatch_apply_f) + 4x NEON Sıçramalı",
-                    SynaxCodeGenerator.emit_gcd_multicore_variant(ir),
-                    SHARED_CFLAGS_O3,
-                ),
-            ])
-
-        include_llvm = ir.target_hint in ("auto", "llvm", "multicore")
-        if ir.target_hint == "scalar":
-            specs = specs[:2]
-            include_llvm = False
-        elif ir.target_hint == "neon":
-            specs = [s for s in specs if s[0] != "v4_gcd_multicore_neon"]
-            include_llvm = False
-        elif ir.target_hint == "avx2":
-            specs = [
-                specs[0],
-                (
-                    "v2_avx2_fma_simd",
-                    "Açık x86_64 AVX2+FMA (__m256) + bit-seviyesi IMMUNE maskesi",
-                    AVX2Backend.emit_c_source(ir),
-                    SHARED_CFLAGS_O3 + (["-mavx2", "-mfma"] if hw_fp.simd_isa.startswith("x86_64") else []),
                 ),
             ]
             include_llvm = False
-        elif ir.target_hint == "llvm":
-            specs = specs[:1]
-            include_llvm = True
+        else:
+            specs: List[Tuple[str, str, str, List[str]]] = [
+                (
+                    "v0_clang_o3_scalar",
+                    "Düz C11 + clang -O3 otomatik vektörleme (adil derleyici temeli)",
+                    scalar_o3_code,
+                    SHARED_CFLAGS_O3,
+                ),
+                (
+                    "v1_unroll4_scalar",
+                    "4x döngü açmalı süperskaler C11 boru hattı",
+                    SynaxCodeGenerator.emit_scalar_variant(
+                        ir, pragma_line="#pragma clang loop vectorize(disable) unroll_count(4)"
+                    ),
+                    SHARED_CFLAGS_O3,
+                ),
+            ]
+
+            if hw_fp.simd_isa.startswith("x86_64"):
+                avx_flags = [*SHARED_CFLAGS_O3, "-mavx2", "-mfma"]
+                specs.append(
+                    (
+                        "v2_avx2_fma_simd",
+                        "Açık x86_64 AVX2+FMA (__m256, 8 float/adım) + bit-seviyesi IMMUNE maskesi",
+                        AVX2Backend.emit_c_source(ir),
+                        avx_flags,
+                    )
+                )
+            else:
+                specs.extend([
+                    (
+                        "v2_neon_simd",
+                        "Açık ARM64 NEON (float32x4_t) + bit-seviyesi IMMUNE maskesi",
+                        SynaxCodeGenerator.emit_neon_variant(ir, unroll_4x=False),
+                        SHARED_CFLAGS_O3,
+                    ),
+                    (
+                        "v3_neon_4acc_prefetch",
+                        "4x ARM64 NEON (16 float/adım) + Ranvier __builtin_prefetch",
+                        SynaxCodeGenerator.emit_neon_variant(ir, unroll_4x=True),
+                        SHARED_CFLAGS_O3,
+                    ),
+                    (
+                        "v4_gcd_multicore_neon",
+                        "Apple GCD çok çekirdek (dispatch_apply_f) + 4x NEON Sıçramalı",
+                        SynaxCodeGenerator.emit_gcd_multicore_variant(ir),
+                        SHARED_CFLAGS_O3,
+                    ),
+                ])
+
+            include_llvm = ir.target_hint in ("auto", "llvm", "multicore")
+            if ir.target_hint == "scalar":
+                specs = specs[:2]
+                include_llvm = False
+            elif ir.target_hint == "neon":
+                specs = [s for s in specs if s[0] != "v4_gcd_multicore_neon"]
+                include_llvm = False
+            elif ir.target_hint == "avx2":
+                specs = [
+                    specs[0],
+                    (
+                        "v2_avx2_fma_simd",
+                        "Açık x86_64 AVX2+FMA (__m256) + bit-seviyesi IMMUNE maskesi",
+                        AVX2Backend.emit_c_source(ir),
+                        SHARED_CFLAGS_O3 + (["-mavx2", "-mfma"] if hw_fp.simd_isa.startswith("x86_64") else []),
+                    ),
+                ]
+                include_llvm = False
+            elif ir.target_hint == "llvm":
+                specs = specs[:1]
+                include_llvm = True
 
         candidate_results: List[CandidateResult] = []
         verified_pool: List[Tuple[CandidateResult, str]] = []
@@ -849,7 +1142,9 @@ class SynaxCompiler:
                 continue
 
             cand_k = LoadedKernel(str(so_file), name=v_name)
-            v_rep: VerificationReport = verify_against_reference(cand_k, ref_kernel, suites)
+            v_rep: VerificationReport = verify_against_reference(
+                cand_k, ref_kernel, suites, is_reduction=ir.is_reduction
+            )
             if not v_rep.passed:
                 if verbose:
                     print(f"   ✗ {v_name:<24} ELENDİ (Semantik Sapma) — {v_rep.failure_reason}")

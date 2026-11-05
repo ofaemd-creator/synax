@@ -57,6 +57,9 @@ UNARY_NUMERIC_BUILTINS = {
 ALL_UNARY_BUILTINS = UNARY_FLOAT_BUILTINS | UNARY_NUMERIC_BUILTINS
 BINARY_BUILTINS = {"min", "max"}
 TERNARY_BUILTINS = {"clamp"}
+DENDRITIC_UNARY_REDUCTIONS = {"sum", "mean", "l2_norm", "norm"}
+DENDRITIC_BINARY_REDUCTIONS = {"dot"}
+DENDRITIC_WINDOW_BUILTINS = {"window_mean"}
 
 
 @dataclass(frozen=True)
@@ -542,5 +545,61 @@ class TypeChecker:
             res = self._broadcast_numeric(t_x_lo, thi, x_expr, hi_expr, expr.span, "clamp")
             expr.inferred_type = res
             return res
+
+        # 4. Dendritic unary reductions (`sum`, `mean`, `l2_norm`, `norm`)
+        if fn in DENDRITIC_UNARY_REDUCTIONS:
+            if len(expr.args) != 1:
+                self._fail(
+                    f"Dendritic reduction '{fn}()' expects 1 argument, got {len(expr.args)}",
+                    expr.span,
+                )
+            arg_expr = expr.args[0]
+            arg_type = self._infer_expr(arg_expr)
+            if not arg_type.is_numeric:
+                self._fail(
+                    f"Dendritic reduction '{fn}()' requires a numeric tensor or scalar, got '{arg_type}'",
+                    arg_expr.span,
+                )
+            ret_type = SynaxType(arg_type.scalar_dtype)
+            expr.inferred_type = ret_type
+            return ret_type
+
+        # 5. Dendritic binary reductions (`dot(a, b)`)
+        if fn in DENDRITIC_BINARY_REDUCTIONS:
+            if len(expr.args) != 2:
+                self._fail(
+                    f"Dendritic reduction '{fn}()' expects 2 arguments, got {len(expr.args)}",
+                    expr.span,
+                )
+            t0 = self._infer_expr(expr.args[0])
+            t1 = self._infer_expr(expr.args[1])
+            if not t0.is_numeric:
+                self._fail(f"Dendritic dot requires numeric operands, got '{t0}'", expr.args[0].span)
+            if not t1.is_numeric:
+                self._fail(f"Dendritic dot requires numeric operands, got '{t1}'", expr.args[1].span)
+            if t0.is_tensor and t1.is_tensor and t0.dim is not None and t1.dim is not None and t0.dim != t1.dim:
+                self._fail(f"Dendritic dot shape mismatch: '{t0}' vs '{t1}'", expr.span)
+            ret_type = SynaxType(t0.scalar_dtype)
+            expr.inferred_type = ret_type
+            return ret_type
+
+        # 6. Dendritic window filtering (`window_mean(x, window_size)`)
+        if fn in DENDRITIC_WINDOW_BUILTINS:
+            if len(expr.args) != 2:
+                self._fail(
+                    f"Dendritic filtering '{fn}()' expects 2 arguments (tensor, window_size), got {len(expr.args)}",
+                    expr.span,
+                )
+            t0 = self._infer_expr(expr.args[0])
+            t1 = self._infer_expr(expr.args[1])
+            if not (t0.is_tensor and t0.is_numeric):
+                self._fail(f"First argument to '{fn}()' must be a numeric tensor, got '{t0}'", expr.args[0].span)
+            if not t1.is_numeric:
+                self._fail(f"Second argument (window size) to '{fn}()' must be numeric, got '{t1}'", expr.args[1].span)
+            w_const = extract_const_number(expr.args[1])
+            if w_const is not None and w_const <= 0:
+                self._fail(f"Window size in '{fn}()' must be > 0, got {w_const}", expr.args[1].span)
+            expr.inferred_type = t0
+            return t0
 
         self._fail(f"Unknown builtin function '{fn}()'", expr.span)

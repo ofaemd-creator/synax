@@ -90,6 +90,13 @@ int main(int argc, char** argv) {
     assert(st.total_transmissions == 4);
     assert(st.healed_anomalies_count == 8); /* 2 anomalies * 4 bursts */
 
+    /* Dendritic Reduction API verification (ABI v1) */
+    float d_arr[4] = {1.0f, 2.0f, 3.0f, 4.0f};
+    assert(fabsf(synax_dendritic_sum(d_arr, 4) - 10.0f) < 1e-5f);
+    assert(fabsf(synax_dendritic_mean(d_arr, 4) - 2.5f) < 1e-5f);
+    assert(fabsf(synax_dendritic_l2_norm(d_arr, 4) - 5.477225f) < 1e-4f);
+    assert(fabsf(synax_dendritic_dot(d_arr, d_arr, 4) - 30.0f) < 1e-5f);
+
     synax_axon_destroy(ch);
     printf("C11_SDK_OK\n");
     return 0;
@@ -165,6 +172,13 @@ int main(int argc, char** argv) {
         caught = true;
     }
     assert(caught);
+
+    /* C++17 Dendritic Reduction helper verification */
+    float d_data[4] = {2.0f, 4.0f, 6.0f, 8.0f};
+    assert(std::fabs(synax::dendritic_sum(d_data, 4) - 20.0f) < 1e-5f);
+    assert(std::fabs(synax::dendritic_mean(d_data, 4) - 5.0f) < 1e-5f);
+    assert(std::fabs(synax::dendritic_l2_norm(d_data, 4) - std::sqrt(120.0f)) < 1e-4f);
+    assert(std::fabs(synax::dendritic_dot(d_data, d_data, 4) - 120.0f) < 1e-4f);
 
     std::cout << "CPP17_SDK_OK\n";
     return 0;

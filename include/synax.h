@@ -236,6 +236,34 @@ SYNAX_API AxonMyelinState synax_axon_get_state(const SynaxAxonChannel* channel);
  */
 SYNAX_API const char* synax_axon_get_kernel_name(const SynaxAxonChannel* channel);
 
+/* ──────────────────────────────────────────────────────────────────────────
+ * Dendritic Reduction & Synaptic Ingestion API (ABI v1)
+ * ────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * @brief Compute spatial & temporal dendritic sum with IEEE-754 Neumaier compensation.
+ *
+ * Guaranteed bit-exact across platforms with zero catastrophic cancellation.
+ */
+SYNAX_API float synax_dendritic_sum(const float* SYNAX_RESTRICT data, size_t count);
+
+/**
+ * @brief Compute dendritic mean potential: (1 / count) * sum(data).
+ */
+SYNAX_API float synax_dendritic_mean(const float* SYNAX_RESTRICT data, size_t count);
+
+/**
+ * @brief Compute dendritic signal energy (Euclidean L2 norm): sqrt(sum(data[i]^2)).
+ */
+SYNAX_API float synax_dendritic_l2_norm(const float* SYNAX_RESTRICT data, size_t count);
+
+/**
+ * @brief Compute presynaptic weight transmission dot-product: sum(a[i] * b[i]).
+ */
+SYNAX_API float synax_dendritic_dot(const float* SYNAX_RESTRICT a,
+                                    const float* SYNAX_RESTRICT b,
+                                    size_t count);
+
 #endif /* SYNAX_MYELIN_ENGINE_H */
 
 #ifdef __cplusplus

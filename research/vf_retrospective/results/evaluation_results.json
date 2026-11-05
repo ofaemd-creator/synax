@@ -1,6 +1,6 @@
 {
   "title": "SYNAX Issue #6 \u2014 Retrospective VF/VT signal-processing evaluation (NON-CLINICAL)",
-  "generated_utc": "2026-11-03T02:27:45.581249+00:00",
+  "generated_utc": "2026-11-05T18:27:38.537857+00:00",
   "host": {
     "platform": "macOS-27.0.1-arm64-arm-64bit",
     "machine": "arm64",
@@ -52,12 +52,13 @@
   },
   "synax_kernel_integrity": {
     "records_processed": 57,
+    "filter_kernel": "ranvier_adaptive_filter",
     "samples_processed": 16003120,
     "immune_healed_samples": 35662,
     "max_abs_diff_native_vs_scalar_sanitizer": 0.0,
     "max_abs_diff_native_vs_scalar_energy": 1.52587890625e-05,
-    "native_total_ms": 15.230666,
-    "scalar_o3_total_ms": 413.120951
+    "native_total_ms": 17.669712,
+    "scalar_o3_total_ms": 410.485127
   },
   "results": {
     "synax_full_model": {
@@ -155,13 +156,13 @@
           "meets_goal_lower_ci": false
         }
       },
-      "auc_shockable_vs_nonshockable": 0.982269244868543,
+      "auc_shockable_vs_nonshockable": 0.9822706299395093,
       "outer_fold_thresholds": [
-        0.9216541884796324,
-        0.8049287299064662,
-        0.8647423306134119,
-        0.9803168976148545,
-        0.9046511271148626
+        0.9216543241836248,
+        0.8049243572665464,
+        0.8647399695741795,
+        0.9803169251700365,
+        0.904578978958622
       ]
     },
     "ablation_without_synax_energy": {
@@ -259,13 +260,13 @@
           "meets_goal_lower_ci": false
         }
       },
-      "auc_shockable_vs_nonshockable": 0.9825374869457062,
+      "auc_shockable_vs_nonshockable": 0.9825384103263505,
       "outer_fold_thresholds": [
-        0.9093571265625999,
-        0.7673128992418256,
-        0.8381346029302982,
-        0.9686621624296743,
-        0.8917513644163545
+        0.9093577229374868,
+        0.7673165065030462,
+        0.8380613952176176,
+        0.9686624143594531,
+        0.8916412696229906
       ]
     },
     "baseline_tcsc_only": {
@@ -363,11 +364,11 @@
           "meets_goal_lower_ci": false
         }
       },
-      "auc_shockable_vs_nonshockable": 0.9631082500674837,
+      "auc_shockable_vs_nonshockable": 0.9631217929835998,
       "outer_fold_thresholds": [
         0.9024179115684375,
-        0.8860005031842345,
-        0.8345792363631857,
+        0.8860786756846092,
+        0.8346816004014331,
         0.8579594685236378,
         0.8654001605805464
       ]
@@ -467,15 +468,15 @@
           "meets_goal_lower_ci": true
         }
       },
-      "auc_shockable_vs_nonshockable": 0.9655606721103034,
+      "auc_shockable_vs_nonshockable": 0.965565904600621,
       "outer_fold_thresholds": [
-        0.7871798711785742,
-        0.9389242603845821,
-        0.9138231276014359,
-        0.9434281120417974,
-        0.9255612607537115
+        0.7871796931155275,
+        0.9389491054881204,
+        0.9138535503870412,
+        0.9434280511209251,
+        0.9255809209615149
       ]
     }
   },
-  "runtime_sec": 5.648952007293701
+  "runtime_sec": 9.337552785873413
 }

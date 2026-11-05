@@ -25,9 +25,10 @@ import math
 import os
 import re
 import struct
+from array import array
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from synax_security import SynaxSecurityGuard
 
@@ -106,6 +107,8 @@ SUPPORTED_OPS = {
     "SIN", "COS", "EXP", "LOG",
     "SIGMOID", "TANH", "RELU",
     "MIN", "MAX", "CLAMP",
+    "DENDRITIC_SUM", "DENDRITIC_MEAN", "DENDRITIC_L2_NORM",
+    "DENDRITIC_DOT", "DENDRITIC_WINDOW_MEAN",
 }
 
 NEON_NATIVE_OPS = {
@@ -301,6 +304,16 @@ class ASTNode:
             x, lo, hi = args[0], args[1], args[2]
             hi_clamped = ASTNode("MAX")._eval_op_f32([x, lo])
             return ASTNode("MIN")._eval_op_f32([hi_clamped, hi])
+        if op == "DENDRITIC_SUM":
+            return args[0]
+        if op == "DENDRITIC_MEAN":
+            return args[0]
+        if op == "DENDRITIC_L2_NORM":
+            return _f32(abs(args[0]))
+        if op == "DENDRITIC_DOT":
+            return _f32(args[0] * args[1])
+        if op == "DENDRITIC_WINDOW_MEAN":
+            return args[0]
         return 0.0
 
     def eval_f32(self, a_val: float, b_val: float, bias_val: float = 0.25) -> float:
@@ -315,7 +328,14 @@ class ASTNode:
         return self._eval_op_f32(child_vals)
 
     # ── Tier-1: IEEE-754 C11 Scalar Float32 ──
-    def to_c_scalar(self, var_a: str = "a[i]", var_b: str = "b[i]", var_bias: str = "bias") -> str:
+    def to_c_scalar(
+        self,
+        var_a: str = "a[i]",
+        var_b: str = "b[i]",
+        var_bias: str = "bias",
+        ptr_a: str = "a",
+        ptr_b: str = "b",
+    ) -> str:
         if self.op == "VAR":
             return var_a if self.value == "a" else var_b
         if self.op == "CONST":
@@ -323,7 +343,21 @@ class ASTNode:
         if self.op == "BIAS":
             return var_bias
 
-        c = [ch.to_c_scalar(var_a=var_a, var_b=var_b, var_bias=var_bias) for ch in self.children]
+        if self.op in ("DENDRITIC_SUM", "DENDRITIC_MEAN", "DENDRITIC_L2_NORM"):
+            arg_ptr = ptr_a if (self.children and self.children[0].op == "VAR" and self.children[0].value == "a") else (
+                ptr_b if (self.children and self.children[0].op == "VAR" and self.children[0].value == "b") else ptr_a
+            )
+            fn_map = {
+                "DENDRITIC_SUM": "synax_dendritic_sum",
+                "DENDRITIC_MEAN": "synax_dendritic_mean",
+                "DENDRITIC_L2_NORM": "synax_dendritic_l2_norm",
+            }
+            return f"{fn_map[self.op]}({arg_ptr}, n)"
+
+        if self.op == "DENDRITIC_DOT":
+            return f"synax_dendritic_dot({ptr_a}, {ptr_b}, n)"
+
+        c = [ch.to_c_scalar(var_a=var_a, var_b=var_b, var_bias=var_bias, ptr_a=ptr_a, ptr_b=ptr_b) for ch in self.children]
         if self.op == "NEG":     return f"(-({c[0]}))"
         if self.op == "ADD":     return f"({c[0]} + {c[1]})"
         if self.op == "SUB":     return f"({c[0]} - {c[1]})"
@@ -427,6 +461,11 @@ class ASTNode:
         if self.op == "MIN":     return f"min({c[0]}, {c[1]})"
         if self.op == "MAX":     return f"max({c[0]}, {c[1]})"
         if self.op == "CLAMP":   return f"clamp({c[0]}, {c[1]}, {c[2]})"
+        if self.op == "DENDRITIC_SUM":         return f"sum({c[0]})"
+        if self.op == "DENDRITIC_MEAN":        return f"mean({c[0]})"
+        if self.op == "DENDRITIC_L2_NORM":     return f"l2_norm({c[0]})"
+        if self.op == "DENDRITIC_DOT":         return f"dot({c[0]}, {c[1]})"
+        if self.op == "DENDRITIC_WINDOW_MEAN": return f"window_mean({c[0]}, {c[1]})"
         return "?"
 
     def to_dict(self) -> Dict[str, Any]:
@@ -435,6 +474,100 @@ class ASTNode:
             "value": self.value,
             "children": [ch.to_dict() for ch in self.children],
         }
+
+
+# ─────────────────────────────────────────────────────────────────
+# 2.5 DENDRITIC REDUCTION PRIMITIVES (IEEE-754 NEUMAIER ACCUMULATION)
+# ─────────────────────────────────────────────────────────────────
+def _dendritic_sum_f32(values: Sequence[float]) -> float:
+    """Exact IEEE-754 Neumaier compensated summation preventing catastrophic cancellation."""
+    if not values:
+        return 0.0
+    s = _f32(0.0)
+    c = _f32(0.0)
+    for val in values:
+        x = _f32(val)
+        if math.isnan(x):
+            return float("nan")
+        if math.isinf(x):
+            s = _f32(s + x)
+            continue
+        t = _f32(s + x)
+        if abs(s) >= abs(x):
+            c = _f32(c + _f32(_f32(s - t) + x))
+        else:
+            c = _f32(c + _f32(_f32(x - t) + s))
+        s = t
+    return _f32(s + c)
+
+
+def _dendritic_mean_f32(values: Sequence[float]) -> float:
+    """Dendritic mean potential: (1 / N) * NeumaierSum(values)."""
+    n = len(values)
+    if n == 0:
+        return 0.0
+    s = _dendritic_sum_f32(values)
+    if math.isnan(s):
+        return float("nan")
+    return _f32(s / float(n))
+
+
+def _dendritic_l2_norm_f32(values: Sequence[float]) -> float:
+    """Dendritic L2 signal energy / Euclidean norm: sqrt(NeumaierSum(x_i^2))."""
+    if not values:
+        return 0.0
+    sq_sum = 0.0
+    c = 0.0
+    for val in values:
+        x = _f32(val)
+        if math.isnan(x):
+            return float("nan")
+        if math.isinf(x):
+            return float("inf")
+        sq = _f32(x * x)
+        t = _f32(sq_sum + sq)
+        if abs(sq_sum) >= abs(sq):
+            c = _f32(c + _f32(_f32(sq_sum - t) + sq))
+        else:
+            c = _f32(c + _f32(_f32(sq - t) + sq_sum))
+        sq_sum = t
+    total = _f32(sq_sum + c)
+    return _f32(math.sqrt(total))
+
+
+def _dendritic_dot_f32(a_vals: Sequence[float], b_vals: Sequence[float]) -> float:
+    """Dendritic synaptic dot-product: NeumaierSum(a_i * b_i)."""
+    n = min(len(a_vals), len(b_vals))
+    s = 0.0
+    c = 0.0
+    for i in range(n):
+        prod = _f32(_f32(a_vals[i]) * _f32(b_vals[i]))
+        if math.isnan(prod):
+            return float("nan")
+        t = _f32(s + prod)
+        if abs(s) >= abs(prod):
+            c = _f32(c + _f32(_f32(s - t) + prod))
+        else:
+            c = _f32(c + _f32(_f32(prod - t) + s))
+        s = t
+    return _f32(s + c)
+
+
+def _dendritic_window_mean_f32(values: Sequence[float], k: int) -> array:
+    """Dendritic temporal sliding window mean filter of window size k."""
+    n = len(values)
+    out = array("f")
+    if n == 0:
+        return out
+    k = max(1, min(k, n))
+    half_k = k // 2
+    for i in range(n):
+        start = max(0, i - half_k)
+        end = min(n, start + k)
+        start = max(0, end - k)
+        w = values[start:end]
+        out.append(_dendritic_mean_f32(w))
+    return out
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -454,6 +587,13 @@ class SynaxIR:
     safety: SafetyPolicy
     expr: ASTNode
     ir_hash: str = ""
+    return_type: str = "tensor<f32>"
+
+    @property
+    def is_reduction(self) -> bool:
+        if self.return_type in ("f32", "f64", "i32", "bool"):
+            return True
+        return self.expr.op in ("DENDRITIC_SUM", "DENDRITIC_MEAN", "DENDRITIC_L2_NORM", "DENDRITIC_DOT")
 
     def __post_init__(self):
         if not self.ir_hash:
@@ -523,6 +663,90 @@ class SynaxIR:
             lo, hi = self.safety.output_clamp
             val = ASTNode("CLAMP")._eval_op_f32([val, _f32(lo), _f32(hi)])
         return val, healed
+
+    def execute_array(
+        self,
+        a_seq: Sequence[float],
+        b_seq: Optional[Sequence[float]] = None,
+    ) -> Tuple[array, int]:
+        """
+        Evaluate full arrays in pure-Python IEEE-754 single precision.
+        For elementwise kernels, returns (out_array of len n, total_healed).
+        For dendritic reduction kernels, returns (out_array of len 1, total_healed).
+        """
+        n = len(a_seq)
+        b_vals = b_seq if b_seq is not None else [0.0] * n
+        bound = self.safety.input_abs_bound
+
+        def is_bad(v: float) -> bool:
+            if not math.isfinite(v):
+                return True
+            if bound is not None and abs(v) > bound:
+                return True
+            return False
+
+        if self.is_reduction:
+            if n == 0:
+                return array("f"), 0
+
+            sanitized_a = []
+            sanitized_b = []
+            healed = 0
+            has_bad = False
+            hv = _f32(self.safety.heal_value)
+
+            for i in range(n):
+                ai = _f32(a_seq[i])
+                bi = _f32(b_vals[i]) if i < len(b_vals) else 0.0
+                bad_a = is_bad(ai)
+                bad_b = is_bad(bi)
+                if bad_a: healed += 1; has_bad = True
+                if bad_b: healed += 1; has_bad = True
+
+                if self.safety.nonfinite_mode == "heal_inputs":
+                    sanitized_a.append(hv if bad_a else ai)
+                    sanitized_b.append(hv if bad_b else bi)
+                else:
+                    sanitized_a.append(ai)
+                    sanitized_b.append(bi)
+
+            if has_bad and self.safety.nonfinite_mode == "reject":
+                return array("f", [float("nan")]), healed
+            if has_bad and self.safety.nonfinite_mode == "zero_output":
+                res = hv
+            else:
+                op = self.expr.op
+                if op == "DENDRITIC_SUM":
+                    use_b = (self.expr.children and self.expr.children[0].op == "VAR" and self.expr.children[0].value == "b")
+                    src = sanitized_b if use_b else sanitized_a
+                    res = _dendritic_sum_f32(src)
+                elif op == "DENDRITIC_MEAN":
+                    use_b = (self.expr.children and self.expr.children[0].op == "VAR" and self.expr.children[0].value == "b")
+                    src = sanitized_b if use_b else sanitized_a
+                    res = _dendritic_mean_f32(src)
+                elif op == "DENDRITIC_L2_NORM":
+                    use_b = (self.expr.children and self.expr.children[0].op == "VAR" and self.expr.children[0].value == "b")
+                    src = sanitized_b if use_b else sanitized_a
+                    res = _dendritic_l2_norm_f32(src)
+                elif op == "DENDRITIC_DOT":
+                    res = _dendritic_dot_f32(sanitized_a, sanitized_b)
+                else:
+                    res = _dendritic_sum_f32(sanitized_a)
+
+            if self.safety.output_clamp is not None:
+                lo, hi = self.safety.output_clamp
+                res = ASTNode("CLAMP")._eval_op_f32([res, _f32(lo), _f32(hi)])
+
+            return array("f", [res]), healed
+
+        out = array("f")
+        healed_count = 0
+        for i in range(n):
+            bv = float(b_vals[i]) if i < len(b_vals) else 0.0
+            val, h = self.eval_element_f32(float(a_seq[i]), bv)
+            out.append(val)
+            healed_count += h
+        return out, healed_count
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -690,6 +914,26 @@ def parse_symbolic_expression(
                     if len(args) != 3:
                         raise SyntaxError(f"'clamp(x, lo, hi)' 3 argüman bekler, {len(args)} verildi.")
                     return ASTNode("CLAMP", children=args)
+                if fn == "sum":
+                    if len(args) != 1:
+                        raise SyntaxError(f"'sum()' 1 argüman bekler, {len(args)} verildi.")
+                    return ASTNode("DENDRITIC_SUM", children=args)
+                if fn == "mean":
+                    if len(args) != 1:
+                        raise SyntaxError(f"'mean()' 1 argüman bekler, {len(args)} verildi.")
+                    return ASTNode("DENDRITIC_MEAN", children=args)
+                if fn in ("l2_norm", "norm"):
+                    if len(args) != 1:
+                        raise SyntaxError(f"'{fn}()' 1 argüman bekler, {len(args)} verildi.")
+                    return ASTNode("DENDRITIC_L2_NORM", children=args)
+                if fn == "dot":
+                    if len(args) != 2:
+                        raise SyntaxError(f"'dot()' 2 argüman bekler, {len(args)} verildi.")
+                    return ASTNode("DENDRITIC_DOT", children=args)
+                if fn == "window_mean":
+                    if len(args) != 2:
+                        raise SyntaxError(f"'window_mean()' 2 argüman bekler, {len(args)} verildi.")
+                    return ASTNode("DENDRITIC_WINDOW_MEAN", children=args)
                 raise SyntaxError(f"Bilinmeyen yerleşik fonksiyon: '{val}()'")
 
             # Variable or `let` binding lookup
@@ -751,7 +995,7 @@ def parse_structured_sx(raw_text: str) -> SynaxIR:
     version = ver_match.group(1) if ver_match else "0.1"
 
     hdr_match = re.search(
-        r"\bkernel\s+([A-Za-z_]\w*)\s*\((.*?)\)\s*(?:->\s*[A-Za-z0-9_<>]+\s*)?\{(.*)\}",
+        r"\bkernel\s+([A-Za-z_]\w*)\s*\((.*?)\)\s*(?:->\s*([A-Za-z0-9_<>]+)\s*)?\{(.*)\}",
         text,
         re.S,
     )
@@ -760,7 +1004,8 @@ def parse_structured_sx(raw_text: str) -> SynaxIR:
 
     kernel_name = hdr_match.group(1).strip()
     params_raw = hdr_match.group(2).strip()
-    body = hdr_match.group(3)
+    ret_type_raw = hdr_match.group(3).strip() if hdr_match.group(3) else "tensor<f32>"
+    body = hdr_match.group(4)
 
     param_names_list: List[str] = []
     if params_raw:
@@ -867,6 +1112,7 @@ def parse_structured_sx(raw_text: str) -> SynaxIR:
         bias_default=0.25,
         safety=safety,
         expr=simplified,
+        return_type=ret_type_raw,
     )
 
 

@@ -62,6 +62,21 @@
         "language": "synax",
         "path": "./snippets/synax.code-snippets"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "SYNAX Language Server",
+      "properties": {
+        "synax.lsp.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time SYNAX Language Server Protocol (LSP) diagnostics and hover."
+        },
+        "synax.lsp.executable": {
+          "type": "string",
+          "default": "synax",
+          "description": "Path to the synax CLI executable (executes 'synax lsp' on stdio)."
+        }
+      }
+    }
   }
 }

@@ -125,6 +125,61 @@ pub mod ffi {
         pub fn synax_axon_get_state(channel: *const SynaxAxonChannel) -> c_int;
 
         pub fn synax_axon_get_kernel_name(channel: *const SynaxAxonChannel) -> *const c_char;
+
+        pub fn synax_dendritic_sum(data: *const f32, count: usize) -> f32;
+        pub fn synax_dendritic_mean(data: *const f32, count: usize) -> f32;
+        pub fn synax_dendritic_l2_norm(data: *const f32, count: usize) -> f32;
+        pub fn synax_dendritic_dot(a: *const f32, b: *const f32, count: usize) -> f32;
+    }
+}
+
+/// Dendritic reduction and synaptic ingestion primitives (Neumaier Compensated Accumulation).
+pub mod dendritic {
+    use super::ffi;
+    use super::SynaxError;
+
+    /// Compute spatial & temporal dendritic sum with IEEE-754 Neumaier compensation.
+    #[inline]
+    #[must_use]
+    pub fn sum(data: &[f32]) -> f32 {
+        if data.is_empty() {
+            return 0.0;
+        }
+        unsafe { ffi::synax_dendritic_sum(data.as_ptr(), data.len()) }
+    }
+
+    /// Compute dendritic mean potential: (1 / count) * sum(data).
+    #[inline]
+    #[must_use]
+    pub fn mean(data: &[f32]) -> f32 {
+        if data.is_empty() {
+            return 0.0;
+        }
+        unsafe { ffi::synax_dendritic_mean(data.as_ptr(), data.len()) }
+    }
+
+    /// Compute dendritic signal energy (Euclidean L2 norm): sqrt(sum(data[i]^2)).
+    #[inline]
+    #[must_use]
+    pub fn l2_norm(data: &[f32]) -> f32 {
+        if data.is_empty() {
+            return 0.0;
+        }
+        unsafe { ffi::synax_dendritic_l2_norm(data.as_ptr(), data.len()) }
+    }
+
+    /// Compute presynaptic weight transmission dot-product: sum(a[i] * b[i]).
+    pub fn dot(a: &[f32], b: &[f32]) -> Result<f32, SynaxError> {
+        if a.len() != b.len() {
+            return Err(SynaxError::LengthMismatch {
+                expected: a.len(),
+                actual: b.len(),
+            });
+        }
+        if a.is_empty() {
+            return Ok(0.0);
+        }
+        Ok(unsafe { ffi::synax_dendritic_dot(a.as_ptr(), b.as_ptr(), a.len()) })
     }
 }
 
@@ -407,5 +462,14 @@ mod tests {
         assert_eq!(st.total_transmissions, 3);
         assert_eq!(st.healed_anomalies_count, 6);
         assert!(!ch.kernel_name().is_empty());
+    }
+
+    #[test]
+    fn dendritic_reductions_and_dot() {
+        let v = vec![1.0_f32, 2.0, 3.0, 4.0];
+        assert!((dendritic::sum(&v) - 10.0).abs() < 1e-5);
+        assert!((dendritic::mean(&v) - 2.5).abs() < 1e-5);
+        assert!((dendritic::l2_norm(&v) - (30.0_f32).sqrt()).abs() < 1e-4);
+        assert!((dendritic::dot(&v, &v).expect("dot") - 30.0).abs() < 1e-5);
     }
 }

@@ -28,6 +28,7 @@ from synax_verifier import LoadedKernel
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
 SANITIZER_SX = ROOT_DIR / "examples" / "vf_bandpass_sanitizer.sx"
 NONLINEAR_SX = ROOT_DIR / "examples" / "vf_nonlinear_energy.sx"
+RANVIER_SX = ROOT_DIR / "examples" / "ranvier_adaptive_filter.sx"
 
 FEATURE_NAMES: Tuple[str, ...] = (
     "ptp_2s_med_mv",      # Median 2-second subwindow peak-to-peak amplitude (mV) — IEC 60601-2-4 amplitude
@@ -62,38 +63,49 @@ class RecordKernelTelemetry:
     scalar_c_energy_us: float
     max_abs_diff_sanitizer: float
     max_abs_diff_energy: float
+    filter_kernel_name: str = "ranvier_adaptive_filter"
 
 
 class SynaxBiomedicalPipeline:
     """
-    Compiles and caches the two Semantic-Locked `.sx` kernels (`vf_bandpass_sanitizer`
-    and `vf_nonlinear_energy`) and provides native SIMD + C11 Scalar execution for
-    both signal conditioning and differential verification on clinical ECG streams.
+    Compiles and caches the Semantic-Locked `.sx` kernels (`ranvier_adaptive_filter.sx`,
+    `vf_bandpass_sanitizer.sx`, and `vf_nonlinear_energy.sx`) and provides native SIMD +
+    C11 Scalar execution for both signal conditioning and differential verification on
+    clinical ECG streams.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, use_ranvier: bool = True) -> None:
         ok1, msg1 = synax.verify_lock(str(SANITIZER_SX))
         if not ok1:
             raise RuntimeError(f"Semantic Lock verification failed for {SANITIZER_SX}: {msg1}")
         ok2, msg2 = synax.verify_lock(str(NONLINEAR_SX))
         if not ok2:
             raise RuntimeError(f"Semantic Lock verification failed for {NONLINEAR_SX}: {msg2}")
+        ok3, msg3 = synax.verify_lock(str(RANVIER_SX))
+        if not ok3:
+            raise RuntimeError(f"Semantic Lock verification failed for {RANVIER_SX}: {msg3}")
 
+        self.use_ranvier = use_ranvier
         self.comp_san = synax.compile_sx(str(SANITIZER_SX), bench_n=262_144, bench_repeats=5, verbose=False)
         self.comp_nle = synax.compile_sx(str(NONLINEAR_SX), bench_n=262_144, bench_repeats=5, verbose=False)
+        self.comp_ran = synax.compile_sx(str(RANVIER_SX), bench_n=262_144, bench_repeats=5, verbose=False)
 
         self.neon_san = LoadedKernel(str(self.comp_san.winner_dylib_path), name=self.comp_san.winner_name)
         self.neon_nle = LoadedKernel(str(self.comp_nle.winner_dylib_path), name=self.comp_nle.winner_name)
+        self.neon_ran = LoadedKernel(str(self.comp_ran.winner_dylib_path), name=self.comp_ran.winner_name)
 
         # Differential oracle: the unoptimized C11 (-O0) reference kernel emitted for every module.
         # Every record is processed twice (native winner + reference) and compared bit-for-bit.
         self.scalar_san: Optional[LoadedKernel] = None
         self.scalar_nle: Optional[LoadedKernel] = None
+        self.scalar_ran: Optional[LoadedKernel] = None
         if Path(self.comp_san.ref_dylib_path).exists():
             self.scalar_san = LoadedKernel(str(self.comp_san.ref_dylib_path), name="referans_c11_o0")
         if Path(self.comp_nle.ref_dylib_path).exists():
             self.scalar_nle = LoadedKernel(str(self.comp_nle.ref_dylib_path), name="referans_c11_o0")
-        if self.scalar_san is None or self.scalar_nle is None:
+        if Path(self.comp_ran.ref_dylib_path).exists():
+            self.scalar_ran = LoadedKernel(str(self.comp_ran.ref_dylib_path), name="referans_c11_o0")
+        if self.scalar_san is None or self.scalar_nle is None or self.scalar_ran is None:
             raise RuntimeError("C11 reference kernels missing; differential verification impossible.")
 
         # 9-tap ~28 Hz low-pass Hann FIR kernel (at fs=250 Hz) to suppress 50/60 Hz & EMG noise
@@ -135,8 +147,12 @@ class SynaxBiomedicalPipeline:
         drift_arr = array("f")
         drift_arr.frombytes(drift_np.tobytes())
 
+        active_neon = self.neon_ran if self.use_ranvier else self.neon_san
+        active_scalar = self.scalar_ran if self.use_ranvier else self.scalar_san
+        active_name = "ranvier_adaptive_filter" if self.use_ranvier else "vf_bandpass_sanitizer"
+
         t0 = time.perf_counter_ns()
-        san_arr, healed_san = self.neon_san.run_pure(raw_signal_mv, drift_arr)
+        san_arr, healed_san = active_neon.run_pure(raw_signal_mv, drift_arr)
         t1 = time.perf_counter_ns()
         neon_san_us = (t1 - t0) / 1000.0
 
@@ -163,9 +179,9 @@ class SynaxBiomedicalPipeline:
         scalar_nle_us = 0.0
         max_diff_san = 0.0
         max_diff_nle = 0.0
-        if self.scalar_san is not None:
+        if active_scalar is not None:
             ts0 = time.perf_counter_ns()
-            s_out, s_heal = self.scalar_san.run_pure(raw_signal_mv, drift_arr)
+            s_out, s_heal = active_scalar.run_pure(raw_signal_mv, drift_arr)
             ts1 = time.perf_counter_ns()
             scalar_san_us = (ts1 - ts0) / 1000.0
             s_np = np.frombuffer(s_out, dtype=np.float32)
@@ -193,6 +209,7 @@ class SynaxBiomedicalPipeline:
             scalar_c_energy_us=scalar_nle_us,
             max_abs_diff_sanitizer=max_diff_san,
             max_abs_diff_energy=max_diff_nle,
+            filter_kernel_name=active_name,
         )
         return clean_np.copy(), nle_np, telem
 

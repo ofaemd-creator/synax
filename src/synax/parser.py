@@ -1011,6 +1011,16 @@ def _lower_expr_to_ast_node(
             return ASTNode(fn.upper(), children=child_irs)
         if fn == "clamp":
             return ASTNode("CLAMP", children=child_irs)
+        if fn == "sum":
+            return ASTNode("DENDRITIC_SUM", children=child_irs)
+        if fn == "mean":
+            return ASTNode("DENDRITIC_MEAN", children=child_irs)
+        if fn in ("l2_norm", "norm"):
+            return ASTNode("DENDRITIC_L2_NORM", children=child_irs)
+        if fn == "dot":
+            return ASTNode("DENDRITIC_DOT", children=child_irs)
+        if fn == "window_mean":
+            return ASTNode("DENDRITIC_WINDOW_MEAN", children=child_irs)
         raise ValueError(f"Unsupported builtin function '{expr.func_name}' during IR lowering.")
 
     raise TypeError(f"Unsupported AST expression node: {type(expr).__name__}")
@@ -1097,4 +1107,5 @@ def lower_to_synax_ir(module_or_source: Union[SynaxModule, KernelDecl, str, Path
         bias_default=0.25,
         safety=safety,
         expr=simplified,
+        return_type=kernel.return_type.format_canonical(),
     )

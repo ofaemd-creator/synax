@@ -93,6 +93,12 @@ AxonStats synax_axon_get_stats(const SynaxAxonChannel* channel);
 AxonMyelinState synax_axon_get_state(const SynaxAxonChannel* channel);
 const char* synax_axon_get_kernel_name(const SynaxAxonChannel* channel);
 
+/* Dendritik İndirgeme ve Sinaptik Giriş API (Neumaier Kompanse Toplama) */
+float synax_dendritic_sum(const float* restrict data, size_t count);
+float synax_dendritic_mean(const float* restrict data, size_t count);
+float synax_dendritic_l2_norm(const float* restrict data, size_t count);
+float synax_dendritic_dot(const float* restrict a, const float* restrict b, size_t count);
+
 #ifdef __cplusplus
 }
 #endif

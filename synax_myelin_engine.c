@@ -522,3 +522,70 @@ const char* synax_axon_get_kernel_name(const SynaxAxonChannel* channel) {
     if (!channel) return "NULL";
     return channel->specialized_kernel_name;
 }
+
+/* ─────────────────────────────────────────────────────────────────
+ * 6. DENDRITIC REDUCTION & SYNAPTIC INGESTION (Neumaier Compensated)
+ * ───────────────────────────────────────────────────────────────── */
+float synax_dendritic_sum(const float* restrict data, size_t count) {
+    if (!data || count == 0) return 0.0f;
+    float s = 0.0f;
+    float c = 0.0f;
+    for (size_t i = 0; i < count; ++i) {
+        float x = data[i];
+        if (isnan(x)) return NAN;
+        if (isinf(x)) { s += x; continue; }
+        float t = s + x;
+        if (fabsf(s) >= fabsf(x)) {
+            c += (s - t) + x;
+        } else {
+            c += (x - t) + s;
+        }
+        s = t;
+    }
+    return s + c;
+}
+
+float synax_dendritic_mean(const float* restrict data, size_t count) {
+    if (!data || count == 0) return 0.0f;
+    float s = synax_dendritic_sum(data, count);
+    return s / (float)count;
+}
+
+float synax_dendritic_l2_norm(const float* restrict data, size_t count) {
+    if (!data || count == 0) return 0.0f;
+    float s = 0.0f;
+    float c = 0.0f;
+    for (size_t i = 0; i < count; ++i) {
+        float x = data[i];
+        if (isnan(x)) return NAN;
+        if (isinf(x)) return INFINITY;
+        float sq = x * x;
+        float t = s + sq;
+        if (fabsf(s) >= fabsf(sq)) {
+            c += (s - t) + sq;
+        } else {
+            c += (sq - t) + s;
+        }
+        s = t;
+    }
+    return sqrtf(s + c);
+}
+
+float synax_dendritic_dot(const float* restrict a, const float* restrict b, size_t count) {
+    if (!a || count == 0) return 0.0f;
+    float s = 0.0f;
+    float c = 0.0f;
+    for (size_t i = 0; i < count; ++i) {
+        float bi = b ? b[i] : 0.0f;
+        float prod = a[i] * bi;
+        if (isnan(prod)) return NAN;
+        float t = s + prod;
+        if (fabsf(s) >= fabsf(prod)) {
+            c += (s - t) + prod;
+        } else {
+            c += (prod - t) + s;
+        }
+        s = t;
+    }
+    return s + c;
+}

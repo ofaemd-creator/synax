@@ -85,6 +85,7 @@ GELİŞTİRİCİ ARAÇLARI (DEVELOPER TOOLS):
   synax verify-lock <dosya.sx>         : Kaynak kodu ve derlenmiş çekirdeği .sx.lock kilidine karşı doğrular
   synax debug <dosya.sx> [--corrupt]   : Adım adım IEEE-754 bit (hex) AST izleyici ve SIMD karşılaştırıcı
   synax profile <dosya.sx> [--n N]     : Tüm aday çekirdekler için medyan, IQR, P95 ve GB/s bellek bant genişliği analizi
+  synax lsp                            : Standart LSP 3.17 JSON-RPC Dil Sunucusunu başlatır (VS Code / Neovim)
   synax studio [--port 8080]           : Yerel SYNAX Studio IDE ve REST derleyici sunucusunu başlatır
   synax dashboard [--port 8080]        : Canlı global web telemetri, trafik ve mimari dashboard'unu açar
 
@@ -105,7 +106,7 @@ def cmd_version() -> None:
     from synax.hardware import detect_hardware_fingerprint
 
     fp = detect_hardware_fingerprint()
-    print("SYNAX Unified Compiler, SDK & Myelin Runtime v0.5.0 (Apache License 2.0)")
+    print("SYNAX Unified Compiler, SDK & Myelin Runtime v0.6.0 (Apache License 2.0)")
     print(f"AXON Donanım Parmak İzi : {fp.fingerprint_id} ({fp.cpu_brand} | {fp.simd_isa})")
     print("Resmi GitHub Deposu     : https://github.com/ofaemd-creator/synax")
     print("Cloud Studio IDE        : https://synaxcode.online")
@@ -503,6 +504,8 @@ def cmd_run(argv: list[str]) -> None:
 def cmd_test() -> None:
     suite_files = [
         os.path.join(BASE_DIR, "tests", "test_lexer_parser_types.py"),
+        os.path.join(BASE_DIR, "tests", "test_dendritic_reductions.py"),
+        os.path.join(BASE_DIR, "tests", "test_lsp.py"),
         os.path.join(BASE_DIR, "tests", "test_c_cpp_sdk.py"),
         os.path.join(BASE_DIR, "test_differential_myelin.py"),
         os.path.join(BASE_DIR, "test_unified_compiler.py"),
@@ -568,6 +571,9 @@ def main() -> None:
             s_args = ap.parse_args(rest)
             from synax_web_server import run_studio_server
             run_studio_server(host=s_args.host, port=s_args.port)
+        elif subcmd == "lsp":
+            from synax.lsp.server import run_lsp_server
+            run_lsp_server()
         elif subcmd == "compile":
             cmd_compile(rest)
         elif subcmd == "run":
