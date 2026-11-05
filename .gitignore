@@ -12,4 +12,7 @@ bindings/rust/target/
 .DS_Store
 .synax_cache/
 synaxcode_live_bundle.zip
+releases/*_public_html.zip
+releases/DASHBOARD_AND_BEACON_UPDATE.zip
+
 

@@ -1,241 +1,73 @@
 {
   "metadata": {
     "version": "v0.5.0",
-    "initialized_at": "2026-11-05T08:58:12.161531",
-    "last_updated": "2026-11-05T09:04:38.038354"
+    "initialized_at": "2026-11-05T13:27:50.629508",
+    "last_updated": "2026-11-05T13:27:50.629536",
+    "is_simulated": false,
+    "note": "Gerçek canlı sayaç başlangıcı (5 Kasım 2026)"
   },
   "overview": {
-    "active_now": 28,
-    "total_visitors": 24860,
-    "total_pageviews": 79421,
-    "uptime_pct": 99.98,
-    "avg_latency_ms": 34.2
+    "active_now": 1,
+    "total_visitors": 1,
+    "total_pageviews": 4,
+    "uptime_pct": 100.0,
+    "avg_latency_ms": 19.4
   },
   "sites": {
     "synaxcode.com": {
       "name": "Ana Tanıtım & Ekosistem Vitrini",
-      "visitors": 13950,
-      "pageviews": 44101,
-      "share_pct": 55.5,
-      "status": "Online",
+      "visitors": 1,
+      "pageviews": 3,
+      "share_pct": 100.0,
+      "status": "Online (Sayaç Aktif)",
       "target": "v0.5.0 Showcase & Benchmark Playground"
     },
     "synaxcode.org": {
       "name": "Resmi Dokümantasyon & Egemen Git",
-      "visitors": 6920,
-      "pageviews": 22750,
-      "share_pct": 28.6,
-      "status": "Online",
+      "visitors": 0,
+      "pageviews": 0,
+      "share_pct": 0.0,
+      "status": "Online (Sayaç Aktif)",
       "target": "EBNF Spec, Architecture & Git Mirror"
     },
     "synaxcode.online": {
       "name": "Cloud Studio IDE & REST Derleyici",
-      "visitors": 3990,
-      "pageviews": 12570,
-      "share_pct": 15.9,
-      "status": "Online",
+      "visitors": 0,
+      "pageviews": 0,
+      "share_pct": 0.0,
+      "status": "Online (Sayaç Aktif)",
       "target": "Live Browser IDE & Kernel Compiler"
     }
   },
   "geo_distribution": [
     {
-      "country": "Amerika Birleşik Devletleri",
-      "code": "US",
-      "visitors": 8450,
-      "pct": 34.0
-    },
-    {
       "country": "Türkiye",
       "code": "TR",
-      "visitors": 5210,
-      "pct": 21.0
-    },
-    {
-      "country": "Almanya",
-      "code": "DE",
-      "visitors": 3230,
-      "pct": 13.0
-    },
-    {
-      "country": "Birleşik Krallık",
-      "code": "GB",
-      "visitors": 2490,
-      "pct": 10.0
-    },
-    {
-      "country": "Japonya",
-      "code": "JP",
-      "visitors": 1740,
-      "pct": 7.0
-    },
-    {
-      "country": "Fransa",
-      "code": "FR",
-      "visitors": 1240,
-      "pct": 5.0
-    },
-    {
-      "country": "Kanada",
-      "code": "CA",
-      "visitors": 990,
-      "pct": 4.0
-    },
-    {
-      "country": "Diğer Ülkeler",
-      "code": "OTHER",
-      "visitors": 1510,
-      "pct": 6.0
+      "visitors": 1,
+      "pct": 100.0
     }
   ],
   "referrers": [
     {
-      "source": "Doğrudan Giriş (Direct / Bookmarks)",
-      "count": 10240,
-      "pct": 41.2
-    },
-    {
-      "source": "GitHub (ofaemd-creator/synax)",
-      "count": 7890,
-      "pct": 31.7
-    },
-    {
-      "source": "Google & Arama Motorları",
-      "count": 3980,
-      "pct": 16.0
-    },
-    {
-      "source": "HackerNews & Reddit (r/programming)",
-      "count": 1740,
-      "pct": 7.0
-    },
-    {
-      "source": "ArXiv / PhysioNet Araştırma Atıfları",
-      "count": 1010,
-      "pct": 4.1
+      "source": "Doğrudan Giriş (Direct)",
+      "count": 1,
+      "pct": 100.0
     }
   ],
   "history_14d": [
     {
-      "date": "2026-10-23",
-      "visitors": 648,
-      "pageviews": 2045,
-      "unique_ips": 505
-    },
-    {
-      "date": "2026-10-24",
-      "visitors": 720,
-      "pageviews": 2255,
-      "unique_ips": 561
-    },
-    {
-      "date": "2026-10-25",
-      "visitors": 792,
-      "pageviews": 2465,
-      "unique_ips": 617
-    },
-    {
-      "date": "2026-10-26",
-      "visitors": 864,
-      "pageviews": 2675,
-      "unique_ips": 673
-    },
-    {
-      "date": "2026-10-27",
-      "visitors": 420,
-      "pageviews": 1380,
-      "unique_ips": 327
-    },
-    {
-      "date": "2026-10-28",
-      "visitors": 492,
-      "pageviews": 1590,
-      "unique_ips": 383
-    },
-    {
-      "date": "2026-10-29",
-      "visitors": 564,
-      "pageviews": 1800,
-      "unique_ips": 439
-    },
-    {
-      "date": "2026-10-30",
-      "visitors": 636,
-      "pageviews": 2010,
-      "unique_ips": 496
-    },
-    {
-      "date": "2026-10-31",
-      "visitors": 708,
-      "pageviews": 2220,
-      "unique_ips": 552
-    },
-    {
-      "date": "2026-11-01",
-      "visitors": 780,
-      "pageviews": 2430,
-      "unique_ips": 608
-    },
-    {
-      "date": "2026-11-02",
-      "visitors": 852,
-      "pageviews": 2640,
-      "unique_ips": 664
-    },
-    {
-      "date": "2026-11-03",
-      "visitors": 924,
-      "pageviews": 2850,
-      "unique_ips": 720
-    },
-    {
-      "date": "2026-11-04",
-      "visitors": 480,
-      "pageviews": 1555,
-      "unique_ips": 374
-    },
-    {
       "date": "2026-11-05",
-      "visitors": 552,
-      "pageviews": 1765,
-      "unique_ips": 430
+      "visitors": 1,
+      "pageviews": 4,
+      "unique_ips": 1
     }
   ],
   "recent_events": [
     {
-      "time": "09:04:38",
+      "time": "Şimdi",
       "site": "synaxcode.com",
-      "event": "Sayfa ziyareti: /dashboard",
+      "event": "Canlı telemetri sayacı başlatıldı ve Hostinger'a kuruldu",
       "geo": "TR"
-    },
-    {
-      "time": "1 dk önce",
-      "site": "synaxcode.com",
-      "event": "Ziyaretçi ana sayfayı açtı (macOS/Chrome)",
-      "geo": "TR"
-    },
-    {
-      "time": "3 dk önce",
-      "site": "synaxcode.online",
-      "event": "Kernel derleme testi başlatıldı (/api/compile)",
-      "geo": "US"
-    },
-    {
-      "time": "5 dk önce",
-      "site": "synaxcode.org",
-      "event": "spec/LANGUAGE_SPEC.md dokümantasyonu incelendi",
-      "geo": "DE"
-    },
-    {
-      "time": "8 dk önce",
-      "site": "synaxcode.org",
-      "event": "Sovereign git clone tetiklendi (/git/synax.git)",
-      "geo": "GB"
-    },
-    {
-      "time": "12 dk önce",
-      "site": "synaxcode.com",
-      "event": "Miyelin benchmark interaktif grafiği çalıştırıldı",
-      "geo": "JP"
     }
   ]
 }

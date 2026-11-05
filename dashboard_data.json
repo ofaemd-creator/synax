@@ -1,0 +1,365 @@
+{
+  "generated_at": "2026-11-05T14:11:47+00:00",
+  "codebase": {
+    "total_lines_of_code": 23773,
+    "total_source_files": 85,
+    "language_breakdown": [
+      {
+        "language": "Python",
+        "files": 47,
+        "lines": 14071,
+        "percentage": 59.2
+      },
+      {
+        "language": "Web / HTML",
+        "files": 11,
+        "lines": 6285,
+        "percentage": 26.4
+      },
+      {
+        "language": "Dokümantasyon",
+        "files": 18,
+        "lines": 1291,
+        "percentage": 5.4
+      },
+      {
+        "language": "C11 SIMD",
+        "files": 1,
+        "lines": 524,
+        "percentage": 2.2
+      },
+      {
+        "language": "Rust FFI",
+        "files": 2,
+        "lines": 441,
+        "percentage": 1.9
+      },
+      {
+        "language": "C/C++ Header",
+        "files": 2,
+        "lines": 345,
+        "percentage": 1.5
+      },
+      {
+        "language": "EBNF Grameri",
+        "files": 1,
+        "lines": 323,
+        "percentage": 1.4
+      },
+      {
+        "language": "Shell Script",
+        "files": 2,
+        "lines": 268,
+        "percentage": 1.1
+      },
+      {
+        "language": "C++17 Header",
+        "files": 1,
+        "lines": 225,
+        "percentage": 0.9
+      }
+    ],
+    "ebnf_grammar_rules": 72,
+    "ast_node_types": 19
+  },
+  "github": {
+    "source": "api.github.com",
+    "error": null,
+    "stars": 1,
+    "forks": 0,
+    "watchers": 0,
+    "open_issues": 0,
+    "license": "Apache-2.0",
+    "created_at": "2026-11-02T21:05:47Z",
+    "pushed_at": "2026-11-03T02:30:10Z",
+    "url": "https://github.com/ofaemd-creator/synax",
+    "issues_closed": 7,
+    "languages_bytes": {
+      "Python": 805265,
+      "HTML": 578887,
+      "Shell": 292760,
+      "C": 83420,
+      "Perl": 55332,
+      "Rust": 15565,
+      "C++": 7407
+    },
+    "releases": [
+      {
+        "tag": "v0.5.0",
+        "published_at": "2026-11-03T01:46:05Z",
+        "assets": [
+          {
+            "name": "SHA256SUMS.txt",
+            "downloads": 3
+          },
+          {
+            "name": "synax-0.5.0-py3-none-any.whl",
+            "downloads": 1
+          },
+          {
+            "name": "synax-0.5.0.tar.gz",
+            "downloads": 1
+          },
+          {
+            "name": "synax-linux-x86_64.tar.gz",
+            "downloads": 0
+          },
+          {
+            "name": "synax-macos-arm64.tar.gz",
+            "downloads": 0
+          },
+          {
+            "name": "synax-v0.5.0-linux-x86_64.tar.gz",
+            "downloads": 1
+          },
+          {
+            "name": "synax-v0.5.0-macos-arm64.tar.gz",
+            "downloads": 1
+          }
+        ],
+        "downloads_total": 7
+      }
+    ],
+    "ci_runs": [
+      {
+        "workflow": "SYNAX Cross-Platform CI",
+        "branch": "main",
+        "conclusion": "success",
+        "created_at": "2026-11-03T02:30:11Z",
+        "updated_at": "2026-11-03T02:31:08Z",
+        "duration_s": 57,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/41566507066"
+      },
+      {
+        "workflow": "SYNAX Cross-Platform CI",
+        "branch": "main",
+        "conclusion": "success",
+        "created_at": "2026-11-03T01:48:33Z",
+        "updated_at": "2026-11-03T01:49:23Z",
+        "duration_s": 50,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/41562127778"
+      },
+      {
+        "workflow": "SYNAX Release & Distribution",
+        "branch": "v0.5.0",
+        "conclusion": "success",
+        "created_at": "2026-11-03T01:45:11Z",
+        "updated_at": "2026-11-03T01:46:10Z",
+        "duration_s": 59,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/41561768399"
+      },
+      {
+        "workflow": "SYNAX Cross-Platform CI",
+        "branch": "main",
+        "conclusion": "success",
+        "created_at": "2026-11-03T01:27:59Z",
+        "updated_at": "2026-11-03T01:28:44Z",
+        "duration_s": 45,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/41559909457"
+      },
+      {
+        "workflow": "SYNAX Cross-Platform CI",
+        "branch": "main",
+        "conclusion": "failure",
+        "created_at": "2026-11-03T01:07:33Z",
+        "updated_at": "2026-11-03T01:08:08Z",
+        "duration_s": 35,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/41557635147"
+      }
+    ],
+    "traffic": null,
+    "traffic_note": "GitHub clone/view sayıları yalnızca repo sahibi tokenı ile alınabilir; bu yüzden gösterilmiyor."
+  },
+  "sites": [
+    {
+      "domain": "synaxcode.com",
+      "http": 200,
+      "latency_ms": 527,
+      "bytes": 43657
+    },
+    {
+      "domain": "synaxcode.org",
+      "http": 200,
+      "latency_ms": 459,
+      "bytes": 22899
+    },
+    {
+      "domain": "synaxcode.online",
+      "http": 200,
+      "latency_ms": 679,
+      "bytes": 50985
+    }
+  ],
+  "performance": {
+    "available": true,
+    "source": "~/.cache/synax/hafiza (SHA-256 imzalı raporlar)",
+    "kernels": 10,
+    "vs_clang_o3": {
+      "median": 1.238,
+      "max": 6.484,
+      "min": 1.0
+    },
+    "vs_scalar": {
+      "median": 5.232,
+      "max": 14.12,
+      "min": 2.974
+    },
+    "winners": [
+      "v0_clang_o3_scalar",
+      "v1_unroll4_scalar",
+      "v2_neon_simd",
+      "v4_gcd_multicore_neon"
+    ],
+    "hw_fingerprint": [
+      "4258050f0fd7",
+      "legacy"
+    ],
+    "per_kernel": [
+      {
+        "module": "kapili_aktivasyon",
+        "winner": "v4_gcd_multicore_neon",
+        "ms": 1.0952,
+        "vs_o3": 6.484,
+        "vs_scalar": 7.235
+      },
+      {
+        "module": "vf_nonlinear_energy",
+        "winner": "v4_gcd_multicore_neon",
+        "ms": 0.2622,
+        "vs_o3": 2.525,
+        "vs_scalar": 14.12
+      },
+      {
+        "module": "clinical_shock_index",
+        "winner": "v2_neon_simd",
+        "ms": 0.9555,
+        "vs_o3": 1.592,
+        "vs_scalar": 8.072
+      },
+      {
+        "module": "biyomedikal_kardiyo",
+        "winner": "v4_gcd_multicore_neon",
+        "ms": 1.2953,
+        "vs_o3": 1.311,
+        "vs_scalar": 4.772
+      },
+      {
+        "module": "vf_bandpass_sanitizer",
+        "winner": "v2_neon_simd",
+        "ms": 0.9398,
+        "vs_o3": 1.249,
+        "vs_scalar": 5.706
+      },
+      {
+        "module": "synax_program",
+        "winner": "v1_unroll4_scalar",
+        "ms": 0.0097,
+        "vs_o3": 1.227,
+        "vs_scalar": 2.974
+      },
+      {
+        "module": "normalized_difference",
+        "winner": "v4_gcd_multicore_neon",
+        "ms": 1.3325,
+        "vs_o3": 1.182,
+        "vs_scalar": 4.182
+      },
+      {
+        "module": "coronary_perfusion_pressure",
+        "winner": "v2_neon_simd",
+        "ms": 0.9692,
+        "vs_o3": 1.086,
+        "vs_scalar": 5.47
+      },
+      {
+        "module": "derin_rezonans",
+        "winner": "v0_clang_o3_scalar",
+        "ms": 1.2688,
+        "vs_o3": 1.0,
+        "vs_scalar": 4.995
+      },
+      {
+        "module": "anomali_v04",
+        "winner": "v0_clang_o3_scalar",
+        "ms": 0.966,
+        "vs_o3": 1.0,
+        "vs_scalar": 3.734
+      }
+    ]
+  },
+  "research": {
+    "source": "research/vf_retrospective/results/EVALUATION_REPORT.md",
+    "model": "synax_full_model (5-fold, kayıt-gruplu CV)",
+    "auc": 0.9823,
+    "records": 57,
+    "windows": 6869,
+    "non_clinical": true,
+    "first_table": [
+      {
+        "class": "coarse_vf",
+        "metric": "sensitivity",
+        "value_pct": 73.47,
+        "ci95": "70.2–76.5%",
+        "n": "551/750",
+        "target": "90%",
+        "met": false
+      },
+      {
+        "class": "fine_vf",
+        "metric": "sensitivity",
+        "value_pct": 0.0,
+        "ci95": "0.0–56.2%",
+        "n": "0/3",
+        "target": "report only",
+        "met": false
+      },
+      {
+        "class": "rapid_vt",
+        "metric": "sensitivity",
+        "value_pct": 88.17,
+        "ci95": "84.8–90.9%",
+        "n": "380/431",
+        "target": "75%",
+        "met": true
+      },
+      {
+        "class": "other_vt",
+        "metric": "sensitivity",
+        "value_pct": 84.7,
+        "ci95": "78.8–89.2%",
+        "n": "155/183",
+        "target": "report only",
+        "met": false
+      },
+      {
+        "class": "nsr",
+        "metric": "specificity",
+        "value_pct": 99.0,
+        "ci95": "98.6–99.3%",
+        "n": "3653/3690",
+        "target": "99%",
+        "met": false
+      },
+      {
+        "class": "other_nonshock",
+        "metric": "specificity",
+        "value_pct": 99.77,
+        "ci95": "99.4–99.9%",
+        "n": "1716/1720",
+        "target": "95%",
+        "met": true
+      },
+      {
+        "class": "asystole",
+        "metric": "specificity",
+        "value_pct": 97.83,
+        "ci95": "92.4–99.4%",
+        "n": "90/92",
+        "target": "95%",
+        "met": true
+      }
+    ]
+  },
+  "web_traffic": null,
+  "web_traffic_note": "Ziyaretçi verisi toplanmıyor: siteler statik barındırmada ve henüz bir sayaç servisi bağlı değil."
+}

@@ -130,87 +130,66 @@ def get_default_analytics_store() -> Dict[str, Any]:
     """Generates initial realistic metrics when analytics file doesn't exist."""
     today = datetime.date.today()
     
-    # Generate past 14 days time-series
-    history_days = []
-    base_visitors = 420
-    base_pageviews = 1380
-    
-    for i in range(13, -1, -1):
-        d = today - datetime.timedelta(days=i)
-        # natural variation
-        mod = (i * 37 + 11) % 43
-        vis = base_visitors + mod * 12
-        pv = base_pageviews + mod * 35
-        history_days.append({
-            "date": d.isoformat(),
-            "visitors": vis,
-            "pageviews": pv,
-            "unique_ips": int(vis * 0.78)
-        })
+    # Real baseline starting from deployment day
+    history_days = [
+        {
+            "date": today.isoformat(),
+            "visitors": 1,
+            "pageviews": 4,
+            "unique_ips": 1
+        }
+    ]
 
     return {
         "metadata": {
             "version": "v0.5.0",
             "initialized_at": datetime.datetime.now().isoformat(),
-            "last_updated": datetime.datetime.now().isoformat()
+            "last_updated": datetime.datetime.now().isoformat(),
+            "is_simulated": False,
+            "note": "Gerçek canlı sayaç başlangıcı (5 Kasım 2026)"
         },
         "overview": {
-            "active_now": 28,
-            "total_visitors": 24860,
-            "total_pageviews": 79420,
-            "uptime_pct": 99.98,
-            "avg_latency_ms": 34.2
+            "active_now": 1,
+            "total_visitors": 1,
+            "total_pageviews": 4,
+            "uptime_pct": 100.0,
+            "avg_latency_ms": 19.4
         },
         "sites": {
             "synaxcode.com": {
                 "name": "Ana Tanıtım & Ekosistem Vitrini",
-                "visitors": 13950,
-                "pageviews": 44100,
-                "share_pct": 55.5,
-                "status": "Online",
+                "visitors": 1,
+                "pageviews": 3,
+                "share_pct": 100.0,
+                "status": "Online (Sayaç Aktif)",
                 "target": "v0.5.0 Showcase & Benchmark Playground"
             },
             "synaxcode.org": {
                 "name": "Resmi Dokümantasyon & Egemen Git",
-                "visitors": 6920,
-                "pageviews": 22750,
-                "share_pct": 28.6,
-                "status": "Online",
+                "visitors": 0,
+                "pageviews": 0,
+                "share_pct": 0.0,
+                "status": "Online (Sayaç Aktif)",
                 "target": "EBNF Spec, Architecture & Git Mirror"
             },
             "synaxcode.online": {
                 "name": "Cloud Studio IDE & REST Derleyici",
-                "visitors": 3990,
-                "pageviews": 12570,
-                "share_pct": 15.9,
-                "status": "Online",
+                "visitors": 0,
+                "pageviews": 0,
+                "share_pct": 0.0,
+                "status": "Online (Sayaç Aktif)",
                 "target": "Live Browser IDE & Kernel Compiler"
             }
         },
         "geo_distribution": [
-            {"country": "Amerika Birleşik Devletleri", "code": "US", "visitors": 8450, "pct": 34.0},
-            {"country": "Türkiye", "code": "TR", "visitors": 5210, "pct": 21.0},
-            {"country": "Almanya", "code": "DE", "visitors": 3230, "pct": 13.0},
-            {"country": "Birleşik Krallık", "code": "GB", "visitors": 2490, "pct": 10.0},
-            {"country": "Japonya", "code": "JP", "visitors": 1740, "pct": 7.0},
-            {"country": "Fransa", "code": "FR", "visitors": 1240, "pct": 5.0},
-            {"country": "Kanada", "code": "CA", "visitors": 990, "pct": 4.0},
-            {"country": "Diğer Ülkeler", "code": "OTHER", "visitors": 1510, "pct": 6.0}
+            {"country": "Türkiye", "code": "TR", "visitors": 1, "pct": 100.0}
         ],
         "referrers": [
-            {"source": "Doğrudan Giriş (Direct / Bookmarks)", "count": 10240, "pct": 41.2},
-            {"source": "GitHub (ofaemd-creator/synax)", "count": 7890, "pct": 31.7},
-            {"source": "Google & Arama Motorları", "count": 3980, "pct": 16.0},
-            {"source": "HackerNews & Reddit (r/programming)", "count": 1740, "pct": 7.0},
-            {"source": "ArXiv / PhysioNet Araştırma Atıfları", "count": 1010, "pct": 4.1}
+            {"source": "Doğrudan Giriş (Direct)", "count": 1, "pct": 100.0}
         ],
         "history_14d": history_days,
         "recent_events": [
-            {"time": "1 dk önce", "site": "synaxcode.com", "event": "Ziyaretçi ana sayfayı açtı (macOS/Chrome)", "geo": "TR"},
-            {"time": "3 dk önce", "site": "synaxcode.online", "event": "Kernel derleme testi başlatıldı (/api/compile)", "geo": "US"},
-            {"time": "5 dk önce", "site": "synaxcode.org", "event": "spec/LANGUAGE_SPEC.md dokümantasyonu incelendi", "geo": "DE"},
-            {"time": "8 dk önce", "site": "synaxcode.org", "event": "Sovereign git clone tetiklendi (/git/synax.git)", "geo": "GB"},
-            {"time": "12 dk önce", "site": "synaxcode.com", "event": "Miyelin benchmark interaktif grafiği çalıştırıldı", "geo": "JP"}
+            {"time": "Şimdi", "site": "synaxcode.com", "event": "Canlı telemetri sayacı başlatıldı ve Hostinger'a kuruldu", "geo": "TR"}
         ]
     }
 
@@ -283,18 +262,18 @@ def get_github_ecosystem_metrics() -> Dict[str, Any]:
         "repository": "ofaemd-creator/synax",
         "url": "https://github.com/ofaemd-creator/synax",
         "license": "Apache-2.0",
-        "stars": 128,
-        "forks": 24,
-        "watchers": 38,
-        "open_issues": 1,  # Issue #6 completed, remaining open issues
-        "closed_issues": 7,
-        "clones_last_14d": 342,
-        "views_last_14d": 1890,
+        "stars": 1,
+        "forks": 0,
+        "watchers": 1,
+        "open_issues": 0,
+        "closed_issues": 1,
+        "clones_last_14d": 1,
+        "views_last_14d": 3,
         "latest_release": {
             "tag": "v0.5.0",
             "name": "SYNAX v0.5.0 — 8-Layer Platform & Neuro-Symbolic Compiler",
             "published_at": "2026-11-03",
-            "downloads_estimate": 1420,
+            "downloads_estimate": 1,
             "assets": [
                 "synax-0.5.0-py3-none-any.whl",
                 "synax-0.5.0.tar.gz",

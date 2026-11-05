@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteBase /
+
+# 1. Clean URLs for .html
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^/]+)/?$ .html [L]
+
+# 2. Clean URLs for dashboard directory
+RewriteRule ^dashboard/?$ dashboard.html [L]
