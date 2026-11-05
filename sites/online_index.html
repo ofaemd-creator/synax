@@ -95,6 +95,7 @@
         <a href="https://synaxcode.com" class="hover:text-white px-2 py-1 rounded hover:bg-slate-800/60 transition">🌐 .COM</a>
         <a href="https://synaxcode.org" class="hover:text-white px-2 py-1 rounded hover:bg-slate-800/60 transition">🏛️ .ORG</a>
         <a href="https://synaxcode.org/guide.html" class="hover:text-cyan-300 px-2 py-1 rounded hover:bg-slate-800/60 transition">📖 16s Rehber</a>
+        <a href="dashboard.html" class="text-amber-400 hover:text-amber-300 font-bold px-2 py-1 rounded hover:bg-slate-800/60 transition">📊 Dashboard</a>
         <a href="https://github.com/ofaemd-creator/synax" target="_blank" class="hover:text-cyan-400 px-2 py-1 rounded hover:bg-slate-800/60 transition flex items-center gap-1">
           🐙 GitHub
         </a>
@@ -123,6 +124,7 @@
       <!-- Şablon Seçici -->
       <select id="preset-selector" onchange="loadPreset(this.value)" class="bg-[#0c182d] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-mono font-bold text-slate-200 hover:border-slate-600 focus:outline-none">
         <option value="cpp_telemetry">🫀 Biyomedikal CPP (DBP - CVP)</option>
+        <option value="shock_index">🚨 Acil Şok İndeksi (HR / SBP)</option>
         <option value="vf_energy">⚡ Aritmi & VF Enerjisi (2-7 Hz)</option>
         <option value="normalized_diff">🧬 Normalize Fark & Clamp</option>
         <option value="myelin_stress">🚀 Ranvier Miyelin Stres Testi</option>
@@ -390,6 +392,37 @@
     // A. HAZIR BİYOMEDİKAL VE DİL ŞABLONLARI (PRESETS)
     // ---------------------------------------------------------------------------
     const PRESETS = {
+      shock_index: {
+        filename: "examples/clinical_shock_index.sx",
+        code: `synax 0.1
+
+kernel clinical_shock_index(
+  heart_rate: tensor<f32>,
+  systolic_bp: tensor<f32>
+) -> tensor<f32> {
+
+  intent "Kritik sok takibi icin Sok Indeksi (SI = HR / SBP) hesapla."
+
+  require shape(heart_rate) == shape(systolic_bp)
+
+  safety {
+    nonfinite = heal(0.0)
+    input_bound = abs_max(350.0)
+    range_check = clamp(0.0, 5.0)
+  }
+
+  // SI = HR / SBP (0.5-0.7 Normal, >0.9 Kritik Sok Riski)
+  let si = heart_rate / systolic_bp
+  return si
+
+  optimize latency
+  target auto
+}`,
+        a: "72.0, 85.0, 110.0, 135.0, 140.0, 95.0, 120.0, 150.0",
+        b: "120.0, 115.0, 90.0, 85.0, 75.0, 110.0, 80.0, 70.0",
+        intent: "Kritik acil servis takibi icin sok indeksi hesapla (HR / SBP)"
+      },
+
       cpp_telemetry: {
         filename: "examples/hemodynamic_cpp.sx",
         code: `synax 0.1
@@ -1137,5 +1170,6 @@ void synax_kernel_${parsed.name}(
       }
     });
   </script>
+  <script src="synax_beacon.js" defer></script>
 </body>
 </html>

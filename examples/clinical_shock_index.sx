@@ -1,0 +1,23 @@
+synax 0.1
+
+kernel clinical_shock_index(
+  heart_rate: tensor<f32>,
+  systolic_bp: tensor<f32>
+) -> tensor<f32> {
+  intent "Acil serviste kritik hipovolemik ve septik sok takibi icin Sok Indeksi (SI = HR / SBP) hesapla. SBP sifir veya elektrot kopuk ise olumcul bolme hatalarina (DivByZero, NaN) karsi koru."
+
+  require shape(heart_rate) == shape(systolic_bp)
+
+  safety {
+    nonfinite = heal(0.0)
+    input_bound = abs_max(350.0)
+    range_check = clamp(0.0, 5.0)
+  }
+
+  // SI = HR / SBP (Klinik norm: 0.5 - 0.7 normal, > 0.9 yuksek mortalite / sok)
+  let si = heart_rate / systolic_bp
+  return si
+
+  optimize latency
+  target auto
+}

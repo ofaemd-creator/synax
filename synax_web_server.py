@@ -21,6 +21,7 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 from synax_sdk import compile_intent
+from synax_telemetry import get_full_dashboard_payload, record_beacon
 from synaxc import SynaxCompiler
 
 
@@ -31,6 +32,17 @@ class SynaxWebHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path in ("/studio", "/studio/"):
             self.path = "/sites/online_index.html"
+        elif self.path in ("/dashboard", "/dashboard/", "/dashboard.html"):
+            self.path = "/sites/dashboard.html"
+        elif self.path in ("/synax_beacon.js", "/sites/synax_beacon.js"):
+            self.path = "/sites/synax_beacon.js"
+        elif self.path in ("/api/telemetry/stats", "/api/stats"):
+            try:
+                stats = get_full_dashboard_payload()
+                self._send_json(200, stats)
+            except Exception as exc:
+                self._send_json(500, {"error": str(exc)})
+            return
         return super().do_GET()
 
     def _send_json(self, status: int, payload: dict) -> None:
@@ -51,6 +63,14 @@ class SynaxWebHandler(SimpleHTTPRequestHandler):
             payload = json.loads(body) if body else {}
         except json.JSONDecodeError as exc:
             self._send_json(400, {"error": f"Invalid JSON: {exc}"})
+            return
+
+        if self.path == "/api/telemetry/beacon":
+            try:
+                res = record_beacon(payload)
+                self._send_json(200, res)
+            except Exception as exc:
+                self._send_json(422, {"error": str(exc)})
             return
 
         if self.path == "/api/compile":
@@ -109,6 +129,7 @@ class SynaxWebHandler(SimpleHTTPRequestHandler):
 
 
 def run_studio_server(host: str = "127.0.0.1", port: int = 8080) -> None:
+    print(f"📊 SYNAX Live Dashboard   : http://{host}:{port}/dashboard")
     print(f"🌐 SYNAX Local Studio IDE : http://{host}:{port}/studio")
     print(f"⚡ SYNAX Compiler REST API: POST http://{host}:{port}/api/compile")
     HTTPServer((host, port), SynaxWebHandler).serve_forever()

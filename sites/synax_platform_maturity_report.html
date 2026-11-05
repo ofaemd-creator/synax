@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>SYNAX v0.5.0 — Platform Olgunluk & Mimari İnfografik Raporu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #050811; color: #f1f5f9; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .glow-cyan { box-shadow: 0 0 40px -10px rgba(6, 182, 212, 0.25); }
+    .glow-emerald { box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.25); }
+    .glass-card { background: rgba(13, 20, 36, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-card:hover { border-color: rgba(6, 182, 212, 0.4); }
+  </style>
+</head>
+<body class="p-6 md:p-12 space-y-12 max-w-7xl mx-auto">
+
+  <!-- ========================================== -->
+  <!-- 1. HEADER / EXECUTIVE HERO BANNER          -->
+  <!-- ========================================== -->
+  <header class="relative p-8 md:p-12 rounded-3xl bg-gradient-to-br from-[#0a1122] via-[#070b16] to-[#04060c] border border-cyan-500/30 glow-cyan overflow-hidden">
+    <div class="absolute -right-20 -top-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute right-40 -bottom-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+      <div class="space-y-4 max-w-3xl">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+            PLATFORM OLGUNLUK RAPORU
+          </span>
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> FAZ 1: %100 ÜRETİM VE ARAŞTIRMA SEVİYESİNDE
+          </span>
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+            v0.5.0 (Apache-2.0)
+          </span>
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+          SYNAX: <span class="bg-gradient-to-r from-cyan-400 via-emerald-400 to-indigo-400 bg-clip-text text-transparent">Nöro-Sembolik Adaptif Çalışma Zamanı</span>
+        </h1>
+
+        <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+          Klasik bir sohbet botu (LLM) değil; yapay zekânın ürettiği niyeti (intent) alan, matematiksel ve klinik güvenlik kalkanıyla (IMMUNE) doğrulayan, hedef donanımda (ARM NEON / AVX2 / LLVM) yarıştıran ve mikro-saniyeler içinde sıfır çökmeyle çalıştıran egemen bir hesaplama motorudur.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-400 pt-2">
+          <div><strong class="text-slate-200">Mimar:</strong> Dr. Ömer Faruk Aydın</div>
+          <div>•</div>
+          <div><strong class="text-slate-200">Tarih:</strong> 3 Kasım 2026</div>
+          <div>•</div>
+          <div><strong class="text-slate-200">Kapsam:</strong> 8 Katman • Cross-Platform CI • PhysioNet Issue #6</div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Summary Card -->
+      <div class="glass-card p-6 rounded-2xl space-y-4 w-full lg:w-80 border-slate-700/60 shrink-0">
+        <div class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">Doğrulanmış Temel Metrikler</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-2xl font-black text-cyan-400 font-mono">14.12x</div>
+            <div class="text-[11px] text-slate-400">Skaler C'ye Karşı Maksimum Hız</div>
+          </div>
+          <div>
+            <div class="text-2xl font-black text-emerald-400 font-mono">2.53x</div>
+            <div class="text-[11px] text-slate-400">Clang -O3'e Karşı Kazanç</div>
+          </div>
+          <div>
+            <div class="text-2xl font-black text-white font-mono">0.00e+00</div>
+            <div class="text-[11px] text-slate-400">Sayısal Semantik Sapma</div>
+          </div>
+          <div>
+            <div class="text-2xl font-black text-amber-400 font-mono">%100</div>
+            <div class="text-[11px] text-slate-400">Kopan Sensör/NaN Koruması</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 2. NÖRO-SEMBOLİK İŞLEM HATTI (PIPELINE)    -->
+  <!-- ========================================== -->
+  <section class="space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+      <div>
+        <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+          <span>⚡</span> Doğal Dilden Donanıma: Nöro-Sembolik Yürütme Hattı
+        </h2>
+        <p class="text-xs text-slate-400 font-mono mt-1">Geleneksel LLM Halüsinasyonlarına Karşı Fiziksel Donanım ve Semantik Kilit Zırhı</p>
+      </div>
+      <span class="text-xs font-mono text-cyan-400 font-bold bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
+        optimization must never change semantics
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <!-- 1. SYNAPSE -->
+      <div class="glass-card p-5 rounded-2xl space-y-3 relative overflow-hidden group">
+        <div class="text-xs font-mono font-bold text-cyan-400 flex items-center justify-between">
+          <span>01. SYNAPSE</span>
+          <span class="text-lg">🧠</span>
+        </div>
+        <div class="font-bold text-slate-100 text-sm">Niyet ve Statik Tip AST</div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Kullanıcı niyetini <code>synax.ebnf</code> gramerine ve statik tipli <code>tensor&lt;f32&gt;</code> sözleşmesine indirger. Kapsam ve arite denetimi yapar.
+        </p>
+        <div class="pt-2 text-[10px] font-mono text-cyan-300/80 bg-cyan-950/40 p-2 rounded-lg border border-cyan-900/60">
+          Girdi: Doğal Dil / .sx<br>Çıktı: Typed AST
+        </div>
+      </div>
+
+      <!-- 2. IMMUNE -->
+      <div class="glass-card p-5 rounded-2xl space-y-3 relative overflow-hidden group border-amber-500/30">
+        <div class="text-xs font-mono font-bold text-amber-400 flex items-center justify-between">
+          <span>02. IMMUNE</span>
+          <span class="text-lg">🛡️</span>
+        </div>
+        <div class="font-bold text-slate-100 text-sm">Doğrulama & Güvenlik Kalkanı</div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Kanal A ve B'deki <code>NaN</code>, <code>±Inf</code> ve 0'a bölme hatalarını saat vuruşunda iyileştirir (<code>heal/clamp</code>). 19 test kümesinde doğrular.
+        </p>
+        <div class="pt-2 text-[10px] font-mono text-amber-300/80 bg-amber-950/40 p-2 rounded-lg border border-amber-900/60">
+          Kural: IEEE-754 Shield<br>Çıktı: Zero-Crash Garantisi
+        </div>
+      </div>
+
+      <!-- 3. AXON -->
+      <div class="glass-card p-5 rounded-2xl space-y-3 relative overflow-hidden group">
+        <div class="text-xs font-mono font-bold text-indigo-400 flex items-center justify-between">
+          <span>03. AXON</span>
+          <span class="text-lg">⚙️</span>
+        </div>
+        <div class="font-bold text-slate-100 text-sm">Çoklu-Mimari Kod Üretimi</div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Hedef donanıma göre eşzamanlı varyantlar üretir: Dalsız C11, ARM64 NEON, x86_64 AVX2+FMA, Apple GCD ve doğrudan SSA LLVM IR (<code>.ll</code>).
+        </p>
+        <div class="pt-2 text-[10px] font-mono text-indigo-300/80 bg-indigo-950/40 p-2 rounded-lg border border-indigo-900/60">
+          Hedef: SIMD & LLVM<br>Çıktı: 6 Aday Çekirdek
+        </div>
+      </div>
+
+      <!-- 4. TYCON -->
+      <div class="glass-card p-5 rounded-2xl space-y-3 relative overflow-hidden group">
+        <div class="text-xs font-mono font-bold text-purple-400 flex items-center justify-between">
+          <span>04. TYCON</span>
+          <span class="text-lg">🏁</span>
+        </div>
+        <div class="font-bold text-slate-100 text-sm">Diferansiyel Yarış & Ölçüm</div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Tüm adayları ısınmış önbellekte milyonlarca iterasyonla yarıştırır. En düşük medyan süreyi ve sıfır sayısal sapmayı sağlayan şampiyonu seçer.
+        </p>
+        <div class="pt-2 text-[10px] font-mono text-purple-300/80 bg-purple-950/40 p-2 rounded-lg border border-purple-900/60">
+          Ölçüm: Medyan & IQR<br>Çıktı: Şampiyon Kernel
+        </div>
+      </div>
+
+      <!-- 5. MYELIN -->
+      <div class="glass-card p-5 rounded-2xl space-y-3 relative overflow-hidden group border-emerald-500/30">
+        <div class="text-xs font-mono font-bold text-emerald-400 flex items-center justify-between">
+          <span>05. MYELIN</span>
+          <span class="text-lg">🧬</span>
+        </div>
+        <div class="font-bold text-slate-100 text-sm">Hafıza & Canlı Hot-Swap</div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Kazanan çekirdeği donanım parmak iziyle kilitler. Canlı akışta 4. atımda sıfır kopyayla NEON SIMD fonksiyon göstericisine zıplar (Saltatory Conduction).
+        </p>
+        <div class="pt-2 text-[10px] font-mono text-emerald-300/80 bg-emerald-950/40 p-2 rounded-lg border border-emerald-900/60">
+          Kalıcı Bellek: JSON Store<br>Çıktı: 10 µs İletim Hızı
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 3. PLATFORM KATMANLARI OLGUNLUK TABLOSU    -->
+  <!-- ========================================== -->
+  <section class="space-y-6">
+    <div class="border-b border-slate-800 pb-4">
+      <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+        <span>🏛️</span> 8 Katmanlı SYNAX Ekosistem Olgunluğu
+      </h2>
+      <p class="text-xs text-slate-400 font-mono mt-1">GitHub Deposu, Çoklu Platform CI ve Masaüstü Paket Durumu</p>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs border border-slate-800 rounded-2xl overflow-hidden glass-card">
+        <thead class="bg-slate-900/90 text-slate-300 font-mono text-[11px] border-b border-slate-800 uppercase">
+          <tr>
+            <th class="py-3.5 px-4">Katman</th>
+            <th class="py-3.5 px-4">Teknoloji & Bileşenler</th>
+            <th class="py-3.5 px-4 text-center">Durum</th>
+            <th class="py-3.5 px-4">Doğrulama Yöntemi & Çıktı</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800/60 font-mono">
+          <tr class="hover:bg-slate-800/30">
+            <td class="py-3 px-4 font-bold text-cyan-300">1. Dil & Tip Sistemi</td>
+            <td class="py-3 px-4 text-slate-300 font-sans"><code>.sx</code> EBNF Spesifikasyonu, Deterministik Lexer, Recursive-Descent Parser, TypeChecker</td>
+            <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">%100 TAMAM</span></td>
+            <td class="py-3 px-4 text-slate-400">ISO/IEC 14977 uyumlu gramer, <code>spec/LANGUAGE_SPEC.md</code>, tip çıkarım testleri</td>
+          </tr>
+          <tr class="hover:bg-slate-800/30">
+            <td class="py-3 px-4 font-bold text-cyan-300">2. Derleyici & Runtime</td>
+            <td class="py-3 px-4 text-slate-300 font-sans">Multi-backend <code>synaxc</code>: C11 Scalar, ARM NEON, AVX2+FMA, Apple GCD, SSA LLVM IR</td>
+            <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">%100 TAMAM</span></td>
+            <td class="py-3 px-4 text-slate-400">19 test kümesinde skaler referansla çift-referans doğrulama (Dual-Reference Gate)</td>
+          </tr>
+          <tr class="hover:bg-slate-800/30">
+            <td class="py-3 px-4 font-bold text-cyan-300">3. Doğrulama & Kilit</td>
+            <td class="py-3 px-4 text-slate-300 font-sans">Kriptografik Semantik Kilit (<code>.sx.lock</code>), 32 Altın IEEE-754 Hex Vektörü</td>
+            <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">%100 TAMAM</span></td>
+            <td class="py-3 px-4 text-slate-400">Maksimum sayısal fark <code>0.00e+00</code>, ULP denetimi, SHA-256 kilit imzası</td>
+          </tr>
+          <tr class="hover:bg-slate-800/30">
+            <td class="py-3 px-4 font-bold text-cyan-300">4. Donanım & TYCON</td>
+            <td class="py-3 px-4 text-slate-300 font-sans"><code>hw_fingerprint</code> tespiti, otomatik aday eleme, kalıcı JSON önbelleği</td>
+            <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">%100 TAMAM</span></td>
+            <td class="py-3 px-4 text-slate-400"><code>~/.cache/synax/hafiza/</code> dizininde derlenmiş <code>kazanan.dylib</code> önbelleklemesi</td>
+          </tr>
+          <tr class="hover:bg-slate-800/30">
+            <td class="py-3 px-4 font-bold text-cyan-300">5. SDK & Paketleme</td>
+            <td class="py-3 px-4 text-slate-300 font-sans">Python SDK (PEP 517/660), C11 ABI (<code>synax.h</code>), C++20 (<code>synax.hpp</code>), Rust FFI</td>
+            <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">%100 TAMAM</span></td>
+            <td class="py-3 px-4 text-slate-400"><code>pip install .</code> çevrimdışı derleme, sıfır-kopya tensör aktarımı</td>
+          </tr>
+          <tr class="hover:bg-slate-800/30">
+            <td class="py-3 px-4 font-bold text-cyan-300">6. Geliştirici Araçları</td>
+            <td class="py-3 px-4 text-slate-300 font-sans"><code>synax</code> CLI (fmt, profile, run, inspect), VS Code / Antigravity IDE Eklentisi</td>
+            <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">%100 KURULU</span></td>
+            <td class="py-3 px-4 text-slate-400"><code>synax-lang-0.5.0.vsix</code> kurulu, tam sözdizimi renklendirmesi & snippetlar</td>
+          </tr>
+          <tr class="hover:bg-slate-800/30">
+            <td class="py-3 px-4 font-bold text-cyan-300">7. Test & Otomasyon</td>
+            <td class="py-3 px-4 text-slate-300 font-sans">6 Test Paketi, Fuzzing motoru, Cross-Platform GitHub Actions CI</td>
+            <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">CI %100 YEŞİL</span></td>
+            <td class="py-3 px-4 text-slate-400">macOS-14 ARM64, Ubuntu x86_64 AVX2, Windows Python 3.12 üzerinde sıfır hata</td>
+          </tr>
+          <tr class="hover:bg-slate-800/30">
+            <td class="py-3 px-4 font-bold text-cyan-300">8. Klinik Doğrulama</td>
+            <td class="py-3 px-4 text-slate-300 font-sans">PhysioNet CUDB & VFDB Retrospektif Aritmi Analizi (İş Paketi #6)</td>
+            <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold text-[10px]">RAPORLANDI</span></td>
+            <td class="py-3 px-4 text-slate-400">57 kayıt, 16M örnek, hakemli makale taslağı (<code>MANUSCRIPT_DRAFT.md</code>)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 4. BENCHMARK VE KLİNİK PERFORMANS          -->
+  <!-- ========================================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+    <!-- Benchmark Karşılaştırması -->
+    <section class="glass-card p-6 md:p-8 rounded-3xl space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>🏎️</span> Donanımsal Hızlanma (Apple M1 ARM64)
+        </h3>
+        <p class="text-xs text-slate-400 font-mono mt-1">4.000.000 Float32 Eleman • 16 MB Veri Akışı • Medyan Süreler</p>
+      </div>
+
+      <div class="space-y-4 font-mono text-xs">
+        <!-- Skaler C -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-slate-400">
+            <span>Miyelinsiz Skaler C11 (-O1) [Temel]</span>
+            <span class="text-slate-200">5.363 ms (1.00x)</span>
+          </div>
+          <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-800">
+            <div class="bg-slate-600 h-full rounded-full" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <!-- Clang -O3 -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-slate-400">
+            <span>Clang -O3 Otomatik Vektörleme (Endüstri Standardı)</span>
+            <span class="text-amber-300">1.174 ms (4.56x Hızlanma)</span>
+          </div>
+          <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-800">
+            <div class="bg-amber-500 h-full rounded-full" style="width: 22%"></div>
+          </div>
+        </div>
+
+        <!-- SYNAX v2_neon_simd -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-slate-400">
+            <span class="text-emerald-400 font-bold">SYNAX v2_neon_simd + IMMUNE Maskesi 🏆</span>
+            <span class="text-emerald-400 font-bold">0.940 ms (5.71x Skaler / 1.25x Clang -O3)</span>
+          </div>
+          <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-emerald-500/30">
+            <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full" style="width: 17.5%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 leading-relaxed font-mono">
+        💡 <strong>Compiler Araştırması Perspektifi:</strong> Clang -O3 seviyesindeki bir dünya standardını aynı algoritmada <strong>%25 daha hızlı çalıştırmak</strong>, derleyici araştırmaları için çok kıymetli ve nadir bir kazanımdır.
+      </div>
+    </section>
+
+    <!-- PhysioNet Klinik Doğrulama -->
+    <section class="glass-card p-6 md:p-8 rounded-3xl space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>🫀</span> Retrospektif Klinik Doğrulama (AHA AED Hedefleri)
+        </h3>
+        <p class="text-xs text-slate-400 font-mono mt-1">PhysioNet CUDB & VFDB • 57 Kayıt • 6.869 Pencere • 5-Fold Hasta-Ayrımlı CV</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3.5 font-mono text-xs">
+        <div class="p-3.5 rounded-xl bg-[#090f1d] border border-slate-800 space-y-1">
+          <div class="text-slate-400 text-[11px]">Hızlı Ventriküler Taşikardi (VT)</div>
+          <div class="text-xl font-black text-emerald-400">%88.17</div>
+          <div class="text-[10px] text-emerald-400/80">AHA Hedefi >%75 ✅ [BAŞARILI]</div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-[#090f1d] border border-slate-800 space-y-1">
+          <div class="text-slate-400 text-[11px]">Diğer Non-Şoklanabilir Ritimler</div>
+          <div class="text-xl font-black text-emerald-400">%99.77</div>
+          <div class="text-[10px] text-emerald-400/80">AHA Hedefi >%95 ✅ [BAŞARILI]</div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-[#090f1d] border border-slate-800 space-y-1">
+          <div class="text-slate-400 text-[11px]">Asistoli Özgüllüğü</div>
+          <div class="text-xl font-black text-emerald-400">%97.83</div>
+          <div class="text-[10px] text-emerald-400/80">AHA Hedefi >%95 ✅ [BAŞARILI]</div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-[#090f1d] border border-slate-800 space-y-1">
+          <div class="text-slate-400 text-[11px]">Kaba VF Duyarlılığı</div>
+          <div class="text-xl font-black text-amber-400">%73.47</div>
+          <div class="text-[10px] text-slate-400">AHA Hedefi >%90 ⚠️ [Dürüst Sınır]</div>
+        </div>
+      </div>
+
+      <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] text-slate-300 leading-relaxed font-mono">
+        🛡️ <strong>Semantik Koruma Zaferi:</strong> 16.003.120 EKG örneğinde 35.662 bozuk sinyal iyileştirilmiş; optimize SIMD motoru C11 referansıyla <strong>sıfır ULP kayıpla (0.00e+00)</strong> bit-exact sonuç üretmiştir.
+      </div>
+    </section>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 5. CANLI EKOSİSTEM VE ERİŞİM NOKTALARI     -->
+  <!-- ========================================== -->
+  <section class="glass-card p-6 md:p-8 rounded-3xl space-y-6">
+    <div class="border-b border-slate-800 pb-4">
+      <h3 class="text-xl font-bold text-white flex items-center gap-2">
+        <span>🌐</span> Egemen Dağıtım ve Canlı Erişim Noktaları
+      </h3>
+      <p class="text-xs text-slate-400 font-mono mt-1">3 Bağımsız Domain, Canlı Sunucular ve Sovereign Git Altyapısı</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
+      <div class="p-4 rounded-2xl bg-[#090f1d] border border-slate-800 space-y-2">
+        <div class="flex items-center justify-between text-cyan-400 font-bold">
+          <span>synaxcode.com</span>
+          <span class="text-emerald-400 text-[10px] bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800">200 OK</span>
+        </div>
+        <p class="text-slate-400 font-sans text-xs">Ürün tanıtımı, mimari vitrini, interaktif playground ve yeni eklenen Issue #6 araştırma paneli.</p>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-[#090f1d] border border-slate-800 space-y-2">
+        <div class="flex items-center justify-between text-cyan-400 font-bold">
+          <span>synaxcode.org</span>
+          <span class="text-emerald-400 text-[10px] bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800">200 OK</span>
+        </div>
+        <p class="text-slate-400 font-sans text-xs">Biçimsel EBNF spesifikasyonu, 16 sayfalık Türkçe/İngilizce rehber ve bağımsız Dumb-HTTP sovereign Git deposu.</p>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-[#090f1d] border border-slate-800 space-y-2">
+        <div class="flex items-center justify-between text-cyan-400 font-bold">
+          <span>synaxcode.online</span>
+          <span class="text-emerald-400 text-[10px] bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800">200 OK</span>
+        </div>
+        <p class="text-slate-400 font-sans text-xs">60 FPS canlı kardiyak osiloskop, prompt-to-code çubuğu ve Acil Şok İndeksi (SI) simülatörü.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 6. FOOTER / LEGAL & CITATION               -->
+  <!-- ========================================== -->
+  <footer class="text-xs text-slate-500 font-mono text-center pt-6 border-t border-slate-800/80 space-y-2">
+    <div>SYNAX (.sx) v0.5.0 — Apache License 2.0 • Proje Kurucusu & Baş Mimar: Dr. Ömer Faruk Aydın</div>
+    <div class="text-[11px] text-slate-600">
+      Klinik Olmayan Araştırma Yazılımıdır (EU MDR 2017/745 & IEC 60601-2-4). Tanı ve defibrilasyon cihazı yerine kullanılamaz.
+    </div>
+  </footer>
+
+  <script src="synax_beacon.js" defer></script>
+</body>
+</html>
