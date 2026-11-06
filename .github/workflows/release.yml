@@ -54,7 +54,7 @@ jobs:
       matrix:
         include:
           - target: macos-arm64
-            os: macos-14
+            os: macos-latest
             shared_lib: libsynax_myelin.dylib
             cflags: "-O3 -mcpu=apple-m1 -shared -fPIC -std=c11"
           - target: linux-x86_64

@@ -18,7 +18,7 @@ SYNAX is organized into eight modular, independently verifiable engineering laye
 | **Layer 4** | **Multi-Variant Codegen (`synaxc`) & Native SDKs** | C11 Scalar, 4x Unrolled, ARM64 NEON (`float32x4_t`), 4-Accumulator Prefetch NEON, Apple GCD Multicore (`synaxc.py`); Public C11 (`include/synax.h`), C++17 (`include/synax.hpp`), and Rust (`bindings/rust/`) SDKs | **Complete (`v0.5`)** |
 | **Layer 5** | **Adaptive Myelin Runtime & Signed Cache** | Native `libsynax_myelin` (`synax_myelin_engine.c`), `0700` isolated `~/.cache/synax/hafiza/<ir_hash>/`, SHA-256 signed `rapor.json` & `.sx.lock`, O(1) `SynaxAxonChannel` function-pointer hot-swap | **Complete (`v0.5`)** |
 | **Layer 6** | **Developer Tooling, Python Package & IDE** | Installable Python SDK (`pip install synax`), unified `synax` CLI, Cloud Studio IDE (`synaxcode.online`), and VS Code Extension (`editors/vscode-synax/`) | **Complete (`v0.5`)** |
-| **Layer 7** | **Cross-Platform CI, Fuzzing & Releases** | GitHub Actions matrix (`macos-14` ARM64 NEON, `ubuntu-latest` x86_64 Clang+AVX2, `windows-latest` Python 3.12), differential fuzz testing, automated `SHA256SUMS.txt` & PyPI release pipeline | **Complete (`v0.5`)** |
+| **Layer 7** | **Cross-Platform CI, Fuzzing & Releases** | GitHub Actions matrix (`macos-latest` ARM64 NEON, `ubuntu-latest` x86_64 Clang+AVX2, `windows-latest` Python 3.12), differential fuzz testing, automated `SHA256SUMS.txt` & PyPI release pipeline | **Complete (`v0.5`)** |
 | **Layer 8** | **Open Governance & Academic Research** | Apache-2.0 legal stack (`LICENSE`, `NOTICE`, `TRADEMARKS.md`, `GOVERNANCE.md`, `CITATION.cff`), `MEDICAL_RESEARCH_DISCLAIMER.md`, and retrospective PhysioNet research benchmarks | **Active (`v0.5` -> `v1.0`)** |
 
 ---

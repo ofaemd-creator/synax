@@ -28,8 +28,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-14
-            label: macos-14 ARM64 NEON
+          - os: macos-latest
+            label: macos-latest ARM64 NEON
             is_posix: true
             shared_ext: dylib
             extra_cflags: "-mcpu=apple-m1"
@@ -123,6 +123,15 @@ jobs:
       - name: Run Lexer, Parser & Typechecker Suite (All OSes)
         run: python tests/test_lexer_parser_types.py
 
+      - name: Run Dendritic Reductions Suite (All OSes)
+        run: python tests/test_dendritic_reductions.py
+
+      - name: Run Language Server Protocol (LSP) Suite (All OSes)
+        run: python tests/test_lsp.py
+
+      - name: Run Synax AI Chat & Autopoiesis Suite (All OSes)
+        run: python tests/test_synax_chat.py
+
       - name: Run Biomedical WFDB Reader Suite (All OSes)
         run: python tests/test_biomedical_wfdb.py
 
@@ -140,6 +149,10 @@ jobs:
       - name: Run Adversarial Differential Fuzz Suite (macOS & Linux)
         if: matrix.is_posix
         run: python tests/test_fuzz_differential.py
+
+      - name: Run DeepTech Python Bridge & IEC 62304 Compliance Suite (macOS & Linux)
+        if: matrix.is_posix
+        run: python tests/test_deeptech_bridge_compliance.py
 
       - name: Run Public C11 & C++17 SDK Integration Suite (macOS & Linux)
         if: matrix.is_posix
