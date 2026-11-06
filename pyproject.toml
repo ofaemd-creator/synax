@@ -5,7 +5,7 @@ backend-path = ["."]
 
 [project]
 name = "synax"
-version = "0.5.0"
+version = "0.6.1"
 description = "SYNAX (.sx) — Neuro-Symbolic Kernel Language, Differential Verifier & Adaptive Myelin Compiler"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -66,6 +66,7 @@ py-modules = [
   "synax_verifier",
   "synaxc",
   "synax_cli",
+  "synax_chat",
   "synax_myelin",
   "synax_security",
   "synapse_neural_model",
