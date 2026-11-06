@@ -199,7 +199,7 @@ class TestSynaxFrontendAndSDK(unittest.TestCase):
     def test_06_reference_interpreter_debugger_and_public_sdk(self) -> None:
         import synax
 
-        self.assertEqual(synax.__version__, "0.5.0")
+        self.assertEqual(synax.__version__, "0.6.1")
         hw = synax.hardware_info()
         self.assertEqual(len(hw.fingerprint_id), 12)
 

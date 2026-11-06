@@ -21,7 +21,7 @@
     "test_serebral_indeks": "relu(a - b) * 0.85 + bias",
     "my_perfusion": "(a + b) * bias"
   },
-  "evolution_generation": 22,
-  "_integrity_sha256": "950b9ca58738cd0c5b3d1d542b4c1a0350f9edc37df08f0fabd5cc4f5ca925b0",
+  "evolution_generation": 24,
+  "_integrity_sha256": "d0209be1ccf54bf2f5740401b7382f05b5fb2c2c27a57f71719085d232bd49cc",
   "algebraic_optimizations_applied": 7
 }

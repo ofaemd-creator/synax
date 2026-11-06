@@ -2,7 +2,7 @@
   "name": "synax-lang",
   "displayName": "SYNAX Code — AI Pair Programmer & Autopoietic Compiler",
   "description": "Official AI Chat Assistant, Autopoiesis Self-Evolution, Language Server Protocol (LSP), and SIMD compiler for SYNAX (.sx).",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "publisher": "synaxcode",
   "author": {
     "name": "Dr. Ömer Faruk Aydın",
@@ -24,6 +24,8 @@
   },
   "main": "./extension.js",
   "activationEvents": [
+    "*",
+    "onStartupFinished",
     "onLanguage:synax",
     "onView:synax.chatView"
   ],
@@ -126,6 +128,16 @@
           "type": "string",
           "default": "synax",
           "description": "Path to the synax CLI executable (executes 'synax lsp' on stdio)."
+        },
+        "synax.chat.scriptPath": {
+          "type": "string",
+          "default": "",
+          "description": "Custom path to synax_chat.py (auto-detected if empty)."
+        },
+        "synax.chat.pythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "Custom path to Python 3 interpreter used by Synax AI Chat."
         }
       }
     }

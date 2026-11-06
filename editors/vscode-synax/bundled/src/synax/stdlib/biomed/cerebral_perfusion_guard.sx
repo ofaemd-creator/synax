@@ -1,0 +1,23 @@
+synax 0.1
+
+kernel cerebral_perfusion_guard(
+  map_pressure: tensor<f32>,
+  icp_pressure: tensor<f32>
+) -> tensor<f32> {
+  intent "İntrakraniyal basınç artışı veya hemodinamik şok durumunda Serebral Perfüzyon Basıncını (CPP = MAP - ICP) ve kritik iskemik eşiği hesapla."
+
+  require shape(map_pressure) == shape(icp_pressure)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(0.0, 200.0)
+    input_bound = abs_max(400.0)
+  }
+
+  // CPP (Cerebral Perfusion Pressure) = MAP - ICP
+  let cpp = relu(map_pressure - icp_pressure)
+  return cpp
+
+  optimize latency
+  target auto
+}

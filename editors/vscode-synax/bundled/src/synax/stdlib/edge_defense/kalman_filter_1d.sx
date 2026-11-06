@@ -1,0 +1,24 @@
+synax 0.1
+
+kernel kalman_filter_1d(
+  measurement: tensor<f32>,
+  predicted_state: tensor<f32>
+) -> tensor<f32> {
+  intent "Tek boyutlu telemetri takibinde sensör gürültüsünü filtreleyip Kalman kazancı (K=0.35) ile güncellenmiş durum tahmini üret."
+
+  require shape(measurement) == shape(predicted_state)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(-1000.0, 1000.0)
+    input_bound = abs_max(5000.0)
+  }
+
+  // Kalman durum güncellemesi: x_k = x_pred + K * (z_k - x_pred)
+  let innovation = measurement - predicted_state
+  let updated_state = predicted_state + (innovation * 0.35)
+  return updated_state
+
+  optimize latency
+  target auto
+}

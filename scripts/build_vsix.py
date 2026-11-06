@@ -32,6 +32,8 @@ CONTENT_TYPES_XML = """<?xml version="1.0" encoding="utf-8"?>
   <Default Extension="svg" ContentType="image/svg+xml"/>
   <Default Extension="md" ContentType="text/markdown"/>
   <Default Extension="txt" ContentType="text/plain"/>
+  <Default Extension="py" ContentType="text/plain"/>
+  <Default Extension="sx" ContentType="text/plain"/>
   <Default Extension="code-snippets" ContentType="application/json"/>
   <Default Extension="vsixmanifest" ContentType="text/xml"/>
 </Types>

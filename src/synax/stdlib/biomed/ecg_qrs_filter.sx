@@ -1,0 +1,24 @@
+synax 0.1
+
+kernel ecg_qrs_filter(
+  ecg_raw: tensor<f32>,
+  baseline: tensor<f32>
+) -> tensor<f32> {
+  intent "Elektrot kopması ve kas titremesi artefaktlarını IMMUNE ile temizleyerek QRS kompleksi tespiti için diferansiyel filtrelenmiş EKG sinyali üret."
+
+  require shape(ecg_raw) == shape(baseline)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(-10.0, 10.0)
+    input_bound = abs_max(50.0)
+  }
+
+  // Temel çizgi kaymasını çıkar ve polarite doğrultucu ile QRS enerjisini izole et
+  let diff = ecg_raw - baseline
+  let qrs_peak = relu(diff)
+  return qrs_peak
+
+  optimize latency
+  target auto
+}

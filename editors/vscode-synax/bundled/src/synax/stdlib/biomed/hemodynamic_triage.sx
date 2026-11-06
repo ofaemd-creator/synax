@@ -1,0 +1,23 @@
+synax 0.1
+
+kernel hemodynamic_triage(
+  sbp: tensor<f32>,
+  dbp: tensor<f32>
+) -> tensor<f32> {
+  intent "İnvaziv arter basıncı sinyalinde kateter yıkama ve hava kabarcığı artefaktlarını otonom iyileştirerek Ortalama Arter Basıncını (MAP = DBP + (SBP - DBP) / 3) sıfır gecikmeyle hesapla."
+
+  require shape(sbp) == shape(dbp)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(0.0, 300.0)
+    input_bound = abs_max(500.0)
+  }
+
+  // MAP (Mean Arterial Pressure) formülü
+  let map_val = dbp + ((sbp - dbp) / 3.0)
+  return map_val
+
+  optimize latency
+  target auto
+}

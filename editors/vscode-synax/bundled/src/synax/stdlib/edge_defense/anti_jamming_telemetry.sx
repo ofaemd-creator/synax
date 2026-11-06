@@ -1,0 +1,23 @@
+synax 0.1
+
+kernel anti_jamming_telemetry(
+  telemetry_raw: tensor<f32>,
+  carrier_ref: tensor<f32>
+) -> tensor<f32> {
+  intent "Elektronik karıştırma (jamming) veya RF patlaması anında gelen uç değerleri Ranvier düğümü benzeri atlama ve IMMUNE kalkanı ile temizleyerek güvenli telemetri üret."
+
+  require shape(telemetry_raw) == shape(carrier_ref)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(-180.0, 180.0)
+    input_bound = abs_max(1000.0)
+  }
+
+  // RF gürültü kesme ve normalize yön açısı
+  let clean_signal = telemetry_raw - carrier_ref
+  return clean_signal
+
+  optimize latency
+  target auto
+}

@@ -1,0 +1,23 @@
+synax 0.1
+
+kernel sensor_fusion(
+  radar_dist: tensor<f32>,
+  lidar_dist: tensor<f32>
+) -> tensor<f32> {
+  intent "Radar ve LiDAR telemetri verilerini sensör körelmesi veya optik yansıma anomalilerine karşı IMMUNE kalkanı ile birleştirerek güvenli füzyon mesafesi üret."
+
+  require shape(radar_dist) == shape(lidar_dist)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(0.0, 5000.0)
+    input_bound = abs_max(10000.0)
+  }
+
+  // Ağırlıklı tamamlayıcı filtre (Complementary Fusion: 0.6 * LiDAR + 0.4 * Radar)
+  let fused = (lidar_dist * 0.6) + (radar_dist * 0.4)
+  return fused
+
+  optimize latency
+  target auto
+}

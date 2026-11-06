@@ -94,7 +94,8 @@ class SynaxChatViewProvider {
                     await this.compileCurrentDocument(data.code);
                     break;
                 case 'ready':
-                    this._ensureBackend();
+                case 'reconnect':
+                    this._restartBackend();
                     break;
             }
         });
@@ -102,7 +103,41 @@ class SynaxChatViewProvider {
         this._ensureBackend();
     }
 
+    _findPythonBin() {
+        const customPy = vscode.workspace.getConfiguration('synax').get('chat.pythonPath');
+        if (customPy && typeof customPy === 'string' && customPy.trim() && fs.existsSync(customPy.trim())) {
+            return customPy.trim();
+        }
+
+        const configPython = vscode.workspace.getConfiguration('python').get('defaultInterpreterPath');
+        if (configPython && typeof configPython === 'string' && fs.existsSync(configPython)) {
+            return configPython;
+        }
+
+        const candidates = [
+            '/Users/o.farukaydin/.local/bin/python3',
+            '/opt/homebrew/bin/python3',
+            '/usr/local/bin/python3',
+            '/usr/bin/python3',
+            'python3'
+        ];
+        for (const c of candidates) {
+            try {
+                if (c.startsWith('/') && fs.existsSync(c)) return c;
+            } catch (e) {}
+        }
+        return 'python3';
+    }
+
     _findSynaxPath() {
+        // 1. Configured custom path
+        const customScript = vscode.workspace.getConfiguration('synax').get('chat.scriptPath');
+        if (customScript && typeof customScript === 'string' && customScript.trim() && fs.existsSync(customScript.trim())) {
+            const p = customScript.trim();
+            return { script: p, cwd: path.dirname(p) };
+        }
+
+        // 2. Open workspace folders
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (workspaceFolders) {
             for (const f of workspaceFolders) {
@@ -110,20 +145,53 @@ class SynaxChatViewProvider {
                 if (fs.existsSync(p)) return { script: p, cwd: f.uri.fsPath };
             }
         }
-        // Fallback to configured or global
+
+        // 3. Known project scratch directory
+        const scratchSynax = '/Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_chat.py';
+        if (fs.existsSync(scratchSynax)) {
+            return { script: scratchSynax, cwd: path.dirname(scratchSynax) };
+        }
+
+        // 4. Bundled inside extension directory
+        const bundled = path.join(this._extensionUri.fsPath, 'bundled', 'synax_chat.py');
+        if (fs.existsSync(bundled)) {
+            return { script: bundled, cwd: path.dirname(bundled) };
+        }
+
         return { script: 'synax_chat.py', cwd: process.cwd() };
+    }
+
+    _restartBackend() {
+        if (this._proc) {
+            try { this._proc.kill(); } catch (e) {}
+            this._proc = null;
+        }
+        this._ensureBackend();
     }
 
     _ensureBackend() {
         if (this._proc && !this._proc.killed) return;
 
         const info = this._findSynaxPath();
-        const pythonBin = vscode.workspace.getConfiguration('python').get('defaultInterpreterPath') || 'python3';
+        const pythonBin = this._findPythonBin();
 
         try {
             this._proc = child_process.spawn(pythonBin, [info.script, '--json-rpc'], {
                 cwd: info.cwd,
-                env: { ...process.env, PYTHONPATH: `${info.cwd}:${info.cwd}/src` }
+                env: {
+                    ...process.env,
+                    PYTHONPATH: `${info.cwd}:${path.join(info.cwd, 'src')}:${process.env.PYTHONPATH || ''}`
+                }
+            });
+
+            this._proc.on('error', (err) => {
+                console.error('[SYNAX Backend Process Error]', err);
+                this._proc = null;
+                this._postToWebview({
+                    type: 'status',
+                    connected: false,
+                    error: `Python işlemi başlatılamadı: ${err.message} (${pythonBin})`
+                });
             });
 
             let buffer = '';
@@ -150,6 +218,11 @@ class SynaxChatViewProvider {
             this._proc.on('close', (code) => {
                 console.log(`[SYNAX Backend exited with ${code}]`);
                 this._proc = null;
+                this._postToWebview({
+                    type: 'status',
+                    connected: false,
+                    error: code !== 0 ? `SYNAX motoru kapandı (çıkış kodu: ${code})` : undefined
+                });
             });
 
             this._postToWebview({ type: 'status', connected: true });
@@ -447,9 +520,12 @@ class SynaxChatViewProvider {
   <div id="header">
     <div style="font-weight: 700; display:flex; align-items:center; gap:6px;">
       <span>🧬 SYNAX Code</span>
-      <span style="font-size:10px; background:#334155; padding:1px 5px; border-radius:4px; color:#cbd5e1;">v0.6.0</span>
+      <span style="font-size:10px; background:#334155; padding:1px 5px; border-radius:4px; color:#cbd5e1;">v0.6.1</span>
     </div>
-    <div class="badge"><div class="dot"></div><span>Autopoiesis Aktif</span></div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <div id="status-badge" class="badge"><div id="status-dot" class="dot"></div><span id="status-text">Bağlanıyor...</span></div>
+      <button id="reconnect-btn" onclick="reconnect()" style="display:none; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-size:10px; padding:2px 6px; border-radius:4px; cursor:pointer;">🔄 Bağlan</button>
+    </div>
   </div>
 
   <div id="pills">
@@ -479,16 +555,44 @@ class SynaxChatViewProvider {
     const messages = document.getElementById('messages');
     const prompt = document.getElementById('prompt');
     const typing = document.getElementById('typing-indicator');
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
+    const reconnectBtn = document.getElementById('reconnect-btn');
 
     window.addEventListener('message', event => {
       const msg = event.data;
-      if (msg.type === 'addMessage') {
+      if (msg.type === 'status') {
+        if (msg.connected) {
+          statusDot.style.background = '#10b981';
+          statusDot.style.boxShadow = '0 0 8px #10b981';
+          statusText.textContent = 'Autopoiesis Aktif';
+          statusText.style.color = '#10b981';
+          reconnectBtn.style.display = 'none';
+        } else {
+          statusDot.style.background = '#ef4444';
+          statusDot.style.boxShadow = '0 0 8px #ef4444';
+          statusText.textContent = 'Çevrimdışı';
+          statusText.style.color = '#ef4444';
+          reconnectBtn.style.display = 'inline-block';
+          if (msg.error) {
+            renderMessage({
+              sender: 'assistant',
+              text: '⚠️ **SYNAX Motoru Durumu:** ' + msg.error + '\\n\\nLütfen yukarıdaki **🔄 Bağlan** butonuna basarak yeniden deneyin.'
+            });
+          }
+        }
+      } else if (msg.type === 'addMessage') {
         renderMessage(msg);
       } else if (msg.type === 'setTyping') {
         typing.style.display = msg.typing ? 'block' : 'none';
         messages.scrollTop = messages.scrollHeight;
       }
     });
+
+    function reconnect() {
+      statusText.textContent = 'Yeniden bağlanıyor...';
+      vscode.postMessage({ type: 'reconnect' });
+    }
 
     function handleKey(e) {
       if (e.key === 'Enter' && !e.shiftKey) {

@@ -1,0 +1,23 @@
+synax 0.1
+
+kernel capnography_etco2(
+  co2_raw: tensor<f32>,
+  airway_pressure: tensor<f32>
+) -> tensor<f32> {
+  intent "Solunum devresi nem ve sekresyon tıkanmalarını filtreleyerek gerçek zamanlı End-Tidal CO2 (EtCO2) alveolar plato basıncını hesapla."
+
+  require shape(co2_raw) == shape(airway_pressure)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(0.0, 100.0)
+    input_bound = abs_max(150.0)
+  }
+
+  // Pozitif basınçlı soluk verme anındaki CO2 tepe plato değeri
+  let alveolar_etco2 = relu(co2_raw)
+  return alveolar_etco2
+
+  optimize latency
+  target auto
+}

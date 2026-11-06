@@ -10,7 +10,7 @@ SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
 
-__version__ = "0.5.0"
+__version__ = "0.6.1"
 
 from .backends import AVX2Backend, LLVMIRBackend
 from .formatter import format_sx as format_source
@@ -28,6 +28,7 @@ from .parser import (
     parse_module,
 )
 from .profiler_debugger import SynaxDebugger, SynaxProfiler
+from .python_bridge import SynaxJITKernel, Tensor, kernel
 from .sdk import (
     check_sx,
     compile_sx,
@@ -65,6 +66,9 @@ __all__ = [
     "SynaxProfiler",
     "SynaxType",
     "SynaxTypeError",
+    "Tensor",
+    "kernel",
+    "SynaxJITKernel",
     "Token",
     "TokenKind",
     "TypeChecker",
