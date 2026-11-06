@@ -42,6 +42,7 @@ from synapse_neural_model import SynapseNanoModel, ASTNode, BRAIN_PATH
 from synax_security import SynaxSecurityGuard
 import synax
 from synax.hardware import detect_hardware_fingerprint
+from synax.chat_router import HybridLLMRouter
 
 
 @dataclass
@@ -78,6 +79,7 @@ class SynaxChatAgent:
         self.brain_path = brain_path or Path(BRAIN_PATH)
         self.model = SynapseNanoModel()
         self.hw = detect_hardware_fingerprint()
+        self.llm_router = HybridLLMRouter()
 
     def reload_brain(self) -> None:
         self.model = SynapseNanoModel()
@@ -298,7 +300,19 @@ kernel auto_generated_kernel(
             except Exception as e:
                 return ChatResponse(text=f"⚠️ **Derleme Hatası:** {str(e)}\n\nLütfen geçerli bir `.sx` kernel bloğu girdiğinizden emin olun.", action="compile_error")
 
-        # ── 6. KLİNİK / GENEL NÖRO-SEMBOLİK ANALİZ ──
+        # ── 6. KLİNİK / GENEL NÖRO-SEMBOLİK ANALİZ & HİBRİT LLM ──
+        # Soru, mimari veya serbest sohbet sorgularını doğrudan Hibrit LLM Router'a yönlendir
+        is_conversational = any(q in lower for q in ("?", "nasıl", "nedir", "ne demek", "kimsin", "xcode", "swift", "yardım", "help", "anlat", "açıkla", "mimari", "proje", "geliştir", "merhaba", "selam"))
+        if is_conversational and not ("kendine şu beceriyi" in lower or "öğren:" in lower or lower.startswith("kod:") or lower.startswith("kernel")):
+            llm_text, llm_code = self.llm_router.query(text, context)
+            lang = "synax"
+            if llm_code:
+                if "import " in llm_code or "func " in llm_code or "class " in llm_code:
+                    lang = "swift"
+                elif "#include" in llm_code or "void " in llm_code:
+                    lang = "c"
+            return ChatResponse(text=llm_text, code=llm_code, language=lang if llm_code else None, action="llm_response")
+
         try:
             ast = self.model.parse_to_ast(text, auto_evolve=True)
             formula = ast.to_human_formula()
@@ -329,6 +343,20 @@ kernel auto_generated_kernel(
             )
             return ChatResponse(text="\n".join(reply_lines), action="expression_evaluated")
         except Exception as e:
+            # AST ayrıştırması başarısız olduysa Hibrit LLM Router'a devret
+            try:
+                llm_text, llm_code = self.llm_router.query(text, context)
+                if llm_text:
+                    lang = "synax"
+                    if llm_code:
+                        if "import " in llm_code or "func " in llm_code or "class " in llm_code:
+                            lang = "swift"
+                        elif "#include" in llm_code or "void " in llm_code:
+                            lang = "c"
+                    return ChatResponse(text=llm_text, code=llm_code, language=lang if llm_code else None, action="llm_response")
+            except Exception:
+                pass
+
             return ChatResponse(
                 text=f"Komutunuzu tam olarak anlayamadım veya sözdizimsel bir hata oluştu: `{str(e)}`.\n\n"
                      f"Örnek komutlar:\n"
@@ -414,7 +442,7 @@ def run_json_rpc(agent: SynaxChatAgent) -> None:
                 formula = params.get("formula", "")
                 result = agent.teach_skill(concept, formula)
             elif method in ("chat", "message"):
-                msg = params.get("message", "")
+                msg = params.get("message") or params.get("text", "")
                 ctx = params.get("context", {})
                 res = agent.process_message(msg, ctx)
                 result = res.to_dict()

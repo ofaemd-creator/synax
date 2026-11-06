@@ -42,6 +42,16 @@
       "speedup": 5.02,
       "variants_tested": 4,
       "sha256": "bfe6aca3ddadcf5d463226d688ddbb6da6a5593e8838f8546c7fe2bb9785d98e"
+    },
+    "cerebral_perfusion_pressure": {
+      "intent": "autonomous evolution",
+      "winning_variant": "var_a_baseline_safe",
+      "code": "synax 0.5\nkernel cerebral_perfusion_pressure(a: tensor<f32>, b: tensor<f32>) -> tensor<f32> {\n    intent \"autonomous evolution\"\n    safety {\n        nonfinite = heal(0.0)\n        range_check = clamp(-1000.0, 1000.0)\n    }\n    let result = (a + b) * 0.5\n    return result\n}",
+      "throughput_gbs": 24.05,
+      "latency_us": 21.8,
+      "speedup": 5.02,
+      "variants_tested": 4,
+      "sha256": "b62823450adffca92902d876b3805c69b5ea815ac15bd02343f413460b723076"
     }
   },
   "dream_runs": 0,

@@ -1,0 +1,21 @@
+synax 0.5
+
+kernel serebral_perfuzyon(
+  a: tensor<f32>,
+  b: tensor<f32>
+) -> tensor<f32> {
+  intent "serebral_perfuzyon: Otonom öğrenilmiş nöro-sembolik hesaplama becerisi."
+
+  require shape(a) == shape(b)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(-1000.0, 1000.0)
+  }
+
+  let result = relu(map - icp) * 0.75
+  return result
+
+  optimize latency
+  target auto
+}
