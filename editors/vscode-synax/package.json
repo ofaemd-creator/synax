@@ -1,8 +1,8 @@
 {
   "name": "synax-lang",
-  "displayName": "SYNAX (.sx) Language Support",
-  "description": "Official syntax highlighting, safety-policy grammar, and biomedical/SIMD kernel snippets for the SYNAX (.sx) neuro-symbolic language.",
-  "version": "0.5.0",
+  "displayName": "SYNAX Code — AI Pair Programmer & Autopoietic Compiler",
+  "description": "Official AI Chat Assistant, Autopoiesis Self-Evolution, Language Server Protocol (LSP), and SIMD compiler for SYNAX (.sx).",
+  "version": "0.6.0",
   "publisher": "synaxcode",
   "author": {
     "name": "Dr. Ömer Faruk Aydın",
@@ -22,13 +22,23 @@
   "engines": {
     "vscode": "^1.80.0"
   },
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:synax",
+    "onView:synax.chatView"
+  ],
   "categories": [
     "Programming Languages",
-    "Snippets"
+    "Snippets",
+    "Machine Learning",
+    "Other"
   ],
   "keywords": [
     "synax",
     "sx",
+    "ai",
+    "autopoiesis",
+    "chat",
     "simd",
     "neon",
     "ieee754",
@@ -36,6 +46,47 @@
     "compiler"
   ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "synax-sidebar",
+          "title": "SYNAX Code",
+          "icon": "media/synax-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "synax-sidebar": [
+        {
+          "type": "webview",
+          "id": "synax.chatView",
+          "name": "Synax AI Chat & Autopoiesis",
+          "icon": "media/synax-icon.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "synax.openChat",
+        "title": "SYNAX Code: Chat ve Autopoiesis Panelini Aç",
+        "category": "SYNAX"
+      },
+      {
+        "command": "synax.teachSkill",
+        "title": "SYNAX Code: Kendine Yeni Beceri Edin (Autopoiesis)",
+        "category": "SYNAX"
+      },
+      {
+        "command": "synax.compileCurrent",
+        "title": "SYNAX Code: Aktif Dosyayı Derle (Compile)",
+        "category": "SYNAX"
+      },
+      {
+        "command": "synax.checkCurrent",
+        "title": "SYNAX Code: Tip ve Güvenlik Denetimi (Check)",
+        "category": "SYNAX"
+      }
+    ],
     "languages": [
       {
         "id": "synax",
@@ -64,7 +115,7 @@
       }
     ],
     "configuration": {
-      "title": "SYNAX Language Server",
+      "title": "SYNAX Code & Language Server",
       "properties": {
         "synax.lsp.enable": {
           "type": "boolean",

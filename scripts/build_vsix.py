@@ -28,6 +28,8 @@ DIST_DIR = ROOT / "dist"
 CONTENT_TYPES_XML = """<?xml version="1.0" encoding="utf-8"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
   <Default Extension="json" ContentType="application/json"/>
+  <Default Extension="js" ContentType="application/javascript"/>
+  <Default Extension="svg" ContentType="image/svg+xml"/>
   <Default Extension="md" ContentType="text/markdown"/>
   <Default Extension="txt" ContentType="text/plain"/>
   <Default Extension="code-snippets" ContentType="application/json"/>

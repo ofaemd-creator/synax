@@ -1,0 +1,21 @@
+synax 0.5
+
+kernel test_serebral_indeks(
+  a: tensor<f32>,
+  b: tensor<f32>
+) -> tensor<f32> {
+  intent "test_serebral_indeks: Otonom öğrenilmiş nöro-sembolik hesaplama becerisi."
+
+  require shape(a) == shape(b)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(-1000.0, 1000.0)
+  }
+
+  let result = relu(a - b) * 0.85 + bias
+  return result
+
+  optimize latency
+  target auto
+}

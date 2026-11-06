@@ -14,9 +14,14 @@
     "otonom_oklid_normu": "(1.0f / (1.0f + expf(-((fabsf((a - b)) + bias)))))",
     "otonom_mutlak_aktivasyon": "fabsf((a - b))",
     "otonom_enerji_kapisi": "(((fabsf((a * b)) + bias)) > 0.0f ? ((fabsf((a * b)) + bias)) : 0.0f)",
-    "otonom_kuantum_darbe": "(1.0f / (1.0f + expf(-((fabsf((a - b)) + bias)))))"
+    "otonom_kuantum_darbe": "(1.0f / (1.0f + expf(-((fabsf((a - b)) + bias)))))",
+    "koroner_perfüzyon": "max(0.0, a - b) * bias",
+    "koroner_perf_zyon": "max(0.0, a - b) * bias",
+    "koroner_perfuzyon": "relu(a - b) * bias",
+    "test_serebral_indeks": "relu(a - b) * 0.85 + bias",
+    "my_perfusion": "(a + b) * bias"
   },
-  "evolution_generation": 11,
-  "_integrity_sha256": "86bb4303a592260d640f73376f783b2a826614c621c711b51d575466f9f2b29c",
-  "algebraic_optimizations_applied": 6
+  "evolution_generation": 22,
+  "_integrity_sha256": "950b9ca58738cd0c5b3d1d542b4c1a0350f9edc37df08f0fabd5cc4f5ca925b0",
+  "algebraic_optimizations_applied": 7
 }

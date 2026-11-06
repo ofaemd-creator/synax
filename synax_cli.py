@@ -64,7 +64,7 @@ def print_banner() -> None:
    ╚════██║  ╚██╔╝  ██║╚██╗██║██╔══██║ ██╔██╗ 
    ███████║   ██║   ██║ ╚████║██║  ██║██╔╝ ██╗
    ╚══════╝   ╚═╝   ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝
-   Neuro-Symbolic Compiler, Verification Gate & Adaptive Myelin Runtime (v0.5.0)
+   Neuro-Symbolic Compiler, Verification Gate & Adaptive Myelin Runtime (v0.6.0)
    GitHub: https://github.com/ofaemd-creator/synax | Cloud IDE: https://synaxcode.online
 """
     print(banner)
@@ -79,6 +79,7 @@ def cmd_help() -> None:
   synax check <dosya.sx>               : Statik tip sistemi (TypeChecker), kanonik IR ve çift-referans denetimini yapar
 
 GELİŞTİRİCİ ARAÇLARI (DEVELOPER TOOLS):
+  synax chat / synax code              : Otonom AI Çift Programcı & Autopoiesis (Kendi Kendini Geliştirme) Asistanı
   synax fmt <dosya.sx> [--check|--write]: .sx kodunu kanonik biçime sokar (idempotent)
   synax inspect <dosya.sx> [--llvm|...]: AST, IR, C11, ARM64 NEON, x86 AVX2 veya SSA LLVM IR çıktısını gösterir
   synax lock <dosya.sx>                : 32 altın IEEE-754 vektörlü kriptografik .sx.lock kilidi üretir
@@ -511,6 +512,7 @@ def cmd_test() -> None:
         os.path.join(BASE_DIR, "test_unified_compiler.py"),
         os.path.join(BASE_DIR, "tests", "test_fuzz_differential.py"),
         os.path.join(BASE_DIR, "tests", "test_biomedical_wfdb.py"),
+        os.path.join(BASE_DIR, "tests", "test_synax_chat.py"),
     ]
     ran = 0
     for sf in suite_files:
@@ -574,6 +576,9 @@ def main() -> None:
         elif subcmd == "lsp":
             from synax.lsp.server import run_lsp_server
             run_lsp_server()
+        elif subcmd in ("chat", "code"):
+            from synax_chat import run_chat_cli
+            run_chat_cli(rest)
         elif subcmd == "compile":
             cmd_compile(rest)
         elif subcmd == "run":
