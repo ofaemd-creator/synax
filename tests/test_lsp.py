@@ -211,6 +211,64 @@ kernel test(signal: tensor<f32>) -> f32 {
         self.assertIn("  a: tensor<f32>", new_text)
         self.assertIn("  return sum(a)", new_text)
 
+    def test_05_code_lens_and_completion(self) -> None:
+        client = MockClient()
+        uri = "file:///evolution_test.sx"
+        code = 'intent "calculate cerebral perfusion pressure MAP minus ICP"\nkernel cpp(map: tensor<f32>, icp: tensor<f32>) -> f32 {\n  return mean(map) - mean(icp)\n}\n'
+        client.send_rpc({
+            "jsonrpc": "2.0",
+            "method": "textDocument/didOpen",
+            "params": {"textDocument": {"uri": uri, "text": code}},
+        })
+        client.read_responses()
+
+        # CodeLens
+        client.send_rpc({
+            "jsonrpc": "2.0",
+            "id": 30,
+            "method": "textDocument/codeLens",
+            "params": {"textDocument": {"uri": uri}},
+        })
+        resps = client.read_responses()
+        self.assertEqual(len(resps), 1)
+        lenses = resps[0]["result"]
+        self.assertGreaterEqual(len(lenses), 2)
+        titles = [lens["command"]["title"] for lens in lenses]
+        self.assertTrue(any("Niyetten Otonom Sentezle" in t for t in titles))
+        self.assertTrue(any("SYNAX" in t for t in titles))
+
+        # Completion
+        client.send_rpc({
+            "jsonrpc": "2.0",
+            "id": 31,
+            "method": "textDocument/completion",
+            "params": {"textDocument": {"uri": uri}, "position": {"line": 1, "character": 0}},
+        })
+        resps = client.read_responses()
+        self.assertEqual(len(resps), 1)
+        items = resps[0]["result"]["items"]
+        labels = [item["label"] for item in items]
+        self.assertIn("intent", labels)
+        self.assertIn("kernel", labels)
+        self.assertIn("safety", labels)
+        self.assertIn("clamp", labels)
+
+    def test_06_neuro_symbolic_synthesis(self) -> None:
+        client = MockClient()
+        client.send_rpc({
+            "jsonrpc": "2.0",
+            "id": 40,
+            "method": "synax/synthesize",
+            "params": {"intent": "kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al"},
+        })
+        resps = client.read_responses()
+        self.assertEqual(len(resps), 1)
+        res = resps[0]["result"]
+        self.assertEqual(res["status"], "success")
+        self.assertIn("best_code", res)
+        self.assertIn("relu", res["best_code"])
+
+
 
 if __name__ == "__main__":
     unittest.main()

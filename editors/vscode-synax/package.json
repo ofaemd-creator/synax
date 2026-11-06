@@ -1,8 +1,8 @@
 {
   "name": "synax-lang",
   "displayName": "SYNAX Code — AI Pair Programmer & Autopoietic Compiler",
-  "description": "Official AI Chat Assistant, Autopoiesis Self-Evolution, Language Server Protocol (LSP), and SIMD compiler for SYNAX (.sx).",
-  "version": "0.6.1",
+  "description": "Official AI Chat Assistant, Neuro-Symbolic Self-Evolution (IMMUNE + TYCON), Language Server Protocol (LSP), and SIMD compiler for SYNAX (.sx).",
+  "version": "0.7.0",
   "publisher": "synaxcode",
   "author": {
     "name": "Dr. Ömer Faruk Aydın",
@@ -74,8 +74,33 @@
         "category": "SYNAX"
       },
       {
+        "command": "synax.openEvolutionArena",
+        "title": "SYNAX Code: Evrim Arenası Panelini Aç",
+        "category": "SYNAX"
+      },
+      {
         "command": "synax.teachSkill",
         "title": "SYNAX Code: Kendine Yeni Beceri Edin (Autopoiesis)",
+        "category": "SYNAX"
+      },
+      {
+        "command": "synax.evolveKernel",
+        "title": "SYNAX Code: Otonom Çekirdek Evrimi (Arena: ARM64 NEON / AVX2)",
+        "category": "SYNAX"
+      },
+      {
+        "command": "synax.synthesizeFromIntent",
+        "title": "SYNAX Code: Niyetten Otonom Sentezle (Neuro-Symbolic Auto-Synthesize)",
+        "category": "SYNAX"
+      },
+      {
+        "command": "synax.showArenaReport",
+        "title": "SYNAX Code: Donanım Evrim Arenası Raporunu Göster",
+        "category": "SYNAX"
+      },
+      {
+        "command": "synax.toggleDreamMode",
+        "title": "SYNAX Code: Boş Zaman Evrimi (Dream Mode) Başlat/Durdur",
         "category": "SYNAX"
       },
       {
@@ -122,7 +147,7 @@
         "synax.lsp.enable": {
           "type": "boolean",
           "default": true,
-          "description": "Enable real-time SYNAX Language Server Protocol (LSP) diagnostics and hover."
+          "description": "Enable real-time SYNAX Language Server Protocol (LSP) diagnostics, hover, and CodeLens."
         },
         "synax.lsp.executable": {
           "type": "string",
@@ -138,6 +163,21 @@
           "type": "string",
           "default": "",
           "description": "Custom path to Python 3 interpreter used by Synax AI Chat."
+        },
+        "synax.evolution.dreamMode": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable idle-time background optimization when inactive for 30 seconds."
+        },
+        "synax.llm.groqApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Optional Groq Cloud API key for ultra-fast Llama-3.3 70B synthesis (500+ tok/s)."
+        },
+        "synax.llm.ollamaUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:11434",
+          "description": "Local Ollama host URL for offline air-gapped code generation."
         }
       }
     }

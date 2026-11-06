@@ -552,6 +552,36 @@ def cmd_run(argv: list[str]) -> None:
         )
 
 
+def cmd_evolve(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(prog="synax evolve")
+    ap.add_argument("target", help="Geliştirilecek .sx dosyası veya klinik niyet metni")
+    ap.add_argument("--n", type=int, default=65536, help="Benchmark eleman sayısı")
+    ap.add_argument("--tekrar", type=int, default=5, help="Benchmark tekrar sayısı")
+    args = ap.parse_args(argv)
+
+    from synax.evolution import EvolutionArena
+    arena = EvolutionArena()
+    print("🧬 SYNAX Otonom Evrim Arenası Başlatılıyor...")
+    report = arena.run_match(args.target, bench_n=args.n, bench_repeats=args.tekrar)
+    print("\n" + report.format_markdown())
+
+
+def cmd_dream(argv: list[str]) -> None:
+    ap = argparse.ArgumentParser(prog="synax dream")
+    ap.add_argument("--threshold", type=int, default=30, help="Boşta kalma (inactivity) eşik süresi (saniye)")
+    ap.add_argument("--dir", default=".", help="İzlenecek çalışma alanı dizini")
+    args = ap.parse_args(argv)
+
+    from synax.evolution import SynaxDreamDaemon
+    daemon = SynaxDreamDaemon(workspace_dir=Path(args.dir), idle_threshold_sec=args.threshold)
+    daemon.run()
+
+
+def cmd_mcp(argv: list[str]) -> None:
+    from synax.mcp_server import run_mcp_server
+    run_mcp_server()
+
+
 def cmd_test() -> None:
     suite_files = [
         os.path.join(BASE_DIR, "tests", "test_lexer_parser_types.py"),
@@ -564,6 +594,7 @@ def cmd_test() -> None:
         os.path.join(BASE_DIR, "tests", "test_biomedical_wfdb.py"),
         os.path.join(BASE_DIR, "tests", "test_synax_chat.py"),
         os.path.join(BASE_DIR, "tests", "test_deeptech_bridge_compliance.py"),
+        os.path.join(BASE_DIR, "tests", "test_evolution_arena.py"),
     ]
     ran = 0
     for sf in suite_files:
@@ -630,6 +661,12 @@ def main() -> None:
         elif subcmd in ("chat", "code"):
             from synax_chat import run_chat_cli
             run_chat_cli(rest)
+        elif subcmd == "evolve":
+            cmd_evolve(rest)
+        elif subcmd == "mcp":
+            cmd_mcp(rest)
+        elif subcmd == "dream":
+            cmd_dream(rest)
         elif subcmd == "compile":
             cmd_compile(rest)
         elif subcmd == "build":

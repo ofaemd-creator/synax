@@ -15,6 +15,8 @@ Installable via:
 from __future__ import annotations
 
 import json
+import os
+import shutil
 import sys
 import zipfile
 from pathlib import Path
@@ -23,6 +25,23 @@ from xml.sax.saxutils import escape
 ROOT = Path(__file__).resolve().parent.parent
 EXT_DIR = ROOT / "editors" / "vscode-synax"
 DIST_DIR = ROOT / "dist"
+
+
+def prepare_bundled_payload() -> None:
+    """Pre-bundle the complete SYNAX runtime engine so the VSIX is 100% self-sufficient."""
+    bundled_dir = EXT_DIR / "bundled"
+    bundled_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. Copy all root Python modules needed by synax chat, CLI, and compiler
+    for py in ROOT.glob("*.py"):
+        if not py.name.startswith("test_"):
+            shutil.copy2(py, bundled_dir / py.name)
+
+    # 2. Copy the whole src/ package
+    bundled_src = bundled_dir / "src"
+    if bundled_src.exists():
+        shutil.rmtree(bundled_src)
+    shutil.copytree(ROOT / "src", bundled_src)
 
 
 CONTENT_TYPES_XML = """<?xml version="1.0" encoding="utf-8"?>
@@ -82,6 +101,7 @@ def render_vsixmanifest(pkg: dict) -> str:
 
 
 def build_vsix(out_dir: Path = DIST_DIR) -> Path:
+    prepare_bundled_payload()
     pkg = json.loads((EXT_DIR / "package.json").read_text(encoding="utf-8"))
     out_dir.mkdir(parents=True, exist_ok=True)
     vsix_name = f"{pkg['name']}-{pkg['version']}.vsix"

@@ -98,6 +98,15 @@ class SynaxLanguageServer:
         self.out_stream = out_stream or sys.stdout.buffer
         self.documents: Dict[str, str] = {}
         self.shutdown_received: bool = False
+        try:
+            from synax.evolution import EpisodicEvolutionMemory, EvolutionArena, NeuroSymbolicSynthesizer
+            self.memory = EpisodicEvolutionMemory()
+            self.arena = EvolutionArena(self.memory)
+            self.synthesizer = NeuroSymbolicSynthesizer(self.memory)
+        except Exception:
+            self.memory = None
+            self.arena = None
+            self.synthesizer = None
 
     def send_response(self, response_id: Any, result: Any = None, error: Any = None) -> None:
         payload: Dict[str, Any] = {"jsonrpc": "2.0", "id": response_id}
@@ -275,6 +284,194 @@ class SynaxLanguageServer:
         except Exception:
             return []
 
+    def handle_code_lens(self, uri: str) -> List[Dict[str, Any]]:
+        text = self.documents.get(uri, "")
+        if not text:
+            return []
+        lines = text.splitlines()
+        code_lenses: List[Dict[str, Any]] = []
+
+        for i, line in enumerate(lines):
+            # Check for kernel definition
+            m_kernel = re.match(r"^\s*kernel\s+([A-Za-z0-9_]+)", line)
+            if m_kernel:
+                k_name = m_kernel.group(1)
+                speed_str = "ARM64 NEON / AVX2"
+                winner_title = f"⚡ SYNAX Donanım Arenasında Yarıştır ({speed_str})"
+                if self.memory:
+                    best = self.memory.query_similar(k_name)
+                    if best:
+                        speed_str = f"{best.winner_target.upper()} ({best.throughput_gbs:.1f} GB/s | IMMUNE: 100%)"
+                        winner_title = f"⚡ SYNAX Evrildi: {speed_str} [Yeniden Yarıştır]"
+
+                code_lenses.append({
+                    "range": {
+                        "start": {"line": i, "character": 0},
+                        "end": {"line": i, "character": len(line)},
+                    },
+                    "command": {
+                        "title": winner_title,
+                        "command": "synax.evolveKernel",
+                        "arguments": [uri, k_name, i],
+                    },
+                })
+
+            # Check for intent declaration
+            m_intent = re.match(r'^\s*intent\s+"([^"]+)"', line)
+            if m_intent:
+                intent_desc = m_intent.group(1)
+                short_desc = (intent_desc[:32] + "...") if len(intent_desc) > 32 else intent_desc
+                code_lenses.append({
+                    "range": {
+                        "start": {"line": i, "character": 0},
+                        "end": {"line": i, "character": len(line)},
+                    },
+                    "command": {
+                        "title": f'🧬 Niyetten Otonom Sentezle: "{short_desc}"',
+                        "command": "synax.synthesizeFromIntent",
+                        "arguments": [uri, i, intent_desc],
+                    },
+                })
+
+        return code_lenses
+
+    def handle_completion(self, uri: str, line: int, char: int) -> Dict[str, Any]:
+        items = [
+            {
+                "label": "intent",
+                "kind": 15,
+                "detail": "SYNAX Nöro-Sembolik Niyet Deklarasyonu",
+                "documentation": "Doğal dilde klinik veya matematiksel niyeti belirtir; LLM ve genetik mutator bu niyetten 4 farklı kod varyantı üretir.",
+                "insertText": 'intent "${1:klinik veya sensör işlem niyeti}"\nsafety {\n    nonfinite = heal(0.0)\n    clamp = (${2:-50.0}, ${3:300.0})\n}\n',
+                "insertTextFormat": 2,
+            },
+            {
+                "label": "kernel",
+                "kind": 14,
+                "detail": "SYNAX Soma Çekirdeği Tanımı",
+                "documentation": "Girdileri alan, Ranvier düğümü immün kalkanıyla donanmış hesaplama çekirdeği.",
+                "insertText": "kernel ${1:name}(${2:a: tensor<f32, N>}):\n    safety {\n        nonfinite = heal(0.0)\n    }\n    let ${3:result} = ${4:a}\n    return ${3:result}\n",
+                "insertTextFormat": 2,
+            },
+            {
+                "label": "safety",
+                "kind": 14,
+                "detail": "Ranvier Düğümü İmmün Kalkanı",
+                "documentation": "Biyomedikal NaN/Inf ve donanım gürültüsü arındırma politikası.",
+                "insertText": "safety {\n    nonfinite = ${1|heal(0.0),reject,zero_output|}\n    clamp = (${2:0.0}, ${3:300.0})\n}\n",
+                "insertTextFormat": 2,
+            },
+            {
+                "label": "clamp",
+                "kind": 3,
+                "detail": "Akson Eşikleme Fonksiyonu",
+                "documentation": "clamp(x, lo, hi): Değeri fizyolojik [lo, hi] sınırlarına kilitler.",
+                "insertText": "clamp(${1:x}, ${2:0.0}, ${3:300.0})",
+                "insertTextFormat": 2,
+            },
+            {
+                "label": "relu",
+                "kind": 3,
+                "detail": "Akson Tepesi Doğrultucu Aktivasyonu",
+                "documentation": "relu(x) = max(0.0, x): Negatif membran potansiyellerini eşikler.",
+                "insertText": "relu(${1:x})",
+                "insertTextFormat": 2,
+            },
+            {
+                "label": "sum",
+                "kind": 3,
+                "detail": "Dendritik Uzaysal & Zamansal Toplama (Spatial Summation)",
+                "documentation": "sum(x: tensor<f32>) -> f32: Neumaier kompanse toplamıyla sıfır kayıpla skaler potansiyele indirger.",
+                "insertText": "sum(${1:x})",
+                "insertTextFormat": 2,
+            },
+            {
+                "label": "mean",
+                "kind": 3,
+                "detail": "Dendritik Ortalama Potansiyel (Mean Potential)",
+                "documentation": "mean(x: tensor<f32>) -> f32: Normalize dendritik membran yükü.",
+                "insertText": "mean(${1:x})",
+                "insertTextFormat": 2,
+            },
+            {
+                "label": "l2_norm",
+                "kind": 3,
+                "detail": "Dendritik Sinyal Enerjisi (L2 Norm)",
+                "documentation": "l2_norm(x: tensor<f32>) -> f32: sqrt(sum(x_i^2))",
+                "insertText": "l2_norm(${1:x})",
+                "insertTextFormat": 2,
+            },
+            {
+                "label": "dot",
+                "kind": 3,
+                "detail": "Sinaptik Nokta Çarpımı (Synaptic Dot Product)",
+                "documentation": "dot(a, b) -> f32: İki tensörü skaler potansiyelde birleştirir.",
+                "insertText": "dot(${1:a}, ${2:b})",
+                "insertTextFormat": 2,
+            },
+        ]
+        return {"isIncomplete": False, "items": items}
+
+    def handle_evolve(self, uri: str, kernel_name: Optional[str] = None) -> Dict[str, Any]:
+        text = self.documents.get(uri, "")
+        if not text:
+            # Fallback to reading from local file if uri is file://
+            if uri.startswith("file://"):
+                fpath = uri[7:]
+                if os.path.exists(fpath):
+                    try:
+                        with open(fpath, "r", encoding="utf-8") as f:
+                            text = f.read()
+                    except Exception:
+                        pass
+        if not text:
+            return {"status": "error", "message": f"Döküman bulunamadı: {uri}"}
+
+        if self.arena is None:
+            return {"status": "error", "message": "EvolutionArena alt sistemi yüklenemedi."}
+
+        try:
+            report = self.arena.run_match(text)
+            return {
+                "status": "success",
+                "report": report.to_dict(),
+                "markdown": report.format_markdown(),
+                "winner": {
+                    "id": report.winner.id,
+                    "name": report.winner.name,
+                    "target": report.winner.target,
+                    "throughput_gbs": report.winner.throughput_gbs,
+                    "latency_us": report.winner.median_latency_us,
+                    "speedup": report.winner.speedup_vs_baseline,
+                } if report.winner else None,
+            }
+        except Exception as exc:
+            logger.exception("Evolve failed")
+            return {"status": "error", "message": str(exc)}
+
+    def handle_synthesize(self, intent: str) -> Dict[str, Any]:
+        if self.synthesizer is None:
+            return {"status": "error", "message": "NeuroSymbolicSynthesizer alt sistemi yüklenemedi."}
+        try:
+            result = self.synthesizer.synthesize_from_intent(intent)
+            return {
+                "status": "success",
+                "best_code": result.best_code,
+                "winner_id": result.winner_id,
+                "candidates_count": len(result.candidates),
+                "candidates": [
+                    {
+                        "id": c.id,
+                        "name": c.name,
+                        "description": c.description,
+                        "code": c.code,
+                    }
+                    for c in result.candidates
+                ],
+            }
+        except Exception as exc:
+            return {"status": "error", "message": str(exc)}
+
     def handle_request(self, msg: Dict[str, Any]) -> None:
         req_id = msg.get("id")
         method = msg.get("method", "")
@@ -286,10 +483,15 @@ class SynaxLanguageServer:
                     "textDocumentSync": 1,  # Full sync
                     "hoverProvider": True,
                     "documentFormattingProvider": True,
+                    "codeLensProvider": {"resolveProvider": False},
+                    "completionProvider": {
+                        "triggerCharacters": ["\"", "{", "(", " "],
+                        "resolveProvider": False,
+                    },
                 },
                 "serverInfo": {
                     "name": "synax-lsp",
-                    "version": "0.6.0",
+                    "version": "0.7.0",
                 },
             }
             self.send_response(req_id, result=res)
@@ -313,6 +515,47 @@ class SynaxLanguageServer:
             doc_uri = params.get("textDocument", {}).get("uri", "")
             edits = self.handle_formatting(doc_uri)
             self.send_response(req_id, result=edits)
+            return
+
+        if method == "textDocument/codeLens":
+            doc_uri = params.get("textDocument", {}).get("uri", "")
+            lenses = self.handle_code_lens(doc_uri)
+            self.send_response(req_id, result=lenses)
+            return
+
+        if method == "textDocument/completion":
+            doc_uri = params.get("textDocument", {}).get("uri", "")
+            pos = params.get("position", {})
+            l = pos.get("line", 0)
+            c = pos.get("character", 0)
+            completions = self.handle_completion(doc_uri, l, c)
+            self.send_response(req_id, result=completions)
+            return
+
+        # Custom SYNAX RPC Extensions
+        if method == "synax/evolve":
+            doc_uri = params.get("uri", "")
+            k_name = params.get("kernel")
+            res = self.handle_evolve(doc_uri, k_name)
+            self.send_response(req_id, result=res)
+            return
+
+        if method == "synax/synthesize":
+            intent = params.get("intent", "")
+            res = self.handle_synthesize(intent)
+            self.send_response(req_id, result=res)
+            return
+
+        if method == "synax/getMemory":
+            if self.memory:
+                mem_data = {
+                    "patterns_count": len(self.memory.data.get("proven_patterns", [])),
+                    "kernels_count": len(self.memory.data.get("historical_kernels", {})),
+                    "proven_patterns": self.memory.data.get("proven_patterns", []),
+                }
+            else:
+                mem_data = {"patterns_count": 0, "kernels_count": 0, "proven_patterns": []}
+            self.send_response(req_id, result=mem_data)
             return
 
         self.send_response(req_id, error={"code": -32601, "message": f"Method {method} not found"})

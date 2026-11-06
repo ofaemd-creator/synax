@@ -408,7 +408,7 @@ def run_json_rpc(agent: SynaxChatAgent) -> None:
             params = req.get("params", {})
 
             if method == "ping":
-                result = {"status": "ok", "version": "0.6.0"}
+                result = {"status": "ok", "version": "0.7.0"}
             elif method == "teach":
                 concept = params.get("concept", "")
                 formula = params.get("formula", "")
@@ -420,6 +420,40 @@ def run_json_rpc(agent: SynaxChatAgent) -> None:
                 result = res.to_dict()
             elif method == "list_skills":
                 result = agent.model.brain.get("learned_concepts", {})
+            elif method == "evolve":
+                code = params.get("code", "")
+                target = params.get("target", code)
+                from synax.evolution import EvolutionArena
+                arena = EvolutionArena()
+                report = arena.run_match(target)
+                result = {
+                    "status": "success",
+                    "report": report.to_dict(),
+                    "markdown": report.format_markdown(),
+                }
+            elif method == "synthesize":
+                intent = params.get("intent", "")
+                from synax.evolution import NeuroSymbolicSynthesizer
+                synthesizer = NeuroSymbolicSynthesizer()
+                syn_res = synthesizer.synthesize_from_intent(intent)
+                result = {
+                    "status": "success",
+                    "best_code": syn_res.best_code,
+                    "winner_id": syn_res.winner_id,
+                    "candidates": [
+                        {
+                            "id": c.id,
+                            "name": c.name,
+                            "description": c.description,
+                            "code": c.code,
+                        }
+                        for c in syn_res.candidates
+                    ],
+                }
+            elif method == "get_memory":
+                from synax.evolution import EpisodicEvolutionMemory
+                mem = EpisodicEvolutionMemory()
+                result = mem.data
             else:
                 result = {"error": f"Unknown method '{method}'"}
 

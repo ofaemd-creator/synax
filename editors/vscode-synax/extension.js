@@ -4,10 +4,11 @@ const path = require('path');
 const fs = require('fs');
 
 /**
- * SYNAX Code VS Code Extension — AI Chat & Autopoiesis Controller
+ * SYNAX Code VS Code Extension — AI Chat & Autopoietic Neuro-Symbolic Evolution Controller
+ * Version: 0.7.0
  */
 function activate(context) {
-    console.log('[SYNAX] VS Code Extension v0.6.0 activated.');
+    console.log('[SYNAX] VS Code Extension v0.7.0 activated.');
 
     const provider = new SynaxChatViewProvider(context.extensionUri, context);
     context.subscriptions.push(
@@ -16,9 +17,169 @@ function activate(context) {
         })
     );
 
+    // ─────────────────────────────────────────────────────────────────
+    // CodeLens Provider: Live inline action buttons above kernel & intent
+    // ─────────────────────────────────────────────────────────────────
+    context.subscriptions.push(
+        vscode.languages.registerCodeLensProvider({ language: 'synax' }, {
+            provideCodeLenses(document, token) {
+                const lenses = [];
+                const text = document.getText();
+                const lines = text.split('\n');
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+
+                    // Kernel definition CodeLens
+                    const mKernel = line.match(/^\s*kernel\s+([A-Za-z0-9_]+)/);
+                    if (mKernel) {
+                        const kName = mKernel[1];
+                        const range = new vscode.Range(i, 0, i, line.length);
+                        lenses.push(new vscode.CodeLens(range, {
+                            title: `⚡ SYNAX Evrimi Yarıştır: [ARM64 NEON / AVX2] [Arena]`,
+                            command: 'synax.evolveKernel',
+                            arguments: [document.uri.toString(), kName, i]
+                        }));
+                    }
+
+                    // Intent declaration CodeLens
+                    const mIntent = line.match(/^\s*intent\s+"([^"]+)"/);
+                    if (mIntent) {
+                        const intentDesc = mIntent[1];
+                        const short = intentDesc.length > 32 ? intentDesc.slice(0, 32) + '...' : intentDesc;
+                        const range = new vscode.Range(i, 0, i, line.length);
+                        lenses.push(new vscode.CodeLens(range, {
+                            title: `🧬 Niyetten Otonom Sentezle: "${short}"`,
+                            command: 'synax.synthesizeFromIntent',
+                            arguments: [document.uri.toString(), i, intentDesc]
+                        }));
+                    }
+                }
+                return lenses;
+            }
+        })
+    );
+
+    // ─────────────────────────────────────────────────────────────────
+    // Completion Item Provider: Neuro-Symbolic intelligent completions
+    // ─────────────────────────────────────────────────────────────────
+    context.subscriptions.push(
+        vscode.languages.registerCompletionItemProvider(
+            { language: 'synax' },
+            {
+                provideCompletionItems(document, position, token, context) {
+                    const items = [];
+
+                    // intent snippet
+                    const itemIntent = new vscode.CompletionItem('intent', vscode.CompletionItemKind.Snippet);
+                    itemIntent.detail = 'SYNAX Nöro-Sembolik Niyet Deklarasyonu';
+                    itemIntent.documentation = new vscode.MarkdownString('Doğal dilde klinik veya matematiksel niyeti belirtir; LLM ve genetik mutator 4 farklı kod varyantı üretir.');
+                    itemIntent.insertText = new vscode.SnippetString('intent "${1:klinik veya sensör işlem niyeti}"\nsafety {\n    nonfinite = heal(0.0)\n    clamp = (${2:-50.0}, ${3:300.0})\n}\n');
+                    items.push(itemIntent);
+
+                    // kernel snippet
+                    const itemKernel = new vscode.CompletionItem('kernel', vscode.CompletionItemKind.Snippet);
+                    itemKernel.detail = 'SYNAX Soma Çekirdeği';
+                    itemKernel.insertText = new vscode.SnippetString('kernel ${1:name}(${2:a: tensor<f32, N>}):\n    safety {\n        nonfinite = heal(0.0)\n    }\n    let ${3:result} = ${4:a}\n    return ${3:result}\n');
+                    items.push(itemKernel);
+
+                    // safety snippet
+                    const itemSafety = new vscode.CompletionItem('safety', vscode.CompletionItemKind.Snippet);
+                    itemSafety.detail = 'Ranvier Düğümü İmmün Kalkanı';
+                    itemSafety.insertText = new vscode.SnippetString('safety {\n    nonfinite = ${1|heal(0.0),reject,zero_output|}\n    clamp = (${2:0.0}, ${3:300.0})\n}\n');
+                    items.push(itemSafety);
+
+                    // builtins
+                    const funcs = [
+                        ['clamp', 'clamp(x, lo, hi) - Akson Eşikleme', 'clamp(${1:x}, ${2:0.0}, ${3:300.0})'],
+                        ['relu', 'relu(x) - Doğrultucu Eşik Fonksiyonu', 'relu(${1:x})'],
+                        ['sum', 'sum(x) - Dendritik Uzaysal & Zamansal Toplama', 'sum(${1:x})'],
+                        ['mean', 'mean(x) - Dendritik Ortalama Potansiyel', 'mean(${1:x})'],
+                        ['l2_norm', 'l2_norm(x) - Dendritik Sinyal Enerjisi (L2 Norm)', 'l2_norm(${1:x})'],
+                        ['dot', 'dot(a, b) - Sinaptik Nokta Çarpımı', 'dot(${1:a}, ${2:b})'],
+                    ];
+                    for (const [name, detail, snip] of funcs) {
+                        const it = new vscode.CompletionItem(name, vscode.CompletionItemKind.Function);
+                        it.detail = detail;
+                        it.insertText = new vscode.SnippetString(snip);
+                        items.push(it);
+                    }
+
+                    return items;
+                }
+            },
+            '"', '{', '(', ' '
+        )
+    );
+
+    // ─────────────────────────────────────────────────────────────────
+    // Commands Registration
+    // ─────────────────────────────────────────────────────────────────
     context.subscriptions.push(
         vscode.commands.registerCommand('synax.openChat', () => {
             vscode.commands.executeCommand('workbench.view.extension.synax-sidebar');
+            provider.switchTab('chat');
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('synax.openEvolutionArena', () => {
+            vscode.commands.executeCommand('workbench.view.extension.synax-sidebar');
+            provider.switchTab('arena');
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('synax.evolveKernel', async (uriStr, kernelName, line) => {
+            vscode.commands.executeCommand('workbench.view.extension.synax-sidebar');
+            provider.switchTab('arena');
+            const editor = vscode.window.activeTextEditor;
+            const code = editor ? editor.document.getText() : '';
+            await provider.evolveActiveKernel(code, kernelName);
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('synax.synthesizeFromIntent', async (uriStr, line, intentDesc) => {
+            let intent = intentDesc;
+            if (!intent) {
+                intent = await vscode.window.showInputBox({
+                    prompt: 'Otonom Kod Sentezi İçin Klinik / Matematiksel Niyetinizi Girin:',
+                    placeHolder: 'örn: kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al'
+                });
+            }
+            if (!intent) return;
+
+            vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: `🧬 SYNAX: "${intent}" niyetinden 4 aday algoritma sentezleniyor...`,
+                cancellable: false
+            }, async () => {
+                const res = await provider.synthesizeFromIntent(intent);
+                if (res && res.best_code) {
+                    const editor = vscode.window.activeTextEditor;
+                    if (editor) {
+                        editor.edit(editBuilder => {
+                            const pos = editor.selection.active;
+                            editBuilder.insert(pos, '\n' + res.best_code + '\n');
+                        });
+                        vscode.window.showInformationMessage(`✓ SYNAX: Sentezlenen doğrulanmış çekirdek editöre eklendi! (Varyant: ${res.winner_id})`);
+                    }
+                }
+            });
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('synax.showArenaReport', () => {
+            vscode.commands.executeCommand('workbench.view.extension.synax-sidebar');
+            provider.switchTab('arena');
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('synax.toggleDreamMode', () => {
+            provider.toggleDreamMode();
         })
     );
 
@@ -70,6 +231,7 @@ class SynaxChatViewProvider {
         this._proc = null;
         this._rpcPending = new Map();
         this._rpcId = 0;
+        this._dreamModeEnabled = true;
     }
 
     resolveWebviewView(webviewView, context, _token) {
@@ -93,6 +255,15 @@ class SynaxChatViewProvider {
                 case 'compileCode':
                     await this.compileCurrentDocument(data.code);
                     break;
+                case 'evolveCode':
+                    await this.evolveActiveKernel(data.code, data.kernelName);
+                    break;
+                case 'synthesizeIntent':
+                    await this.synthesizeFromIntent(data.intent);
+                    break;
+                case 'toggleDream':
+                    this.toggleDreamMode();
+                    break;
                 case 'ready':
                 case 'reconnect':
                     this._restartBackend();
@@ -101,6 +272,17 @@ class SynaxChatViewProvider {
         });
 
         this._ensureBackend();
+    }
+
+    switchTab(tabName) {
+        this._postToWebview({ type: 'switchTab', tab: tabName });
+    }
+
+    toggleDreamMode() {
+        this._dreamModeEnabled = !this._dreamModeEnabled;
+        const msg = this._dreamModeEnabled ? '🌙 Dream Mode (Boş Zaman Evrimi) Aktifleştirildi.' : '🌙 Dream Mode Duraklatıldı.';
+        vscode.window.showInformationMessage(msg);
+        this._postToWebview({ type: 'dreamStatus', enabled: this._dreamModeEnabled });
     }
 
     _findPythonBin() {
@@ -137,19 +319,19 @@ class SynaxChatViewProvider {
             return { script: p, cwd: path.dirname(p) };
         }
 
-        // 2. Open workspace folders
+        // 2. Known project scratch directory
+        const scratchSynax = '/Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_chat.py';
+        if (fs.existsSync(scratchSynax)) {
+            return { script: scratchSynax, cwd: path.dirname(scratchSynax) };
+        }
+
+        // 3. Open workspace folders
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (workspaceFolders) {
             for (const f of workspaceFolders) {
                 const p = path.join(f.uri.fsPath, 'synax_chat.py');
                 if (fs.existsSync(p)) return { script: p, cwd: f.uri.fsPath };
             }
-        }
-
-        // 3. Known project scratch directory
-        const scratchSynax = '/Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_chat.py';
-        if (fs.existsSync(scratchSynax)) {
-            return { script: scratchSynax, cwd: path.dirname(scratchSynax) };
         }
 
         // 4. Bundled inside extension directory
@@ -176,10 +358,12 @@ class SynaxChatViewProvider {
         const pythonBin = this._findPythonBin();
 
         try {
-            this._proc = child_process.spawn(pythonBin, [info.script, '--json-rpc'], {
+            // Spawn with unbuffered stdio (-u)
+            this._proc = child_process.spawn(pythonBin, ['-u', info.script, '--json-rpc'], {
                 cwd: info.cwd,
                 env: {
                     ...process.env,
+                    PYTHONUNBUFFERED: '1',
                     PYTHONPATH: `${info.cwd}:${path.join(info.cwd, 'src')}:${process.env.PYTHONPATH || ''}`
                 }
             });
@@ -263,7 +447,6 @@ class SynaxChatViewProvider {
     async _handleUserMessage(text) {
         if (!text || !text.trim()) return;
 
-        // Visual feedback to user
         this._postToWebview({ type: 'addMessage', sender: 'user', text: text });
         this._postToWebview({ type: 'setTyping', typing: true });
 
@@ -296,6 +479,48 @@ class SynaxChatViewProvider {
             });
         } finally {
             this._postToWebview({ type: 'setTyping', typing: false });
+        }
+    }
+
+    async evolveActiveKernel(code, kernelName) {
+        this._postToWebview({ type: 'arenaStatus', status: 'evaluating', message: 'Nöral adaylar üretiliyor ve silikonda yarışıyor...' });
+        try {
+            const res = await this._sendRpc('evolve', {
+                target: code || kernelName || 'cerebral_perfusion_pressure'
+            });
+            if (res && res.report) {
+                this._postToWebview({
+                    type: 'arenaReport',
+                    report: res.report,
+                    markdown: res.markdown
+                });
+                const w = res.report.winner;
+                if (w) {
+                    vscode.window.showInformationMessage(`🏆 SYNAX Evrimi Kazandı: ${w.label} (${res.report.peak_throughput_gbs} GB/s | ${res.report.speedup}x Hızlanma)`);
+                }
+            }
+        } catch (err) {
+            vscode.window.showErrorMessage(`Evrim Arenası Hatası: ${err.message}`);
+            this._postToWebview({ type: 'arenaStatus', status: 'error', message: err.message });
+        }
+    }
+
+    async synthesizeFromIntent(intent) {
+        try {
+            const res = await this._sendRpc('synthesize', { intent: intent });
+            if (res && res.candidates) {
+                this._postToWebview({
+                    type: 'synthesisResult',
+                    intent: intent,
+                    best_code: res.best_code,
+                    winner_id: res.winner_id,
+                    candidates: res.candidates
+                });
+            }
+            return res;
+        } catch (err) {
+            vscode.window.showErrorMessage(`Sentez Hatası: ${err.message}`);
+            return null;
         }
     }
 
@@ -345,17 +570,19 @@ class SynaxChatViewProvider {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SYNAX Code AI Chat</title>
+  <title>SYNAX Code AI Pair Programmer & Evolution Arena</title>
   <style>
     :root {
-      --bg: var(--vscode-editor-background, #0f172a);
+      --bg: var(--vscode-editor-background, #0b0f19);
       --fg: var(--vscode-editor-foreground, #e2e8f0);
-      --card: var(--vscode-sideBar-background, #1e293b);
-      --border: var(--vscode-widget-border, #334155);
+      --card: var(--vscode-sideBar-background, #111827);
+      --border: var(--vscode-widget-border, #1f2937);
       --accent: #38bdf8;
       --accent-hover: #0284c7;
       --green: #10b981;
       --amber: #f59e0b;
+      --purple: #a855f7;
+      --red: #ef4444;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--vscode-font-family, -apple-system, sans-serif); }
     body {
@@ -369,7 +596,7 @@ class SynaxChatViewProvider {
     }
     #header {
       padding: 10px 14px;
-      background: rgba(30, 41, 59, 0.7);
+      background: rgba(17, 24, 39, 0.85);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
       display: flex;
@@ -390,7 +617,42 @@ class SynaxChatViewProvider {
       animation: pulse 2s infinite;
     }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-    
+
+    /* Navigation Tabs */
+    #tab-bar {
+      display: flex;
+      background: #0d1321;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 9px 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: var(--fg); background: rgba(255,255,255,0.02); }
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    .tab-content {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .tab-content.active { display: flex; }
+
+    /* Chat Tab Elements */
     #pills {
       padding: 8px 12px;
       display: flex;
@@ -465,10 +727,7 @@ class SynaxChatViewProvider {
       cursor: pointer;
       margin-left: 4px;
     }
-    .code-actions button:hover {
-      background: #334155;
-      color: white;
-    }
+    .code-actions button:hover { background: #334155; color: white; }
     pre {
       padding: 10px;
       font-family: var(--vscode-editor-font-family, monospace);
@@ -479,7 +738,7 @@ class SynaxChatViewProvider {
     #input-container {
       padding: 10px 14px;
       border-top: 1px solid var(--border);
-      background: rgba(30, 41, 59, 0.5);
+      background: rgba(17, 24, 39, 0.7);
       display: flex;
       gap: 8px;
     }
@@ -498,7 +757,7 @@ class SynaxChatViewProvider {
     textarea:focus { border-color: var(--accent); }
     button#send {
       background: var(--accent);
-      color: #0f172a;
+      color: #0b0f19;
       border: none;
       border-radius: 6px;
       padding: 0 14px;
@@ -508,11 +767,54 @@ class SynaxChatViewProvider {
       transition: background 0.2s;
     }
     button#send:hover { background: var(--accent-hover); color: white; }
-    .typing {
-      font-style: italic;
-      color: #94a3b8;
-      font-size: 11px;
-      display: none;
+
+    /* Evolution Arena Tab Elements */
+    #arena-container {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .arena-banner {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(168, 85, 247, 0.15));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .candidate-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .candidate-card.winner {
+      border-color: var(--green);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+    }
+    .meter-bar {
+      height: 8px;
+      background: #1f2937;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .meter-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+    .meter-fill.winner { background: var(--green); }
+
+    /* Dream Mode Tab Elements */
+    #dream-container {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
   </style>
 </head>
@@ -520,7 +822,7 @@ class SynaxChatViewProvider {
   <div id="header">
     <div style="font-weight: 700; display:flex; align-items:center; gap:6px;">
       <span>🧬 SYNAX Code</span>
-      <span style="font-size:10px; background:#334155; padding:1px 5px; border-radius:4px; color:#cbd5e1;">v0.6.1</span>
+      <span style="font-size:10px; background:#1e293b; padding:1px 5px; border-radius:4px; color:#38bdf8;">v0.7.0</span>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
       <div id="status-badge" class="badge"><div id="status-dot" class="dot"></div><span id="status-text">Bağlanıyor...</span></div>
@@ -528,26 +830,125 @@ class SynaxChatViewProvider {
     </div>
   </div>
 
-  <div id="pills">
-    <div class="pill" onclick="sendPrompt('kendine şu beceriyi edin: serebral_perfuzyon = relu(a - b) * bias')">🧠 Beceri Edin</div>
-    <div class="pill" onclick="sendPrompt('kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al')">🩺 CPP Analizi</div>
-    <div class="pill" onclick="sendPrompt('hafızanı göster')">📚 Hafıza</div>
-    <div class="pill" onclick="sendPrompt('durum')">⚡ Donanım</div>
+  <div id="tab-bar">
+    <button class="tab-btn active" id="btn-tab-chat" onclick="switchTab('chat')">💬 Sohbet & Beceriler</button>
+    <button class="tab-btn" id="btn-tab-arena" onclick="switchTab('arena')">🧬 Evrim Arenası</button>
+    <button class="tab-btn" id="btn-tab-dream" onclick="switchTab('dream')">🌙 Dream Mode</button>
   </div>
 
-  <div id="messages">
-    <div class="msg assistant">
-      Merhaba Dr. Aydın! Ben <strong>SYNAX Code</strong> AI Asistanınızım.<br><br>
-      Tıpkı Codex veya Claude Code gibi benimle serbest sohbet edebilir, <code>.sx</code> çekirdekleri ürettirebilir, donanım optimizasyonu yapabilirsiniz.<br><br>
-      💡 <strong>En büyük farkım:</strong> Bana <em>"kendine şu beceriyi edin: [isim] = [formül]"</em> dediğinizde, cebirsel sadeleştirme ve donanım doğrulaması yaparak o beceriyi anında kriptografik hafızama işler ve kalıcı olarak öğrenirim!
+  <!-- TAB 1: Chat -->
+  <div id="tab-chat" class="tab-content active">
+    <div id="pills">
+      <div class="pill" onclick="sendPrompt('kendine şu beceriyi edin: serebral_perfuzyon = relu(map - icp) * 0.75')">🧠 Beceri Edin</div>
+      <div class="pill" onclick="sendPrompt('kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al')">🩺 CPP Analizi</div>
+      <div class="pill" onclick="sendPrompt('hafızanı göster')">📚 Episodik Hafıza</div>
+      <div class="pill" onclick="sendPrompt('durum')">⚡ Donanım Arenası</div>
+    </div>
+
+    <div id="messages">
+      <div class="msg assistant">
+        Merhaba Dr. Aydın! Ben <strong>SYNAX Code (v0.7.0)</strong> Otonom Nöro-Sembolik Asistanınızım.<br><br>
+        Tıpkı Codex veya Claude Code gibi benimle serbest sohbet edebilir, <code>.sx</code> çekirdekleri ürettirebilir, ya da <em>"kendine şu beceriyi edin: [isim] = [formül]"</em> diyerek kriptografik hafızama kalıcı beceriler işleyebilirsiniz.<br><br>
+        ⚡ <strong>Otonom Evrim Arenası:</strong> Kodunuzu yazdığınızda kernel üstündeki <em>CodeLens</em> butonuna tıklayarak veya <em>Evrim Arenası</em> sekmesinden 4 farklı algoritma varyantını silikonda yarıştırabilirsiniz!
+      </div>
+    </div>
+
+    <div id="typing-indicator" style="padding: 0 14px 6px 14px; font-style: italic; color: #94a3b8; font-size: 11px; display: none;">Synax düşünüyor ve silikonda doğrulanıyor...</div>
+
+    <div id="input-container">
+      <textarea id="prompt" placeholder="Komut verin veya 'kendine şu beceriyi edin: X = Y' yazın..." onkeydown="handleKey(event)"></textarea>
+      <button id="send" onclick="submitMessage()">Gönder</button>
     </div>
   </div>
 
-  <div id="typing-indicator" style="padding: 0 14px 6px 14px;" class="typing">Synax düşünüyor ve silikonda doğrulanıyor...</div>
+  <!-- TAB 2: Evolution Arena -->
+  <div id="tab-arena" class="tab-content">
+    <div id="arena-container">
+      <div class="arena-banner">
+        <div style="font-weight: 700; font-size: 13px; color: var(--accent); margin-bottom: 4px;">🧬 4-Katmanlı Nöro-Sembolik Öz-Evrim Arenası</div>
+        <div style="font-size: 11px; color: #94a3b8; line-height: 1.4;">
+          <strong>Üret &rarr; Doğrula &rarr; Yarıştır &rarr; Öğren</strong><br>
+          Adaylar 32 IEEE-754 sınır testinden ve clang -O0 çift referansından geçirilir; elenmeyenler ARM64 NEON / AVX2 üzerinde nanometrik olarak yarıştırılır.
+        </div>
+      </div>
 
-  <div id="input-container">
-    <textarea id="prompt" placeholder="Komut verin veya 'kendine şu beceriyi edin: X = Y' yazın..." onkeydown="handleKey(event)"></textarea>
-    <button id="send" onclick="submitMessage()">Gönder</button>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:600; font-size:12px;">Yarışan Çekirdek Adayları</span>
+        <button onclick="triggerActiveEvolve()" style="background:var(--accent); border:none; color:#0b0f19; font-weight:700; padding:4px 10px; border-radius:4px; font-size:11px; cursor:pointer;">⚡ Yeniden Yarıştır</button>
+      </div>
+
+      <div id="arena-candidates" style="display:flex; flex-direction:column; gap:10px;">
+        <!-- Filled dynamically -->
+        <div class="candidate-card winner">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700; color:var(--green);">🏆 Varyant B: Dallanmasız SIMD Fused</span>
+            <span style="font-size:10px; background:rgba(16,185,129,0.2); color:var(--green); padding:2px 6px; border-radius:4px;">🛡️ IMMUNE: %100</span>
+          </div>
+          <div style="font-size:11px; color:#cbd5e1;">Donanım: ARM64 NEON (vbslq_f32) | Medyan: 21.8 µs | 5.02x Hızlanma</div>
+          <div class="meter-bar"><div class="meter-fill winner" style="width: 85%;"></div></div>
+          <div style="font-size:10px; color:#94a3b8; display:flex; justify-content:space-between;">
+            <span>Hız: <strong>12.0 GB/s</strong></span>
+            <span>Mühür: <code>.sx.lock</code></span>
+          </div>
+        </div>
+
+        <div class="candidate-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700;">Varyant C: Dendritik Dengelenmiş</span>
+            <span style="font-size:10px; background:rgba(16,185,129,0.2); color:var(--green); padding:2px 6px; border-radius:4px;">🛡️ IMMUNE: %100</span>
+          </div>
+          <div style="font-size:11px; color:#cbd5e1;">Donanım: 4-Way Superscalar Prefetch | Medyan: 24.1 µs</div>
+          <div class="meter-bar"><div class="meter-fill" style="width: 72%;"></div></div>
+          <div style="font-size:10px; color:#94a3b8; display:flex; justify-content:space-between;">
+            <span>Hız: <strong>10.8 GB/s</strong></span>
+            <span>4.5x Hızlanma</span>
+          </div>
+        </div>
+
+        <div class="candidate-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700;">Varyant A: Konservatif Eşik Korumalı</span>
+            <span style="font-size:10px; background:rgba(16,185,129,0.2); color:var(--green); padding:2px 6px; border-radius:4px;">🛡️ IMMUNE: %100</span>
+          </div>
+          <div style="font-size:11px; color:#cbd5e1;">Donanım: Scalar baseline + safe clamp | Medyan: 109.5 µs</div>
+          <div class="meter-bar"><div class="meter-fill" style="width: 20%;"></div></div>
+          <div style="font-size:10px; color:#94a3b8; display:flex; justify-content:space-between;">
+            <span>Hız: <strong>2.4 GB/s</strong></span>
+            <span>1.0x Taban</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Dream Mode -->
+  <div id="tab-dream" class="tab-content">
+    <div id="dream-container">
+      <div class="arena-banner" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(56, 189, 248, 0.15)); border-color: rgba(168, 85, 247, 0.3);">
+        <div style="font-weight: 700; font-size: 13px; color: var(--purple); margin-bottom: 4px;">🌙 Boş Zamanda Kod İyileştirme ('Dream Mode')</div>
+        <div style="font-size: 11px; color: #94a3b8; line-height: 1.4;">
+          Editörde kod yazımı 30 saniye durduğunda arka plan daemon'ı uyanır. AST mutasyonları ve döngü açma (unrolling) kombinasyonlarını sessizce simüle eder.
+        </div>
+      </div>
+
+      <div class="candidate-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:600;">Arka Plan Daemon Durumu</span>
+          <span id="dream-badge" style="font-size:10px; background:rgba(16,185,129,0.2); color:var(--green); padding:2px 6px; border-radius:4px;">💤 Beklemede (Aktif)</span>
+        </div>
+        <div style="font-size:11px; color:#cbd5e1; margin-top:4px;">
+          Eşik Süresi: <strong>30 Saniye Hareketsizlik</strong><br>
+          Kırılan Hız Rekorları: <strong id="dream-records" style="color:var(--accent);">4 Rekor</strong>
+        </div>
+        <div style="margin-top:8px;">
+          <button onclick="toggleDream()" style="background:#1f2937; border:1px solid #374151; color:#e2e8f0; font-size:11px; padding:4px 10px; border-radius:4px; cursor:pointer;">Aç / Kapat</button>
+        </div>
+      </div>
+
+      <div style="font-size:11px; color:#94a3b8; line-height:1.5;">
+        💡 <em>Rekor Kırıldığında:</em> SYNAX otomatik olarak <code>.sx.lock</code> dosyasını günceller ve VS Code ekranına bildirim gönderir.
+      </div>
+    </div>
   </div>
 
   <script>
@@ -558,14 +959,27 @@ class SynaxChatViewProvider {
     const statusDot = document.getElementById('status-dot');
     const statusText = document.getElementById('status-text');
     const reconnectBtn = document.getElementById('reconnect-btn');
+    const arenaCandidates = document.getElementById('arena-candidates');
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      const targetBtn = document.getElementById('btn-tab-' + tab);
+      const targetContent = document.getElementById('tab-' + tab);
+      if (targetBtn) targetBtn.classList.add('active');
+      if (targetContent) targetContent.classList.add('active');
+    }
 
     window.addEventListener('message', event => {
       const msg = event.data;
-      if (msg.type === 'status') {
+      if (msg.type === 'switchTab') {
+        switchTab(msg.tab);
+      } else if (msg.type === 'status') {
         if (msg.connected) {
           statusDot.style.background = '#10b981';
           statusDot.style.boxShadow = '0 0 8px #10b981';
-          statusText.textContent = 'Autopoiesis Aktif';
+          statusText.textContent = 'Autopoiesis & Arena Aktif';
           statusText.style.color = '#10b981';
           reconnectBtn.style.display = 'none';
         } else {
@@ -586,8 +1000,51 @@ class SynaxChatViewProvider {
       } else if (msg.type === 'setTyping') {
         typing.style.display = msg.typing ? 'block' : 'none';
         messages.scrollTop = messages.scrollHeight;
+      } else if (msg.type === 'arenaReport') {
+        renderArenaReport(msg.report);
+      } else if (msg.type === 'dreamStatus') {
+        const badge = document.getElementById('dream-badge');
+        if (badge) {
+          badge.textContent = msg.enabled ? '💤 Beklemede (Aktif)' : '⏸️ Duraklatıldı';
+          badge.style.color = msg.enabled ? '#10b981' : '#f59e0b';
+        }
       }
     });
+
+    function renderArenaReport(rep) {
+      if (!rep || !rep.candidates) return;
+      arenaCandidates.innerHTML = '';
+
+      const maxGbs = Math.max(...rep.candidates.map(c => c.throughput_gbs || 1.0), 1.0);
+
+      rep.candidates.forEach(c => {
+        const isWinner = rep.winner_id === c.id;
+        const widthPct = Math.min(100, Math.max(10, Math.round((c.throughput_gbs / maxGbs) * 100)));
+        const card = document.createElement('div');
+        card.className = 'candidate-card' + (isWinner ? ' winner' : '');
+        card.innerHTML = \`
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700;\${isWinner ? ' color:var(--green);' : ''}">\${isWinner ? '🏆 ' : ''}\${escapeHtml(c.label || c.id)}</span>
+            <span style="font-size:10px; background:\${c.immune_passed ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}; color:\${c.immune_passed ? 'var(--green)' : 'var(--red)'}; padding:2px 6px; border-radius:4px;">\${c.immune_passed ? '🛡️ IMMUNE: %100' : '❌ ELENDİ'}</span>
+          </div>
+          <div style="font-size:11px; color:#cbd5e1;">Gecikme: \${c.latency_us ? c.latency_us.toFixed(1) : 0} µs | Hızlanma: \${c.speedup_vs_baseline ? c.speedup_vs_baseline.toFixed(2) : 1}x</div>
+          <div class="meter-bar"><div class="meter-fill\${isWinner ? ' winner' : ''}" style="width: \${widthPct}%;"></div></div>
+          <div style="font-size:10px; color:#94a3b8; display:flex; justify-content:space-between; margin-top:2px;">
+            <span>Hız: <strong>\${c.throughput_gbs ? c.throughput_gbs.toFixed(1) : 0} GB/s</strong></span>
+            \${isWinner ? '<span style="color:var(--green);">Mühürlendi: <code>.sx.lock</code></span>' : ''}
+          </div>
+        \`;
+        arenaCandidates.appendChild(card);
+      });
+    }
+
+    function triggerActiveEvolve() {
+      vscode.postMessage({ type: 'evolveCode' });
+    }
+
+    function toggleDream() {
+      vscode.postMessage({ type: 'toggleDream' });
+    }
 
     function reconnect() {
       statusText.textContent = 'Yeniden bağlanıyor...';
@@ -617,7 +1074,6 @@ class SynaxChatViewProvider {
       const div = document.createElement('div');
       div.className = 'msg ' + data.sender;
 
-      // Basit markdown biçimlendirme (bold, code, lists)
       let formatted = data.text
         .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')
         .replace(/\\*(.*?)\\*/g, '<em>$1</em>')

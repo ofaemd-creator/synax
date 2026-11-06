@@ -5,7 +5,7 @@ backend-path = ["."]
 
 [project]
 name = "synax"
-version = "0.6.1"
+version = "0.7.0"
 description = "SYNAX (.sx) — Neuro-Symbolic Kernel Language, Differential Verifier & Adaptive Myelin Compiler"
 readme = "README.md"
 requires-python = ">=3.10"
