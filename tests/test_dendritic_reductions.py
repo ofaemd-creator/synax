@@ -162,6 +162,7 @@ class TestDendriticReductions(unittest.TestCase):
         res_dot = interp_dot.execute([1.0, 2.0, 3.0], [4.0, 5.0, 6.0])
         self.assertAlmostEqual(res_dot.output[0], 32.0, places=5)
 
+    @unittest.skipIf(sys.platform == "win32", "Native C compilation requires POSIX clang/gcc toolchain")
     def test_06_native_compilation_and_differential_verification(self) -> None:
         kernel_code = """synax 0.5
 kernel dendritic_sum_verified(signal: tensor<f32>) -> f32 {

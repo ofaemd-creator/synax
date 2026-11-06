@@ -42,6 +42,7 @@ class TestDeepTechBridgeAndCompliance(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
+    @unittest.skipIf(sys.platform == "win32", "Native C compilation requires POSIX clang/gcc toolchain")
     def test_python_kernel_decorator(self):
         """Verify @synax.kernel traces Python AST, synthesizes .sx, and heals NaNs."""
 
@@ -85,6 +86,7 @@ class TestDeepTechBridgeAndCompliance(unittest.TestCase):
         c_content = c_path.read_text(encoding="utf-8")
         self.assertIn("synax_is_valid_f32", c_content)
 
+    @unittest.skipIf(sys.platform == "win32", "Native C compilation requires POSIX clang/gcc toolchain")
     def test_iec62304_compliance_report(self):
         """Verify IEC 62304 Class C audit report generation."""
         sx_path = os.path.join(_ROOT, "src", "synax", "stdlib", "biomed", "cerebral_perfusion_guard.sx")
