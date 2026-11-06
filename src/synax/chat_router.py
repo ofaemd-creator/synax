@@ -49,6 +49,7 @@ class HybridLLMRouter:
     def __init__(self):
         self.groq_api_key = os.environ.get("GROQ_API_KEY", "").strip()
         self.ollama_host = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434").strip()
+        self.opencode_proxy = "http://127.0.0.1:11435/v1"
 
     def query(self, prompt: str, context: Optional[Dict[str, Any]] = None) -> Tuple[str, Optional[str]]:
         """
@@ -61,13 +62,45 @@ class HybridLLMRouter:
             if res:
                 return res
 
-        # 2. Try Local Ollama if running
+        # 2. Try OpenCode & OpenRouter Free Tier Proxy
+        res = self._query_opencode_free(prompt, context)
+        if res:
+            return res
+
+        # 3. Try Local Ollama if running
         res = self._query_ollama(prompt, context)
         if res:
             return res
 
-        # 3. Built-in Expert Domain Fallback
+        # 4. Built-in Expert Domain Fallback
         return self._query_builtin_expert(prompt, context)
+
+    def _query_opencode_free(self, prompt: str, context: Optional[Dict[str, Any]]) -> Optional[Tuple[str, Optional[str]]]:
+        """Queries the local OpenCode & OpenRouter free models proxy."""
+        try:
+            req_data = {
+                "model": "openrouter/free",
+                "messages": [
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
+                "temperature": 0.3,
+                "max_tokens": 1200,
+            }
+            req = urllib.request.Request(
+                f"{self.opencode_proxy}/chat/completions",
+                data=json.dumps(req_data).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=4) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                text = data["choices"][0]["message"]["content"]
+                if text and text.strip():
+                    code = self._extract_code(text)
+                    return text, code
+        except Exception:
+            return None
+        return None
 
     def _query_groq(self, prompt: str, context: Optional[Dict[str, Any]]) -> Optional[Tuple[str, Optional[str]]]:
         try:
