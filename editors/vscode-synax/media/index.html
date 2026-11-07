@@ -10,7 +10,7 @@
       --fg: var(--vscode-editor-foreground, #e2e8f0);
       --card: var(--vscode-sideBar-background, #111827);
       --border: var(--vscode-widget-border, #1f2937);
-      --accent: #38bdf8;
+      --accent: var(--vscode-textLink-foreground, #38bdf8);
       --accent-hover: #0284c7;
       --green: #10b981;
       --amber: #f59e0b;
@@ -28,6 +28,7 @@
       font-size: 13px;
     }
     #header {
+      color: #e2e8f0;
       padding: 10px 14px;
       background: rgba(17, 24, 39, 0.85);
       backdrop-filter: blur(8px);
@@ -90,7 +91,7 @@
       padding: 8px 12px;
       display: flex;
       gap: 6px;
-      overflow-x: auto;
+      flex-wrap: wrap;
       border-bottom: 1px solid rgba(51, 65, 85, 0.4);
     }
     .pill {
@@ -189,8 +190,8 @@
     }
     textarea:focus { border-color: var(--accent); }
     button#send {
-      background: var(--accent);
-      color: #0b0f19;
+      background: var(--vscode-button-background, #0284c7);
+      color: var(--vscode-button-foreground, #ffffff);
       border: none;
       border-radius: 6px;
       padding: 0 14px;
@@ -255,7 +256,7 @@
   <div id="header">
     <div style="font-weight: 700; display:flex; align-items:center; gap:6px;">
       <span>🧬 SYNAX Code</span>
-      <span style="font-size:10px; background:#1e293b; padding:1px 5px; border-radius:4px; color:#38bdf8;">v0.7.0</span>
+      <span style="font-size:10px; background:#1e293b; padding:1px 5px; border-radius:4px; color:#38bdf8;">v0.8.0</span>
     </div>
     <div style="display:flex; align-items:center; gap:8px;">
       <div id="status-badge" class="badge"><div id="status-dot" class="dot"></div><span id="status-text">Bağlanıyor...</span></div>
@@ -272,24 +273,29 @@
   <!-- TAB 1: Chat -->
   <div id="tab-chat" class="tab-content active">
     <div id="pills">
-      <div class="pill" onclick="sendPrompt('kendine şu beceriyi edin: serebral_perfuzyon = relu(map - icp) * 0.75')">🧠 Beceri Edin</div>
-      <div class="pill" onclick="sendPrompt('kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al')">🩺 CPP Analizi</div>
-      <div class="pill" onclick="sendPrompt('hafızanı göster')">📚 Episodik Hafıza</div>
-      <div class="pill" onclick="sendPrompt('durum')">⚡ Donanım Arenası</div>
+      <button type="button" class="pill" onclick="sendPrompt('synax artık çalışıyor musun')">⚡ Sistem Durumu</button>
+      <button type="button" class="pill" onclick="sendPrompt('ecc ara: compiler')">🛠️ ECC Becerileri</button>
+      <button type="button" class="pill" onclick="sendPrompt('hafızanı göster')">🧠 Sinaptik Hafıza</button>
+      <button type="button" class="pill" onclick="sendPrompt('kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al')">🩺 Klinik CPP</button>
+      <button type="button" class="pill" onclick="sendPrompt('xcode ile nasıl çalışırım')">📱 Xcode / Swift</button>
     </div>
 
     <div id="messages">
       <div class="msg assistant">
-        Merhaba Dr. Aydın! Ben <strong>SYNAX Code (v0.7.0)</strong> Otonom Nöro-Sembolik Asistanınızım.<br><br>
-        Tıpkı Codex veya Claude Code gibi benimle serbest sohbet edebilir, <code>.sx</code> çekirdekleri ürettirebilir, ya da <em>"kendine şu beceriyi edin: [isim] = [formül]"</em> diyerek kriptografik hafızama kalıcı beceriler işleyebilirsiniz.<br><br>
-        ⚡ <strong>Otonom Evrim Arenası:</strong> Kodunuzu yazdığınızda kernel üstündeki <em>CodeLens</em> butonuna tıklayarak veya <em>Evrim Arenası</em> sekmesinden 4 farklı algoritma varyantını silikonda yarıştırabilirsiniz!
+        <strong>🧬 SYNAX Code AI — Nöro-Sembolik Derleyici & Biyomedikal Asistan (v0.8.0)</strong><br><br>
+        Hoş geldiniz Dr. Aydın! Sistem tüm katmanlarıyla devrede:<br><br>
+        • <strong>314 ECC Mühendislik Becerisi & 71 Uzman Ajan:</strong> Tam entegrasyon hazır.<br>
+        • <strong>Hibrit Zeka Katmanı:</strong> OpenCode / Free LLM modelleri & Dahili Derleyici Motoru devrede.<br>
+        • <strong>ARM64 NEON & SIMD Optimizasyonu:</strong> IEEE-754 0-ULP Ranvier Düğümü immün kalkanı aktif.<br>
+        • <strong>Otonom Beceri Edinimi:</strong> <code>kendine şu beceriyi edin: &lt;isim&gt; = &lt;formül&gt;</code><br><br>
+        Hızlı kontrol için yukarıdaki butonlara tıklayabilir veya doğrudan sorunuzu yazabilirsiniz.
       </div>
     </div>
 
-    <div id="typing-indicator" style="padding: 0 14px 6px 14px; font-style: italic; color: #94a3b8; font-size: 11px; display: none;">Synax düşünüyor ve silikonda doğrulanıyor...</div>
+    <div id="typing-indicator" style="padding: 0 14px 6px 14px; font-style: italic; color: #94a3b8; font-size: 11px; display: none;">SYNAX yanıt hazırlıyor...</div>
 
     <div id="input-container">
-      <textarea id="prompt" placeholder="Komut verin veya 'kendine şu beceriyi edin: X = Y' yazın..." onkeydown="handleKey(event)"></textarea>
+      <textarea id="prompt" placeholder="Sohbet veya /komut" onkeydown="handleKey(event)"></textarea>
       <button id="send" onclick="submitMessage()">Gönder</button>
     </div>
   </div>
@@ -411,7 +417,7 @@
         if (msg.connected) {
           statusDot.style.background = '#10b981';
           statusDot.style.boxShadow = '0 0 8px #10b981';
-          statusText.textContent = 'Autopoiesis & Arena Aktif';
+          statusText.textContent = 'SYNAX backend bağlı';
           statusText.style.color = '#10b981';
           reconnectBtn.style.display = 'none';
         } else {
@@ -506,7 +512,7 @@
       const div = document.createElement('div');
       div.className = 'msg ' + data.sender;
 
-      let formatted = data.text
+      let formatted = escapeHtml(data.text)
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
         .replace(/`([^`]+)`/g, '<code style="background:rgba(0,0,0,0.3); padding:1px 4px; border-radius:3px; color:#38bdf8;">$1</code>')
