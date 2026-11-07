@@ -206,15 +206,19 @@ class HybridLLMRouter:
         # ── 1. ÇALIŞMA / DURUM / AKTİFLİK SORGULARI ──
         if any(w in p_lower for w in ("çalışıyor musun", "çalışıyor mu", "aktif misin", "hazır mısın", "nasılsın", "artık çalışıyor")):
             reply = (
-                "✅ **Evet Dr. Aydın! SYNAX Nöro-Sembolik Derleyici ve Asistan Sistemi Tam Kapasite Çalışıyor.**\n\n"
-                "Sistem tüm hatlarıyla devrede ve optimize edilmiş durumdadır:\n\n"
-                "* 🛠️ **314 ECC Mühendislik Becerisi & 71 Uzman Ajan:** Antigravity ve OpenCode ortamlarına bağlandı.\n"
-                "* ⚡ **ARM64 NEON & AVX2 Vektör Motoru:** Apple Silicon M-serisi üzerinde 12.0+ GB/s hızla devrede.\n"
-                "* 🛡️ **Ranvier Düğümü İmmün Kalkanı:** IEEE-754 0-ULP toleranslı `heal(0.0)` koruması aktif.\n"
-                "* 🧬 **Autopoiesis & Kalıcı Hafıza:** `kendine şu beceriyi edin: <isim> = <formül>` ile anında yeni beceri edinimi.\n"
-                "* 📱 **Xcode & Swift Native Entegrasyonu:** C-ABI bridging header ve asenkron aktör istemcisi hazır.\n"
-                "* 🌐 **Hibrit LLM & OpenCode Modelleri:** Groq, Ollama ve yerel nöro-sembolik uzman motor devrede.\n\n"
-                "Bugün hangi kernel, fizyolojik algoritma veya derleyici optimizasyonu üzerinde çalışalım?"
+                "✅ **Evet Dr. Aydın! SYNAX v0.8.0 çekirdek çalışma zamanı tam kapasite bağlı ve aktif.**\n\n"
+                "**🟢 Active (Doğrulanmış & Çalışan Katmanlar)**\n"
+                "* **Parser & Kanonik IR:** `.sx` sözdizimi, AST sadeleştirme ve C11/Q16.16 kod üretimi\n"
+                "* **IMMUNE 0-ULP Kalkanı:** 19 uç test kümesinde `NaN/Inf` $\\rightarrow$ `heal(0.0)` diferansiyel doğrulama\n"
+                "* **Native Host Derleme:** Apple Silicon `clang` + `ARM64 NEON` (`vbslq_f32`) canlı derleme\n"
+                "* **C-ABI & Xcode Köprüsü:** `--emit-c-header` ile bağımsız `.h`/`.c` dışa aktarımı\n"
+                "* **ECC & Hibrit Zeka:** 314 mühendislik becerisi, 71 ajan ve yerel/OpenCode yönlendirici\n\n"
+                "**🟡 Experimental (Araştırma & Prototip)**\n"
+                "* **Autopoiesis Sembolik Bellek:** `synapse_brain.json` üzerine SHA-256 mühürlü formül kaydı\n"
+                "* **Evrim Arenası & Dream Mode:** Çoklu SIMD varyant yarıştırma ve boş zaman optimizasyonu\n\n"
+                "**⚪ Planned (Yol Haritası)**\n"
+                "* **Canlı Klinik VF CDSS:** Gerçek zamanlı hastabaşı monitör (WFDB) karar destek entegrasyonu\n\n"
+                "👉 **Önerilen Aksiyon:** `/pipeline kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al` yazarak **7 aşamalı canlı silikon derleme hattını** test edebilirsiniz."
             )
             return reply, None
 

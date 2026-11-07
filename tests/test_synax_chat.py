@@ -42,7 +42,9 @@ class TestSynaxChatAndAutopoiesis(unittest.TestCase):
         # 2. Status inspection
         resp2 = self.agent.process_message("durum")
         self.assertEqual(resp2.action, "status")
-        self.assertIn("SIMD Vektör Hatları", resp2.text)
+        self.assertIn("Active", resp2.text)
+        self.assertIn("Experimental", resp2.text)
+        self.assertIn("Planned", resp2.text)
 
         # 3. Memory inspection
         resp3 = self.agent.process_message("hafızanı göster")
@@ -66,7 +68,7 @@ class TestSynaxChatAndAutopoiesis(unittest.TestCase):
         resp1 = self.agent.process_message("synax artık çalışıyor musun")
         self.assertEqual(resp1.action, "llm_response")
         self.assertIn("Evet", resp1.text)
-        self.assertIn("tam kapasite", resp1.text.lower())
+        self.assertIn("Active", resp1.text)
         self.assertNotIn("ipotizle", resp1.text)  # No gibberish!
 
         resp2 = self.agent.process_message("merhaba")
@@ -87,6 +89,18 @@ class TestSynaxChatAndAutopoiesis(unittest.TestCase):
         self.assertEqual(action, "general_chat")
         self.assertIn("Evet", answer)
         self.assertNotIn("ağırlıkları seçilmedi", answer)
+
+    def test_07_live_7_stage_pipeline(self) -> None:
+        """Agent executes the live 7-stage silicon pipeline from natural language intent to hardware winner."""
+        resp = self.agent.process_message("/pipeline kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al")
+        self.assertEqual(resp.action, "pipeline_executed")
+        self.assertIn("1. Intent", resp.text)
+        self.assertIn("2. Canonical SYNAX", resp.text)
+        self.assertIn("3. Symbolic AST", resp.text)
+        self.assertIn("4. Reference & IMMUNE 0-ULP", resp.text)
+        self.assertIn("6. Semantic Lock", resp.text)
+        self.assertIn("7. Silicon Winner", resp.text)
+        self.assertIn("SHA-256", resp.text)
 
 
 if __name__ == "__main__":
