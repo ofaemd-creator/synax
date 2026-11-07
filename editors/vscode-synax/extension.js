@@ -1,3 +1,4 @@
+const { chatEnvironment, findChatScript } = require('./chat-config');
 const vscode = require('vscode');
 const child_process = require('child_process');
 const path = require('path');
@@ -5,10 +6,10 @@ const fs = require('fs');
 
 /**
  * SYNAX Code VS Code Extension — AI Chat & Autopoietic Neuro-Symbolic Evolution Controller
- * Version: 0.7.0
+ * Version: 0.8.0
  */
 function activate(context) {
-    console.log('[SYNAX] VS Code Extension v0.7.0 activated.');
+    console.log('[SYNAX] VS Code Extension v0.8.0 activated.');
 
     const provider = new SynaxChatViewProvider(context.extensionUri, context);
     context.subscriptions.push(
@@ -219,6 +220,20 @@ function activate(context) {
             provider.checkCurrentDocument(editor.document.fileName);
         })
     );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('synax.reconnectBackend', () => {
+            provider._restartBackend();
+            vscode.window.showInformationMessage('🔄 SYNAX Backend bağlantısı yenilendi.');
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('synax.disconnectBackend', () => {
+            provider._disconnectBackend();
+            vscode.window.showInformationMessage('⏹️ SYNAX Backend bağlantısı kesildi.');
+        })
+    );
 }
 
 class SynaxChatViewProvider {
@@ -232,6 +247,8 @@ class SynaxChatViewProvider {
         this._rpcPending = new Map();
         this._rpcId = 0;
         this._dreamModeEnabled = true;
+        this._manualDisconnect = false;
+        this._lastHtml = '';
     }
 
     resolveWebviewView(webviewView, context, _token) {
@@ -242,7 +259,8 @@ class SynaxChatViewProvider {
             localResourceRoots: [this._extensionUri]
         };
 
-        webviewView.webview.html = this._getHtmlForWebview();
+        this._lastHtml = this._getHtmlForWebview();
+        webviewView.webview.html = this._lastHtml;
 
         webviewView.webview.onDidReceiveMessage(async (data) => {
             switch (data.type) {
@@ -267,12 +285,17 @@ class SynaxChatViewProvider {
                 case 'ready':
                     if (this._proc && !this._proc.killed) {
                         this._postToWebview({ type: 'status', connected: true });
-                    } else {
+                    } else if (!this._manualDisconnect) {
                         this._ensureBackend();
+                    } else {
+                        this._postToWebview({ type: 'status', connected: false });
                     }
                     break;
                 case 'reconnect':
                     this._restartBackend();
+                    break;
+                case 'disconnect':
+                    this._disconnectBackend();
                     break;
             }
         });
@@ -318,47 +341,37 @@ class SynaxChatViewProvider {
     }
 
     _findSynaxPath() {
-        // 1. Configured custom path
-        const customScript = vscode.workspace.getConfiguration('synax').get('chat.scriptPath');
-        if (customScript && typeof customScript === 'string' && customScript.trim() && fs.existsSync(customScript.trim())) {
-            const p = customScript.trim();
-            return { script: p, cwd: path.dirname(p) };
-        }
-
-        // 2. Known project scratch directory
-        const scratchSynax = '/Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_chat.py';
-        if (fs.existsSync(scratchSynax)) {
-            return { script: scratchSynax, cwd: path.dirname(scratchSynax) };
-        }
-
-        // 3. Open workspace folders
-        const workspaceFolders = vscode.workspace.workspaceFolders;
-        if (workspaceFolders) {
-            for (const f of workspaceFolders) {
-                const p = path.join(f.uri.fsPath, 'synax_chat.py');
-                if (fs.existsSync(p)) return { script: p, cwd: f.uri.fsPath };
-            }
-        }
-
-        // 4. Bundled inside extension directory
-        const bundled = path.join(this._extensionUri.fsPath, 'bundled', 'synax_chat.py');
-        if (fs.existsSync(bundled)) {
-            return { script: bundled, cwd: path.dirname(bundled) };
-        }
-
-        return { script: 'synax_chat.py', cwd: process.cwd() };
+        return findChatScript(vscode.workspace.getConfiguration('synax'),
+            vscode.workspace.workspaceFolders, this._extensionUri.fsPath);
     }
 
-    _restartBackend() {
+    _disconnectBackend() {
+        this._manualDisconnect = true;
         if (this._proc) {
             try { this._proc.kill(); } catch (e) {}
             this._proc = null;
         }
-        this._ensureBackend();
+        this._postToWebview({ type: 'status', connected: false });
     }
 
-    _ensureBackend() {
+    _restartBackend() {
+        this._manualDisconnect = true;
+        if (this._proc) {
+            try { this._proc.kill(); } catch (e) {}
+            this._proc = null;
+        }
+        const freshHtml = this._getHtmlForWebview();
+        if (this._view && freshHtml !== this._lastHtml) {
+            this._lastHtml = freshHtml;
+            this._view.webview.html = freshHtml + `\n<!-- refresh:${Date.now()} -->`;
+        }
+        this._manualDisconnect = false;
+        this._ensureBackend(true);
+    }
+
+    _ensureBackend(isReconnect = false) {
         if (this._proc && !this._proc.killed) return;
+        this._manualDisconnect = false;
 
         const info = this._findSynaxPath();
         const pythonBin = this._findPythonBin();
@@ -368,8 +381,9 @@ class SynaxChatViewProvider {
             this._proc = child_process.spawn(pythonBin, ['-u', info.script, '--json-rpc'], {
                 cwd: info.cwd,
                 env: {
-                    ...process.env,
+                    ...chatEnvironment(vscode.workspace.getConfiguration('synax'), process.env),
                     PYTHONUNBUFFERED: '1',
+                    PYTHONPYCACHEPREFIX: path.join(this._context.globalStorageUri.fsPath, 'python-cache'),
                     PYTHONPATH: `${info.cwd}:${path.join(info.cwd, 'src')}:${process.env.PYTHONPATH || ''}`
                 }
             });
@@ -408,14 +422,15 @@ class SynaxChatViewProvider {
             this._proc.on('close', (code) => {
                 console.log(`[SYNAX Backend exited with ${code}]`);
                 this._proc = null;
+                const wasManual = this._manualDisconnect;
                 this._postToWebview({
                     type: 'status',
                     connected: false,
-                    error: code !== 0 ? `SYNAX motoru kapandı (çıkış kodu: ${code})` : undefined
+                    error: (!wasManual && code !== 0 && code !== null) ? `SYNAX motoru kapandı (çıkış kodu: ${code})` : undefined
                 });
             });
 
-            this._postToWebview({ type: 'status', connected: true });
+            this._postToWebview({ type: 'status', connected: true, reconnected: isReconnect });
         } catch (e) {
             console.error('[SYNAX Backend Launch Failed]', e);
             this._postToWebview({ type: 'status', connected: false, error: e.message });
@@ -457,7 +472,7 @@ class SynaxChatViewProvider {
         this._postToWebview({ type: 'setTyping', typing: true });
 
         const activeEditor = vscode.window.activeTextEditor;
-        const editorText = activeEditor ? activeEditor.document.getText() : '';
+        const editorText = activeEditor && /^\/compile\b/i.test(text) ? activeEditor.document.getText() : '';
 
         try {
             const result = await this._sendRpc('chat', {

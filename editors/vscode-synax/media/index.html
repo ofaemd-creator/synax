@@ -29,18 +29,20 @@
     }
     #header {
       color: #e2e8f0;
-      padding: 10px 14px;
-      background: rgba(17, 24, 39, 0.85);
+      padding: 8px 12px;
+      background: rgba(17, 24, 39, 0.9);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
     }
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       font-size: 11px;
       font-weight: 600;
       color: var(--green);
@@ -49,6 +51,36 @@
       width: 7px; height: 7px; border-radius: 50%; background: var(--green);
       box-shadow: 0 0 8px var(--green);
       animation: pulse 2s infinite;
+    }
+    .hdr-btn {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 7px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .hdr-btn-reconnect {
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: #38bdf8;
+    }
+    .hdr-btn-reconnect:hover {
+      background: rgba(56, 189, 248, 0.28);
+      color: #ffffff;
+    }
+    .hdr-btn-disconnect {
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+    .hdr-btn-disconnect:hover {
+      background: rgba(239, 68, 68, 0.3);
+      color: #ffffff;
     }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
@@ -258,9 +290,10 @@
       <span>🧬 SYNAX Code</span>
       <span style="font-size:10px; background:#1e293b; padding:1px 5px; border-radius:4px; color:#38bdf8;">v0.8.0</span>
     </div>
-    <div style="display:flex; align-items:center; gap:8px;">
+    <div style="display:flex; align-items:center; gap:6px;">
       <div id="status-badge" class="badge"><div id="status-dot" class="dot"></div><span id="status-text">Bağlanıyor...</span></div>
-      <button id="reconnect-btn" onclick="reconnect()" style="display:none; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-size:10px; padding:2px 6px; border-radius:4px; cursor:pointer;">🔄 Bağlan</button>
+      <button id="reconnect-btn" class="hdr-btn hdr-btn-reconnect" onclick="reconnect()" title="SYNAX bağlantısını ve motoru yenile">🔄 Yeniden Bağlan</button>
+      <button id="disconnect-btn" class="hdr-btn hdr-btn-disconnect" onclick="disconnectBackend()" title="SYNAX arka uç bağlantısını kes">⏹️ Bağlantıyı Kes</button>
     </div>
   </div>
 
@@ -396,6 +429,7 @@
     const statusDot = document.getElementById('status-dot');
     const statusText = document.getElementById('status-text');
     const reconnectBtn = document.getElementById('reconnect-btn');
+    const disconnectBtn = document.getElementById('disconnect-btn');
     const arenaCandidates = document.getElementById('arena-candidates');
 
     function switchTab(tab) {
@@ -408,29 +442,42 @@
       if (targetContent) targetContent.classList.add('active');
     }
 
+    function updateConnectionUI(connected) {
+      if (connected) {
+        statusDot.style.background = '#10b981';
+        statusDot.style.boxShadow = '0 0 8px #10b981';
+        statusText.textContent = 'Bağlı';
+        statusText.style.color = '#10b981';
+        reconnectBtn.innerHTML = '🔄 Yeniden Bağlan';
+        reconnectBtn.style.display = 'inline-flex';
+        if (disconnectBtn) disconnectBtn.style.display = 'inline-flex';
+      } else {
+        statusDot.style.background = '#ef4444';
+        statusDot.style.boxShadow = '0 0 8px #ef4444';
+        statusText.textContent = 'Bağlantı Kesildi';
+        statusText.style.color = '#ef4444';
+        reconnectBtn.innerHTML = '▶️ Bağlan';
+        reconnectBtn.style.display = 'inline-flex';
+        if (disconnectBtn) disconnectBtn.style.display = 'none';
+      }
+    }
+
     window.addEventListener('message', event => {
       const msg = event.data;
       if (msg.type === 'switchTab') {
         switchTab(msg.tab);
       } else if (msg.type === 'status') {
-        if (msg.connected) {
-          statusDot.style.background = '#10b981';
-          statusDot.style.boxShadow = '0 0 8px #10b981';
-          statusText.textContent = 'SYNAX backend bağlı';
-          statusText.style.color = '#10b981';
-          reconnectBtn.style.display = 'none';
-        } else {
-          statusDot.style.background = '#ef4444';
-          statusDot.style.boxShadow = '0 0 8px #ef4444';
-          statusText.textContent = 'Çevrimdışı';
-          statusText.style.color = '#ef4444';
-          reconnectBtn.style.display = 'inline-block';
-          if (msg.error) {
-            renderMessage({
-              sender: 'assistant',
-              text: '⚠️ **SYNAX Motoru Durumu:** ' + msg.error + '\n\nLütfen yukarıdaki **🔄 Bağlan** butonuna basarak yeniden deneyin.'
-            });
-          }
+        updateConnectionUI(Boolean(msg.connected));
+        if (!msg.connected && msg.error) {
+          renderMessage({
+            sender: 'assistant',
+            text: '⚠️ **SYNAX Motoru Durumu:** ' + msg.error + '\n\nLütfen yukarıdaki **▶️ Bağlan** veya **🔄 Yeniden Bağlan** butonuna basarak yeniden deneyin.'
+          });
+        } else if (msg.connected && msg.reconnected) {
+          renderMessage({
+            sender: 'assistant',
+            text: '🔄 **SYNAX v0.8.0 arka uç bağlantısı başarıyla yenilendi.** Tüm derleyici hatları, 7-aşamalı silikon pipeline (`/pipeline`) ve ECC becerileri aktif.'
+          });
         }
       } else if (msg.type === 'addMessage') {
         renderMessage(msg);
@@ -484,8 +531,15 @@
     }
 
     function reconnect() {
-      statusText.textContent = 'Yeniden bağlanıyor...';
+      statusDot.style.background = '#f59e0b';
+      statusText.textContent = 'Yenileniyor...';
+      statusText.style.color = '#f59e0b';
       vscode.postMessage({ type: 'reconnect' });
+    }
+
+    function disconnectBackend() {
+      updateConnectionUI(false);
+      vscode.postMessage({ type: 'disconnect' });
     }
 
     function handleKey(e) {
