@@ -103,7 +103,9 @@ class TestSynaxChatAndAutopoiesis(unittest.TestCase):
         self.assertIn("SHA-256", resp.text)
 
     def test_08_screen_and_video_actions(self) -> None:
-        """Agent inspects active screen/editor context and generates MP4 technical animations."""
+        """Agent inspects active screen/editor context and generates MP4 technical & space animations."""
+        import os
+        os.environ["SYNAX_DISABLE_VIDEO_OPEN"] = "1"
         resp_screen = self.agent.process_message(
             "/ekran",
             context={"fileName": "cerebral_perfusion.sx", "editorText": "kernel cpp(a: tensor<f32>) -> tensor<f32> {\n  return a\n}"},
@@ -114,6 +116,12 @@ class TestSynaxChatAndAutopoiesis(unittest.TestCase):
         resp_video = self.agent.process_message("/video Serebral Perfüzyon Demo")
         self.assertEqual(resp_video.action, "video_generated")
         self.assertIn(".mp4", resp_video.text)
+
+        resp_space = self.agent.process_message("bana kısa bir uzay simülasyon videosu üret")
+        self.assertEqual(resp_space.action, "video_generated")
+        self.assertEqual(resp_space.metadata.get("mode"), "space_3d")
+        self.assertIsNotNone(resp_space.code)
+        self.assertIn("nbody_kepler_simd", resp_space.code)
 
 
 if __name__ == "__main__":

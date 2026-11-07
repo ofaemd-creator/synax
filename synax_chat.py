@@ -380,23 +380,64 @@ kernel {slug}(
                 metadata=info,
             )
 
-        # ── 3.7. OTONOM VİDEO & ANİMASYON ÜRETİMİ (/video <konu>) ──
+        # ── 3.7. OTONOM VİDEO & ANİMASYON ÜRETİMİ (/video <konu> veya doğal dil) ──
         m_video = re.match(r"^(?:/video|video\s+(?:üret|oluştur|yap|hazırla))\s*[:=]?\s*(.*)", text, re.I)
-        if m_video or any(w in lower for w in ("video üret", "video oluştur", "animasyon üret")):
+        has_video_intent = bool(m_video) or (
+            any(k in lower for k in ("video", "videosu", "videoyu", "animasyon", "animasyonu"))
+            and any(v in lower for v in ("üret", "oluştur", "yap", "hazırla", "çiz", "render", "göster"))
+        )
+        if has_video_intent:
             from synax.agent_actions import generate_synax_video
 
-            topic = (m_video.group(1).strip() if m_video and m_video.group(1).strip() else "Serebral Perfüzyon & ARM64 NEON Evrimi")
+            if m_video and m_video.group(1).strip():
+                topic = m_video.group(1).strip()
+            else:
+                cleaned = re.sub(
+                    r"\b(bana|lütfen|hemen|şimdi|bir|tane|videosu|videoyu|video|üret|oluştur|yap|hazırla|çiz)\b",
+                    "",
+                    text,
+                    flags=re.I,
+                ).strip(" :.,!?")
+                topic = cleaned if cleaned else "Serebral Perfüzyon & ARM64 NEON Evrimi"
+
             try:
                 vid = generate_synax_video(topic)
+                if vid.get("mode") == "space_3d":
+                    desc = (
+                        "Video içerisinde **3B Derin Uzay Yıldız Alanı**, **Kepler Yörünge Mekaniği (Gaz Devi, Yaşanabilir Gezegen + Uydu)** "
+                        "ve **LIGO Kütleçekim Dalgası $h(t)$ Telemetrisi** kare kare işlenmiş ve ekranınızda açılmıştır."
+                    )
+                    sx_sample = (
+                        "synax 0.5\n\n"
+                        "kernel nbody_kepler_simd(\n"
+                        "  r_sq: tensor<f32>,\n"
+                        "  mass_prod: tensor<f32>\n"
+                        ") -> tensor<f32> {\n"
+                        "  intent \"Keplerian gravitational force with singularity shield\"\n"
+                        "  safety {\n"
+                        "    nonfinite = heal(0.0)\n"
+                        "  }\n"
+                        "  let safe_r2 = relu(r_sq) + 0.0001\n"
+                        "  let grav_force = mass_prod / safe_r2\n"
+                        "  return grav_force\n"
+                        "}\n"
+                    )
+                else:
+                    desc = (
+                        "Video içerisinde canlı fizyolojik dalga formu (`CPP = ReLU(MAP - ICP)`), "
+                        "7-aşamalı silikon doğrulama akışı ve `ARM64 NEON` hız barları kare kare işlenmiştir."
+                    )
+                    sx_sample = None
+
                 reply = (
-                    f"🎬 **SYNAX Otonom Teknik Video Üretildi!**\n\n"
+                    f"🎬 **SYNAX Otonom Simülasyon Videosu Üretildi!**\n\n"
                     f"* **Konu:** `{topic}`\n"
                     f"* **Format & Çözünürlük:** `{vid['resolution']}` @ `{vid['fps']} FPS` (`{vid['duration_sec']} sn` H.264 MP4)\n"
                     f"* **Dosya Boyutu:** `{vid['size_kb']} KB`\n"
                     f"* **Kayıt Konumu:** `{vid['video_path']}`\n\n"
-                    f"Video içerisinde canlı fizyolojik dalga formu (`CPP = ReLU(MAP - ICP)`), 7-aşamalı silikon doğrulama akışı ve `ARM64 NEON` hız barları kare kare işlenmiştir."
+                    f"{desc}"
                 )
-                return ChatResponse(text=reply, action="video_generated", metadata=vid)
+                return ChatResponse(text=reply, code=sx_sample, language="synax" if sx_sample else None, action="video_generated", metadata=vid)
             except Exception as e:
                 return ChatResponse(text=f"⚠️ **Video Üretim Hatası:** {str(e)}", action="error")
 
