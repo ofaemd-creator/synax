@@ -77,6 +77,25 @@ class HybridLLMRouter:
         Routes the prompt to the best available LLM backend.
         Returns: (response_text, extracted_code_snippet)
         """
+        p_lower = prompt.lower().strip()
+        # 0. Fast-path deterministic SYNAX identity, status, and weight diagnostics (0ms latency)
+        if any(
+            w in p_lower
+            for w in (
+                "çalışıyor musun",
+                "çalışıyor mu",
+                "aktif misin",
+                "hazır mısın",
+                "nasılsın",
+                "artık çalışıyor",
+                "ağırlık",
+                "synax-llm",
+                "ağırlıkları seçilmedi",
+                "synax_model_path",
+            )
+        ) or p_lower in ("merhaba", "selam", "selamlar", "hi", "hello", "hey", "günaydın", "iyi akşamlar"):
+            return self._query_builtin_expert(prompt, context)
+
         # 1. Try Groq Cloud if API key is present
         if self.groq_api_key:
             res = self._query_groq(prompt, context)

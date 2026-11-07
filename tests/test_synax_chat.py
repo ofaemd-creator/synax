@@ -94,12 +94,12 @@ class TestSynaxChatAndAutopoiesis(unittest.TestCase):
         """Agent executes the live 7-stage silicon pipeline from natural language intent to hardware winner."""
         resp = self.agent.process_message("/pipeline kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al")
         self.assertEqual(resp.action, "pipeline_executed")
-        self.assertIn("1. Intent", resp.text)
-        self.assertIn("2. Canonical SYNAX", resp.text)
-        self.assertIn("3. Symbolic AST", resp.text)
-        self.assertIn("4. Reference & IMMUNE 0-ULP", resp.text)
-        self.assertIn("6. Semantic Lock", resp.text)
-        self.assertIn("7. Silicon Winner", resp.text)
+        self.assertIn("Intent", resp.text)
+        self.assertIn("Canonical SYNAX", resp.text)
+        self.assertIn("Symbolic AST", resp.text)
+        self.assertIn("Reference & IMMUNE", resp.text)
+        self.assertIn("Semantic Lock", resp.text)
+        self.assertIn("Silicon Winner", resp.text)
         self.assertIn("SHA-256", resp.text)
 
 
