@@ -217,9 +217,16 @@ kernel {slug}(
             sha = self.model.brain.get("_integrity_sha256", "verified")[:12]
             opt_count = self.model.brain.get("algebraic_optimizations_applied", 0)
 
+            # ECC Entegrasyon Durumu
+            from synax.ecc_bridge import get_ecc_bridge
+            ecc = get_ecc_bridge()
+            ecc_count = len(ecc.list_skills()) if ecc.is_available() else 0
+            ecc_agent_count = len(ecc.list_agents()) if ecc.is_available() else 0
+
             lines = [
                 f"🧠 **SYNAX Sinaptik Bellek ve Öğrenilmiş Beceriler** (Nesil #{gen} | Bütünlük: `#{sha}`)",
-                f"Uygulanan otonom cebirsel süper-optimizasyon: **{opt_count}**\n",
+                f"Uygulanan otonom cebirsel süper-optimizasyon: **{opt_count}**",
+                f"🛠️ **ECC Mühendislik Kütüphanesi:** **{ecc_count} Beceri** ve **{ecc_agent_count} Uzman Ajan** devrede.\n",
                 "| Beceri / Kavram | Kayıtlı Sembolik Formül |",
                 "| :--- | :--- |",
             ]
@@ -227,7 +234,26 @@ kernel {slug}(
                 lines.append(f"| **{c}** | `{f}` |")
 
             lines.append("\n💡 *Yeni bir beceri öğretmek için: `kendine şu beceriyi edin: <ad> = <formül>` yazabilirsiniz.*")
+            lines.append("💡 *ECC mühendislik becerisi aramak için: `ecc ara: <kelime>` yazabilirsiniz.*")
             return ChatResponse(text="\n".join(lines), action="list_skills")
+
+        # ── 2.1 ECC BECERİ ARAMA & ÇAĞIRMA ──
+        m_ecc_search = re.search(r"ecc\s+(?:ara|search|bul|skill)\s*[:=]?\s*(.+)", text, re.I)
+        if m_ecc_search or "ecc beceri" in lower:
+            from synax.ecc_bridge import get_ecc_bridge
+            ecc = get_ecc_bridge()
+            query = m_ecc_search.group(1).strip() if m_ecc_search else "tdd"
+            matches = ecc.search_skills(query, limit=5)
+            if matches:
+                lines = [f"🔍 **ECC Becerisi Arama Sonuçları (`{query}`):**\n"]
+                for m in matches:
+                    lines.append(f"* **`{m['name']}`**")
+                    if m['description']:
+                        lines.append(f"  _{m['description'][:140]}..._")
+                lines.append("\n💡 *Bu beceriyi projenizde uygulamak için doğrudan talimat verebilirsiniz.*")
+                return ChatResponse(text="\n".join(lines), action="ecc_search")
+            else:
+                return ChatResponse(text=f"⚠️ `{query}` ile eşleşen bir ECC becerisi bulunamadı. Toplam 314 beceri yüklü.", action="ecc_search")
 
         # ── 3. DONANIM & DURUM RAPORU ──
         if lower in ("durum", "status", "donanım", "hardware", "info"):
