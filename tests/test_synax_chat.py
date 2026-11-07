@@ -61,6 +61,33 @@ class TestSynaxChatAndAutopoiesis(unittest.TestCase):
         self.assertIn("Fizyolojik Yorum", resp.text)
         self.assertIn("ReLU", resp.text)
 
+    def test_04_conversational_greetings_and_activity(self) -> None:
+        """Agent recognizes natural language conversational queries and responds coherently."""
+        resp1 = self.agent.process_message("synax artık çalışıyor musun")
+        self.assertEqual(resp1.action, "llm_response")
+        self.assertIn("Evet", resp1.text)
+        self.assertIn("tam kapasite", resp1.text.lower())
+        self.assertNotIn("ipotizle", resp1.text)  # No gibberish!
+
+        resp2 = self.agent.process_message("merhaba")
+        self.assertEqual(resp2.action, "llm_response")
+        self.assertIn("Merhaba", resp2.text)
+
+    def test_05_ecc_skills_and_search(self) -> None:
+        """Agent searches and lists ECC engineering skills."""
+        resp = self.agent.process_message("ecc ara: tdd")
+        self.assertEqual(resp.action, "ecc_search")
+        self.assertIn("ECC Becerisi Arama Sonuçları", resp.text)
+
+    def test_06_conversation_fallback_without_weights(self) -> None:
+        """Conversation harness gracefully falls back to HybridLLMRouter without fatal ModelError."""
+        from synax.assistant.conversation import Conversation
+        conv = Conversation()
+        answer, action = conv.reply("synax artık çalışıyor musun")
+        self.assertEqual(action, "general_chat")
+        self.assertIn("Evet", answer)
+        self.assertNotIn("ağırlıkları seçilmedi", answer)
+
 
 if __name__ == "__main__":
     unittest.main()

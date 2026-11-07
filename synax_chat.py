@@ -80,6 +80,11 @@ class SynaxChatAgent:
         self.model = SynapseNanoModel()
         self.hw = detect_hardware_fingerprint()
         self.llm_router = HybridLLMRouter()
+        try:
+            from synax.assistant.conversation import Conversation
+            self.conversation = Conversation()
+        except Exception:
+            self.conversation = None
 
     def reload_brain(self) -> None:
         self.model = SynapseNanoModel()
@@ -168,6 +173,25 @@ kernel {slug}(
         """
         text = user_msg.strip()
         lower = text.lower()
+
+        # ── 0. PROTOKOL & KONTROL KOMUTLARI ──
+        if lower == "/reset":
+            if self.conversation:
+                self.conversation.reset()
+            return ChatResponse(text="Sohbet bağlamı ve bellek oturumu temizlendi.", action="conversation_reset")
+        if lower.startswith("/check "):
+            try:
+                from synax.assistant.tools import check_source
+                result = check_source(text.split(" ", 1)[1])
+                return ChatResponse(text=result.text, action="source_checked", metadata={"type_checked": result.verified, "verified": False})
+            except Exception as e:
+                return ChatResponse(text=f"Kaynak doğrulama hatası: {str(e)}", action="error")
+        if lower.startswith("/science "):
+            text = text[9:].strip()
+            lower = text.lower()
+        if lower.startswith("/chat "):
+            text = text[6:].strip()
+            lower = text.lower()
 
         # ── 1. AUTOPOIESIS / BECERİ EDİNME ──
         # Örnek kalıplar:
@@ -327,8 +351,27 @@ kernel auto_generated_kernel(
                 return ChatResponse(text=f"⚠️ **Derleme Hatası:** {str(e)}\n\nLütfen geçerli bir `.sx` kernel bloğu girdiğinizden emin olun.", action="compile_error")
 
         # ── 6. KLİNİK / GENEL NÖRO-SEMBOLİK ANALİZ & HİBRİT LLM ──
-        # Soru, mimari veya serbest sohbet sorgularını doğrudan Hibrit LLM Router'a yönlendir
-        is_conversational = any(q in lower for q in ("?", "nasıl", "nedir", "ne demek", "kimsin", "xcode", "swift", "yardım", "help", "anlat", "açıkla", "mimari", "proje", "geliştir", "merhaba", "selam"))
+        # Doğal dil matematik niyetleri (örn: "kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al")
+        is_math_intent = any(w in lower for w in (
+            "pozitif kısm", "negatifleri sıfırla", "karekökü", "mutlak değeri",
+            "farkının", "oranının", "toplamının", "çarpımının", "pow2", "pow3"
+        )) or any(c in text for c in ("=", "+", "*", "^", "/", "tensor", "kernel", "let ", "return "))
+
+        is_conversational = (
+            (
+                any(q in lower for q in (
+                    "?", "nasıl", "nedir", "ne demek", "kimsin", "sen kimsin", "adın ne",
+                    "xcode", "swift", "yardım", "help", "anlat", "açıkla", "mimari", "proje",
+                    "geliştir", "merhaba", "selam", "günaydın", "iyi günler", "hello", "hi", "hey",
+                    "çalışıyor", "musun", "mısın", "misin", "mü", "mu", "artık", "nasılsın",
+                    "hazır mısın", "durum", "neler", "yapabilir", "yapar", "hata", "uyarı",
+                    "ağırlık", "model", "ecc", "ajan", "agent", "beceri", "hafıza", "saçmalıyor"
+                ))
+                or ("?" in text)
+                or (not is_math_intent)
+            )
+            and not is_math_intent
+        )
         if is_conversational and not ("kendine şu beceriyi" in lower or "öğren:" in lower or lower.startswith("kod:") or lower.startswith("kernel")):
             llm_text, llm_code = self.llm_router.query(text, context)
             lang = "synax"
