@@ -472,13 +472,15 @@ class SynaxChatViewProvider {
         this._postToWebview({ type: 'setTyping', typing: true });
 
         const activeEditor = vscode.window.activeTextEditor;
-        const editorText = activeEditor && /^\/compile\b/i.test(text) ? activeEditor.document.getText() : '';
+        const editorText = activeEditor ? activeEditor.document.getText() : '';
+        const selectionText = activeEditor && !activeEditor.selection.isEmpty ? activeEditor.document.getText(activeEditor.selection) : '';
 
         try {
             const result = await this._sendRpc('chat', {
                 message: text,
                 context: {
                     editorText: editorText,
+                    selectionText: selectionText,
                     fileName: activeEditor ? activeEditor.document.fileName : ''
                 }
             });

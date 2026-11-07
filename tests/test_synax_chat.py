@@ -102,6 +102,19 @@ class TestSynaxChatAndAutopoiesis(unittest.TestCase):
         self.assertIn("Silicon Winner", resp.text)
         self.assertIn("SHA-256", resp.text)
 
+    def test_08_screen_and_video_actions(self) -> None:
+        """Agent inspects active screen/editor context and generates MP4 technical animations."""
+        resp_screen = self.agent.process_message(
+            "/ekran",
+            context={"fileName": "cerebral_perfusion.sx", "editorText": "kernel cpp(a: tensor<f32>) -> tensor<f32> {\n  return a\n}"},
+        )
+        self.assertEqual(resp_screen.action, "screen_inspected")
+        self.assertIn("cerebral_perfusion.sx", resp_screen.text)
+
+        resp_video = self.agent.process_message("/video Serebral Perfüzyon Demo")
+        self.assertEqual(resp_video.action, "video_generated")
+        self.assertIn(".mp4", resp_video.text)
+
 
 if __name__ == "__main__":
     unittest.main()

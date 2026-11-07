@@ -349,6 +349,57 @@ kernel {slug}(
             except Exception as e:
                 return ChatResponse(text=f"⚠️ **Pipeline Hatası:** {str(e)}", action="error")
 
+        # ── 3.6. EKRAN ERİŞİMİ & AKTİF EDİTÖR ANALİZİ (/ekran) ──
+        if lower.startswith("/ekran") or any(
+            w in lower
+            for w in ("ekranımı gör", "ekran görüntüsü al", "ekranı analiz et", "ekranda ne var", "ekranıma bak")
+        ):
+            from synax.agent_actions import capture_screen_and_context
+
+            info = capture_screen_and_context(context)
+            lines = ["🖥️ **SYNAX Canlı Ekran & Çalışma Alanı Analizi**\n"]
+            if info["screen_captured"]:
+                lines.append(f"* **Masaüstü Ekran Yakalama:** ✅ Başarılı (`{info['resolution']}` | Ortalama Parlaklık: `{info['brightness']}`)")
+                lines.append(f"* **Kaydedilen Görsel:** `{info['screenshot_path']}`")
+            else:
+                lines.append(f"* **Masaüstü Tam Ekran Yakalama:** ⚠️ macOS Ekran Kaydı (Screen Recording) izni bekliyor (`{info['tcc_note']}`)")
+
+            if info["active_file"]:
+                lines.append(f"* **VS Code Aktif Dosya:** `{info['active_file']}` (**{info['editor_lines']}** satır okundu)")
+            else:
+                lines.append("* **VS Code Aktif Dosya:** Şu an açık bir editör sekmesi seçili değil (bir `.sx` veya kod dosyasına tıkladığınızda içeriğini doğrudan okurum).")
+
+            if info["selection_preview"]:
+                lines.append(f"* **Seçili Metin:** `{info['selection_preview']}`")
+
+            return ChatResponse(
+                text="\n".join(lines),
+                code=info["editor_preview"] if info["editor_preview"] else None,
+                language="synax",
+                action="screen_inspected",
+                metadata=info,
+            )
+
+        # ── 3.7. OTONOM VİDEO & ANİMASYON ÜRETİMİ (/video <konu>) ──
+        m_video = re.match(r"^(?:/video|video\s+(?:üret|oluştur|yap|hazırla))\s*[:=]?\s*(.*)", text, re.I)
+        if m_video or any(w in lower for w in ("video üret", "video oluştur", "animasyon üret")):
+            from synax.agent_actions import generate_synax_video
+
+            topic = (m_video.group(1).strip() if m_video and m_video.group(1).strip() else "Serebral Perfüzyon & ARM64 NEON Evrimi")
+            try:
+                vid = generate_synax_video(topic)
+                reply = (
+                    f"🎬 **SYNAX Otonom Teknik Video Üretildi!**\n\n"
+                    f"* **Konu:** `{topic}`\n"
+                    f"* **Format & Çözünürlük:** `{vid['resolution']}` @ `{vid['fps']} FPS` (`{vid['duration_sec']} sn` H.264 MP4)\n"
+                    f"* **Dosya Boyutu:** `{vid['size_kb']} KB`\n"
+                    f"* **Kayıt Konumu:** `{vid['video_path']}`\n\n"
+                    f"Video içerisinde canlı fizyolojik dalga formu (`CPP = ReLU(MAP - ICP)`), 7-aşamalı silikon doğrulama akışı ve `ARM64 NEON` hız barları kare kare işlenmiştir."
+                )
+                return ChatResponse(text=reply, action="video_generated", metadata=vid)
+            except Exception as e:
+                return ChatResponse(text=f"⚠️ **Video Üretim Hatası:** {str(e)}", action="error")
+
         # ── 4. KERNEL ÜRETİMİ / KOD YAZMA ──
         m_kernel = re.search(r"(?:kernel|kod)\s+(?:yaz|üret|oluştur|yarat|make|create|generate)\s*[:=]?\s*(.+)", text, re.I)
         m_kernel_rev = re.search(r"(.+?)\s*(?:için\s+)?(?:kernel|kod)\s+(?:yaz|üret|oluştur|yap|create|generate)", text, re.I)
