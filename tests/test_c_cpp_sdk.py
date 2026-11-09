@@ -29,8 +29,14 @@ from synaxc import SynaxCompiler
 def _ensure_myelin_shared_lib() -> Path:
     ext = "dylib" if sys.platform == "darwin" else "so"
     lib_path = REPO_ROOT / f"libsynax_myelin.{ext}"
-    if not lib_path.exists():
-        c_src = REPO_ROOT / "synax_myelin_engine.c"
+    c_src = REPO_ROOT / "synax_myelin_engine.c"
+    h_src = REPO_ROOT / "include" / "synax.h"
+    needs_rebuild = (
+        not lib_path.exists()
+        or c_src.stat().st_mtime > lib_path.stat().st_mtime
+        or h_src.stat().st_mtime > lib_path.stat().st_mtime
+    )
+    if needs_rebuild:
         cmd = ["clang", "-O3", "-shared", "-fPIC", "-std=c11", str(c_src), "-lm", "-o", str(lib_path)]
         if sys.platform != "darwin":
             cmd.append("-ldl")

@@ -1,0 +1,4 @@
+{"messages": [{"role": "user", "content": "Merhaba SYNAX"}, {"role": "assistant", "content": "Merhaba! Ben deneysel bir dil modeliyim."}]}
+{"messages": [{"role": "user", "content": "Explain evidence"}, {"role": "assistant", "content": "Evidence is information used to test a claim."}]}
+{"messages": [{"role": "user", "content": "Deney ne demek?"}, {"role": "assistant", "content": "Deney, bir hipotezi kontrollu kosullarda sinar."}]}
+{"messages": [{"role": "user", "content": "Sonuç kesin mi?"}, {"role": "assistant", "content": "Belirsizlik ve sinirliliklar degerlendirilmelidir."}]}

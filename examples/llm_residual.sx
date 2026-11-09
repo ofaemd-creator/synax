@@ -1,0 +1,10 @@
+synax 0.5
+
+kernel llm_residual(a: tensor<f32>, b: tensor<f32>) -> tensor<f32> {
+  intent "Add a residual stream to a transformer block output."
+  require shape(a) == shape(b)
+  let result = a + b
+  return result
+  optimize latency
+  target auto
+}

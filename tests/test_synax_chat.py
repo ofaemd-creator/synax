@@ -123,6 +123,21 @@ class TestSynaxChatAndAutopoiesis(unittest.TestCase):
         self.assertIsNotNone(resp_space.code)
         self.assertIn("nbody_kepler_simd", resp_space.code)
 
+    def test_09_frugal_benchmark_and_omni_mission(self) -> None:
+        """Agent reports millijoule energy efficiency and executes 5-stage autonomous Omni-Mission."""
+        import os
+        os.environ["SYNAX_DISABLE_VIDEO_OPEN"] = "1"
+        resp_energy = self.agent.process_message("/enerji")
+        self.assertEqual(resp_energy.action, "frugal_benchmark")
+        self.assertIn("Frugal AI", resp_energy.text)
+        self.assertIn("Q16.16", resp_energy.text)
+
+        resp_omni = self.agent.process_message("/gorev kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al")
+        self.assertEqual(resp_omni.action, "omni_mission")
+        self.assertIn("Otonom Omni-Ajan Görevi Tamamlandı", resp_omni.text)
+        self.assertIn("Q16.16", resp_omni.text)
+        self.assertIsNotNone(resp_omni.code)
+
 
 if __name__ == "__main__":
     unittest.main()

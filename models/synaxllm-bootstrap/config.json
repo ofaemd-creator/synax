@@ -1,0 +1,27 @@
+{
+  "name": "SynaxLLM",
+  "stage": "experimental-bootstrap",
+  "architecture": {
+    "context": 256,
+    "width": 128,
+    "heads": 4,
+    "layers": 3,
+    "vocab": 261
+  },
+  "tokenizer": "utf8-byte-v1",
+  "training": {
+    "parameters": 659712,
+    "steps": 200,
+    "seed": 42,
+    "device": "cpu",
+    "train_records": 24,
+    "validation_records": 4,
+    "initial_train_loss": 5.59105920791626,
+    "final_train_loss": 0.08624356240034103,
+    "initial_validation_loss": 5.587170600891113,
+    "final_validation_loss": 4.391861438751221,
+    "dataset_sha256": "2617d124a046b9ed22a0c8e3af4cf00c1c955832689739a677f5005c4ac7d1a7",
+    "validation_sha256": "638ad0317877324c07ab38b7769cb8427db3d760f3c3bbb9e6848138dabacf89",
+    "weights_sha256": "d54c30edf47aa909a158c9751796cf61cff841bb1f0e510dcbff6e77f5d81841"
+  }
+}

@@ -187,11 +187,48 @@ kernel {slug}(
             except Exception as e:
                 return ChatResponse(text=f"Kaynak doğrulama hatası: {str(e)}", action="error")
         if lower.startswith("/science "):
-            text = text[9:].strip()
-            lower = text.lower()
+            sci_prompt = text[9:].strip()
+            if self.conversation:
+                ans, act = self.conversation.reply(sci_prompt, scientific=True)
+                stage = getattr(self.conversation.model, "stage", None) or "experimental-bootstrap"
+                return ChatResponse(
+                    text=ans,
+                    action=act,
+                    metadata={"verified": False, "retrieval": False, "backend": "SynaxLLM", "stage": stage},
+                )
         if lower.startswith("/chat "):
             text = text[6:].strip()
             lower = text.lower()
+
+        # ── 0.5. FRUGAL AI ENERJİ & VERİMLİLİK KARŞILAŞTIRMASI (/enerji) ──
+        if lower.startswith("/enerji") or any(
+            w in lower for w in ("enerji tüketimi", "verimlilik raporu", "frugal", "az enerji", "model karşılaştır")
+        ):
+            from synax.frugal_engine import format_frugal_benchmark_report, get_memory_and_footprint_stats
+
+            return ChatResponse(
+                text=format_frugal_benchmark_report(),
+                action="frugal_benchmark",
+                metadata=get_memory_and_footprint_stats(),
+            )
+
+        # ── 0.6. OTONOM OMNI-AJAN GÖREV MOTORU (Manus + Claude + Gemini + Groq Sentezi) (/gorev) ──
+        m_omni = re.match(r"^(?:/gorev|/görev|otonom\s+görev|manus\s+modu)\s*[:=]?\s*(.*)", text, re.I)
+        if m_omni:
+            from synax.frugal_engine import execute_autonomous_omni_mission
+
+            goal = m_omni.group(1).strip() or "kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al"
+            try:
+                res_omni = execute_autonomous_omni_mission(goal, self.model)
+                return ChatResponse(
+                    text=res_omni["markdown"],
+                    code=res_omni["code"],
+                    language="synax",
+                    action="omni_mission",
+                    metadata=res_omni,
+                )
+            except Exception as e:
+                return ChatResponse(text=f"⚠️ **Otonom Görev Hatası:** {str(e)}", action="error")
 
         # ── 1. AUTOPOIESIS / BECERİ EDİNME ──
         # Örnek kalıplar:
