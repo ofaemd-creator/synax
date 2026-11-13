@@ -4,7 +4,7 @@ from __future__ import annotations
 from importlib import import_module
 from typing import Any, Final
 
-__version__ = "0.9.0"
+__version__ = "1.0.0"
 
 _EXPORTS: Final = {
     "AVX2Backend": ("backends", "AVX2Backend"),
@@ -37,6 +37,8 @@ _EXPORTS: Final = {
     "check_sx": ("sdk", "check_sx"),
     "compile_sx": ("sdk", "compile_sx"),
     "eval_sx": ("sdk", "eval_sx"),
+    "run_sx": ("sdk", "run_sx"),
+    "run": ("sdk", "run_sx"),
     "format_sx": ("sdk", "format_sx"),
     "hardware_info": ("sdk", "hardware_info"),
     "lock_sx": ("sdk", "lock_sx"),
@@ -102,6 +104,8 @@ __all__ = [
     "compile_sx",
     "detect_hardware_fingerprint",
     "eval_sx",
+    "run_sx",
+    "run",
     "format_source",
     "format_sx",
     "generate_lock",

@@ -56,7 +56,7 @@ UNARY_NUMERIC_BUILTINS = {
 }
 ALL_UNARY_BUILTINS = UNARY_FLOAT_BUILTINS | UNARY_NUMERIC_BUILTINS
 BINARY_BUILTINS = {"min", "max"}
-TERNARY_BUILTINS = {"clamp"}
+TERNARY_BUILTINS = {"clamp", "select", "mux", "fma"}
 DENDRITIC_UNARY_REDUCTIONS = {"sum", "mean", "l2_norm", "norm"}
 DENDRITIC_BINARY_REDUCTIONS = {"dot"}
 DENDRITIC_WINDOW_BUILTINS = {"window_mean"}
@@ -520,11 +520,11 @@ class TypeChecker:
             expr.inferred_type = res
             return res
 
-        # 3. Ternary builtin (`clamp(x, lo, hi)`)
+        # 3. Ternary builtins (`clamp(x, lo, hi)`, `select(cond, vt, vf)`, `mux(cond, vt, vf)`, `fma(a, b, c)`)
         if fn in TERNARY_BUILTINS:
             if len(expr.args) != 3:
                 self._fail(
-                    f"Builtin 'clamp(x, lo, hi)' expects 3 arguments, got {len(expr.args)}",
+                    f"Builtin '{fn}(...)' expects 3 arguments, got {len(expr.args)}",
                     expr.span,
                 )
             x_expr, lo_expr, hi_expr = expr.args
@@ -532,17 +532,18 @@ class TypeChecker:
             tlo = self._infer_expr(lo_expr)
             thi = self._infer_expr(hi_expr)
 
-            # Static constant bound check: if `lo` and `hi` are constant literals and `lo > hi`, fail!
-            lo_const = extract_const_number(lo_expr)
-            hi_const = extract_const_number(hi_expr)
-            if lo_const is not None and hi_const is not None and lo_const > hi_const:
-                self._fail(
-                    f"Invalid clamp(x, {lo_const}, {hi_const}): constant lower bound ({lo_const}) > upper bound ({hi_const})",
-                    expr.span,
-                )
+            # Static constant bound check for clamp: if `lo` and `hi` are constant literals and `lo > hi`, fail!
+            if fn == "clamp":
+                lo_const = extract_const_number(lo_expr)
+                hi_const = extract_const_number(hi_expr)
+                if lo_const is not None and hi_const is not None and lo_const > hi_const:
+                    self._fail(
+                        f"Invalid clamp(x, {lo_const}, {hi_const}): constant lower bound ({lo_const}) > upper bound ({hi_const})",
+                        expr.span,
+                    )
 
-            t_x_lo = self._broadcast_numeric(tx, tlo, x_expr, lo_expr, expr.span, "clamp")
-            res = self._broadcast_numeric(t_x_lo, thi, x_expr, hi_expr, expr.span, "clamp")
+            t_x_lo = self._broadcast_numeric(tx, tlo, x_expr, lo_expr, expr.span, fn)
+            res = self._broadcast_numeric(t_x_lo, thi, x_expr, hi_expr, expr.span, fn)
             expr.inferred_type = res
             return res
 

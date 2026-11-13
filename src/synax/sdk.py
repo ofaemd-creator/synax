@@ -124,3 +124,46 @@ def hardware_info() -> HardwareFingerprint:
 def myelin_entries() -> list[Dict[str, Any]]:
     """List all cryptographically verified optimization entries in MYELIN cache."""
     return MyelinOptimizationStore().list_entries()
+
+
+def run_sx(
+    source_or_path: str,
+    a: Optional[Sequence[float]] = None,
+    b: Optional[Sequence[float]] = None,
+) -> Dict[str, Any]:
+    """
+    Parse, type-check, 19-suite verify, compile to native silicon, and execute a `.sx` kernel,
+    returning a complete diagnostic execution report with inputs, outputs, healed anomalies,
+    lowered C11/NEON/Q16.16 expressions, and microsecond latency.
+    """
+    ir = check_sx(source_or_path)
+    if a is None:
+        if ir.safety.nonfinite_mode in ("heal_inputs", "zero_output"):
+            a = [85.0, 92.0, 78.0, float("nan"), 110.0, 95.0, 70.0, 88.0]
+        else:
+            a = [85.0, 92.0, 78.0, 64.0, 110.0, 95.0, 70.0, 88.0]
+    if b is None:
+        b = [12.0, 14.0, 10.0, 18.0, 15.0, 11.0, 9.0, 13.0]
+
+    comp = compile_sx(source_or_path, bench_n=65536, bench_repeats=3, verbose=False)
+    out_arr, healed = eval_sx(source_or_path, a, b, prefer_native=True, strict_reject=False)
+
+    return {
+        "kernel_name": ir.name,
+        "version": ir.version,
+        "return_type": ir.return_type,
+        "param_names": ir.param_names,
+        "intent": ir.intent_text,
+        "formula": ir.expr.to_human_formula(ir.param_names[0], ir.param_names[1]),
+        "c_scalar": ir.expr.to_c_scalar(),
+        "c_neon": ir.expr.to_neon_f32x4() if ir.expr.can_use_pure_neon_intrinsics() else "Hybrid NEON Shield + Scalar",
+        "c_q16": ir.expr.to_q16_fixed_point(),
+        "inputs_a": ["NaN" if (x != x) else round(float(x), 4) for x in a],
+        "inputs_b": ["NaN" if (x != x) else round(float(x), 4) for x in b],
+        "outputs": ["NaN" if (x != x) else round(float(x), 4) for x in out_arr],
+        "healed_count": int(healed),
+        "winner_backend": comp.winner_name,
+        "median_us": round(comp.winner_median_ms * 1000.0, 2),
+        "speedup": round(comp.speedup_vs_clang_o3, 2),
+        "ir_hash": ir.ir_hash,
+    }

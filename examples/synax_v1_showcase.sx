@@ -1,0 +1,26 @@
+// SYNAX v1.0.0 Canonical Language Showcase
+// Demonstrates multi-step typed let bindings, branchless select() multiplexing,
+// fused multiply-add fma(), logistic sigmoid() gating, and IEEE-754 IMMUNE shield.
+synax 1.0
+
+kernel synax_v1_showcase(
+  map_mmhg: tensor<f32>,
+  icp_mmhg: tensor<f32>
+) -> tensor<f32> {
+  intent "SYNAX 1.0 Multi-Let, Branchless Select & Sigmoid Autoregulation"
+
+  require shape(map_mmhg) == shape(icp_mmhg)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(0.0, 250.0)
+  }
+
+  let cpp: tensor<f32> = relu(map_mmhg - icp_mmhg)
+  let gate: tensor<f32> = sigmoid((cpp - 50.0) * 0.1)
+  let autoreg: tensor<f32> = select(cpp - 40.0, fma(cpp, gate, 5.0), cpp * 0.5)
+  return autoreg
+
+  optimize latency
+  target auto
+}

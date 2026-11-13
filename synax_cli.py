@@ -64,7 +64,7 @@ def print_banner() -> None:
    ╚════██║  ╚██╔╝  ██║╚██╗██║██╔══██║ ██╔██╗ 
    ███████║   ██║   ██║ ╚████║██║  ██║██╔╝ ██╗
    ╚══════╝   ╚═╝   ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝
-   Neuro-Symbolic Compiler, Verification Gate & Adaptive Myelin Runtime (v0.6.0)
+   Neuro-Symbolic Compiler, Verification Gate & Adaptive Myelin Runtime (v1.0.0)
    GitHub: https://github.com/ofaemd-creator/synax | Cloud IDE: https://synaxcode.online
 """
     print(banner)
@@ -110,7 +110,7 @@ def cmd_version() -> None:
     from synax.hardware import detect_hardware_fingerprint
 
     fp = detect_hardware_fingerprint()
-    print("SYNAX Unified Compiler, SDK & Myelin Runtime v0.6.0 (Apache License 2.0)")
+    print("SYNAX Unified Compiler, SDK & Myelin Runtime v1.0.0 (Apache License 2.0)")
     print(f"AXON Donanım Parmak İzi : {fp.fingerprint_id} ({fp.cpu_brand} | {fp.simd_isa})")
     print("Resmi GitHub Deposu     : https://github.com/ofaemd-creator/synax")
     print("Cloud Studio IDE        : https://synaxcode.online")
@@ -595,6 +595,7 @@ def cmd_test() -> None:
         os.path.join(BASE_DIR, "tests", "test_synax_chat.py"),
         os.path.join(BASE_DIR, "tests", "test_deeptech_bridge_compliance.py"),
         os.path.join(BASE_DIR, "tests", "test_evolution_arena.py"),
+        os.path.join(BASE_DIR, "tests", "test_language_v1.py"),
     ]
     ran = 0
     for sf in suite_files:

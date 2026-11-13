@@ -22,7 +22,7 @@
     "my_perfusion": "(a + b) * bias",
     "serebral_perfuzyon": "relu(map - icp) * 0.75"
   },
-  "evolution_generation": 61,
-  "_integrity_sha256": "39122db9d6a64c7874fad5a667ca12dfe42bc9e771d07d8c761c3adf88427127",
+  "evolution_generation": 65,
+  "_integrity_sha256": "4631c43ed06d1ebcffa81448aefe9ef7e82a8521455dcb286e1b87e3e8d4ba1c",
   "algebraic_optimizations_applied": 7
 }

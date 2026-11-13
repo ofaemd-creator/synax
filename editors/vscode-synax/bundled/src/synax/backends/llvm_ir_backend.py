@@ -195,6 +195,16 @@ class _SSABuilder:
         if op == "CLAMP":
             lo_clamped = self.emit_max_f32(c[0], c[1])
             return self.emit_min_f32(lo_clamped, c[2])
+        if op == "SELECT":
+            gt = self.reg()
+            self.emit(f"{gt} = fcmp ogt float {c[0]}, 0.000000e+00")
+            self.emit(f"{r} = select i1 {gt}, float {c[1]}, float {c[2]}")
+            return r
+        if op == "FMA":
+            prod = self.reg()
+            self.emit(f"{prod} = fmul float {c[0]}, {c[1]}")
+            self.emit(f"{r} = fadd float {prod}, {c[2]}")
+            return r
         raise ValueError(f"Unsupported AST op in LLVM IR backend: {op}")
 
 

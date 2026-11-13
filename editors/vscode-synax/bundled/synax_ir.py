@@ -106,7 +106,7 @@ SUPPORTED_OPS = {
     "POW2", "POW3", "SQRT", "ABS",
     "SIN", "COS", "EXP", "LOG",
     "SIGMOID", "TANH", "RELU",
-    "MIN", "MAX", "CLAMP",
+    "MIN", "MAX", "CLAMP", "SELECT", "FMA",
     "DENDRITIC_SUM", "DENDRITIC_MEAN", "DENDRITIC_L2_NORM",
     "DENDRITIC_DOT", "DENDRITIC_WINDOW_MEAN",
 }
@@ -115,7 +115,7 @@ NEON_NATIVE_OPS = {
     "VAR", "CONST", "BIAS", "NEG",
     "ADD", "SUB", "MUL", "DIV",
     "POW2", "POW3", "SQRT", "ABS",
-    "RELU", "MIN", "MAX", "CLAMP",
+    "RELU", "MIN", "MAX", "CLAMP", "SELECT", "FMA",
     "EXP", "SIGMOID",
 }
 
@@ -304,6 +304,11 @@ class ASTNode:
             x, lo, hi = args[0], args[1], args[2]
             hi_clamped = ASTNode("MAX")._eval_op_f32([x, lo])
             return ASTNode("MIN")._eval_op_f32([hi_clamped, hi])
+        if op == "SELECT":
+            cond, vt, vf = args[0], args[1], args[2]
+            return vt if cond > 0.0 else vf
+        if op == "FMA":
+            return _f32(_f32(args[0] * args[1]) + args[2])
         if op == "DENDRITIC_SUM":
             return args[0]
         if op == "DENDRITIC_MEAN":
@@ -377,6 +382,8 @@ class ASTNode:
         if self.op == "MIN":     return f"synax_minf({c[0]}, {c[1]})"
         if self.op == "MAX":     return f"synax_maxf({c[0]}, {c[1]})"
         if self.op == "CLAMP":   return f"synax_clampf({c[0]}, {c[1]}, {c[2]})"
+        if self.op == "SELECT":  return f"synax_selectf({c[0]}, {c[1]}, {c[2]})"
+        if self.op == "FMA":     return f"(({c[0]} * {c[1]}) + {c[2]})"
         return c[0] if c else "0.0f"
 
     # ── Tier-2: ARM64 NEON SIMD Intrinsics (float32x4_t) ──
@@ -407,6 +414,8 @@ class ASTNode:
         if self.op == "MIN":     return f"vminq_f32({c[0]}, {c[1]})"
         if self.op == "MAX":     return f"vmaxq_f32({c[0]}, {c[1]})"
         if self.op == "CLAMP":   return f"vminq_f32(vmaxq_f32({c[0]}, {c[1]}), {c[2]})"
+        if self.op == "SELECT":  return f"vbslq_f32(vcgtq_f32({c[0]}, vdupq_n_f32(0.0f)), {c[1]}, {c[2]})"
+        if self.op == "FMA":     return f"vaddq_f32(vmulq_f32({c[0]}, {c[1]}), {c[2]})"
         if self.op == "EXP":     return f"synax_vexpq_f32({c[0]})"
         if self.op == "SIGMOID": return f"synax_vsigmoidq_f32({c[0]})"
         return c[0] if c else "vdupq_n_f32(0.0f)"
@@ -432,6 +441,8 @@ class ASTNode:
         if self.op == "SQRT":    return f"q16_sqrt({c[0]})"
         if self.op == "SIGMOID": return f"q16_fast_sigmoid({c[0]})"
         if self.op == "TANH":    return f"q16_fast_tanh({c[0]})"
+        if self.op == "SELECT":  return f"(({c[0]}) > 0 ? ({c[1]}) : ({c[2]}))"
+        if self.op == "FMA":     return f"(((int32_t)(((int64_t)({c[0]}) * ({c[1]})) >> 16)) + ({c[2]}))"
         return c[0] if c else "0"
 
     def to_human_formula(self, name_a: str = "a", name_b: str = "b") -> str:
@@ -461,6 +472,8 @@ class ASTNode:
         if self.op == "MIN":     return f"min({c[0]}, {c[1]})"
         if self.op == "MAX":     return f"max({c[0]}, {c[1]})"
         if self.op == "CLAMP":   return f"clamp({c[0]}, {c[1]}, {c[2]})"
+        if self.op == "SELECT":  return f"select({c[0]}, {c[1]}, {c[2]})"
+        if self.op == "FMA":     return f"fma({c[0]}, {c[1]}, {c[2]})"
         if self.op == "DENDRITIC_SUM":         return f"sum({c[0]})"
         if self.op == "DENDRITIC_MEAN":        return f"mean({c[0]})"
         if self.op == "DENDRITIC_L2_NORM":     return f"l2_norm({c[0]})"
@@ -914,6 +927,14 @@ def parse_symbolic_expression(
                     if len(args) != 3:
                         raise SyntaxError(f"'clamp(x, lo, hi)' 3 argüman bekler, {len(args)} verildi.")
                     return ASTNode("CLAMP", children=args)
+                if fn in ("select", "mux"):
+                    if len(args) != 3:
+                        raise SyntaxError(f"'{fn}(cond, val_true, val_false)' 3 argüman bekler, {len(args)} verildi.")
+                    return ASTNode("SELECT", children=args)
+                if fn == "fma":
+                    if len(args) != 3:
+                        raise SyntaxError(f"'fma(a, b, c)' 3 argüman bekler, {len(args)} verildi.")
+                    return ASTNode("FMA", children=args)
                 if fn == "sum":
                     if len(args) != 1:
                         raise SyntaxError(f"'sum()' 1 argüman bekler, {len(args)} verildi.")
@@ -995,7 +1016,7 @@ def parse_structured_sx(raw_text: str) -> SynaxIR:
     version = ver_match.group(1) if ver_match else "0.1"
 
     hdr_match = re.search(
-        r"\bkernel\s+([A-Za-z_]\w*)\s*\((.*?)\)\s*(?:->\s*([A-Za-z0-9_<>]+)\s*)?\{(.*)\}",
+        r"\bkernel\s+([A-Za-z_]\w*)\s*\((.*?)\)\s*(?:->\s*([A-Za-z0-9_<> ,+-]+?)\s*)?\{(.*)\}",
         text,
         re.S,
     )
@@ -1080,7 +1101,7 @@ def parse_structured_sx(raw_text: str) -> SynaxIR:
         if m_tgt:
             target_hint = m_tgt.group(1).lower()
             continue
-        m_let = re.match(r"^let\s+([A-Za-z_]\w*)\s*=\s*(.+)$", line)
+        m_let = re.match(r"^let\s+([A-Za-z_]\w*)\s*(?::\s*[A-Za-z0-9_<> ,+-]+)?\s*=\s*(.+)$", line)
         if m_let:
             var_name = m_let.group(1)
             rhs_expr = m_let.group(2)

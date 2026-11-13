@@ -1,8 +1,8 @@
 {
 	"name": "synax-lang",
 	"displayName": "SYNAX Code — Frugal Neuro-Symbolic AI & Autopoietic Compiler",
-	"description": "Official Frugal AI Omni-Agent, Owned SynaxLLM (2.5MB), Neuro-Symbolic Self-Evolution (IMMUNE 0-ULP + TYCON), 3D Video/Screen Agent, LSP, and SIMD/MCU compiler for SYNAX (.sx).",
-	"version": "0.9.0",
+	"description": "Official SYNAX v1.0.0 Language, Frugal AI Omni-Agent, Owned SynaxLLM (2.5MB), Neuro-Symbolic Self-Evolution (IMMUNE 0-ULP + TYCON), 3D Video/Screen Agent, LSP, and SIMD/MCU compiler for SYNAX (.sx).",
+	"version": "1.0.0",
 	"publisher": "synaxcode",
 	"author": {
 		"name": "Dr. Ömer Faruk Aydın",
@@ -101,6 +101,11 @@
 			{
 				"command": "synax.toggleDreamMode",
 				"title": "SYNAX Code: Boş Zaman Evrimi (Dream Mode) Başlat/Durdur",
+				"category": "SYNAX"
+			},
+			{
+				"command": "synax.runKernel",
+				"title": "SYNAX Code: Aktif Çekirdeği Çalıştır & Doğrula (0-ULP Run)",
 				"category": "SYNAX"
 			},
 			{

@@ -188,7 +188,8 @@ class TestSynaxLLMAndServer(unittest.TestCase):
 
     def test_10_model_import_does_not_eagerly_load_compiler(self) -> None:
         script = "import sys, synax; assert 'synaxc' not in sys.modules; assert 'torch' not in sys.modules; assert 'check' in dir(synax)"
-        result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, check=False)
+        env = {**os.environ, "PYTHONPATH": f"{ROOT / 'src'}:{ROOT}"}
+        result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, check=False, env=env)
         self.assertEqual(result.returncode, 0, result.stderr)
 
 

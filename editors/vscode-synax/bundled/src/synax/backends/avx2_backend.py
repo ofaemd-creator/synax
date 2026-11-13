@@ -27,7 +27,7 @@ AVX2_NATIVE_OPS = {
     "VAR", "CONST", "BIAS", "NEG",
     "ADD", "SUB", "MUL", "DIV",
     "POW2", "POW3", "SQRT", "ABS",
-    "RELU", "MIN", "MAX", "CLAMP",
+    "RELU", "MIN", "MAX", "CLAMP", "SELECT", "FMA",
     "EXP", "SIGMOID",
 }
 
@@ -141,6 +141,8 @@ class AVX2Backend:
         if node.op == "MIN":     return f"synax_avx2_min_ps({c[0]}, {c[1]})"
         if node.op == "MAX":     return f"synax_avx2_max_ps({c[0]}, {c[1]})"
         if node.op == "CLAMP":   return f"synax_avx2_min_ps(synax_avx2_max_ps({c[0]}, {c[1]}), {c[2]})"
+        if node.op == "SELECT":  return f"_mm256_blendv_ps({c[2]}, {c[1]}, _mm256_cmp_ps({c[0]}, _mm256_setzero_ps(), _CMP_GT_OQ))"
+        if node.op == "FMA":     return f"_mm256_add_ps(_mm256_mul_ps({c[0]}, {c[1]}), {c[2]})"
         if node.op == "EXP":     return f"synax_avx2_exp_ps({c[0]})"
         if node.op == "SIGMOID": return f"synax_avx2_sigmoid_ps({c[0]})"
         return c[0] if c else "_mm256_setzero_ps()"

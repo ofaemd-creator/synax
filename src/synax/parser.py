@@ -1011,6 +1011,10 @@ def _lower_expr_to_ast_node(
             return ASTNode(fn.upper(), children=child_irs)
         if fn == "clamp":
             return ASTNode("CLAMP", children=child_irs)
+        if fn in ("select", "mux"):
+            return ASTNode("SELECT", children=child_irs)
+        if fn == "fma":
+            return ASTNode("FMA", children=child_irs)
         if fn == "sum":
             return ASTNode("DENDRITIC_SUM", children=child_irs)
         if fn == "mean":

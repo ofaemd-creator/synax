@@ -37,6 +37,11 @@ function activate(context) {
                         const kName = mKernel[1];
                         const range = new vscode.Range(i, 0, i, line.length);
                         lenses.push(new vscode.CodeLens(range, {
+                            title: `▶️ SYNAX Çalıştır & Doğrula (0-ULP Run)`,
+                            command: 'synax.runKernel',
+                            arguments: [document.uri.toString(), kName, i]
+                        }));
+                        lenses.push(new vscode.CodeLens(range, {
                             title: `⚡ SYNAX Evrimi Yarıştır: [ARM64 NEON / AVX2] [Arena]`,
                             command: 'synax.evolveKernel',
                             arguments: [document.uri.toString(), kName, i]
@@ -92,8 +97,12 @@ function activate(context) {
 
                     // builtins
                     const funcs = [
+                        ['select', 'select(cond, val_true, val_false) - Dallanmasız Koşullu Seçici (Branchless Mux)', 'select(${1:cond}, ${2:val_true}, ${3:val_false})'],
+                        ['fma', 'fma(a, b, c) - Birleşik Çarpma-Toplama (a * b + c)', 'fma(${1:a}, ${2:b}, ${3:c})'],
                         ['clamp', 'clamp(x, lo, hi) - Akson Eşikleme', 'clamp(${1:x}, ${2:0.0}, ${3:300.0})'],
                         ['relu', 'relu(x) - Doğrultucu Eşik Fonksiyonu', 'relu(${1:x})'],
+                        ['sigmoid', 'sigmoid(x) - Lojistik Nöral Kapı', 'sigmoid(${1:x})'],
+                        ['tanh', 'tanh(x) - Hiperbolik Tanjant Aktivasyonu', 'tanh(${1:x})'],
                         ['sum', 'sum(x) - Dendritik Uzaysal & Zamansal Toplama', 'sum(${1:x})'],
                         ['mean', 'mean(x) - Dendritik Ortalama Potansiyel', 'mean(${1:x})'],
                         ['l2_norm', 'l2_norm(x) - Dendritik Sinyal Enerjisi (L2 Norm)', 'l2_norm(${1:x})'],
@@ -199,6 +208,16 @@ function activate(context) {
             if (!formula) return;
 
             provider.teachSkillDirect(concept, formula);
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('synax.runKernel', async () => {
+            vscode.commands.executeCommand('workbench.view.extension.synax-sidebar');
+            provider.switchTab('chat');
+            const editor = vscode.window.activeTextEditor;
+            const code = editor ? editor.document.getText() : '';
+            await provider._handleUserMessage(code ? `/run ${code}` : '/run');
         })
     );
 

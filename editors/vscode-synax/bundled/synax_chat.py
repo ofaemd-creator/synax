@@ -536,6 +536,60 @@ kernel auto_generated_kernel(
             )
             return ChatResponse(text=reply, code=kernel_code, language="synax", action="code_generated")
 
+        # ── 4.8. DOĞRUDAN SYNAX ÇALIŞTIRMA & CANLI TENZÖR YÜRÜTME (/run veya çalıştır) ──
+        m_run = re.match(r"^(?:/run|/calistir|/çalıştır|çalıştır|calistir|run)\s*[:=]?\s*(.*)", text, re.I | re.S)
+        if m_run:
+            arg_src = m_run.group(1).strip()
+            editor_src = (context or {}).get("editorText", "").strip()
+            default_showcase = (
+                "synax 1.0\n\n"
+                "kernel synax_v1_showcase(\n"
+                "  map_mmhg: tensor<f32>,\n"
+                "  icp_mmhg: tensor<f32>\n"
+                ") -> tensor<f32> {\n"
+                "  intent \"SYNAX 1.0 Multi-Let, Branchless Select & Sigmoid Autoregulation\"\n"
+                "  require shape(map_mmhg) == shape(icp_mmhg)\n"
+                "  safety {\n"
+                "    nonfinite = heal(0.0)\n"
+                "    range_check = clamp(0.0, 250.0)\n"
+                "  }\n"
+                "  let cpp = relu(map_mmhg - icp_mmhg)\n"
+                "  let gate = sigmoid((cpp - 50.0) * 0.1)\n"
+                "  let autoreg = select(cpp - 40.0, fma(cpp, gate, 5.0), cpp * 0.5)\n"
+                "  return autoreg\n"
+                "  optimize latency\n"
+                "  target auto\n"
+                "}\n"
+            )
+            src_to_run = arg_src if arg_src else (editor_src if editor_src else default_showcase)
+            try:
+                run_info = synax.run_sx(src_to_run)
+                p0, p1 = run_info["param_names"]
+                reply = (
+                    f"▶️ **SYNAX v1.0.0 Canlı Çekirdek Yürütme & 0-ULP Doğrulama Raporu**\n\n"
+                    f"* **Çekirdek:** `{run_info['kernel_name']}` (`synax {run_info['version']}` | Dönüş: `{run_info['return_type']}` | Hash: `#{run_info['ir_hash']}`)\n"
+                    f"* **Sembolik İfade:** `{run_info['formula']}`\n"
+                    f"* **Donanım & Hız:** 🏆 **`{run_info['winner_backend']}`** (**{run_info['median_us']} µs** | Clang -O3'e göre **{run_info['speedup']}x**)\n"
+                    f"* **IMMUNE Kalkanı:** `{run_info['healed_count']}` adet `NaN/Inf` sensör hatası donanımda otomatik onarıldı.\n\n"
+                    f"**📊 Canlı Giriş / Çıkış Tenzörleri (IEEE-754 binary32):**\n"
+                    f"* **`{p0}`:** `{run_info['inputs_a']}`\n"
+                    f"* **`{p1}`:** `{run_info['inputs_b']}`\n"
+                    f"* **`Çıktı`:** **`{run_info['outputs']}`**\n\n"
+                    f"**🔩 Üretilen Çoklu Silikon Kodları:**\n"
+                    f"* `C11 Scalar` : `{run_info['c_scalar']}`\n"
+                    f"* `ARM64 NEON` : `{run_info['c_neon']}`\n"
+                    f"* `Q16.16 MCU` : `{run_info['c_q16']}`"
+                )
+                return ChatResponse(
+                    text=reply,
+                    code=src_to_run if not os.path.exists(src_to_run) else None,
+                    language="synax",
+                    action="kernel_executed",
+                    metadata=run_info,
+                )
+            except Exception as e:
+                return ChatResponse(text=f"⚠️ **Çalıştırma Hatası:** {str(e)}", action="run_error")
+
         # ── 5. DERLEME VEYA DOĞRULAMA TALEBİ ──
         if "derle" in lower or "compile" in lower:
             # Editörden kod veya dosya yolu var mı?

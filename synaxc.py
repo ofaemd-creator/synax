@@ -154,6 +154,10 @@ static inline float synax_clampf(float x, float lo, float hi) {
     return synax_minf(synax_maxf(x, lo), hi);
 }
 
+static inline float synax_selectf(float cond, float val_true, float val_false) {
+    return (cond > 0.0f) ? val_true : val_false;
+}
+
 /* Dendritic Summation & Reduction Primitives (Neumaier Compensated Accumulation) */
 static inline float synax_dendritic_sum(const float* __restrict src, size_t n) {
     if (n == 0) return 0.0f;
