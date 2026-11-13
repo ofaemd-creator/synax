@@ -230,6 +230,24 @@ kernel {slug}(
             except Exception as e:
                 return ChatResponse(text=f"⚠️ **Otonom Görev Hatası:** {str(e)}", action="error")
 
+        # ── 0.7. CANLI KARDİYAK VF & ELEKTROT KOPMASI TELEMETRİSİ (/vf veya /ekg) ──
+        if lower.startswith("/vf") or lower.startswith("/ekg") or any(
+            w in lower for w in ("vf analizi", "ekg analizi", "fibrilasyon analizi", "ventriküler fibrilasyon")
+        ):
+            from synax.frugal_engine import execute_live_vf_telemetry
+
+            try:
+                vf_res = execute_live_vf_telemetry()
+                return ChatResponse(
+                    text=vf_res["markdown"],
+                    code=vf_res["code"],
+                    language="synax",
+                    action="vf_telemetry",
+                    metadata=vf_res,
+                )
+            except Exception as e:
+                return ChatResponse(text=f"⚠️ **VF Telemetri Hatası:** {str(e)}", action="error")
+
         # ── 1. AUTOPOIESIS / BECERİ EDİNME ──
         # Örnek kalıplar:
         # "kendine şu beceriyi edin: X = Y"

@@ -138,6 +138,13 @@ class TestSynaxChatAndAutopoiesis(unittest.TestCase):
         self.assertIn("Q16.16", resp_omni.text)
         self.assertIsNotNone(resp_omni.code)
 
+    def test_10_live_vf_telemetry(self) -> None:
+        """Agent executes live 250Hz Ventricular Fibrillation (VF) signal conditioning and IMMUNE healing."""
+        resp_vf = self.agent.process_message("/vf")
+        self.assertEqual(resp_vf.action, "vf_telemetry")
+        self.assertIn("vf_bandpass_sanitizer.sx", resp_vf.text)
+        self.assertEqual(resp_vf.metadata.get("healed_count"), 6)
+
 
 if __name__ == "__main__":
     unittest.main()
