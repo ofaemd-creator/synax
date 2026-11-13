@@ -1,8 +1,8 @@
 {
 	"name": "synax-lang",
-	"displayName": "SYNAX Code — AI Pair Programmer & Autopoietic Compiler",
-	"description": "Official AI Chat Assistant, Neuro-Symbolic Self-Evolution (IMMUNE + TYCON), Language Server Protocol (LSP), and SIMD compiler for SYNAX (.sx).",
-	"version": "0.8.0",
+	"displayName": "SYNAX Code — Frugal Neuro-Symbolic AI & Autopoietic Compiler",
+	"description": "Official Frugal AI Omni-Agent, Owned SynaxLLM (2.5MB), Neuro-Symbolic Self-Evolution (IMMUNE 0-ULP + TYCON), 3D Video/Screen Agent, LSP, and SIMD/MCU compiler for SYNAX (.sx).",
+	"version": "0.9.0",
 	"publisher": "synaxcode",
 	"author": {
 		"name": "Dr. Ömer Faruk Aydın",
@@ -205,8 +205,8 @@
 		}
 	},
 	"__metadata": {
-		"installedTimestamp": 1793952063767,
+		"installedTimestamp": 1794053080143,
 		"targetPlatform": "undefined",
-		"size": 726586
+		"size": 1674388
 	}
 }

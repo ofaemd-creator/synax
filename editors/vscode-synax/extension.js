@@ -321,7 +321,7 @@ class SynaxChatViewProvider {
         }
 
         const configPython = vscode.workspace.getConfiguration('python').get('defaultInterpreterPath');
-        if (configPython && typeof configPython === 'string' && fs.existsSync(configPython)) {
+        if (configPython && typeof configPython === 'string' && !configPython.includes('.venv-chat') && fs.existsSync(configPython)) {
             return configPython;
         }
 
