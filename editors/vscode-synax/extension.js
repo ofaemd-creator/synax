@@ -607,9 +607,36 @@ class SynaxChatViewProvider {
     }
 
     _getHtmlForWebview() {
-        const htmlPath = path.join(this._extensionUri.fsPath, 'media', 'index.html');
-        if (fs.existsSync(htmlPath)) {
-            return fs.readFileSync(htmlPath, 'utf-8');
+        const candidates = [
+            path.join(this._extensionUri.fsPath, 'media', 'index.html')
+        ];
+
+        // If VS Code upgraded the extension in-place and removed the old version directory
+        // before window reload, automatically discover the newest installed synax-lang-* folder.
+        try {
+            const extRoot = path.dirname(this._extensionUri.fsPath);
+            if (fs.existsSync(extRoot)) {
+                const dirs = fs.readdirSync(extRoot)
+                    .filter(d => d.startsWith('synaxcode.synax-lang-'))
+                    .sort()
+                    .reverse();
+                for (const d of dirs) {
+                    candidates.push(path.join(extRoot, d, 'media', 'index.html'));
+                }
+            }
+        } catch (e) {}
+
+        candidates.push(
+            '/Users/o.farukaydin/.gemini/antigravity/scratch/synax/editors/vscode-synax/media/index.html',
+            '/Users/o.farukaydin/Desktop/AI modeller/SYNAX/proje/editors/vscode-synax/media/index.html'
+        );
+
+        for (const htmlPath of candidates) {
+            try {
+                if (fs.existsSync(htmlPath)) {
+                    return fs.readFileSync(htmlPath, 'utf-8');
+                }
+            } catch (e) {}
         }
         return '<html><body><p>SYNAX UI yüklenemedi: media/index.html bulunamadı.</p></body></html>';
     }
