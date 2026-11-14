@@ -292,6 +292,7 @@
     </div>
     <div style="display:flex; align-items:center; gap:6px;">
       <div id="status-badge" class="badge"><div id="status-dot" class="dot"></div><span id="status-text">Bağlanıyor...</span></div>
+      <button class="hdr-btn hdr-btn-reconnect" onclick="vscode.postMessage({type:'openStudio'})" title="Tam Ekran SYNAX Studio IDE Uygulamasını Aç">🖥️ Studio Uygulaması</button>
       <button id="reconnect-btn" class="hdr-btn hdr-btn-reconnect" onclick="reconnect()" title="SYNAX bağlantısını ve motoru yenile">🔄 Yeniden Bağlan</button>
       <button id="disconnect-btn" class="hdr-btn hdr-btn-disconnect" onclick="disconnectBackend()" title="SYNAX arka uç bağlantısını kes">⏹️ Bağlantıyı Kes</button>
     </div>
@@ -306,22 +307,23 @@
   <!-- TAB 1: Chat -->
   <div id="tab-chat" class="tab-content active">
     <div id="pills">
+      <button type="button" class="pill" onclick="vscode.postMessage({type:'openStudio'})">🖥️ Studio Uygulaması</button>
       <button type="button" class="pill" onclick="sendPrompt('/run')">▶️ Çalıştır (.sx)</button>
+      <button type="button" class="pill" onclick="sendPrompt('/egraph')">🔬 E-Graph &amp; Formel Kanıt</button>
       <button type="button" class="pill" onclick="sendPrompt('/agent examples/synax_v1_showcase.sx dosyasını sx_check ile kontrol et')">🤖 Kodlama Ajanı (/agent)</button>
-      <button type="button" class="pill" onclick="sendPrompt('/pipeline kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al')">🔬 7-Aşama Derleyici</button>
+      <button type="button" class="pill" onclick="sendPrompt('/ecosystem')">🔌 Claude / Codex / Antigravity</button>
+      <button type="button" class="pill" onclick="sendPrompt('/pipeline kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al')">⚡ 7-Aşama Derleyici</button>
       <button type="button" class="pill" onclick="sendPrompt('/vf')">🫀 VF / EKG Testi</button>
       <button type="button" class="pill" onclick="sendPrompt('/enerji')">📊 Sistem &amp; Bellek</button>
-      <button type="button" class="pill" onclick="sendPrompt('/video Kısa Uzay & Yörünge Simülasyonu')">🌌 Simülasyon Videosu</button>
-      <button type="button" class="pill" onclick="sendPrompt('/ekran')">🖥️ Çalışma Alanı</button>
     </div>
 
     <div id="messages">
       <div class="msg assistant">
-        <strong>🧬 SYNAX Code v1.0.0 — Silikon Derleyicisi &amp; Otonom Kodlama Ajanı</strong><br><br>
-        <strong>🟢 Derleyici &amp; Dil (`.sx` v1.0):</strong> <code>select / fma / multi-let / dendritic</code> · <code>C11 / ARM64 NEON / AVX2 / LLVM IR / Q16.16 MCU</code> · <code>19/19 IEEE-754 Çift-Referans Testi</code><br>
-        <strong>🤖 Otonom Kodlama Ajanı (`src/synax/agent.py`):</strong> Dosya okuma, arama (`grep`), düzenleme, terminal (`bash`) ve `.sx` doğrulama (`sx_check`, `sx_run`) araçlarını çok adımlı döngüde çalıştırır (`./synax code` veya `/agent`).<br><br>
-        <code style="display:block; padding:6px 8px; background:rgba(0,0,0,0.35); border-radius:4px; color:#10b981; font-size:11px;">.sx Kaynak &rarr; Typed AST &rarr; 19-Küme Çift Referans &rarr; C11 / SIMD / Q16.16 MCU &rarr; Çalıştır</code><br>
-        Yukarıdaki <strong>▶️ Çalıştır (.sx)</strong>, <strong>🤖 Kodlama Ajanı (/agent)</strong> veya <strong>🔬 7-Aşama Derleyici</strong> butonlarıyla test edebilirsiniz.
+        <strong>🧬 SYNAX Studio IDE &amp; Silikon Derleyicisi (v1.0.0)</strong><br><br>
+        <strong>🟢 Derleyici &amp; 2030+ Formal Mimari:</strong> <code>E-Graph Equality Saturation (src/synax/egraph.py)</code> · <code>Formal Interval Prover (src/synax/formal_prover.py)</code> · <code>C11 / ARM64 NEON / AVX2 / LLVM IR / Q16.16 MCU</code> · <code>19/19 IEEE-754 0-ULP Testi</code><br>
+        <strong>🤖 Otonom Kodlama Ajanı &amp; Ekosistem:</strong> <code>src/synax/agent.py</code> + <code>Claude Code</code>, <code>OpenAI Codex</code>, <code>Google Antigravity</code>, <code>Cursor</code> ve <code>OpenCode</code> eklentileri.<br><br>
+        <code style="display:block; padding:6px 8px; background:rgba(0,0,0,0.35); border-radius:4px; color:#10b981; font-size:11px;">.sx &rarr; E-Graph Saturation &rarr; Formal Interval Proof &rarr; 19-Suite 0-ULP &rarr; SIMD / MCU</code><br>
+        Tam ekran uygulama için yukarıdaki <strong>🖥️ Studio Uygulaması</strong> butonuna tıklayabilir veya <strong>🔬 E-Graph &amp; Formel Kanıt</strong> komutunu çalıştırabilirsiniz.
       </div>
     </div>
 

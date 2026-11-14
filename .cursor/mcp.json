@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "synax": {
+      "command": "/Users/o.farukaydin/.local/bin/python3",
+      "args": [
+        "/Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_cli.py",
+        "mcp"
+      ],
+      "env": {
+        "PYTHONPATH": "/Users/o.farukaydin/.gemini/antigravity/scratch/synax:/Users/o.farukaydin/.gemini/antigravity/scratch/synax/src"
+      }
+    }
+  }
+}

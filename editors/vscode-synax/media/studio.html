@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNAX Studio IDE v1.0.0 — E-Graph, Formal Prover &amp; Silicon Workbench</title>
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: #0f172a;
+      --card: #131c31;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --emerald: #10b981;
+      --purple: #a855f7;
+      --amber: #f59e0b;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      height: 54px;
+      background: #0b1120;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: -0.3px;
+    }
+    .tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      font-weight: 600;
+    }
+    .tag-emerald {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 7px 13px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: #38bdf8;
+      color: #fff;
+    }
+    .btn-primary:hover { color: #fff; filter: brightness(1.1); }
+    .btn-emerald {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: rgba(16, 185, 129, 0.45);
+      color: #34d399;
+    }
+    select {
+      background: #0f172a;
+      color: var(--text);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+    .workbench {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 42% 58%;
+      grid-template-rows: 56% 44%;
+      gap: 1px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .pane {
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .pane-header {
+      padding: 9px 14px;
+      background: #0b1324;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #cbd5e1;
+    }
+    .pane-body {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    textarea#sx-editor {
+      width: 100%;
+      flex: 1;
+      background: #050811;
+      color: #e2e8f0;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 12px;
+      font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      line-height: 1.55;
+      resize: none;
+      outline: none;
+    }
+    textarea#sx-editor:focus { border-color: var(--accent); }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .stat-label {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .stat-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: "SF Mono", Menlo, monospace;
+    }
+    pre.code-box {
+      margin: 0;
+      padding: 10px;
+      background: #050811;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 11.5px;
+      color: #38bdf8;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .tabs {
+      display: flex;
+      gap: 6px;
+    }
+    .tab {
+      padding: 4px 9px;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      background: #1e293b;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+    .tab.active {
+      background: rgba(56, 189, 248, 0.18);
+      color: var(--accent);
+      border-color: rgba(56, 189, 248, 0.4);
+      font-weight: 600;
+    }
+    .agent-log {
+      flex: 1;
+      background: #050811;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .agent-bar {
+      display: flex;
+      gap: 8px;
+    }
+    .agent-bar input[type="text"] {
+      flex: 1;
+      background: #050811;
+      color: var(--text);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span>🧬 SYNAX Studio IDE</span>
+      <span class="tag">v1.0.0 Native App</span>
+      <span class="tag tag-emerald" id="hw-badge">ARM64 NEON · 0-ULP</span>
+    </div>
+    <div class="toolbar">
+      <select id="preset-select" onchange="loadPreset()">
+        <option value="showcase">Örnek 1: Serebral Otoregülasyon (select + fma)</option>
+        <option value="egraph_demo">Örnek 2: E-Graph Cebirsel Füzyon ((a*b)+b + x*x)</option>
+        <option value="vf_energy">Örnek 3: Kardiyak VF Spektral Enerji (250 Hz)</option>
+      </select>
+      <button class="btn btn-primary" onclick="runStudioCompile()">▶️ Derle, E-Graph &amp; Formel Kanıtla</button>
+      <button class="btn btn-emerald" onclick="installEcosystem()">🔌 Claude / Codex / Antigravity Eklentilerini Kur</button>
+    </div>
+  </header>
+
+  <div class="workbench">
+    <!-- PANE 1: .sx Kernel Editor -->
+    <div class="pane">
+      <div class="pane-header">
+        <span>📝 Kanonik SYNAX 1.0 Çekirdek Editörü (`.sx`)</span>
+        <span style="color:var(--emerald); font-size:11px;" id="compile-status">Hazır</span>
+      </div>
+      <div class="pane-body">
+        <textarea id="sx-editor" spellcheck="false">synax 1.0
+
+kernel synax_v1_showcase(
+  map_mmhg: tensor<f32>,
+  icp_mmhg: tensor<f32>
+) -> tensor<f32> {
+  intent "SYNAX 1.0 Multi-Let, Branchless Select & Sigmoid Autoregulation"
+
+  require shape(map_mmhg) == shape(icp_mmhg)
+
+  safety {
+    nonfinite = heal(0.0)
+    range_check = clamp(0.0, 250.0)
+  }
+
+  let cpp = relu(map_mmhg - icp_mmhg)
+  let gate = sigmoid((cpp - 50.0) * 0.1)
+  let autoreg = select(cpp - 40.0, fma(cpp, gate, 5.0), cpp * 0.5)
+  return autoreg
+
+  optimize latency
+  target auto
+}</textarea>
+      </div>
+    </div>
+
+    <!-- PANE 2: E-Graph Equality Saturation & Formal Interval Prover -->
+    <div class="pane">
+      <div class="pane-header">
+        <span>🔬 E-Graph Eşitlik Doygunluğu &amp; Formel Aralık Kanıtlayıcı (2030+ Compiler Tech)</span>
+        <span class="tag" id="proof-badge">Formel Kanıt Bekleniyor</span>
+      </div>
+      <div class="pane-body">
+        <div class="grid-2">
+          <div class="stat-card">
+            <div class="stat-label">E-Graph Doygunluk (E-Classes / E-Nodes)</div>
+            <div class="stat-val" id="eg-stats">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Donanım Çevrim Maliyeti (Önce &rarr; Sonra)</div>
+            <div class="stat-val" id="eg-cost">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Formel Çıktı Aralığı [Min, Max]</div>
+            <div class="stat-val" id="pf-bounds">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Sıfıra Bölme / Taşma / NaN Garantisi</div>
+            <div class="stat-val" id="pf-safety">—</div>
+          </div>
+        </div>
+        <div class="stat-label" style="margin-top:4px;">Uygulanan E-Graph Denklik Kuralları &amp; Formel Sertifika:</div>
+        <pre class="code-box" id="eg-details">Derleme butonuna tıkladığınızda E-Graph eşdeğerlik sınıfları ve formel aralık kanıtı burada gösterilir.</pre>
+      </div>
+    </div>
+
+    <!-- PANE 3: Multi-Silicon Codegen & Live Tensor Waveform -->
+    <div class="pane">
+      <div class="pane-header">
+        <span>🔩 Çoklu Silikon Hedef Kodu &amp; 19-Küme 0-ULP Çıktısı</span>
+        <div class="tabs">
+          <span class="tab active" onclick="selectBackendTab('arm64_neon', this)">ARM64 NEON</span>
+          <span class="tab" onclick="selectBackendTab('c_scalar', this)">C11 Scalar</span>
+          <span class="tab" onclick="selectBackendTab('q16_mcu', this)">Q16.16 MCU</span>
+          <span class="tab" onclick="selectBackendTab('x86_avx2', this)">x86 AVX2</span>
+          <span class="tab" onclick="selectBackendTab('llvm_ir', this)">LLVM IR</span>
+        </div>
+      </div>
+      <div class="pane-body">
+        <pre class="code-box" id="backend-code" style="flex:1;">// Silikon çıktısı burada görüntülenecek...</pre>
+        <div class="stat-card">
+          <div class="stat-label">Canlı Tenzör Çıktısı (19/19 IEEE-754 0-ULP Doğrulandı)</div>
+          <div class="stat-val" id="tensor-outputs" style="font-size:12px; color:#34d399;">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE 4: Autonomous Coding Agent & Ecosystem Console -->
+    <div class="pane">
+      <div class="pane-header">
+        <span>🤖 Otonom Kodlama Ajanı (`src/synax/agent.py`) &amp; Ekosistem Konsolu</span>
+        <label style="font-size:11px; font-weight:normal; display:flex; align-items:center; gap:4px;">
+          <input type="checkbox" id="agent-allow-writes" /> Yazma / Komut İzni (`--yes`)
+        </label>
+      </div>
+      <div class="pane-body">
+        <div class="agent-log" id="agent-log">🤖 SYNAX Code Otonom Ajanı hazır. Çalışma alanındaki dosyaları incelemek, `.sx` çekirdeklerini doğrulamak veya kod düzenlemek için aşağıdan görev verin.</div>
+        <div class="agent-bar">
+          <input type="text" id="agent-input" placeholder="Örn: examples/ klasöründeki .sx dosyalarını listele ve synax_v1_showcase.sx dosyasını kontrol et" onkeydown="if(event.key==='Enter') runAgentTask()" />
+          <button class="btn btn-primary" onclick="runAgentTask()">Gönder</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const vscodeApi = (typeof acquireVsCodeApi === 'function') ? acquireVsCodeApi() : null;
+    let lastBackends = {};
+    let currentBackendKey = 'arm64_neon';
+
+    const PRESETS = {
+      showcase: `synax 1.0\n\nkernel synax_v1_showcase(\n  map_mmhg: tensor<f32>,\n  icp_mmhg: tensor<f32>\n) -> tensor<f32> {\n  intent "SYNAX 1.0 Multi-Let, Branchless Select & Sigmoid Autoregulation"\n\n  require shape(map_mmhg) == shape(icp_mmhg)\n\n  safety {\n    nonfinite = heal(0.0)\n    range_check = clamp(0.0, 250.0)\n  }\n\n  let cpp = relu(map_mmhg - icp_mmhg)\n  let gate = sigmoid((cpp - 50.0) * 0.1)\n  let autoreg = select(cpp - 40.0, fma(cpp, gate, 5.0), cpp * 0.5)\n  return autoreg\n\n  optimize latency\n  target auto\n}`,
+      egraph_demo: `synax 1.0\n\nkernel egraph_fusion_demo(\n  a: tensor<f32>,\n  b: tensor<f32>\n) -> tensor<f32> {\n  intent "E-Graph Equality Saturation: (a*b + b) -> fma(a,b,b), (d*d) -> pow2(d), relu(relu(x)) -> relu(x)"\n\n  safety {\n    nonfinite = heal(0.0)\n    range_check = clamp(-500.0, 500.0)\n  }\n\n  let d = relu(relu(a - b))\n  let sq = (d * d) / 2.0\n  let mac = (sq * 1.0) * b + b\n  return select(mac, mac, mac)\n}`,
+      vf_energy: `synax 1.0\n\nkernel cardiac_vf_energy(\n  ecg_mv: tensor<f32>,\n  baseline_mv: tensor<f32>\n) -> tensor<f32> {\n  intent "250 Hz Ventricular Fibrillation Spectral Energy with Lead-Off Shield"\n\n  safety {\n    nonfinite = heal(0.0)\n    range_check = clamp(0.0, 100.0)\n  }\n\n  let diff = ecg_mv - baseline_mv\n  let energy = fma(diff, diff, abs(diff) * 0.15)\n  return select(energy - 0.25, energy, 0.0)\n}`
+    };
+
+    function loadPreset() {
+      const k = document.getElementById('preset-select').value;
+      if (PRESETS[k]) {
+        document.getElementById('sx-editor').value = PRESETS[k];
+        runStudioCompile();
+      }
+    }
+
+    function selectBackendTab(key, el) {
+      currentBackendKey = key;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      if (el) el.classList.add('active');
+      document.getElementById('backend-code').textContent = lastBackends[key] || '// Henüz üretilmedi';
+    }
+
+    function renderStudioResult(data) {
+      if (!data || !data.ok) {
+        document.getElementById('compile-status').textContent = 'Hata: ' + (data?.error || 'Bilinmeyen');
+        return;
+      }
+      document.getElementById('compile-status').textContent = `✓ ${data.run.winner_backend} (${data.run.median_us} µs | ${data.run.speedup}x)`;
+      const eg = data.egraph;
+      document.getElementById('eg-stats').textContent = `${eg.eclasses} E-Class / ${eg.enodes} E-Node (${eg.iterations} tur)`;
+      document.getElementById('eg-cost').textContent = `${eg.cost_before} -> ${eg.cost_after} çevrim (-%${eg.cycle_reduction_pct})`;
+
+      const pf = data.proof;
+      document.getElementById('pf-bounds').textContent = `[${pf.final_output_bounds[0]}, ${pf.final_output_bounds[1]}]`;
+      document.getElementById('pf-safety').textContent = pf.all_verified
+        ? `✅ Kanıtlandı (#${pf.certificate_sha256.slice(0, 8)})`
+        : `⚠️ Uyarı (${pf.hazards.length})`;
+      document.getElementById('proof-badge').textContent = pf.all_verified ? '✅ Formel Kanıtlı' : '⚠️ İnceleme Gerekli';
+
+      const rw = eg.rewrites.length ? eg.rewrites.map(r => '  • ' + r).join('\n') : '  • İfade zaten minimal kanonik formda';
+      document.getElementById('eg-details').textContent =
+        `Başlangıç AST : ${eg.original_formula}\n` +
+        `E-Graph Optimum: ${eg.optimized_formula}\n` +
+        `Uygulanan Kurallar:\n${rw}\n\n` +
+        `Formel Sertifika SHA-256: #${pf.certificate_sha256} | Sıfıra Bölme Yok: ${pf.div_by_zero_free} | Taşma Yok: ${pf.overflow_free}`;
+
+      lastBackends = data.backends || {};
+      document.getElementById('backend-code').textContent = lastBackends[currentBackendKey] || '';
+      document.getElementById('tensor-outputs').textContent = JSON.stringify(data.run.outputs) + ` (Onarılan NaN/Inf: ${data.run.healed_count})`;
+    }
+
+    async function runStudioCompile() {
+      const code = document.getElementById('sx-editor').value;
+      document.getElementById('compile-status').textContent = 'Derleniyor ve kanıtlanıyor...';
+      if (vscodeApi) {
+        vscodeApi.postMessage({ type: 'studioCompile', code });
+        return;
+      }
+      try {
+        const r = await fetch('/api/compile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, target: 'neon' })
+        });
+        renderStudioResult(await r.json());
+      } catch (e) {
+        document.getElementById('compile-status').textContent = 'Bağlantı hatası: ' + e.message;
+      }
+    }
+
+    async function runAgentTask() {
+      const input = document.getElementById('agent-input');
+      const task = input.value.trim();
+      if (!task) return;
+      const allow_writes = document.getElementById('agent-allow-writes').checked;
+      const logEl = document.getElementById('agent-log');
+      logEl.textContent += `\n\n› Görev: ${task}\n⏳ Ajan çalışıyor...`;
+      input.value = '';
+
+      if (vscodeApi) {
+        vscodeApi.postMessage({ type: 'studioAgent', task, allow_writes });
+        return;
+      }
+      try {
+        const r = await fetch('/api/agent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task, allow_writes })
+        });
+        const d = await r.json();
+        const trace = (d.logs || []).join('\n');
+        logEl.textContent += `\n${trace}\n✅ Yanıt (${d.model || 'LLM'}):\n${d.reply || d.error}`;
+        logEl.scrollTop = logEl.scrollHeight;
+      } catch (e) {
+        logEl.textContent += `\n✗ Hata: ${e.message}`;
+      }
+    }
+
+    async function installEcosystem() {
+      const logEl = document.getElementById('agent-log');
+      if (vscodeApi) {
+        vscodeApi.postMessage({ type: 'studioEcosystem' });
+        return;
+      }
+      const r = await fetch('/api/ecosystem', { method: 'POST' });
+      const d = await r.json();
+      if (d.ok) {
+        const lines = d.integrations.map(i => `  ✓ ${i.platform}: ${i.path}`).join('\n');
+        logEl.textContent += `\n\n🔌 Evrensel AI Eklentileri Kuruldu (${d.installed_count} platform):\n${lines}`;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+    }
+
+    window.addEventListener('message', (ev) => {
+      const msg = ev.data;
+      if (msg.type === 'studioCompileResult') renderStudioResult(msg.data);
+      if (msg.type === 'studioAgentResult') {
+        const logEl = document.getElementById('agent-log');
+        const trace = (msg.data.logs || []).join('\n');
+        logEl.textContent += `\n${trace}\n✅ Yanıt (${msg.data.model || 'LLM'}):\n${msg.data.reply || msg.data.error}`;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      if (msg.type === 'studioEcosystemResult') {
+        const logEl = document.getElementById('agent-log');
+        const lines = (msg.data.integrations || []).map(i => `  ✓ ${i.platform}: ${i.path}`).join('\n');
+        logEl.textContent += `\n\n🔌 Evrensel AI Eklentileri Kuruldu:\n${lines}`;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(runStudioCompile, 250);
+    });
+  </script>
+</body>
+</html>

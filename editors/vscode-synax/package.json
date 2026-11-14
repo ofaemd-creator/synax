@@ -114,6 +114,11 @@
 				"category": "SYNAX"
 			},
 			{
+				"command": "synax.openStudio",
+				"title": "SYNAX Studio IDE: Tam Ekran Uygulamayı Aç (E-Graph + Formel Kanıtlayıcı)",
+				"category": "SYNAX"
+			},
+			{
 				"command": "synax.openAgent",
 				"title": "SYNAX Code: Otonom Kodlama Ajanını Aç (Terminal)",
 				"category": "SYNAX"

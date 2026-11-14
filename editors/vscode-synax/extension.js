@@ -244,13 +244,25 @@ function activate(context) {
         vscode.commands.registerCommand('synax.openAgent', () => {
             const { cwd } = provider._findSynaxPath();
             const folder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || cwd;
-            // Runs through the user's shell so API keys exported in ~/.zshrc are visible to the agent.
             const term = vscode.window.createTerminal({
                 name: 'SYNAX Code Agent', cwd: folder,
                 env: { PYTHONPATH: [cwd, path.join(cwd, 'src')].join(path.delimiter) }
             });
             term.show();
             term.sendText(`"${provider._findPythonBin()}" -m synax.agent`);
+        })
+    );
+
+    const studioStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+    studioStatusBar.text = '$(rocket) SYNAX Studio IDE';
+    studioStatusBar.tooltip = 'Tam Ekran SYNAX Studio Uygulamasını Aç (E-Graph, Formel Kanıtlayıcı, Silikon Derleyici & Ajan)';
+    studioStatusBar.command = 'synax.openStudio';
+    studioStatusBar.show();
+    context.subscriptions.push(studioStatusBar);
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('synax.openStudio', () => {
+            provider.openFullStudioPanel();
         })
     );
 
@@ -330,10 +342,62 @@ class SynaxChatViewProvider {
                 case 'disconnect':
                     this._disconnectBackend();
                     break;
+                case 'openStudio':
+                    this.openFullStudioPanel();
+                    break;
             }
         });
 
         this._ensureBackend();
+    }
+
+    openFullStudioPanel() {
+        const panel = vscode.window.createWebviewPanel(
+            'synaxStudioApp',
+            '🧬 SYNAX Studio IDE (v1.0.0)',
+            vscode.ViewColumn.One,
+            { enableScripts: true, retainContextWhenHidden: true }
+        );
+        const studioPath = path.join(this._extensionUri.fsPath, 'media', 'studio.html');
+        if (fs.existsSync(studioPath)) {
+            panel.webview.html = fs.readFileSync(studioPath, 'utf8');
+        }
+        const { cwd } = this._findSynaxPath();
+        const pyBin = this._findPythonBin();
+        const env = { ...process.env, PYTHONPATH: [cwd, path.join(cwd, 'src')].join(path.delimiter) };
+
+        panel.webview.onDidReceiveMessage((msg) => {
+            if (msg.type === 'studioCompile') {
+                const script = `import json, sys; from synax.studio_app import evaluate_studio_payload; print(json.dumps(evaluate_studio_payload(sys.stdin.read())))`;
+                const p = cp.spawn(pyBin, ['-c', script], { cwd, env });
+                let out = '';
+                p.stdout.on('data', d => out += d.toString());
+                p.on('close', () => {
+                    try { panel.webview.postMessage({ type: 'studioCompileResult', data: JSON.parse(out.trim()) }); }
+                    catch (e) { panel.webview.postMessage({ type: 'studioCompileResult', data: { ok: false, error: out || e.message } }); }
+                });
+                p.stdin.write(msg.code || '');
+                p.stdin.end();
+            } else if (msg.type === 'studioEcosystem') {
+                const script = `import json; from synax.ecosystem import install_all_ecosystem_integrations; print(json.dumps(install_all_ecosystem_integrations()))`;
+                cp.execFile(pyBin, ['-c', script], { cwd, env }, (err, stdout) => {
+                    try { panel.webview.postMessage({ type: 'studioEcosystemResult', data: JSON.parse(stdout.trim()) }); }
+                    catch (e) { panel.webview.postMessage({ type: 'studioEcosystemResult', data: { ok: false, error: err?.message } }); }
+                });
+            } else if (msg.type === 'studioAgent') {
+                const logs = [];
+                const script = `import json, sys; from pathlib import Path; from synax.agent import Agent, Workspace, http_chat, resolve_backend; req=json.loads(sys.stdin.read()); b,m,k=resolve_backend(); logs=[]; ag=Agent(Workspace(Path('.')), http_chat(b,m,k), approve=(lambda *_: bool(req.get('allow_writes'))), log=lambda s: logs.append(str(s)), max_steps=15); r=ag.run(req['task']); print(json.dumps({'ok':True,'model':m,'logs':logs,'reply':r}))`;
+                const p = cp.spawn(pyBin, ['-c', script], { cwd, env });
+                let out = '';
+                p.stdout.on('data', d => out += d.toString());
+                p.on('close', () => {
+                    try { panel.webview.postMessage({ type: 'studioAgentResult', data: JSON.parse(out.trim().split('\\n').pop()) }); }
+                    catch (e) { panel.webview.postMessage({ type: 'studioAgentResult', data: { ok: false, error: out || e.message, logs } }); }
+                });
+                p.stdin.write(JSON.stringify({ task: msg.task, allow_writes: msg.allow_writes }));
+                p.stdin.end();
+            }
+        });
     }
 
     switchTab(tabName) {

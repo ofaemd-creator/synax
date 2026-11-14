@@ -108,14 +108,38 @@ kernel branchless_mux_test(
         self.assertIn("synax_v1_showcase", resp.text)
         self.assertIn("vbslq_f32", resp.text)
 
-    def test_04_agent_workspace_sx_check_and_run(self) -> None:
+    def test_04_agent_egraph_prover_and_ecosystem(self) -> None:
         from synax.agent import Workspace
+        from synax.ecosystem import install_all_ecosystem_integrations
+        from synax.egraph import saturate_and_extract
+        from synax.formal_prover import prove_kernel_safety
+        from synax.studio_app import evaluate_studio_payload
+        from synax_ir import parse_symbolic_expression
 
         ws = Workspace(ROOT_DIR)
         chk_out = ws.sx_check("examples/synax_v1_showcase.sx")
         self.assertIn("synax_v1_showcase", chk_out)
         run_out = ws.sx_run("examples/synax_v1_showcase.sx")
         self.assertIn("synax_v1_showcase", run_out)
+
+        # E-Graph equality saturation: (a * b) + b -> fma(a, b, b), relu(relu(a)) -> relu(a)
+        expr = parse_symbolic_expression("relu(relu(a)) * b + b")
+        eg = saturate_and_extract(expr, target="neon")
+        self.assertLess(eg.cost_after, eg.cost_before)
+        self.assertEqual(eg.optimized_ast.op, "FMA")
+
+        # Formal Interval Prover
+        showcase_ir = synax.check_sx(str(ROOT_DIR / "examples" / "synax_v1_showcase.sx"))
+        cert = prove_kernel_safety(showcase_ir, (-500.0, 500.0), (-500.0, 500.0))
+        self.assertTrue(cert.all_verified)
+        self.assertEqual(cert.final_output_bounds.lo, 0.0)
+        self.assertLessEqual(cert.final_output_bounds.hi, 250.0)
+
+        # Studio payload & Ecosystem installer
+        studio_res = evaluate_studio_payload((ROOT_DIR / "examples" / "synax_v1_showcase.sx").read_text(encoding="utf-8"))
+        self.assertTrue(studio_res["ok"])
+        eco_res = install_all_ecosystem_integrations(ROOT_DIR)
+        self.assertGreaterEqual(eco_res["installed_count"], 5)
 
 
 if __name__ == "__main__":

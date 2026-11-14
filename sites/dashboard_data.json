@@ -1,62 +1,62 @@
 {
-  "generated_at": "2026-11-05T18:29:24+00:00",
+  "generated_at": "2026-11-14T23:42:01+00:00",
   "codebase": {
-    "total_lines_of_code": 24664,
-    "total_source_files": 89,
+    "total_lines_of_code": 53959,
+    "total_source_files": 219,
     "language_breakdown": [
       {
         "language": "Python",
-        "files": 51,
-        "lines": 15578,
-        "percentage": 63.2
+        "files": 160,
+        "lines": 42901,
+        "percentage": 79.5
       },
       {
         "language": "Web / HTML",
-        "files": 11,
-        "lines": 5484,
-        "percentage": 22.2
+        "files": 13,
+        "lines": 6598,
+        "percentage": 12.2
       },
       {
         "language": "Dokümantasyon",
-        "files": 18,
-        "lines": 1292,
-        "percentage": 5.2
+        "files": 35,
+        "lines": 2069,
+        "percentage": 3.8
       },
       {
         "language": "C11 SIMD",
         "files": 1,
         "lines": 591,
-        "percentage": 2.4
+        "percentage": 1.1
       },
       {
         "language": "Rust FFI",
         "files": 2,
         "lines": 505,
-        "percentage": 2.0
+        "percentage": 0.9
       },
       {
         "language": "C/C++ Header",
         "files": 2,
         "lines": 379,
-        "percentage": 1.5
+        "percentage": 0.7
+      },
+      {
+        "language": "Shell Script",
+        "files": 4,
+        "lines": 349,
+        "percentage": 0.6
       },
       {
         "language": "EBNF Grameri",
         "files": 1,
         "lines": 323,
-        "percentage": 1.3
-      },
-      {
-        "language": "Shell Script",
-        "files": 2,
-        "lines": 268,
-        "percentage": 1.1
+        "percentage": 0.6
       },
       {
         "language": "C++17 Header",
         "files": 1,
         "lines": 244,
-        "percentage": 1.0
+        "percentage": 0.5
       }
     ],
     "ebnf_grammar_rules": 72,
@@ -129,43 +129,252 @@
   },
   "github": {
     "source": "api.github.com",
-    "error": "<urlopen error [Errno 8] nodename nor servname provided, or not known>"
+    "error": null,
+    "stars": 1,
+    "forks": 0,
+    "watchers": 0,
+    "open_issues": 0,
+    "license": "Apache-2.0",
+    "created_at": "2026-11-02T21:05:47Z",
+    "pushed_at": "2026-11-14T05:02:54Z",
+    "url": "https://github.com/ofaemd-creator/synax",
+    "issues_closed": 7,
+    "languages_bytes": {
+      "Python": 1923357,
+      "HTML": 831060,
+      "Shell": 294941,
+      "C": 87395,
+      "Perl": 55332,
+      "Swift": 51504,
+      "JavaScript": 40121,
+      "Rust": 17772,
+      "C++": 8441
+    },
+    "releases": [
+      {
+        "tag": "v1.0.0",
+        "published_at": "2026-11-13T20:26:25Z",
+        "assets": [
+          {
+            "name": "SHA256SUMS.txt",
+            "downloads": 0
+          },
+          {
+            "name": "synax-1.0.0-py3-none-any.whl",
+            "downloads": 0
+          },
+          {
+            "name": "synax-1.0.0.tar.gz",
+            "downloads": 0
+          },
+          {
+            "name": "synax-lang-1.0.0.vsix",
+            "downloads": 0
+          },
+          {
+            "name": "synax-v1.0.0-linux-x86_64.tar.gz",
+            "downloads": 0
+          },
+          {
+            "name": "synax-v1.0.0-macos-arm64.tar.gz",
+            "downloads": 0
+          }
+        ],
+        "downloads_total": 0
+      },
+      {
+        "tag": "v0.9.0",
+        "published_at": "2026-11-13T20:05:42Z",
+        "assets": [
+          {
+            "name": "SHA256SUMS.txt",
+            "downloads": 1
+          },
+          {
+            "name": "synax-0.7.0-py3-none-any.whl",
+            "downloads": 1
+          },
+          {
+            "name": "synax-0.7.0.tar.gz",
+            "downloads": 1
+          },
+          {
+            "name": "synax-lang-0.9.0.vsix",
+            "downloads": 1
+          },
+          {
+            "name": "synax-v0.9.0-linux-x86_64.tar.gz",
+            "downloads": 1
+          },
+          {
+            "name": "synax-v0.9.0-macos-arm64.tar.gz",
+            "downloads": 1
+          }
+        ],
+        "downloads_total": 6
+      },
+      {
+        "tag": "v0.5.0",
+        "published_at": "2026-11-03T01:46:05Z",
+        "assets": [
+          {
+            "name": "SHA256SUMS.txt",
+            "downloads": 2
+          },
+          {
+            "name": "synax-0.5.0-py3-none-any.whl",
+            "downloads": 1
+          },
+          {
+            "name": "synax-0.5.0.tar.gz",
+            "downloads": 1
+          },
+          {
+            "name": "synax-v0.5.0-linux-x86_64.tar.gz",
+            "downloads": 1
+          },
+          {
+            "name": "synax-v0.5.0-macos-arm64.tar.gz",
+            "downloads": 1
+          }
+        ],
+        "downloads_total": 6
+      }
+    ],
+    "ci_runs": [
+      {
+        "workflow": "SYNAX Release & Distribution",
+        "branch": "v1.0.0",
+        "conclusion": "success",
+        "created_at": "2026-11-14T05:02:55Z",
+        "updated_at": "2026-11-14T05:03:39Z",
+        "duration_s": 44,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/43559599444"
+      },
+      {
+        "workflow": "SYNAX Cross-Platform CI",
+        "branch": "main",
+        "conclusion": "failure",
+        "created_at": "2026-11-14T05:02:53Z",
+        "updated_at": "2026-11-14T05:03:34Z",
+        "duration_s": 41,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/43559596842"
+      },
+      {
+        "workflow": "SYNAX Cross-Platform CI",
+        "branch": "main",
+        "conclusion": "failure",
+        "created_at": "2026-11-13T20:50:09Z",
+        "updated_at": "2026-11-13T20:50:47Z",
+        "duration_s": 38,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/43505183130"
+      },
+      {
+        "workflow": "SYNAX Release & Distribution",
+        "branch": "v1.0.0",
+        "conclusion": "success",
+        "created_at": "2026-11-13T20:50:09Z",
+        "updated_at": "2026-11-13T20:51:02Z",
+        "duration_s": 53,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/43505183076"
+      },
+      {
+        "workflow": "SYNAX Release & Distribution",
+        "branch": "v1.0.0",
+        "conclusion": "success",
+        "created_at": "2026-11-13T20:20:37Z",
+        "updated_at": "2026-11-13T20:26:28Z",
+        "duration_s": 351,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/43500670685"
+      },
+      {
+        "workflow": "SYNAX Cross-Platform CI",
+        "branch": "main",
+        "conclusion": "failure",
+        "created_at": "2026-11-13T20:20:37Z",
+        "updated_at": "2026-11-13T20:35:39Z",
+        "duration_s": 902,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/43500669944"
+      },
+      {
+        "workflow": "SYNAX Release & Distribution",
+        "branch": "v0.9.0",
+        "conclusion": "success",
+        "created_at": "2026-11-13T20:04:38Z",
+        "updated_at": "2026-11-13T20:05:46Z",
+        "duration_s": 68,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/43498154722"
+      },
+      {
+        "workflow": "SYNAX Cross-Platform CI",
+        "branch": "main",
+        "conclusion": "failure",
+        "created_at": "2026-11-13T20:04:38Z",
+        "updated_at": "2026-11-13T20:05:28Z",
+        "duration_s": 50,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/43498154711"
+      },
+      {
+        "workflow": "SYNAX Cross-Platform CI",
+        "branch": "main",
+        "conclusion": "failure",
+        "created_at": "2026-11-13T19:32:46Z",
+        "updated_at": "2026-11-13T19:43:13Z",
+        "duration_s": 627,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/43493222233"
+      },
+      {
+        "workflow": "SYNAX Cross-Platform CI",
+        "branch": "main",
+        "conclusion": "failure",
+        "created_at": "2026-11-09T20:21:40Z",
+        "updated_at": "2026-11-09T20:22:17Z",
+        "duration_s": 37,
+        "url": "https://github.com/ofaemd-creator/synax/actions/runs/42692213429"
+      }
+    ],
+    "traffic": null,
+    "traffic_note": "GitHub clone/view sayıları yalnızca repo sahibi tokenı ile alınabilir; bu yüzden gösterilmiyor."
   },
   "sites": [
     {
       "domain": "synaxcode.com",
-      "http": null,
-      "error": "<urlopen error [Errno 8] nodename nor servname provided, or not known>"
+      "http": 200,
+      "latency_ms": 392,
+      "bytes": 43657
     },
     {
       "domain": "synaxcode.org",
-      "http": null,
-      "error": "<urlopen error [Errno 8] nodename nor servname provided, or not known>"
+      "http": 200,
+      "latency_ms": 397,
+      "bytes": 22899
     },
     {
       "domain": "synaxcode.online",
-      "http": null,
-      "error": "<urlopen error [Errno 8] nodename nor servname provided, or not known>"
+      "http": 200,
+      "latency_ms": 499,
+      "bytes": 50985
     }
   ],
   "performance": {
     "available": true,
     "source": "~/.cache/synax/hafiza (SHA-256 imzalı raporlar)",
-    "kernels": 12,
+    "kernels": 32,
     "vs_clang_o3": {
-      "median": 1.28,
+      "median": 1.446,
       "max": 6.484,
       "min": 1.0
     },
     "vs_scalar": {
-      "median": 5.232,
-      "max": 14.12,
+      "median": 5.505,
+      "max": 57.123,
       "min": 0.841
     },
     "winners": [
       "v0_clang_o3_scalar",
       "v1_unroll4_scalar",
       "v2_neon_simd",
+      "v3_neon_4acc_prefetch",
       "v4_gcd_multicore_neon",
       "v5_llvm_ssa_ir_o3"
     ],
@@ -182,11 +391,67 @@
         "vs_scalar": 7.235
       },
       {
+        "module": "shock_index_eval",
+        "winner": "v2_neon_simd",
+        "ms": 0.0339,
+        "vs_o3": 3.166,
+        "vs_scalar": 39.119
+      },
+      {
+        "module": "shock_index_eval",
+        "winner": "v2_neon_simd",
+        "ms": 0.0221,
+        "vs_o3": 2.945,
+        "vs_scalar": 8.491
+      },
+      {
+        "module": "cerebral_perfusion_guard",
+        "winner": "v2_neon_simd",
+        "ms": 0.0011,
+        "vs_o3": 2.693,
+        "vs_scalar": 5.54
+      },
+      {
+        "module": "shock_index_eval",
+        "winner": "v2_neon_simd",
+        "ms": 0.0243,
+        "vs_o3": 2.668,
+        "vs_scalar": 57.123
+      },
+      {
         "module": "vf_nonlinear_energy",
         "winner": "v4_gcd_multicore_neon",
         "ms": 0.2622,
         "vs_o3": 2.525,
         "vs_scalar": 14.12
+      },
+      {
+        "module": "tmpmu5k8k97",
+        "winner": "v1_unroll4_scalar",
+        "ms": 0.0095,
+        "vs_o3": 2.336,
+        "vs_scalar": 6.838
+      },
+      {
+        "module": "test_mcp",
+        "winner": "v3_neon_4acc_prefetch",
+        "ms": 0.0048,
+        "vs_o3": 1.974,
+        "vs_scalar": 6.932
+      },
+      {
+        "module": "synax_v1_showcase",
+        "winner": "v3_neon_4acc_prefetch",
+        "ms": 0.0377,
+        "vs_o3": 1.818,
+        "vs_scalar": 17.098
+      },
+      {
+        "module": "ecg_qrs_filter",
+        "winner": "v2_neon_simd",
+        "ms": 0.0013,
+        "vs_o3": 1.782,
+        "vs_scalar": 4.126
       },
       {
         "module": "ranvier_adaptive_filter",
@@ -196,11 +461,32 @@
         "vs_scalar": 7.866
       },
       {
+        "module": "capnography_etco2",
+        "winner": "v2_neon_simd",
+        "ms": 0.0009,
+        "vs_o3": 1.714,
+        "vs_scalar": 6.334
+      },
+      {
         "module": "clinical_shock_index",
         "winner": "v2_neon_simd",
         "ms": 0.9555,
         "vs_o3": 1.592,
         "vs_scalar": 8.072
+      },
+      {
+        "module": "triage_map",
+        "winner": "v3_neon_4acc_prefetch",
+        "ms": 0.021,
+        "vs_o3": 1.567,
+        "vs_scalar": 8.683
+      },
+      {
+        "module": "sensor_fusion",
+        "winner": "v2_neon_simd",
+        "ms": 0.0019,
+        "vs_o3": 1.501,
+        "vs_scalar": 2.544
       },
       {
         "module": "dendritic_sum_verified",
@@ -210,11 +496,32 @@
         "vs_scalar": 0.841
       },
       {
+        "module": "hemodynamic_triage",
+        "winner": "v3_neon_4acc_prefetch",
+        "ms": 0.026,
+        "vs_o3": 1.42,
+        "vs_scalar": 10.752
+      },
+      {
+        "module": "shock_index_triage",
+        "winner": "v2_neon_simd",
+        "ms": 0.0263,
+        "vs_o3": 1.396,
+        "vs_scalar": 2.258
+      },
+      {
         "module": "biyomedikal_kardiyo",
         "winner": "v4_gcd_multicore_neon",
         "ms": 1.2953,
         "vs_o3": 1.311,
         "vs_scalar": 4.772
+      },
+      {
+        "module": "shock_index_triage",
+        "winner": "v2_neon_simd",
+        "ms": 0.0218,
+        "vs_o3": 1.275,
+        "vs_scalar": 5.023
       },
       {
         "module": "vf_bandpass_sanitizer",
@@ -231,11 +538,39 @@
         "vs_scalar": 2.974
       },
       {
+        "module": "cerebral_perfusion",
+        "winner": "v2_neon_simd",
+        "ms": 0.0444,
+        "vs_o3": 1.194,
+        "vs_scalar": 37.483
+      },
+      {
         "module": "normalized_difference",
         "winner": "v4_gcd_multicore_neon",
         "ms": 1.3325,
         "vs_o3": 1.182,
         "vs_scalar": 4.182
+      },
+      {
+        "module": "test_pipe",
+        "winner": "v2_neon_simd",
+        "ms": 0.0067,
+        "vs_o3": 1.179,
+        "vs_scalar": 4.327
+      },
+      {
+        "module": "shock_index_triage",
+        "winner": "v3_neon_4acc_prefetch",
+        "ms": 0.0237,
+        "vs_o3": 1.141,
+        "vs_scalar": 4.775
+      },
+      {
+        "module": "kalman_filter_1d",
+        "winner": "v5_llvm_ssa_ir_o3",
+        "ms": 0.0025,
+        "vs_o3": 1.134,
+        "vs_scalar": 1.733
       },
       {
         "module": "coronary_perfusion_pressure",
@@ -250,6 +585,20 @@
         "ms": 1.2688,
         "vs_o3": 1.0,
         "vs_scalar": 4.995
+      },
+      {
+        "module": "anti_jamming_telemetry",
+        "winner": "v0_clang_o3_scalar",
+        "ms": 0.002,
+        "vs_o3": 1.0,
+        "vs_scalar": 2.574
+      },
+      {
+        "module": "mcp_quick_test",
+        "winner": "v0_clang_o3_scalar",
+        "ms": 0.016,
+        "vs_o3": 1.0,
+        "vs_scalar": 5.021
       },
       {
         "module": "anomali_v04",

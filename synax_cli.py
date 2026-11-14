@@ -666,6 +666,18 @@ def main() -> None:
         elif subcmd in ("code", "agent"):
             from synax.agent import main as run_agent
             run_agent(rest)
+        elif subcmd == "studio":
+            from synax.studio_app import build_macos_app_bundle, launch_studio_server
+            if "--build-app" in rest:
+                p = build_macos_app_bundle()
+                print(f"✓ macOS Uygulaması Oluşturuldu: {p}")
+            else:
+                launch_studio_server(open_window=("--no-window" not in rest))
+        elif subcmd in ("ecosystem", "plugins"):
+            from synax.ecosystem import install_all_ecosystem_integrations
+            info = install_all_ecosystem_integrations()
+            for item in info["integrations"]:
+                print(f"✓ {item['platform']}: {item['path']}")
         elif subcmd == "evolve":
             cmd_evolve(rest)
         elif subcmd == "mcp":

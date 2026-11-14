@@ -1,0 +1,10 @@
+{
+  "name": "synax",
+  "version": "1.0.0",
+  "description": "SYNAX v1.0.0 Compiler, E-Graph Optimizer, Formal Interval Prover & 0-ULP Silicon Verifier",
+  "author": {
+    "name": "Dr. \u00d6mer Faruk Ayd\u0131n"
+  },
+  "skills": "./skills",
+  "mcpServers": "../.mcp.json"
+}

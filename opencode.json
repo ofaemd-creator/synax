@@ -1,0 +1,14 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "synax": {
+      "type": "local",
+      "command": [
+        "/Users/o.farukaydin/.local/bin/python3",
+        "/Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_cli.py",
+        "mcp"
+      ],
+      "enabled": true
+    }
+  }
+}

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SYNAX Documentation, Formal EBNF Specification & Benchmarks (synaxcode.org — v0.5.0)</title>
-  <meta name="description" content="Official SYNAX v0.5.0 Language Specification (ISO/IEC 14977 EBNF), IEEE-754 Differential Verification, .sx.lock Semantic Lockfiles, Multi-Target SIMD Backends, and Reproducible Benchmarks." />
+  <title>SYNAX Documentation, Formal EBNF Specification & Benchmarks (synaxcode.org — v1.0.0)</title>
+  <meta name="description" content="Official SYNAX v1.0.0 Language Specification (ISO/IEC 14977 EBNF), IEEE-754 Differential Verification, .sx.lock Semantic Lockfiles, Multi-Target SIMD Backends, and Reproducible Benchmarks." />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#090d16] text-slate-100 antialiased selection:bg-cyan-500/30">
@@ -13,7 +13,7 @@
   <div class="bg-[#05080f] border-b border-slate-800 text-xs py-2 px-6">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
       <div class="flex flex-wrap items-center gap-2 font-mono text-slate-400">
-        <span class="text-emerald-400 font-bold">● SYNAX v0.5.0:</span>
+        <span class="text-emerald-400 font-bold">● SYNAX v1.0.0:</span>
         <a href="https://synaxcode.com" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition">🌐 synaxcode.com</a>
         <span>•</span>
         <a href="https://synaxcode.org" class="text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded">📖 synaxcode.org (Docs &amp; Spec)</a>
@@ -25,7 +25,7 @@
         <a href="dashboard.html" class="text-amber-400 hover:text-amber-300 font-bold px-2 py-0.5 rounded hover:bg-slate-800 transition">📊 Canlı Dashboard</a>
       </div>
       <div class="flex items-center gap-3">
-        <span class="text-slate-400 font-mono">Spec v0.5.0 • Apache-2.0</span>
+        <span class="text-slate-400 font-mono">Spec v1.0.0 • Apache-2.0</span>
         <button onclick="toggleOrgLang()" class="px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono font-bold transition">
           🌐 TR | EN
         </button>
@@ -43,7 +43,7 @@
         <div>
           <span class="font-black text-lg tracking-wider">SYNAX<span class="text-cyan-400">DOCS</span></span>
           <span class="ml-2 px-2 py-0.5 text-xs font-mono rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-            Language Spec &amp; Verification v0.5.0
+            Language Spec &amp; Verification v1.0.0
           </span>
         </div>
       </div>
@@ -114,7 +114,7 @@
 
         <div class="border-t border-slate-800 pt-4">
           <a href="https://synaxcode.com/install.sh" target="_blank" class="block w-full text-center py-2.5 px-3 rounded-xl font-bold bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 transition font-mono">
-            ⬇ install.sh İndir (v0.5.0)
+            ⬇ install.sh İndir (v1.0.0)
           </a>
         </div>
       </div>
@@ -127,13 +127,13 @@
       <div id="sec-intro" class="bg-gradient-to-br from-slate-900 via-[#111827] to-cyan-950/40 border border-slate-800 rounded-3xl p-8 space-y-4">
         <div class="flex flex-wrap items-center gap-2">
           <span class="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono">
-            OFFICIAL TECHNICAL SPECIFICATION • v0.5.0
+            OFFICIAL TECHNICAL SPECIFICATION • v1.0.0
           </span>
           <span class="text-xs font-mono text-emerald-400">SPDX: Apache-2.0</span>
           <span class="text-xs font-mono text-slate-400">• git clone https://synaxcode.org/git/synax.git</span>
         </div>
         <h1 class="text-3xl sm:text-4xl font-black tracking-tight" id="doc-main-title">
-          SYNAX v0.5.0: Diferansiyel Doğrulamalı Çoklu-Backend Tensör Dili ve Miyelin Süper-Optimize Edicisi
+          SYNAX v1.0.0: Diferansiyel Doğrulamalı Çoklu-Backend Tensör Dili ve Miyelin Süper-Optimize Edicisi
         </h1>
         <p class="text-sm text-slate-300 leading-relaxed">
           <strong>Mühendislik Tezi:</strong> SYNAX'ın temel değişmezi <code class="text-emerald-400 font-bold">optimization must never change semantics</code> ilkesidir. Bir <code>.sx</code> programı ne yapmak istediğini ve IEEE-754 güvenlik sınırlarını bildirimsel olarak tanımlar; derleyici bunu statik tipli AST'ye dönüştürür (<em>Synapse</em>), referans yorumlayıcı ve <code>clang -O0</code> skaler referansıyla doğrular (<em>Immune</em>), hedef donanıma göre <strong>C11, ARM64 NEON, x86_64 AVX2+FMA, Apple GCD ve doğrudan SSA LLVM IR (<code>.ll</code>)</strong> adayları üretir (<em>Axon</em>), 19 sınır testi kümesini geçen adayları ısınmış önbellekte ölçer (<em>Tycon</em>) ve kazananı kriptografik donanım parmak iziyle kalıcı önbelleğe kilitler (<em>Myelin</em>).
@@ -144,12 +144,12 @@
       <section id="sec-ebnf" class="bg-[#111827] border border-slate-800 rounded-3xl p-7 space-y-4">
         <h2 class="text-xl font-black text-cyan-400">1.2 ISO/IEC 14977 EBNF Grameri ve Statik Tip Sistemi</h2>
         <p class="text-sm text-slate-300 leading-relaxed">
-          <code>spec/synax.ebnf</code> ve <code>src/synax/{lexer,parser,type_system}.py</code> katmanı hem yapılandırılmış <code>synax 0.5</code> çekirdek sözdizimini hem de Türkçe/İngilizce bildirimsel <code>niyet:/kural:</code> sözdizimini aynı kanonik <code>SynaxIR</code> ağacına indirger. Statik <code>TypeChecker</code> tanımsız değişkenleri, arite uyumsuzluklarını, ters <code>clamp(lo, hi)</code> sınırlarını ve uyuşmayan sabit tensör boyutlarını (<code>tensor&lt;f32, 16&gt;</code> vs <code>tensor&lt;f32, 32&gt;</code>) derleme öncesinde yakalar:
+          <code>spec/synax.ebnf</code> ve <code>src/synax/{lexer,parser,type_system}.py</code> katmanı hem yapılandırılmış <code>synax 1.0</code> çekirdek sözdizimini hem de Türkçe/İngilizce bildirimsel <code>niyet:/kural:</code> sözdizimini aynı kanonik <code>SynaxIR</code> ağacına indirger. Statik <code>TypeChecker</code> tanımsız değişkenleri, arite uyumsuzluklarını, ters <code>clamp(lo, hi)</code> sınırlarını ve uyuşmayan sabit tensör boyutlarını (<code>tensor&lt;f32, 16&gt;</code> vs <code>tensor&lt;f32, 32&gt;</code>) derleme öncesinde yakalar:
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
           <div class="p-4 rounded-2xl bg-[#090d16] border border-cyan-500/30 font-mono text-xs space-y-2">
-            <div class="text-cyan-400 font-bold">📐 Yapılandırılmış Sözdizimi (synax 0.5):</div>
-            <pre class="text-slate-200 overflow-x-auto">synax 0.5
+            <div class="text-cyan-400 font-bold">📐 Yapılandırılmış Sözdizimi (synax 1.0):</div>
+            <pre class="text-slate-200 overflow-x-auto">synax 1.0
 kernel coronary_perfusion_pressure(
   dbp: tensor&lt;f32&gt;, cvp: tensor&lt;f32&gt;
 ) -&gt; tensor&lt;f32&gt; {
@@ -338,7 +338,7 @@ hedef: throughput
   <!-- FOOTER -->
   <footer class="border-t border-slate-800 py-8 text-center text-xs text-slate-400 bg-[#060911]">
     <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div><strong>SYNAX Specification v0.5.0</strong> (<code>synaxcode.org</code>) — Apache License 2.0</div>
+      <div><strong>SYNAX Specification v1.0.0</strong> (<code>synaxcode.org</code>) — Apache License 2.0</div>
       <div class="flex flex-wrap gap-4 font-mono">
         <a href="https://synaxcode.com" class="hover:text-white">synaxcode.com</a>
         <a href="https://synaxcode.org" class="text-cyan-400">synaxcode.org</a>
@@ -354,8 +354,8 @@ hedef: throughput
     function toggleOrgLang() {
       orgLang = orgLang === "tr" ? "en" : "tr";
       document.getElementById("doc-main-title").textContent = orgLang === "en"
-        ? "SYNAX v0.5.0: Differentially Verified Multi-Backend Tensor Language & Myelin Superoptimizer"
-        : "SYNAX v0.5.0: Diferansiyel Doğrulamalı Çoklu-Backend Tensör Dili ve Miyelin Süper-Optimize Edicisi";
+        ? "SYNAX v1.0.0: Differentially Verified Multi-Backend Tensor Language & Myelin Superoptimizer"
+        : "SYNAX v1.0.0: Diferansiyel Doğrulamalı Çoklu-Backend Tensör Dili ve Miyelin Süper-Optimize Edicisi";
     }
   </script>
   <script src="synax_beacon.js" defer></script>

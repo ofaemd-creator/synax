@@ -1,0 +1,3 @@
+[mcp_servers.synax]
+command = "/Users/o.farukaydin/.local/bin/python3"
+args = ["/Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_cli.py", "mcp"]

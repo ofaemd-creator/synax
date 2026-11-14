@@ -102,6 +102,7 @@ def http_chat(base: str, model: str, key: str) -> Callable[[List[Dict[str, Any]]
     def chat(messages: List[Dict[str, Any]]) -> Dict[str, Any]:
         body = json.dumps({"model": model, "messages": messages, "tools": tool_schemas(),
                            "max_tokens": 8192}).encode()
+        headers = {"Content-Type": "application/json"}
         headers = {"Content-Type": "application/json", "User-Agent": "SYNAX-Agent/1.0"}
         if key:
             headers["Authorization"] = f"Bearer {key}"

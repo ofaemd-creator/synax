@@ -13,7 +13,7 @@
 
 ---
 
-## 🏗️ 8-Layer Platform Architecture (`v0.5.0`)
+## 🏗️ 8-Layer Platform Architecture (`v1.0.0`)
 
 | Layer | Subsystem | Repository Implementation |
 | :--- | :--- | :--- |

@@ -293,6 +293,49 @@ kernel {slug}(
             except Exception as e:
                 return ChatResponse(text=f"⚠️ **Kodlama Ajanı Hatası:** {str(e)}", action="error")
 
+        # ── 0.9. E-GRAPH EŞİTLİK DOYGUNLUĞU (/egraph), FORMEL ARALIK KANITLAYICI (/prove) & EKOSİSTEM (/ecosystem) ──
+        if lower.startswith("/egraph") or lower.startswith("/prove") or lower.startswith("/kanit"):
+            from synax.egraph import saturate_and_extract
+            from synax.formal_prover import prove_kernel_safety
+
+            editor_src = (context or {}).get("editorText", "").strip()
+            showcase_path = Path(__file__).resolve().parent / "examples" / "synax_v1_showcase.sx"
+            src_to_check = editor_src if editor_src else showcase_path.read_text(encoding="utf-8")
+            try:
+                ir = synax.check_sx(src_to_check)
+                eg = saturate_and_extract(ir.expr, target="neon")
+                cert = prove_kernel_safety(ir, (-500.0, 500.0), (-500.0, 500.0))
+                rw_str = ", ".join(f"`{r}`" for r in eg.rewrites_triggered) or "`Zaten minimal formda`"
+                reply = (
+                    f"🔬 **SYNAX E-Graph Eşitlik Doygunluğu & Formel Aralık Kanıtı (`{ir.name}`)**\n\n"
+                    f"**1. E-Graph Eşdeğerlik Grafiği (`src/synax/egraph.py`):**\n"
+                    f"* **Keşfedilen Uzay:** `{eg.eclasses_count}` E-Class / `{eg.enodes_count}` E-Node (`{eg.iterations_run}` doygunluk turu)\n"
+                    f"* **Başlangıç AST:** `{eg.original_ast.to_human_formula()}`\n"
+                    f"* **Minimum Çevrimli AST:** `{eg.optimized_ast.to_human_formula()}`\n"
+                    f"* **Donanım Çevrim Maliyeti (`ARM64 NEON`):** `{eg.cost_before}` &rarr; **`{eg.cost_after}` çevrim** (**-%{eg.cycle_reduction_pct}** kazanç)\n"
+                    f"* **Tetiklenen Kurallar:** {rw_str}\n\n"
+                    f"**2. Formel Soyut Yorumlama & Aralık Kanıtı (`src/synax/formal_prover.py`):**\n"
+                    f"* **Statik Çıktı Aralığı:** `{cert.final_output_bounds}`\n"
+                    f"* **Sıfıra Bölme Yok (`div_by_zero_free`):** `{'✅ Kanıtlandı' if cert.div_by_zero_free else '⚠️ Risk Var'}`\n"
+                    f"* **Tanım Kümesi Güvenli (`domain_error_free`):** `{'✅ Kanıtlandı' if cert.domain_error_free else '⚠️ Risk Var'}`\n"
+                    f"* **IEEE-754 Taşma Yok (`overflow_free`):** `{'✅ Kanıtlandı' if cert.overflow_free else '⚠️ Risk Var'}`\n"
+                    f"* **Sertifika SHA-256:** `#{cert.certificate_sha256}`"
+                )
+                return ChatResponse(text=reply, action="egraph_and_proof", metadata=cert.to_dict())
+            except Exception as e:
+                return ChatResponse(text=f"⚠️ **E-Graph / Formel Kanıt Hatası:** {str(e)}", action="error")
+
+        if lower.startswith("/ecosystem") or lower.startswith("/ekosistem"):
+            from synax.ecosystem import install_all_ecosystem_integrations
+
+            res_eco = install_all_ecosystem_integrations()
+            lines = [
+                f"🔌 **SYNAX Evrensel AI Ekosistem Entegrasyonları Kuruldu (`{res_eco['installed_count']}` Platform)**\n"
+            ]
+            for item in res_eco["integrations"]:
+                lines.append(f"* **{item['platform']}:** `{item['path']}`")
+            return ChatResponse(text="\n".join(lines), action="ecosystem_installed", metadata=res_eco)
+
         # ── 1. AUTOPOIESIS / BECERİ EDİNME ──
         # Örnek kalıplar:
         # "kendine şu beceriyi edin: X = Y"
