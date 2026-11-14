@@ -248,6 +248,51 @@ kernel {slug}(
             except Exception as e:
                 return ChatResponse(text=f"⚠️ **VF Telemetri Hatası:** {str(e)}", action="error")
 
+        # ── 0.8. GERÇEK OTONOM KODLAMA AJANI (/agent veya /code) (`src/synax/agent.py`) ──
+        m_agent = re.match(r"^(?:/agent|/code|/ajan)\s*(.*)", text, re.I | re.S)
+        if m_agent:
+            from synax.agent import Agent, Workspace, http_chat, resolve_backend
+
+            raw_arg = m_agent.group(1).strip()
+            allow_writes = False
+            if raw_arg.startswith("--yes"):
+                allow_writes = True
+                raw_arg = raw_arg[5:].strip()
+            task_prompt = raw_arg or "examples/synax_v1_showcase.sx dosyasını sx_check ile kontrol et ve sonucu özetle."
+
+            ws_root = Path((context or {}).get("workspaceRoot") or Path(__file__).resolve().parent)
+            base_url, model_id, api_key = resolve_backend()
+            trace_logs: List[str] = []
+
+            def _approve_sidebar(tool_name: str, tool_args: Dict[str, Any]) -> bool:
+                if allow_writes:
+                    return True
+                trace_logs.append(f"  🔒 `{tool_name}` onay bekliyor (yazma/komut izni için `/agent --yes <görev>` kullanın).")
+                return False
+
+            try:
+                coding_agent = Agent(
+                    Workspace(ws_root),
+                    http_chat(base_url, model_id, api_key),
+                    approve=_approve_sidebar,
+                    log=lambda msg: trace_logs.append(str(msg)),
+                    max_steps=15,
+                )
+                final_answer = coding_agent.run(task_prompt)
+                header = f"🤖 **SYNAX Code Otonom Ajan (`{model_id}`)**\n"
+                if trace_logs:
+                    trace_block = "\n".join(f"* `{line.strip()}`" for line in trace_logs if line.strip())
+                    full_reply = f"{header}\n**🔧 Çağrılan Araçlar:**\n{trace_block}\n\n---\n{final_answer}"
+                else:
+                    full_reply = f"{header}\n{final_answer}"
+                return ChatResponse(
+                    text=full_reply,
+                    action="agent_executed",
+                    metadata={"model": model_id, "steps": len(trace_logs), "writes_enabled": allow_writes},
+                )
+            except Exception as e:
+                return ChatResponse(text=f"⚠️ **Kodlama Ajanı Hatası:** {str(e)}", action="error")
+
         # ── 1. AUTOPOIESIS / BECERİ EDİNME ──
         # Örnek kalıplar:
         # "kendine şu beceriyi edin: X = Y"

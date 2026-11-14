@@ -596,6 +596,7 @@ def cmd_test() -> None:
         os.path.join(BASE_DIR, "tests", "test_deeptech_bridge_compliance.py"),
         os.path.join(BASE_DIR, "tests", "test_evolution_arena.py"),
         os.path.join(BASE_DIR, "tests", "test_language_v1.py"),
+        os.path.join(BASE_DIR, "tests", "test_agent.py"),
     ]
     ran = 0
     for sf in suite_files:
@@ -659,9 +660,12 @@ def main() -> None:
         elif subcmd == "lsp":
             from synax.lsp.server import run_lsp_server
             run_lsp_server()
-        elif subcmd in ("chat", "code"):
+        elif subcmd == "chat":
             from synax_chat import run_chat_cli
             run_chat_cli(rest)
+        elif subcmd in ("code", "agent"):
+            from synax.agent import main as run_agent
+            run_agent(rest)
         elif subcmd == "evolve":
             cmd_evolve(rest)
         elif subcmd == "mcp":

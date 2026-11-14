@@ -241,6 +241,20 @@ function activate(context) {
     );
 
     context.subscriptions.push(
+        vscode.commands.registerCommand('synax.openAgent', () => {
+            const { cwd } = provider._findSynaxPath();
+            const folder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || cwd;
+            // Runs through the user's shell so API keys exported in ~/.zshrc are visible to the agent.
+            const term = vscode.window.createTerminal({
+                name: 'SYNAX Code Agent', cwd: folder,
+                env: { PYTHONPATH: [cwd, path.join(cwd, 'src')].join(path.delimiter) }
+            });
+            term.show();
+            term.sendText(`"${provider._findPythonBin()}" -m synax.agent`);
+        })
+    );
+
+    context.subscriptions.push(
         vscode.commands.registerCommand('synax.reconnectBackend', () => {
             provider._restartBackend();
             vscode.window.showInformationMessage('🔄 SYNAX Backend bağlantısı yenilendi.');

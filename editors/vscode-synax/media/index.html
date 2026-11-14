@@ -307,21 +307,21 @@
   <div id="tab-chat" class="tab-content active">
     <div id="pills">
       <button type="button" class="pill" onclick="sendPrompt('/run')">▶️ Çalıştır (.sx)</button>
-      <button type="button" class="pill" onclick="sendPrompt('/gorev kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al')">🤖 Otonom Görev</button>
-      <button type="button" class="pill" onclick="sendPrompt('/vf')">🫀 VF / EKG Analizi</button>
-      <button type="button" class="pill" onclick="sendPrompt('/enerji')">🌱 Enerji &amp; Verimlilik</button>
-      <button type="button" class="pill" onclick="sendPrompt('/pipeline kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al')">🔬 Canlı Pipeline</button>
-      <button type="button" class="pill" onclick="sendPrompt('/video Kısa Uzay & Yörünge Simülasyonu')">🌌 Uzay Videosu</button>
-      <button type="button" class="pill" onclick="sendPrompt('/ekran')">🖥️ Ekran Analizi</button>
+      <button type="button" class="pill" onclick="sendPrompt('/agent examples/synax_v1_showcase.sx dosyasını sx_check ile kontrol et')">🤖 Kodlama Ajanı (/agent)</button>
+      <button type="button" class="pill" onclick="sendPrompt('/pipeline kan basıncı ile intrakraniyal basınç farkının pozitif kısmını al')">🔬 7-Aşama Derleyici</button>
+      <button type="button" class="pill" onclick="sendPrompt('/vf')">🫀 VF / EKG Testi</button>
+      <button type="button" class="pill" onclick="sendPrompt('/enerji')">📊 Sistem &amp; Bellek</button>
+      <button type="button" class="pill" onclick="sendPrompt('/video Kısa Uzay & Yörünge Simülasyonu')">🌌 Simülasyon Videosu</button>
+      <button type="button" class="pill" onclick="sendPrompt('/ekran')">🖥️ Çalışma Alanı</button>
     </div>
 
     <div id="messages">
       <div class="msg assistant">
-        <strong>🧬 SYNAX Code v1.0.0 — Tam Sürüm Programlama Dili &amp; Merkeziyetsiz Frugal AI</strong><br><br>
-        <strong>🟢 Active (v1.0.0 Tam Doğrulanmış):</strong> <code>SYNAX 1.0 Language (select / fma / multi-let / dendritic)</code> · <code>SynaxLLM (2.5 MB)</code> · <code>C11 / ARM64 NEON / AVX2 / LLVM IR / Q16.16 MCU</code> · <code>IMMUNE 0-ULP (19/19)</code> · <code>Canlı VF 250Hz (/vf)</code> · <code>3B Video (/video)</code> · <code>Ekran (/ekran)</code> · <code>Omni-Görev (/gorev)</code> · <code>Canlı Yürütme (/run)</code><br>
-        <strong>🌱 Enerji &amp; Verimlilik:</strong> Sorgu başına <code>~0.38 mJ</code> (Bulut LLM'lerine göre <strong>4.700x daha az enerji</strong>) · FPU'suz en basit işlemcilerde <code>&lt; 2 KB RAM</code> ile çalışma.<br><br>
-        <code style="display:block; padding:6px 8px; background:rgba(0,0,0,0.35); border-radius:4px; color:#10b981; font-size:11px;">Intent &rarr; .sx (v1.0) &rarr; Typed AST &rarr; IMMUNE 0-ULP &rarr; Native SIMD / Q16.16 MCU &rarr; .sx.lock &rarr; Run</code><br>
-        Yukarıdaki <strong>▶️ Çalıştır (.sx)</strong>, <strong>🤖 Otonom Görev</strong>, <strong>🫀 VF / EKG Analizi</strong> veya <strong>🌱 Enerji &amp; Verimlilik</strong> butonlarıyla hemen test edebilirsiniz.
+        <strong>🧬 SYNAX Code v1.0.0 — Silikon Derleyicisi &amp; Otonom Kodlama Ajanı</strong><br><br>
+        <strong>🟢 Derleyici &amp; Dil (`.sx` v1.0):</strong> <code>select / fma / multi-let / dendritic</code> · <code>C11 / ARM64 NEON / AVX2 / LLVM IR / Q16.16 MCU</code> · <code>19/19 IEEE-754 Çift-Referans Testi</code><br>
+        <strong>🤖 Otonom Kodlama Ajanı (`src/synax/agent.py`):</strong> Dosya okuma, arama (`grep`), düzenleme, terminal (`bash`) ve `.sx` doğrulama (`sx_check`, `sx_run`) araçlarını çok adımlı döngüde çalıştırır (`./synax code` veya `/agent`).<br><br>
+        <code style="display:block; padding:6px 8px; background:rgba(0,0,0,0.35); border-radius:4px; color:#10b981; font-size:11px;">.sx Kaynak &rarr; Typed AST &rarr; 19-Küme Çift Referans &rarr; C11 / SIMD / Q16.16 MCU &rarr; Çalıştır</code><br>
+        Yukarıdaki <strong>▶️ Çalıştır (.sx)</strong>, <strong>🤖 Kodlama Ajanı (/agent)</strong> veya <strong>🔬 7-Aşama Derleyici</strong> butonlarıyla test edebilirsiniz.
       </div>
     </div>
 

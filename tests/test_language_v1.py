@@ -108,6 +108,15 @@ kernel branchless_mux_test(
         self.assertIn("synax_v1_showcase", resp.text)
         self.assertIn("vbslq_f32", resp.text)
 
+    def test_04_agent_workspace_sx_check_and_run(self) -> None:
+        from synax.agent import Workspace
+
+        ws = Workspace(ROOT_DIR)
+        chk_out = ws.sx_check("examples/synax_v1_showcase.sx")
+        self.assertIn("synax_v1_showcase", chk_out)
+        run_out = ws.sx_run("examples/synax_v1_showcase.sx")
+        self.assertIn("synax_v1_showcase", run_out)
+
 
 if __name__ == "__main__":
     unittest.main()

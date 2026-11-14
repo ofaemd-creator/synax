@@ -114,6 +114,11 @@
 				"category": "SYNAX"
 			},
 			{
+				"command": "synax.openAgent",
+				"title": "SYNAX Code: Otonom Kodlama Ajanını Aç (Terminal)",
+				"category": "SYNAX"
+			},
+			{
 				"command": "synax.checkCurrent",
 				"title": "SYNAX Code: Tip ve Güvenlik Denetimi (Check)",
 				"category": "SYNAX"
