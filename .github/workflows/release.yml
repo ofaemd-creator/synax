@@ -40,7 +40,7 @@ jobs:
           cp vsix_out/*.vsix dist/
 
       - name: Upload Python package artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: python-dist
           path: dist/*
@@ -125,7 +125,7 @@ jobs:
           tar -C "${STAGE_DIR}" -czf "bundle_out/${BUNDLE_NAME}.tar.gz" bin lib include share
 
       - name: Upload Native Bundle Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: native-${{ matrix.target }}
           path: bundle_out/*.tar.gz
@@ -154,7 +154,7 @@ jobs:
           cat SHA256SUMS.txt
 
       - name: Upload SHA256SUMS artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-sha256sums
           path: release_assets/SHA256SUMS.txt
