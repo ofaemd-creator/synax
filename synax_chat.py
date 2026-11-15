@@ -336,6 +336,60 @@ kernel {slug}(
                 lines.append(f"* **{item['platform']}:** `{item['path']}`")
             return ChatResponse(text="\n".join(lines), action="ecosystem_installed", metadata=res_eco)
 
+        # ── 0.10. BİYOMEDİKAL SIFIR-SAPMA KALİBRATÖRÜ (/calibrate veya /autocal) ──
+        if lower.startswith("/calibrate") or lower.startswith("/autocal") or any(
+            w in lower for w in ("kalibre", "sıfır sapma", "zero drift", "autocal")
+        ):
+            from synax.biomedical_autocal import (
+                format_autocal_telegram_report,
+                generate_device_firmware_header,
+                run_autocal_convergence_simulation,
+            )
+
+            parts = text.split()
+            prof = parts[1].lower() if len(parts) > 1 and parts[1].lower() in ("ecg", "ibp", "ventilator", "spo2") else "ecg"
+            rep = run_autocal_convergence_simulation(prof, epochs=16)
+            fw_path = generate_device_firmware_header(prof)
+            fw_code = fw_path.read_text(encoding="utf-8") if fw_path.exists() else ""
+            return ChatResponse(
+                text=format_autocal_telegram_report(prof),
+                code=fw_code,
+                language="c",
+                action="biomedical_autocal",
+                metadata=rep.to_dict(),
+            )
+
+        # ── 0.11. CLAUDE / CODEX / ANTIGRAVITY TOKEN KALKANI (/shield veya /tokens) ──
+        if lower.startswith("/shield") or lower.startswith("/tokens") or any(
+            w in lower for w in ("token kalkanı", "token tasarrufu", "token shield")
+        ):
+            from synax.token_shield import format_shield_summary_text, skeletonize_code
+
+            editor_src = (context or {}).get("editorText", "").strip()
+            reply_txt = format_shield_summary_text(editor_src)
+            skel_code = skeletonize_code(editor_src).compressed_text if editor_src else None
+            return ChatResponse(
+                text=reply_txt,
+                code=skel_code,
+                language="python",
+                action="token_shield",
+            )
+
+        # ── 0.12. AJANLAR ARASI SIFIR-KAYBI HAFIZA KAPSÜLÜ (/vault veya /memory) ──
+        if lower.startswith("/vault") or lower.startswith("/memory") or any(
+            w in lower for w in ("hafıza kapsülü", "context vault", "ajan devir")
+        ):
+            from synax.context_vault import SynaxContextVault, format_vault_summary_text
+
+            vault = SynaxContextVault()
+            cap = vault.create_capsule(active_goal="VS Code SYNAX Chat <-> Claude Code / Codex / Antigravity Handoff")
+            return ChatResponse(
+                text=format_vault_summary_text(),
+                code=cap.to_compact_prompt(),
+                language="markdown",
+                action="context_vault",
+            )
+
         # ── 1. AUTOPOIESIS / BECERİ EDİNME ──
         # Örnek kalıplar:
         # "kendine şu beceriyi edin: X = Y"

@@ -5,15 +5,18 @@ const path = require('path');
 const fs = require('fs');
 
 /**
- * SYNAX Code VS Code Extension — AI Chat & Autopoietic Neuro-Symbolic Evolution Controller
- * Version: 0.8.0
+ * SYNAX Chat & Studio IDE — Autonomous AI Chat Application & Zero-Drift Compiler
+ * Version: 2.0.0
  */
 function activate(context) {
-    console.log('[SYNAX] VS Code Extension v0.8.0 activated.');
+    console.log('[SYNAX] VS Code Chat Application v2.0.0 activated.');
 
     const provider = new SynaxChatViewProvider(context.extensionUri, context);
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider(SynaxChatViewProvider.viewType, provider, {
+            webviewOptions: { retainContextWhenHidden: true }
+        }),
+        vscode.window.registerWebviewViewProvider('synax.chatViewSecondary', provider, {
             webviewOptions: { retainContextWhenHidden: true }
         })
     );
@@ -253,6 +256,13 @@ function activate(context) {
         })
     );
 
+    const chatStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 101);
+    chatStatusBar.text = '$(comment-discussion) SYNAX Chat';
+    chatStatusBar.tooltip = 'SYNAX AI Sohbet Uygulamasını Aç (Cmd+Shift+Y | Biyomedikal Zero-Drift, Token Shield, Context Vault)';
+    chatStatusBar.command = 'synax.openChatEditor';
+    chatStatusBar.show();
+    context.subscriptions.push(chatStatusBar);
+
     const studioStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
     studioStatusBar.text = '$(rocket) SYNAX Studio IDE';
     studioStatusBar.tooltip = 'Tam Ekran SYNAX Studio Uygulamasını Aç (E-Graph, Formel Kanıtlayıcı, Silikon Derleyici & Ajan)';
@@ -261,6 +271,25 @@ function activate(context) {
     context.subscriptions.push(studioStatusBar);
 
     context.subscriptions.push(
+        vscode.commands.registerCommand('synax.openChatEditor', () => {
+            provider.openFullChatEditorPanel();
+        }),
+        vscode.commands.registerCommand('synax.newChatSession', async () => {
+            provider.openFullChatEditorPanel();
+            await provider._handleUserMessage('/reset');
+        }),
+        vscode.commands.registerCommand('synax.runBiomedAutocal', async () => {
+            provider.openFullChatEditorPanel();
+            await provider._handleUserMessage('/calibrate ecg');
+        }),
+        vscode.commands.registerCommand('synax.runTokenShield', async () => {
+            provider.openFullChatEditorPanel();
+            await provider._handleUserMessage('/shield');
+        }),
+        vscode.commands.registerCommand('synax.runContextVault', async () => {
+            provider.openFullChatEditorPanel();
+            await provider._handleUserMessage('/vault');
+        }),
         vscode.commands.registerCommand('synax.openStudio', () => {
             provider.openFullStudioPanel();
         })
@@ -288,6 +317,7 @@ class SynaxChatViewProvider {
         this._extensionUri = extensionUri;
         this._context = context;
         this._view = undefined;
+        this._chatPanel = null;
         this._proc = null;
         this._rpcPending = new Map();
         this._rpcId = 0;
@@ -296,18 +326,8 @@ class SynaxChatViewProvider {
         this._lastHtml = '';
     }
 
-    resolveWebviewView(webviewView, context, _token) {
-        this._view = webviewView;
-
-        webviewView.webview.options = {
-            enableScripts: true,
-            localResourceRoots: [this._extensionUri]
-        };
-
-        this._lastHtml = this._getHtmlForWebview();
-        webviewView.webview.html = this._lastHtml;
-
-        webviewView.webview.onDidReceiveMessage(async (data) => {
+    _attachWebviewListeners(webview) {
+        webview.onDidReceiveMessage(async (data) => {
             switch (data.type) {
                 case 'sendMessage':
                     await this._handleUserMessage(data.text);
@@ -345,9 +365,46 @@ class SynaxChatViewProvider {
                 case 'openStudio':
                     this.openFullStudioPanel();
                     break;
+                case 'openChatEditor':
+                    this.openFullChatEditorPanel();
+                    break;
             }
         });
+    }
 
+    resolveWebviewView(webviewView, context, _token) {
+        this._view = webviewView;
+
+        webviewView.webview.options = {
+            enableScripts: true,
+            localResourceRoots: [this._extensionUri]
+        };
+
+        this._lastHtml = this._getHtmlForWebview();
+        webviewView.webview.html = this._lastHtml;
+        this._attachWebviewListeners(webviewView.webview);
+        this._ensureBackend();
+    }
+
+    openFullChatEditorPanel() {
+        if (this._chatPanel) {
+            this._chatPanel.reveal(vscode.ViewColumn.One);
+            return;
+        }
+        const panel = vscode.window.createWebviewPanel(
+            'synaxChatEditorPanel',
+            '💬 SYNAX Chat & Autonomous Studio',
+            vscode.ViewColumn.One,
+            { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [this._extensionUri] }
+        );
+        const iconPath = vscode.Uri.joinPath(this._extensionUri, 'media', 'synax-logo-color.svg');
+        panel.iconPath = { light: iconPath, dark: iconPath };
+        panel.webview.html = this._getHtmlForWebview();
+        this._chatPanel = panel;
+        this._attachWebviewListeners(panel.webview);
+        panel.onDidDispose(() => {
+            this._chatPanel = null;
+        });
         this._ensureBackend();
     }
 
@@ -681,6 +738,9 @@ class SynaxChatViewProvider {
     _postToWebview(msg) {
         if (this._view) {
             this._view.webview.postMessage(msg);
+        }
+        if (this._chatPanel) {
+            this._chatPanel.webview.postMessage(msg);
         }
     }
 

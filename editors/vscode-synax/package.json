@@ -1,9 +1,10 @@
 {
 	"name": "synax-lang",
-	"displayName": "SYNAX Code — Frugal Neuro-Symbolic AI & Autopoietic Compiler",
-	"description": "Official SYNAX v1.0.0 Language, Frugal AI Omni-Agent, Owned SynaxLLM (2.5MB), Neuro-Symbolic Self-Evolution (IMMUNE 0-ULP + TYCON), 3D Video/Screen Agent, LSP, and SIMD/MCU compiler for SYNAX (.sx).",
-	"version": "1.0.0",
+	"displayName": "SYNAX Chat & Studio IDE — Autonomous AI & Zero-Drift Compiler",
+	"description": "Official SYNAX v2.0.0 AI Chat Application, Biomedical Zero-Drift Autocalibrator (/calibrate), Claude/Codex Token Shield (/shield), Cross-Agent Context Vault (/vault), E-Graph Prover (/egraph), and SIMD/MCU Compiler.",
+	"version": "2.0.0",
 	"publisher": "synaxcode",
+	"icon": "media/synax-logo.png",
 	"author": {
 		"name": "Dr. Ömer Faruk Aydın",
 		"email": "dev@synaxcode.com",
@@ -13,10 +14,10 @@
 	"homepage": "https://synaxcode.org",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/ofaemd-creator/synax.git"
+		"url": "https://github.com/ofaemd-creator/synax-vscode-chat.git"
 	},
 	"bugs": {
-		"url": "https://github.com/ofaemd-creator/synax/issues",
+		"url": "https://github.com/ofaemd-creator/synax-vscode-chat/issues",
 		"email": "dev@synaxcode.com"
 	},
 	"engines": {
@@ -27,32 +28,40 @@
 		"*",
 		"onStartupFinished",
 		"onLanguage:synax",
-		"onView:synax.chatView"
+		"onView:synax.chatView",
+		"onWebviewPanel:synaxChatEditorPanel"
 	],
 	"categories": [
+		"AI",
+		"Chat",
 		"Programming Languages",
-		"Snippets",
-		"Machine Learning",
-		"Other"
+		"Machine Learning"
 	],
 	"keywords": [
 		"synax",
-		"sx",
-		"ai",
-		"autopoiesis",
 		"chat",
-		"simd",
-		"neon",
-		"ieee754",
-		"neuro-symbolic",
-		"compiler"
+		"ai",
+		"biomedical",
+		"token-shield",
+		"claude",
+		"codex",
+		"antigravity",
+		"egraph",
+		"simd"
 	],
 	"contributes": {
 		"viewsContainers": {
 			"activitybar": [
 				{
 					"id": "synax-sidebar",
-					"title": "SYNAX Code",
+					"title": "SYNAX Chat & Studio",
+					"icon": "media/synax-icon.svg"
+				}
+			],
+			"secondarySidebar": [
+				{
+					"id": "synax-sidebar-secondary",
+					"title": "SYNAX Chat",
 					"icon": "media/synax-icon.svg"
 				}
 			]
@@ -62,16 +71,64 @@
 				{
 					"type": "webview",
 					"id": "synax.chatView",
-					"name": "Synax AI Chat & Autopoiesis",
+					"name": "SYNAX AI Chat",
+					"icon": "media/synax-icon.svg"
+				}
+			],
+			"synax-sidebar-secondary": [
+				{
+					"type": "webview",
+					"id": "synax.chatViewSecondary",
+					"name": "SYNAX AI Chat",
 					"icon": "media/synax-icon.svg"
 				}
 			]
 		},
 		"commands": [
 			{
+				"command": "synax.openChatEditor",
+				"title": "SYNAX Chat: Sohbet Uygulamasını Aç (Tam Ekran Sekme)",
+				"category": "SYNAX",
+				"icon": {
+					"light": "media/synax-logo-color.svg",
+					"dark": "media/synax-logo-color.svg"
+				}
+			},
+			{
 				"command": "synax.openChat",
-				"title": "SYNAX Code: Chat ve Autopoiesis Panelini Aç",
+				"title": "SYNAX Chat: Yan Panel Sohbet Ekranını Aç",
+				"category": "SYNAX",
+				"icon": {
+					"light": "media/synax-logo-color.svg",
+					"dark": "media/synax-logo-color.svg"
+				}
+			},
+			{
+				"command": "synax.newChatSession",
+				"title": "SYNAX Chat: Yeni Sohbet Oturumu Başlat",
+				"category": "SYNAX",
+				"icon": "$(add)"
+			},
+			{
+				"command": "synax.runBiomedAutocal",
+				"title": "SYNAX Biomed: Otonom Sıfır-Sapma Kalibratörü (/calibrate)",
 				"category": "SYNAX"
+			},
+			{
+				"command": "synax.runTokenShield",
+				"title": "SYNAX Shield: Claude / Codex / Antigravity Token Kalkanı (/shield)",
+				"category": "SYNAX"
+			},
+			{
+				"command": "synax.runContextVault",
+				"title": "SYNAX Vault: Ajanlar Arası Sıfır-Kaybı Hafıza Kapsülü (/vault)",
+				"category": "SYNAX"
+			},
+			{
+				"command": "synax.openStudio",
+				"title": "SYNAX Studio IDE: Tam Ekran Derleyici & E-Graph Çalışma Alanını Aç",
+				"category": "SYNAX",
+				"icon": "$(window)"
 			},
 			{
 				"command": "synax.openEvolutionArena",
@@ -114,11 +171,6 @@
 				"category": "SYNAX"
 			},
 			{
-				"command": "synax.openStudio",
-				"title": "SYNAX Studio IDE: Tam Ekran Uygulamayı Aç (E-Graph + Formel Kanıtlayıcı)",
-				"category": "SYNAX"
-			},
-			{
 				"command": "synax.openAgent",
 				"title": "SYNAX Code: Otonom Kodlama Ajanını Aç (Terminal)",
 				"category": "SYNAX"
@@ -130,28 +182,46 @@
 			},
 			{
 				"command": "synax.reconnectBackend",
-				"title": "Yeniden Bağlan / Bağlantıyı Yenile",
+				"title": "SYNAX Motorunu Yeniden Bağla",
 				"category": "SYNAX",
 				"icon": "$(sync)"
 			},
 			{
 				"command": "synax.disconnectBackend",
-				"title": "Bağlantıyı Kes",
+				"title": "SYNAX Bağlantısını Kes",
 				"category": "SYNAX",
 				"icon": "$(debug-disconnect)"
 			}
 		],
+		"keybindings": [
+			{
+				"command": "synax.openChatEditor",
+				"key": "ctrl+shift+y",
+				"mac": "cmd+shift+y"
+			}
+		],
 		"menus": {
+			"editor/title": [
+				{
+					"command": "synax.openChatEditor",
+					"group": "navigation@1"
+				}
+			],
 			"view/title": [
 				{
-					"command": "synax.reconnectBackend",
-					"when": "view == synax.chatView",
+					"command": "synax.newChatSession",
+					"when": "view == synax.chatView || view == synax.chatViewSecondary",
 					"group": "navigation@1"
 				},
 				{
-					"command": "synax.disconnectBackend",
-					"when": "view == synax.chatView",
+					"command": "synax.openChatEditor",
+					"when": "view == synax.chatView || view == synax.chatViewSecondary",
 					"group": "navigation@2"
+				},
+				{
+					"command": "synax.reconnectBackend",
+					"when": "view == synax.chatView || view == synax.chatViewSecondary",
+					"group": "navigation@3"
 				}
 			]
 		},
@@ -183,7 +253,7 @@
 			}
 		],
 		"configuration": {
-			"title": "SYNAX Code & Language Server",
+			"title": "SYNAX Chat & Studio IDE",
 			"properties": {
 				"synax.lsp.enable": {
 					"type": "boolean",
@@ -203,7 +273,7 @@
 				"synax.chat.pythonPath": {
 					"type": "string",
 					"default": "",
-					"description": "Custom path to Python 3 interpreter used by Synax AI Chat."
+					"description": "Custom path to Python 3 interpreter used by SYNAX AI Chat."
 				},
 				"synax.evolution.dreamMode": {
 					"type": "boolean",
@@ -214,14 +284,9 @@
 					"type": "string",
 					"default": "",
 					"scope": "machine-overridable",
-					"description": "Directory containing your own SynaxLLM config.json and weights.pt. No external model API is called. Reconnect after changing."
+					"description": "Directory containing your own SynaxLLM config.json and weights.pt."
 				}
 			}
 		}
-	},
-	"__metadata": {
-		"installedTimestamp": 1794053080143,
-		"targetPlatform": "undefined",
-		"size": 1674388
 	}
 }
