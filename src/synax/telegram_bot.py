@@ -403,6 +403,11 @@ class SynaxTelegramBot:
 
 
 def run_telegram_cli(argv: Optional[List[str]] = None) -> int:
+    try:
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
     ap = argparse.ArgumentParser(
         prog="synax telegram",
         description="SYNAX Telegram Bot & Multi-Model Skill Bridge (Claude, Codex, Antigravity)",
