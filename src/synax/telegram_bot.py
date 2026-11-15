@@ -208,6 +208,10 @@ class SynaxTelegramBot:
             from synax.context_vault import format_vault_summary_text
 
             return format_vault_summary_text(arg, workspace_dir=self.config.workspace_dir)
+        if cmd in ("/calibrate", "/autocal", "calibrate", "autocal"):
+            from synax.biomedical_autocal import format_autocal_telegram_report
+
+            return format_autocal_telegram_report(arg or "ecg")
         if cmd in ("/code", "/agent"):
             return self._handle_code(arg)
 
@@ -224,6 +228,7 @@ class SynaxTelegramBot:
             "uzaktan doğrulama ve otonom ajan köprüsü.\n\n"
             "📌 Komutlar:\n"
             "• /status — Donanım (SIMD), derleyici ve aktif LLM durumunu göster\n"
+            "• /calibrate [ecg|ibp|ventilator|spo2] — Otonom Biyomedikal Sıfır-Sapma Kalibratörü\n"
             "• /shield — Claude/Codex/Antigravity Token Kalkanı (%75-%92 token tasarrufu)\n"
             "• /vault  — Ajanlar Arası Sıfır-Kaybı Hafıza Kapsülü (%99.7 devir tasarrufu)\n"
             "• /egraph <ifade> — E-Graph Eşitlik Doygunluğu ile ifadeyi optimize et\n"
@@ -402,11 +407,14 @@ class SynaxTelegramBot:
         bot_info = me.get("result", {})
         username = bot_info.get("username", "synax_bot")
         print(f"🤖 SYNAX Telegram Bot aktif: @{username}")
-        print("   Komutlar: /status, /egraph, /prove, /check, /run, /code")
+        print("   Komutlar: /status, /calibrate, /shield, /vault, /egraph, /prove, /check, /run, /code")
         print("   Durdurmak için Ctrl+C tuşlayın.\n")
         try:
             while True:
-                self.poll_once()
+                try:
+                    self.poll_once()
+                except (TimeoutError, Exception):
+                    pass
                 time.sleep(0.5)
         except KeyboardInterrupt:
             print("\n👋 SYNAX Telegram Bot durduruldu.")

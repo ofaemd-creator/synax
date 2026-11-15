@@ -1,0 +1,13 @@
+synax 1.0
+
+kernel biomedical_zero_drift_autocal(
+  raw_signal: tensor<f32>,
+  drift_estimate: tensor<f32>
+) -> tensor<f32> {
+  intent "Eliminate biomedical sensor baseline drift and heal IEEE-754 faults with contractive zero-point locking"
+  safety {
+    nonfinite = heal(0.0)
+  }
+  let corrected = raw_signal - drift_estimate
+  return corrected
+}
