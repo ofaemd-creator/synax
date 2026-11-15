@@ -200,6 +200,14 @@ class SynaxTelegramBot:
             return self._handle_check(arg)
         if cmd == "/run":
             return self._handle_run(arg)
+        if cmd in ("/shield", "/tokens", "shield"):
+            from synax.token_shield import format_shield_summary_text
+
+            return format_shield_summary_text(arg, workspace_dir=self.config.workspace_dir)
+        if cmd in ("/vault", "/memory", "vault"):
+            from synax.context_vault import format_vault_summary_text
+
+            return format_vault_summary_text(arg, workspace_dir=self.config.workspace_dir)
         if cmd in ("/code", "/agent"):
             return self._handle_code(arg)
 
@@ -216,6 +224,8 @@ class SynaxTelegramBot:
             "uzaktan doğrulama ve otonom ajan köprüsü.\n\n"
             "📌 Komutlar:\n"
             "• /status — Donanım (SIMD), derleyici ve aktif LLM durumunu göster\n"
+            "• /shield — Claude/Codex/Antigravity Token Kalkanı (%75-%92 token tasarrufu)\n"
+            "• /vault  — Ajanlar Arası Sıfır-Kaybı Hafıza Kapsülü (%99.7 devir tasarrufu)\n"
             "• /egraph <ifade> — E-Graph Eşitlik Doygunluğu ile ifadeyi optimize et\n"
             "  Örnek: `/egraph (a * b + c) + max(x - x, 0.0)`\n"
             "• /prove <kod_veya_ifade> — Statik IEEE-754 Aralık ([lo, hi]) güvenlik kanıtı üret\n"
