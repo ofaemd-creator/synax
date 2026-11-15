@@ -135,6 +135,15 @@ jobs:
       - name: Run Biomedical WFDB Reader Suite (All OSes)
         run: python tests/test_biomedical_wfdb.py
 
+      - name: Run E-Graph & Formal Interval Prover Suite (All OSes)
+        run: python tests/test_nextgen_2050.py
+
+      - name: Run Autonomous Coding Agent Suite (All OSes)
+        run: python tests/test_agent.py
+
+      - name: Run Telegram Bot Skill Suite (All OSes)
+        run: python tests/test_telegram_bot.py
+
       - name: Build VS Code VSIX package (All OSes)
         run: python scripts/build_vsix.py
 

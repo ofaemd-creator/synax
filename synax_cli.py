@@ -597,6 +597,8 @@ def cmd_test() -> None:
         os.path.join(BASE_DIR, "tests", "test_evolution_arena.py"),
         os.path.join(BASE_DIR, "tests", "test_language_v1.py"),
         os.path.join(BASE_DIR, "tests", "test_agent.py"),
+        os.path.join(BASE_DIR, "tests", "test_nextgen_2050.py"),
+        os.path.join(BASE_DIR, "tests", "test_telegram_bot.py"),
     ]
     ran = 0
     for sf in suite_files:
@@ -678,6 +680,9 @@ def main() -> None:
             info = install_all_ecosystem_integrations()
             for item in info["integrations"]:
                 print(f"✓ {item['platform']}: {item['path']}")
+        elif subcmd in ("telegram", "bot"):
+            from synax.telegram_bot import run_telegram_cli
+            sys.exit(run_telegram_cli(rest))
         elif subcmd == "evolve":
             cmd_evolve(rest)
         elif subcmd == "mcp":
