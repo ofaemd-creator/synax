@@ -28,8 +28,10 @@ if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from synax_chat import SynaxChatAgent
+from synax.agent_office import MultitaskOfficeOrchestrator, build_embedded_3d_office_html
 
 _CHAT_AGENT: Optional[SynaxChatAgent] = None
+_OFFICE_ORCH: Optional[MultitaskOfficeOrchestrator] = None
 
 
 def get_chat_agent() -> SynaxChatAgent:
@@ -37,6 +39,13 @@ def get_chat_agent() -> SynaxChatAgent:
     if _CHAT_AGENT is None:
         _CHAT_AGENT = SynaxChatAgent()
     return _CHAT_AGENT
+
+
+def get_office_orchestrator() -> MultitaskOfficeOrchestrator:
+    global _OFFICE_ORCH
+    if _OFFICE_ORCH is None:
+        _OFFICE_ORCH = MultitaskOfficeOrchestrator()
+    return _OFFICE_ORCH
 
 
 VSCODE_WORKBENCH_HTML = """<!DOCTYPE html>
@@ -250,7 +259,11 @@ class SynaxVSCodeAppHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         media_dir = REPO_ROOT / "editors" / "vscode-synax" / "media"
-        if self.path in ("/", "/index.html", "/vscode"):
+        if self.path in ("/", "/index.html", "/vscode", "/office", "/office.html"):
+            office_html = build_embedded_3d_office_html().encode("utf-8")
+            self._send_bytes(office_html, "text/html; charset=utf-8")
+            return
+        if self.path.startswith("/workbench"):
             self._send_bytes(VSCODE_WORKBENCH_HTML.encode("utf-8"), "text/html; charset=utf-8")
             return
         if self.path.startswith("/chat"):
@@ -276,6 +289,20 @@ class SynaxVSCodeAppHandler(BaseHTTPRequestHandler):
         self._send_bytes(b"Not Found", "text/plain", status=404)
 
     def do_POST(self) -> None:
+        if self.path == "/api/office-chat":
+            length = int(self.headers.get("Content-Length", "0"))
+            raw = self.rfile.read(length).decode("utf-8", errors="replace")
+            try:
+                payload = json.loads(raw) if raw else {}
+                prompt = payload.get("prompt") or payload.get("message") or "Merhaba SYNAX"
+                orch = get_office_orchestrator()
+                res = orch.execute_multitask(prompt)
+                body = json.dumps(res, ensure_ascii=False).encode("utf-8")
+                self._send_bytes(body, "application/json; charset=utf-8")
+            except Exception as e:
+                err = json.dumps({"reply": f"❌ Hata: {e}", "intent": "error"}).encode("utf-8")
+                self._send_bytes(err, "application/json; charset=utf-8", status=500)
+            return
         if self.path == "/api/chat":
             length = int(self.headers.get("Content-Length", "0"))
             raw = self.rfile.read(length).decode("utf-8", errors="replace")

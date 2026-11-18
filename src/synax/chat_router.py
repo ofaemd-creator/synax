@@ -217,9 +217,20 @@ class HybridLLMRouter:
 
     def _query_builtin_expert(self, prompt: str, context: Optional[Dict[str, Any]]) -> Tuple[str, Optional[str]]:
         """
-        Deterministic, offline, air-gapped domain expert knowledge engine.
-        Answers common architectural, biomedical, Xcode, ECC, and language questions.
+        Trained Turkish & English Conversational Language Model (SYNAX-LLM v2.1)
+        + 3D Agent Office Multitask Orchestrator.
         """
+        try:
+            from synax.synax_llm import SynaxTurkishLLM
+            if not hasattr(self, "_trained_tr_llm") or self._trained_tr_llm is None:
+                self._trained_tr_llm = SynaxTurkishLLM()
+            llm_out = self._trained_tr_llm.chat(prompt)
+            reply_text = llm_out.get("reply", "")
+            if reply_text:
+                return reply_text, self._extract_code(reply_text)
+        except Exception:
+            pass
+
         p_lower = prompt.lower().strip()
 
         # ── 1. ÇALIŞMA / DURUM / AKTİFLİK SORGULARI ──

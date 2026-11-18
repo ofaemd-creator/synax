@@ -214,11 +214,27 @@ class SynaxTelegramBot:
             return format_autocal_telegram_report(arg or "ecg")
         if cmd in ("/code", "/agent"):
             return self._handle_code(arg)
+        if cmd in ("/office", "/multitask", "office"):
+            from synax.agent_office import MultitaskOfficeOrchestrator
+            if not hasattr(self, "_office_orch"):
+                self._office_orch = MultitaskOfficeOrchestrator()
+            res = self._office_orch.execute_multitask(arg or "3D Ajan Ofisindeki 6 ajana aynı anda multitask görev ver")
+            desk_lines = "\n".join(
+                f"  {'🟢' if d['active'] else '⚪'} {d['name']}: {d['speech_tr']}"
+                for d in res["desks"]
+            )
+            return f"🏢 SYNAX 3D Agent Office (Multitask #{res['task_id']})\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n{res['reply']}\n\n📊 3D Ofis Masa Telemetrisi:\n{desk_lines}"
 
-        # If user sends raw .sx code or expression without a slash command
+        # If user sends raw .sx code
         if raw.startswith("synax ") or "kernel " in raw:
             return self._handle_check(raw)
-        return self._handle_egraph(raw)
+
+        # Otherwise route natural language conversation to trained SYNAX-LLM (Turkish AI)
+        from synax.synax_llm import SynaxTurkishLLM
+        if not hasattr(self, "_tr_llm"):
+            self._tr_llm = SynaxTurkishLLM()
+        chat_out = self._tr_llm.chat(raw)
+        return f"🧠 SYNAX-LLM (Türkçe AI · Güven: %{chat_out['confidence']*100:.1f})\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n{chat_out['reply']}"
 
     def _format_help(self) -> str:
         return (

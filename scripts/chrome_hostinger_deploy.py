@@ -1,150 +1,128 @@
 #!/usr/bin/env python3
 """
-SYNAX Chrome Direct Hostinger Deployer (`scripts/chrome_hostinger_deploy.py`)
-=============================================================================
-Uploads all necessary production files directly into Hostinger File Browser
-via the active Google Chrome tab session.
+SYNAX Hostinger Famulus Direct Deployer (`scripts/chrome_hostinger_deploy.py`)
+==============================================================================
+Uploads all production files (`index.html`, `office.html`, `repos.html`, `guide.html`,
+`dashboard.html`, `dashboard_data.json`, `synax_beacon.js`, `studio.html`)
+directly to `synaxcode.com`, `synaxcode.org`, and `synaxcode.online` on
+Hostinger via the authenticated `famulusStore` client in Safari.
 """
 
 import base64
 import json
-import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-def run_chrome_js(js_code: str) -> str:
-    """Executes JavaScript inside the Hostinger File Browser Chrome tab."""
-    # Escape for AppleScript
-    # Write JS to a temp file or use python json encoding
-    escaped_js = json.dumps(js_code)
-    apple_script = f'''
-    tell application "Google Chrome"
+
+def safari_js(js_code: str) -> str:
+    escaped = json.dumps(js_code)
+    script = f"""
+    tell application "Safari"
         repeat with w in every window
             repeat with t in every tab of w
-                if URL of t contains "files.hstgr.io" then
+                if URL of t contains "file-manager" then
                     tell t
-                        set res to execute javascript {escaped_js}
-                        return res
+                        return do JavaScript {escaped}
                     end tell
                 end if
             end repeat
         end repeat
-        return "TAB_NOT_FOUND"
+        error "Hostinger file-manager tab not found in Safari"
     end tell
-    '''
-    res = subprocess.run(["osascript", "-e", apple_script], capture_output=True, text=True)
-    if res.returncode != 0:
-        raise RuntimeError(f"AppleScript error: {res.stderr}")
-    return res.stdout.strip()
+    """
+    r = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(f"Safari AppleScript error: {r.stderr.strip()}")
+    return r.stdout.strip()
 
-def upload_file_to_hostinger(remote_path: str, local_path: Path):
-    """Uploads a local file to Hostinger via Chrome session."""
-    data_b64 = base64.b64encode(local_path.read_bytes()).decode("ascii")
-    js = f'''
+
+def upload_file_famulus(remote_path: str, local_path: Path) -> bool:
+    b64 = base64.b64encode(local_path.read_bytes()).decode("ascii")
+    js_start = f"""
     (function() {{
-        try {{
-            const b64 = "{data_b64}";
-            const bin = atob(b64);
-            const bytes = new Uint8Array(bin.length);
-            for (let i = 0; i < bin.length; i++) {{
+        window._upStatus = "PENDING";
+        var el = Array.from(document.querySelectorAll('script,link')).find(function(x) {{
+            return (x.src || x.href || '').includes('famulusStore.');
+        }});
+        var chunkUrl = el ? (el.src || el.href) : '/assets/chunk/famulusStore.FtnZJayN.js';
+        import(chunkUrl).then(function(m) {{
+            var fn = m.t || m.u || m.useFamulusStore || Object.values(m).find(function(v) {{ return typeof v === 'function'; }});
+            var store = fn();
+            var bin = atob("{b64}");
+            var bytes = new Uint8Array(bin.length);
+            for (var i = 0; i < bin.length; i++) {{
                 bytes[i] = bin.charCodeAt(i);
             }}
-            const blob = new Blob([bytes], {{ type: "application/octet-stream" }});
-            
-            const xhr = new XMLHttpRequest();
-            const url = "/56c0a3c8002461e4/api/resources{remote_path}?override=true";
-            xhr.open("POST", url, false);
-            xhr.setRequestHeader("X-Auth", localStorage.getItem("jwt"));
-            xhr.send(blob);
-            return JSON.stringify({{ status: xhr.status, path: "{remote_path}" }});
-        }} catch(e) {{
-            return JSON.stringify({{ error: e.message }});
-        }}
+            return store.client.writeFile("{remote_path}", bytes, {{}});
+        }}).then(function(etag) {{
+            window._upStatus = "OK:" + (etag || "200");
+        }}).catch(function(err) {{
+            window._upStatus = "ERR:" + (err.message || String(err));
+        }});
+        return "STARTED";
     }})()
-    '''
-    raw_res = run_chrome_js(js)
-    res = json.loads(raw_res)
-    if res.get("status") in (200, 204):
-        print(f"  ✓ Yüklendi: {remote_path} ({local_path.stat().st_size:,} bayt)")
-    else:
-        print(f"  ✗ Hata ({res.get('status')}): {remote_path} - {res}")
+    """
+    safari_js(js_start)
+    for _ in range(50):
+        time.sleep(0.25)
+        st = safari_js("window._upStatus")
+        if st != "PENDING":
+            if st.startswith("OK:"):
+                print(f"  ✓ Yüklendi: {remote_path:<48} ({local_path.stat().st_size:,} bayt)")
+                return True
+            print(f"  ✗ Hata: {remote_path} -> {st}")
+            return False
+    print(f"  ✗ Zaman aşımı: {remote_path}")
+    return False
 
-def create_directory_in_hostinger(remote_dir_path: str):
-    """Creates a directory in Hostinger via Chrome session."""
-    # In File Browser, POST with trailing slash creates a directory
-    js = f'''
-    (function() {{
-        try {{
-            const xhr = new XMLHttpRequest();
-            const url = "/56c0a3c8002461e4/api/resources{remote_dir_path}/";
-            xhr.open("POST", url, false);
-            xhr.setRequestHeader("X-Auth", localStorage.getItem("jwt"));
-            xhr.send();
-            return JSON.stringify({{ status: xhr.status }});
-        }} catch(e) {{
-            return JSON.stringify({{ error: e.message }});
-        }}
-    }})()
-    '''
-    run_chrome_js(js)
 
-def main():
-    print("=" * 70)
-    print("🚀 SYNAX CHROME ÜZERİNDEN DOĞRUDAN HOSTINGER DAĞITIMI")
-    print("=" * 70)
+def main() -> int:
+    print("=" * 74)
+    print("🚀 SYNAX DOĞRUDAN HOSTINGER FAMULUS CANLI DAĞITIMI (3 SITE BİRDEN)")
+    print("=" * 74)
 
-    # File paths
-    dashboard_html = BASE_DIR / "sites" / "dashboard.html"
-    synax_beacon_js = BASE_DIR / "sites" / "synax_beacon.js"
-    htaccess = BASE_DIR / ".htaccess"
-    guide_html = BASE_DIR / "sites" / "guide.html"
-    repos_html = BASE_DIR / "sites" / "repos_index.html"
-    
-    com_index = BASE_DIR / "sites" / "com_index.html"
-    org_index = BASE_DIR / "sites" / "org_index.html"
-    online_index = BASE_DIR / "sites" / "online_index.html"
+    sites_dir = BASE_DIR / "sites"
+    studio_html = BASE_DIR / "editors" / "vscode-synax" / "media" / "studio.html"
 
     domains_map = {
-        "synaxcode.com": com_index,
-        "synaxcode.org": org_index,
-        "synaxcode.online": online_index
+        "synaxcode.com": sites_dir / "com_index.html",
+        "synaxcode.org": sites_dir / "org_index.html",
+        "synaxcode.online": sites_dir / "online_index.html",
     }
 
     for domain, index_file in domains_map.items():
-        print(f"\n🌐 {domain} Dağıtımı Başlatılıyor...")
+        print(f"\n🌐 {domain} güncelleniyor...")
         pub = f"/domains/{domain}/public_html"
-        
-        # 1. Create dashboard directory
-        create_directory_in_hostinger(f"{pub}/dashboard")
-        
-        # 2. Upload dashboard.html (both in public_html and in public_html/dashboard/index.html)
-        upload_file_to_hostinger(f"{pub}/dashboard.html", dashboard_html)
-        upload_file_to_hostinger(f"{pub}/dashboard/index.html", dashboard_html)
-        
-        # 3. Upload synax_beacon.js
-        upload_file_to_hostinger(f"{pub}/synax_beacon.js", synax_beacon_js)
-        
-        # 4. Upload .htaccess
-        upload_file_to_hostinger(f"{pub}/.htaccess", htaccess)
-        
-        # 5. Upload index.html
-        upload_file_to_hostinger(f"{pub}/index.html", index_file)
-        
-        # 6. Upload guide.html
-        upload_file_to_hostinger(f"{pub}/guide.html", guide_html)
-        
-        # 7. Upload repos.html (for .com and .org)
+        upload_file_famulus(f"{pub}/index.html", index_file)
+        if (sites_dir / "office.html").exists():
+            upload_file_famulus(f"{pub}/office.html", sites_dir / "office.html")
+        upload_file_famulus(f"{pub}/dashboard.html", sites_dir / "dashboard.html")
+        upload_file_famulus(f"{pub}/dashboard/index.html", sites_dir / "dashboard.html")
+        if (BASE_DIR / "dashboard_data.json").exists():
+            upload_file_famulus(f"{pub}/dashboard_data.json", BASE_DIR / "dashboard_data.json")
+        upload_file_famulus(f"{pub}/guide.html", sites_dir / "guide.html")
+        if (BASE_DIR / "synax_beacon.js").exists():
+            upload_file_famulus(f"{pub}/synax_beacon.js", BASE_DIR / "synax_beacon.js")
         if domain in ("synaxcode.com", "synaxcode.org"):
-            upload_file_to_hostinger(f"{pub}/repos.html", repos_html)
+            upload_file_famulus(f"{pub}/repos.html", sites_dir / "repos_index.html")
+        if studio_html.exists():
+            upload_file_famulus(f"{pub}/studio.html", studio_html)
 
-    # Reload Chrome tab to show the updated directory
-    print("\n🔄 Chrome sekmesi yenileniyor...")
-    run_chrome_js("window.location.reload()")
-    print("\n🎉 TEBRİKLER! TÜM DOSYALAR HOSTINGER'A BAŞARIYLA YÜKLENDİ!")
-    print("=" * 70)
+    # Also update root /public_html on the primary domain
+    print("\n📂 Ana /public_html dizini senkronize ediliyor...")
+    upload_file_famulus("/public_html/index.html", sites_dir / "com_index.html")
+    if (sites_dir / "office.html").exists():
+        upload_file_famulus("/public_html/office.html", sites_dir / "office.html")
+    if studio_html.exists():
+        upload_file_famulus("/public_html/studio.html", studio_html)
+
+    print("\n🎉 TÜM SİTELER (synaxcode.com, synaxcode.org, synaxcode.online) CANLI OLARAK GÜNCELLENDİ!")
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
