@@ -1,8 +1,8 @@
 {
   "name": "synax-lang",
-  "displayName": "SYNAX Chat, 3D Agent Office & Turkish LLM Studio",
+  "displayName": "SYNAX 3D Agent Office v3.0 (Claude Code · Codex · Antigravity · Academic & Silicon Studio)",
   "description": "Trained Native Turkish Conversational AI (SYNAX-LLM v2.1) & 3D Isometric Multitask Agent Office (6 Autonomous Agents: LLM, Lyapunov Autocal, E-Graph 0-ULP, Token Shield -88%, SHA-256 Context Vault, 5-Target Silicon).",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "publisher": "synaxcode",
   "icon": "media/synax-logo.png",
   "author": {

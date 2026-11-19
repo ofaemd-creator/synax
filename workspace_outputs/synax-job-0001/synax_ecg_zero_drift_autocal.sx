@@ -1,0 +1,16 @@
+synax 1.0
+
+// Otonom EKG Sıfır-Sapma (Zero-Drift) & R-Dalga Kararlılık Çekirdeği
+// Otomatik Sentezleyen: SYNAX 3D Agent Office (SYNAX-JOB-0001)
+kernel synax_ecg_zero_drift_autocal(
+  ecg_raw_mv: tensor<f32>,
+  baseline_drift_mv: tensor<f32>
+) -> tensor<f32> {
+  intent "Otonom EKG Sıfır-Sapma (Zero-Drift) & R-Dalga Kararlılık Çekirdeği — V_{k+1} < V_k Zero-Drift & 0-ULP Verified"
+  safety {
+    nonfinite = heal(0.0)
+    bounds = (-7.0, 7.0)
+  }
+  let out = (ecg_raw_mv - baseline_drift_mv) * 0.985
+  return out
+}

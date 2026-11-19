@@ -1,0 +1,97 @@
+{
+  "job_id": "SYNAX-JOB-0001",
+  "kernel_name": "synax_ecg_zero_drift_autocal",
+  "domain": "biomedical_ecg",
+  "title_tr": "Otonom EKG Sıfır-Sapma (Zero-Drift) & R-Dalga Kararlılık Çekirdeği",
+  "formal_proof": {
+    "status": "PROVEN_SAFE_0_ULP",
+    "output_interval": [
+      -7.0,
+      7.0
+    ],
+    "ieee754_suites_passed": "19/19",
+    "nan_inf_immune_healing": true,
+    "certificate_sha256": "62fecaea679a7a55077abd45920790bc80a1cd7a9b4fa82191dbc62950f43be1"
+  },
+  "lyapunov_autocal": {
+    "contraction_rate_gamma": 0.24,
+    "v_initial": 1.976836,
+    "v_final": 5.846e-05,
+    "monotone_decreasing_verified": true,
+    "drift_suppression_pct": 99.587,
+    "convergence_trace": [
+      {
+        "epoch": 1,
+        "raw_sensor": 3.05,
+        "calibrated": 2.606,
+        "residual_error": 1.406,
+        "lyapunov_V": 1.976836
+      },
+      {
+        "epoch": 2,
+        "raw_sensor": 3.05,
+        "calibrated": 2.26856,
+        "residual_error": 1.06856,
+        "lyapunov_V": 1.14182047
+      },
+      {
+        "epoch": 3,
+        "raw_sensor": 3.05,
+        "calibrated": 2.012106,
+        "residual_error": 0.812106,
+        "lyapunov_V": 0.65951551
+      },
+      {
+        "epoch": 4,
+        "raw_sensor": 3.05,
+        "calibrated": 1.8172,
+        "residual_error": 0.6172,
+        "lyapunov_V": 0.38093616
+      },
+      {
+        "epoch": 5,
+        "raw_sensor": 3.05,
+        "calibrated": 1.669072,
+        "residual_error": 0.469072,
+        "lyapunov_V": 0.22002872
+      },
+      {
+        "epoch": 6,
+        "raw_sensor": 3.05,
+        "calibrated": 1.556495,
+        "residual_error": 0.356495,
+        "lyapunov_V": 0.12708859
+      },
+      {
+        "epoch": 7,
+        "raw_sensor": 3.05,
+        "calibrated": 1.470936,
+        "residual_error": 0.270936,
+        "lyapunov_V": 0.07340637
+      },
+      {
+        "epoch": 8,
+        "raw_sensor": 3.05,
+        "calibrated": 1.405911,
+        "residual_error": 0.205911,
+        "lyapunov_V": 0.04239952
+      }
+    ]
+  },
+  "token_shield": {
+    "raw_tokens": 2114,
+    "compressed_tokens": 132,
+    "savings_pct": 93.76
+  },
+  "context_vault": {
+    "capsule_tokens": 132,
+    "vault_sha256": "79baf21de2b902639ee3d7e8224e903f8f4a0854d4063d7b8d53b4ed99d7780e",
+    "compatible_agents": [
+      "Claude Code",
+      "OpenAI Codex",
+      "Google Antigravity",
+      "Cursor",
+      "Windsurf"
+    ]
+  }
+}

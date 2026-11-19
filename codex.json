@@ -1,0 +1,18 @@
+{
+  "name": "synax-agent-office",
+  "version": "2.5.0",
+  "provider": "SYNAX 3D Agent Office & Turkish LLM",
+  "mcp_server": {
+    "command": "python3",
+    "args": [
+      "/Users/o.farukaydin/.gemini/antigravity/scratch/synax/src/synax/office_mcp_server.py",
+      "--stdio"
+    ]
+  },
+  "tools": [
+    "synax_office_multitask",
+    "synax_llm_chat_tr",
+    "synax_token_shield_compress",
+    "synax_context_vault_handoff"
+  ]
+}

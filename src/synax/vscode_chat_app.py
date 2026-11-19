@@ -295,8 +295,14 @@ class SynaxVSCodeAppHandler(BaseHTTPRequestHandler):
             try:
                 payload = json.loads(raw) if raw else {}
                 prompt = payload.get("prompt") or payload.get("message") or "Merhaba SYNAX"
+                target_agent_id = payload.get("target_agent_id")
+                engine_provider = payload.get("engine_provider") or "Claude Code + Codex + Antigravity"
                 orch = get_office_orchestrator()
-                res = orch.execute_multitask(prompt)
+                res = orch.execute_multitask(
+                    prompt,
+                    target_agent_id=target_agent_id,
+                    engine_provider=engine_provider,
+                )
                 body = json.dumps(res, ensure_ascii=False).encode("utf-8")
                 self._send_bytes(body, "application/json; charset=utf-8")
             except Exception as e:

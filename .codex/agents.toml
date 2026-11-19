@@ -1,0 +1,24 @@
+# OpenAI Codex CLI Native MCP & 8-Agent Office Configuration (v3.0.0)
+[mcp_servers.synax_agent_office]
+command = "python3"
+args = ["/Users/o.farukaydin/.gemini/antigravity/scratch/synax/src/synax/office_mcp_server.py", "--stdio"]
+
+[agents.academic_scholar]
+role = "PRISMA 2020 Systematic Literature Review & PubMed/CrossRef Citation Agent"
+tool = "synax_academic_literature_review"
+
+[agents.biostat_analyst]
+role = "Biostatistical Meta-Analysis, Forest Plot & IMRaD Manuscript Agent"
+tool = "synax_academic_literature_review"
+
+[agents.biomed_lyapunov]
+role = "Contractive Lyapunov-Kalman Zero-Drift Biomedical Firmware Agent"
+tool = "synax_office_multitask"
+
+[agents.token_shield]
+role = "AST Skeletonizer & -88% Token Cost Optimizer"
+tool = "synax_token_shield_compress"
+
+[agents.formal_silicon]
+role = "E-Graph 0-ULP Prover & 5-Target Hardware Codegen (NEON/AVX2/MCU)"
+tool = "synax_office_multitask"

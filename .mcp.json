@@ -1,13 +1,13 @@
 {
   "mcpServers": {
-    "synax": {
-      "command": "/Users/o.farukaydin/.local/bin/python3",
+    "synax-agent-office": {
+      "command": "python3",
       "args": [
-        "/Users/o.farukaydin/.gemini/antigravity/scratch/synax/synax_cli.py",
-        "mcp"
+        "/Users/o.farukaydin/.gemini/antigravity/scratch/synax/src/synax/office_mcp_server.py",
+        "--stdio"
       ],
       "env": {
-        "PYTHONPATH": "/Users/o.farukaydin/.gemini/antigravity/scratch/synax:/Users/o.farukaydin/.gemini/antigravity/scratch/synax/src"
+        "PYTHONUNBUFFERED": "1"
       }
     }
   }

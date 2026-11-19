@@ -80,7 +80,37 @@ def upload_file_famulus(remote_path: str, local_path: Path) -> bool:
     return False
 
 
+def ensure_file_manager_tab() -> None:
+    script = """
+    tell application "Safari"
+        repeat with w in every window
+            repeat with t in every tab of w
+                if URL of t contains "file-manager" then
+                    return "ALREADY_OPEN"
+                end if
+            end repeat
+        end repeat
+        repeat with w in every window
+            repeat with t in every tab of w
+                if URL of t contains "hostinger.com" then
+                    tell t
+                        set URL to "https://hpanel.hostinger.com/websites/synaxcode.com/files/file-manager?redirectLocation=side_menu"
+                    end tell
+                    return "NAVIGATED"
+                end if
+            end repeat
+        end repeat
+        return "NO_TAB"
+    end tell
+    """
+    r = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
+    if "NAVIGATED" in r.stdout:
+        print("⏳ Hostinger Dosya Yöneticisi sekmesi açılıyor (7 sn bekleniyor)...")
+        time.sleep(7)
+
+
 def main() -> int:
+    ensure_file_manager_tab()
     print("=" * 74)
     print("🚀 SYNAX DOĞRUDAN HOSTINGER FAMULUS CANLI DAĞITIMI (3 SITE BİRDEN)")
     print("=" * 74)

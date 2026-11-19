@@ -1,10 +1,7 @@
 {
-  "name": "synax",
-  "version": "1.0.0",
-  "description": "SYNAX v1.0.0 Compiler, E-Graph Optimizer, Formal Interval Prover & 0-ULP Silicon Verifier",
-  "author": {
-    "name": "Dr. \u00d6mer Faruk Ayd\u0131n"
-  },
-  "skills": "./skills",
-  "mcpServers": "../.mcp.json"
+  "name": "synax-agent-office",
+  "version": "2.5.0",
+  "description": "SYNAX 3D Multitask Agent Office & Native Turkish Conversational LLM for Claude Code, OpenAI Codex, and Antigravity.",
+  "author": "Dr. Ömer Faruk Aydın (@ofaemd-creator)",
+  "mcp": "../.mcp.json"
 }
