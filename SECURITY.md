@@ -1,61 +1,63 @@
-# Security Policy & Zero-Trust Architecture (`SYNAX-SEC v2.5`)
+# 🔒 SYNAX Agent Office & SYNAX-OMNI Ekosistemi Güvenlik Politikası (Security Policy)
 
-SYNAX (`.sx`) is engineered for high-integrity numerical computing, ranging from resource-constrained embedded microcontrollers to SIMD/multicore CPUs. Security, filesystem isolation, and IEEE-754 mathematical determinism are enforced across every stage of the compiler (`synaxc`) and adaptive runtime (`libsynax_myelin`).
-
----
-
-## 1. Supported Versions
-
-| Version | Status | Security Updates |
-| :--- | :--- | :--- |
-| **`0.5.x` (Unified Compiler & Myelin Engine)** | **Supported** | Active security & differential verification patches |
-| `< 0.5.0` (Legacy prototypes) | Unsupported | Please upgrade to `>= 0.5.0` |
+SYNAX (`@ofaemd-creator`) açık kaynak ekosistemine, kullanıcı veri mahremiyetine ve tıbbi/biyomedikal yazılım güvenliğine en üst düzeyde önem verir. Bu politika belgesi; güvenlik açığı bildirme sürecini, desteklenen sürümleri ve platformumuzun temel güvenlik mimarisini tanımlar.
 
 ---
 
-## 2. Reporting a Vulnerability
+## 🛡️ Desteklenen Sürümler (Supported Versions)
 
-**Please do NOT open public GitHub issues for suspected security vulnerabilities.**
+SYNAX Agent Office ve bağlı çekirdek modülleri düzenli güvenlik güncellemeleri alır:
 
-Report security issues privately via email to the SYNAX Security & Architecture Team:
-
-- **Primary Security Contact:** `dev@synaxcode.com`
-- **Lead Maintainer Direct Contact:** `ofaemd@gmail.com` (Dr. Ömer Faruk Aydın)
-
-### What to Include
-1. Affected component (`synax_ir.py`, `synax_security.py`, `synaxc.py`, `synax_myelin_engine.c`, SDK bindings, etc.) and version/commit hash.
-2. Minimal `.sx` input, C API call, or cache payload reproducing the issue.
-3. Impact assessment (e.g., sandbox/firewall bypass, memory safety defect in C FFI, cache signature bypass, or silent IEEE-754 semantic corruption).
-
-### Response Timeline
-- **Acknowledgement:** Within **48 hours** of receipt.
-- **Triage & Remediation Plan:** Within **7 days**.
-- **Coordinated Disclosure:** Credit is granted in release advisories once a verified fix is published.
+| Sürüm (Version) | Destek Durumu (Support Status) | Güvenlik Yamaları (Security Fixes) |
+|---|---|---|
+| **v6.0.x (SYNAX-OMNI)** | :white_check_mark: Tam Destekleniyor (Aktif) | Canlı & Öncelikli |
+| **v5.0.x** | :white_check_mark: Destekleniyor | Kritik Hatalar |
+| **v4.x / v3.x** | :warning: Sınırlı Destek | Sadece Güvenlik Açığı Tespiti |
+| **< v3.0** | :x: Kullanım Dışı | Desteklenmiyor (Lütfen güncelleyin) |
 
 ---
 
-## 3. Defense-in-Depth Security Controls
+## 🔐 Temel Güvenlik ve Gizlilik Mimarisi (Security Architecture)
 
-### 3.1 Zero-Trust AST & Code-Injection Firewall (`SynaxSecurityGuard`)
-Implemented in [`synax_security.py`](synax_security.py), `SynaxSecurityGuard` inspects both lowered expressions and full C translation units prior to invoking the native C compiler:
-- **Expression Verification (`verify_c_expression`):** Enforces a strict character whitelist, balanced parentheses, and payload length bounds (`1..4096` bytes). Blocks shell/process execution (`system`, `popen`, `exec*`, `fork`), dynamic loader escapes (`dlopen`), inline assembly (`asm`, `__asm__`), unsafe libc calls (`gets`, `strcpy`, `sprintf`), and preprocessor directives (`#include`, `#define`, `#pragma`).
-- **Translation-Unit Verification (`verify_c_module_source`):** Inspects generated and optional LLM-mutated C11 modules (`<= 65,536` bytes) against an explicit `#include` allowlist (`stddef.h`, `stdint.h`, `stdbool.h`, `float.h`, `math.h`, `arm_neon.h`, `immintrin.h`, `dispatch/dispatch.h`, `unistd.h`, `string.h`) and rejects filesystem or network syscalls (`fopen`, `freopen`, `socket`, `connect`, `unlink`, `remove`, `rename`).
+1. **Sıfır-Bilgi Anahtar Güvenliği (Zero-Trust BYOK - Bring Your Own Key):**
+   * Kullanıcıların girdiği harici API anahtarları (`Groq`, `Anthropic Claude`, `OpenAI`, `Gemini`, `OpenRouter`) **asla uzak sunuculara veya GitHub'a iletilmez ve kaydedilmez**.
+   * Tarayıcı üzerinde çalışan versiyonlarda anahtarlar yalnızca istemci tarafında (`localStorage`) tutulur.
+   * Masaüstü uygulamasında (`SYNAX Studio.app`) anahtarlar yerel kullanıcı dizininde `~/.synax/user_accounts.json` dosyasında `chmod 600` (sadece yerel kullanıcı okuyabilir) yetkisiyle saklanır.
 
-### 3.2 `0700` Cache Directory Isolation
-Compiled Myelin artifacts (`~/.cache/synax/hafiza/<ir_hash>/` and per-UID fallback `/tmp/synax_<uid>`) are created with owner-only POSIX mode **`0700` (`rwx------`)** in both Python (`get_hafiza_root()`) and C (`synax_myelin_engine.c`). This prevents cross-user shared-object tampering, symlink races, and unauthorized inspection on multi-user POSIX hosts.
+2. **İzole Python Code Interpreter Sandbox:**
+   * Kullanıcı veya ajanlar tarafından üretilen Python hesaplama scriptleri yerel işletim sisteminde sınırlandırılmış yetkilerle ve 5 saniyelik zaman aşımı (subprocess timeout) kontrolü altında çalıştırılır.
 
-### 3.3 Cryptographic `SHA-256` State & Lockfile Signing
-Persistent compiler metadata, lockfiles, and self-evolving runtime files carry canonical `SHA-256` digests (`_integrity_sha256` computed over sorted-key canonical JSON via `SynaxSecurityGuard.compute_canonical_sha256`):
-- **`rapor.json`** — Per-kernel verification, candidate elimination, and benchmark manifest inside `~/.cache/synax/hafiza/<ir_hash>/`.
-- **`.sx.lock`** — Deterministic compilation lockfiles pinning canonical `ir_hash`, safety policy, and verified artifact digests.
-- **`synapse_brain.json` / `myelin_memory.json` / `synapse_weights.json`** — Persistent concept and hardware-bandit state verified via `SynaxSecurityGuard.verify_json_file()` prior to load; tampered cache entries are automatically invalidated and rebuilt from source.
+3. **IEEE-754 0-ULP & Lyapunov Sıfır-Sapma Güvenliği:**
+   * Biyomedikal sinyal işleme çekirdeklerinde (`.sx`) oluşabilecek beklenmedik donanım taşmaları, `NaN` ve `Inf` değerleri donanımsal `heal(0.0)` emniyet kalkanı ile anında bertaraf edilir.
 
-### 3.4 IEEE-754 Runtime Immune Shield & 19-Suite Semantic Gate
-- All non-finite (`NaN`, `±Inf`) and range-bound checks execute via unsigned 32-bit IEEE-754 bit-mask comparisons (`(bits & 0x7FFFFFFFu) <= bound_u32`), remaining 100% deterministic across scalar and SIMD lanes without `-ffast-math`.
-- Every compiled candidate must pass all **19 adversarial differential test suites** against dual independent references before any `.dylib`/`.so` can enter the Myelin cache.
+4. **Kriptografik Ajan Hafıza Kasası (SHA-256 Context Vault):**
+   * Ajanlar arası bağlam devri sırasında üretilen kapsüller SHA-256 özetleri ile mühürlenir; veri manipülasyonuna veya üçüncü taraf müdahalesine kapalıdır.
 
 ---
 
-## 4. Non-Clinical Research Scope
+## 🚨 Güvenlik Açığı Bildirimi (Reporting a Vulnerability)
 
-Security hardening in SYNAX does not constitute clinical medical device certification. All biomedical pipelines are strictly governed by [`MEDICAL_RESEARCH_DISCLAIMER.md`](MEDICAL_RESEARCH_DISCLAIMER.md).
+SYNAX depolarında potansiyel bir güvenlik açığı veya veri güvenliği riski tespit ederseniz, lütfen bunu **herkese açık bir GitHub Issue (Hata Kaydı) olarak bildirmeyiniz**.
+
+Bunun yerine aşağıdaki güvenli kanalları kullanınız:
+
+1. **GitHub Private Vulnerability Reporting (Önerilen):**
+   * Depo sayfasında [Security > Advisories > Report a vulnerability](https://github.com/ofaemd-creator/synax-agent-office/security/advisories/new) sekmesine giderek gizli bir rapor oluşturabilirsiniz.
+2. **Doğrudan İletişim & Güvenlik Masası:**
+   * E-posta: **`dev@synaxcode.com`**
+   * Konu Başlığı: `[SECURITY AUDIT] SYNAX Agent Office - <Bileşen Adı>`
+   * Raporunuzda lütfen:
+     * Açığın tespit edildiği bileşen / dosya yolu,
+     * Yeniden üretme adımları (PoC - Proof of Concept),
+     * Olası etki değerlendirmesini belirtiniz.
+
+### Yanıt Süresi Taahhüdümüz:
+* **İlk Yanıt:** 24 saat içerisinde rapor onaylanır ve inceleme başlatılır.
+* **Geçici Çözüm / Düzeltme:** Kritik açıklar için en geç 72 saat içerisinde yama yayınlanır.
+* **Sorumlu İfşa (Responsible Disclosure):** Açık kapatılıp yeni sürüm yayınlanana kadar detaylar gizli tutulur. Katkıda bulunan araştırmacılara sürüm notlarında resmi teşekkür edilir.
+
+---
+
+## 🏥 Tıbbi & Biyomedikal Sorumluluk Reddi (Clinical Disclaimer)
+
+SYNAX ve bağlı tüm biyomedikal algoritmalar (`Lyapunov-Kalman autocal`, `PRISMA meta-analysis`, `0-ULP verifier`), deneysel ve akademik araştırmalara yönelik açık kaynaklı mühendislik araçlarıdır. Ürünlerin klinik tanı ve acil tıp kararlarında kullanımı hekim ve sağlık personeli sorumluluğundadır; CE/FDA sınıflandırması gerektiren tıbbi cihaz yazılımlarında doğrudan birincil karar verici olarak kullanılamaz.
