@@ -295,6 +295,20 @@ class SynaxVSCodeAppHandler(BaseHTTPRequestHandler):
             body = json.dumps(res, ensure_ascii=False).encode("utf-8")
             self._send_bytes(body, "application/json; charset=utf-8")
             return
+        if self.path == "/api/register-agent":
+            length = int(self.headers.get("Content-Length", "0"))
+            raw = self.rfile.read(length).decode("utf-8", errors="replace") if length > 0 else "{}"
+            data = json.loads(raw)
+            orch = get_office_orchestrator()
+            res = orch.producer.computer.register_custom_user_agent(
+                agent_name=data.get("name", "Custom Agent"),
+                agent_role=data.get("role", "Specialist"),
+                system_prompt=data.get("system_prompt", ""),
+                provider=data.get("provider", "Claude Code"),
+            )
+            body = json.dumps(res, ensure_ascii=False).encode("utf-8")
+            self._send_bytes(body, "application/json; charset=utf-8")
+            return
         if self.path == "/api/office-chat":
             length = int(self.headers.get("Content-Length", "0"))
             raw = self.rfile.read(length).decode("utf-8", errors="replace")
@@ -308,6 +322,9 @@ class SynaxVSCodeAppHandler(BaseHTTPRequestHandler):
                     prompt,
                     target_agent_id=target_agent_id,
                     engine_provider=engine_provider,
+                    user_api_key=payload.get("user_api_key", ""),
+                    user_model=payload.get("user_model", ""),
+                    custom_system_prompt=payload.get("custom_system_prompt", ""),
                 )
                 body = json.dumps(res, ensure_ascii=False).encode("utf-8")
                 self._send_bytes(body, "application/json; charset=utf-8")

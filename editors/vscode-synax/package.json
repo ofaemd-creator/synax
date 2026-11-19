@@ -1,8 +1,8 @@
 {
   "name": "synax-lang",
-  "displayName": "SYNAX Studio & 3D Pixar-Tycoon Agent Office v4.0 (Computer Access · Claude · Codex · Antigravity)",
+  "displayName": "SYNAX Studio & 3D Pixar-Tycoon Agent Office v4.2 (BYOK · Custom Agents · Claude · Codex)",
   "description": "Trained Native Turkish Conversational AI (SYNAX-LLM v2.1) & 3D Isometric Multitask Agent Office (6 Autonomous Agents: LLM, Lyapunov Autocal, E-Graph 0-ULP, Token Shield -88%, SHA-256 Context Vault, 5-Target Silicon).",
-  "version": "4.0.0",
+  "version": "4.2.0",
   "publisher": "synaxcode",
   "icon": "media/synax-logo.png",
   "author": {

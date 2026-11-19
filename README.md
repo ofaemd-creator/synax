@@ -1,3 +1,19 @@
+<p align="center">
+  <img src="assets/pixar-tycoon-office.jpg" alt="SYNAX 3D Agent Office v4.2 — Pixar & Tycoon Animated Edition" width="100%">
+</p>
+
+<p align="center">
+  <a href="https://synaxcode.com"><img src="https://img.shields.io/badge/Canl%C4%B1%20Pixar--Tycoon%203D%20Ofis-synaxcode.com-10b981?style=for-the-badge" alt="Live Studio"></a>
+  <a href="https://github.com/ofaemd-creator/synax-agent-office/releases/tag/v4.0.0"><img src="https://img.shields.io/badge/Masa%C3%BCst%C3%BC%20Uygulamas%C4%B1%20%26%20VSIX-v4.2%20%C4%B0ndir-f59e0b?style=for-the-badge" alt="Download Desktop App"></a>
+  <a href="https://github.com/ofaemd-creator/synax-agent-office"><img src="https://img.shields.io/badge/3D%20Agent%20Office%20Repo-Claude%20%C2%B7%20Codex%20%C2%B7%20Antigravity-38bdf8?style=for-the-badge" alt="Agent Office Repo"></a>
+</p>
+
+| 🎬 Pixar-Tycoon 3D Ajan Ofisi (8 Uzman Karakter) | 🏢 8-Masalı Mimari Görev Atama Stüdyosu | 📚 Akademik PRISMA & Biyoistatistik Paketi |
+| :---: | :---: | :---: |
+| <img src="assets/pixar-tycoon-office.jpg" width="100%"> | <img src="assets/agent-office-v3-screen.jpg" width="100%"> | <img src="assets/academic-skills-screen.jpg" width="100%"> |
+
+---
+
 # ⚡ SYNAX (`.sx`) — Neuro-Symbolic Kernel Language, E-Graph Optimizer, Formal Prover & Multi-Agent Ecosystem
 
 [![CI](https://img.shields.io/github/actions/workflow/status/ofaemd-creator/synax/ci.yml?branch=main&style=for-the-badge&label=Cross-Platform_CI)](https://github.com/ofaemd-creator/synax/actions)

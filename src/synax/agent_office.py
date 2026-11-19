@@ -50,12 +50,18 @@ class MultitaskOfficeOrchestrator:
         prompt_tr: str,
         target_agent_id: Optional[str] = None,
         engine_provider: str = "Claude Code + Codex + Antigravity",
+        user_api_key: str = "",
+        user_model: str = "",
+        custom_system_prompt: str = "",
     ) -> Dict[str, Any]:
         return self.producer.produce_work(
             prompt_tr,
             target_agent_id=target_agent_id,
             engine_provider=engine_provider,
             write_files=True,
+            user_api_key=user_api_key,
+            user_model=user_model,
+            custom_system_prompt=custom_system_prompt,
         )
 
 
@@ -463,11 +469,73 @@ def build_embedded_3d_office_html() -> str:
       <span class="badge">🤝 Claude Code · Codex · Antigravity</span>
       <span class="badge">📚 PRISMA 2020 &amp; Biyoistatistik</span>
       <span class="badge" id="tycoonTotalXpBadge" style="color:#fde047;border-color:#f59e0b;">⭐ Ofis Seviyesi: LVL 99 (14,850 XP)</span>
+      <button onclick="openAccountHubModal()" class="badge" id="connectedAccountBadge" style="cursor:pointer;color:#fde047;border-color:#f59e0b;background:rgba(245,158,11,0.18);">🔑 Kendi Hesabını &amp; Özel Ajanını Bağla</button>
       <button onclick="openComputerTab()" class="badge" style="cursor:pointer;color:#34d399;border-color:#10b981;">🖥️ Bilgisayarım &amp; Sistem Doktoru</button>
       <button onclick="openLocalWorkspaceFolder()" class="badge" style="cursor:pointer;color:#38bdf8;border-color:#38bdf8;">📂 Bilgisayarımdaki Klasörü Aç</button>
-      <a href="https://github.com/ofaemd-creator/synax-agent-office/releases/download/v4.0.0/SYNAX-Desktop-macOS-v4.0.0.zip" class="badge" style="color:#fde047;border-color:#f59e0b;background:rgba(245,158,11,0.16);">💻 Masaüstü Uygulamasını İndir (v4.0)</a>
+      <a href="https://github.com/ofaemd-creator/synax-agent-office/releases/download/v4.0.0/SYNAX-Desktop-macOS-v4.0.0.zip" class="badge" style="color:#fde047;border-color:#f59e0b;background:rgba(245,158,11,0.16);">💻 Masaüstü Uygulamasını İndir (v4.2)</a>
     </div>
   </header>
+
+  <!-- ===================================================================== -->
+  <!-- ACCOUNT & CUSTOM AGENT CONNECTOR MODAL (BYOK / CLAUDE / CODEX / OLLAMA) -->
+  <!-- ===================================================================== -->
+  <div id="accountHubModal" style="display:none;position:fixed;inset:0;background:rgba(2,6,18,0.82);backdrop-filter:blur(10px);z-index:100;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:#0b1224;border:2px solid #f59e0b;border-radius:18px;max-width:780px;width:100%;padding:20px;box-shadow:0 25px 70px rgba(0,0,0,0.85);color:#f8fafc;max-height:92vh;overflow-y:auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;margin-bottom:14px;">
+        <div>
+          <h2 style="font-size:16px;color:#fde047;">🔑 Kendi Yapay Zeka Hesabını &amp; Özel Ajanlarını Bağla (Claude Code · Codex · Gemini · Ollama)</h2>
+          <p style="font-size:11.5px;color:#94a3b8;margin-top:3px;">Anahtarınız yalnızca kendi tarayıcınızda/bilgisayarınızda saklanır; 8 Pixar ajanı ve eklediğiniz özel ajanlar doğrudan kendi hesabınızla çalışır.</p>
+        </div>
+        <button onclick="closeAccountHubModal()" style="background:rgba(239,68,68,0.2);color:#fca5a5;border:1px solid #ef4444;border-radius:8px;padding:5px 11px;cursor:pointer;font-weight:800;">✕ Kapat</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <!-- LEFT: CONNECT YOUR OWN AI ACCOUNT (BYOK / CLI) -->
+        <div style="background:rgba(15,23,42,0.9);border:1px solid rgba(56,189,248,0.3);border-radius:13px;padding:14px;">
+          <h3 style="font-size:13px;color:#38bdf8;margin-bottom:10px;">🔗 1. Kendi AI Hesabını / API Anahtarını Bağla</h3>
+          <label style="font-size:11px;color:#cbd5e1;display:block;margin-bottom:4px;">Yapay Zeka Sağlayıcısı Seçin:</label>
+          <select id="userProviderSelect" class="desk-input" style="width:100%;margin-bottom:9px;padding:7px;">
+            <option value="Anthropic Claude Code">Anthropic Claude / Claude Code (sk-ant-...)</option>
+            <option value="OpenAI Codex">OpenAI Codex / GPT-4o (sk-...)</option>
+            <option value="Google Gemini">Google Gemini 2.5 Flash/Pro (AIza...)</option>
+            <option value="OpenRouter">OpenRouter (Ücretsiz &amp; Pro Modeller · sk-or-...)</option>
+            <option value="Local Ollama">Yerel Ollama Sunucusu (http://127.0.0.1:11434)</option>
+            <option value="SYNAX-LLM Türkçe">Yerel SYNAX-LLM Türkçe (Ücretsiz · Anahtarsız)</option>
+          </select>
+
+          <label style="font-size:11px;color:#cbd5e1;display:block;margin-bottom:4px;">API Anahtarınız (veya Yerel Ollama URL):</label>
+          <input type="password" id="userApiKeyInput" class="desk-input" style="width:100%;margin-bottom:9px;padding:7px;" placeholder="sk-ant-... / sk-... / AIza... / sk-or-... (Anahtarsız için boş bırakın)" />
+
+          <label style="font-size:11px;color:#cbd5e1;display:block;margin-bottom:4px;">Model Adı (İsteğe Bağlı):</label>
+          <input type="text" id="userModelInput" class="desk-input" style="width:100%;margin-bottom:11px;padding:7px;" placeholder="Örn: claude-3-7-sonnet-latest, gpt-4o, gemini-2.5-flash, qwen2.5-coder" />
+
+          <div style="display:flex;gap:7px;">
+            <button class="btn-assign" style="flex:1;padding:8px;" onclick="saveUserAccountConnection()">🔗 Hesabımı Bağla &amp; Tüm Ajanlara Uygula</button>
+            <button class="btn-view-work" onclick="clearUserAccountConnection()">Sıfırla</button>
+          </div>
+          <div id="accountConnStatusMsg" style="font-size:11px;color:#34d399;margin-top:8px;">● Aktif: Yerel SYNAX-LLM + Claude/Codex MCP Köprüsü</div>
+        </div>
+
+        <!-- RIGHT: ADD YOUR OWN CUSTOM AGENT TO THE 3D OFFICE & CLAUDE/CODEX -->
+        <div style="background:rgba(15,23,42,0.9);border:1px solid rgba(16,185,129,0.35);border-radius:13px;padding:14px;">
+          <h3 style="font-size:13px;color:#34d399;margin-bottom:10px;">➕ 2. Kendi Özel Ajanını Ofise &amp; Claude/Codex'e Ekle</h3>
+          <label style="font-size:11px;color:#cbd5e1;display:block;margin-bottom:4px;">Özel Ajan Adı:</label>
+          <input type="text" id="customAgentName" class="desk-input" style="width:100%;margin-bottom:8px;padding:7px;" placeholder="Örn: Dr. Radyoloji AI veya Kıdemli Rust Mimarı" />
+
+          <label style="font-size:11px;color:#cbd5e1;display:block;margin-bottom:4px;">Uzmanlık Alanı &amp; Görevi:</label>
+          <input type="text" id="customAgentRole" class="desk-input" style="width:100%;margin-bottom:8px;padding:7px;" placeholder="Örn: Klinik Görüntüleme Analizi / Mikroservis Güvenliği" />
+
+          <label style="font-size:11px;color:#cbd5e1;display:block;margin-bottom:4px;">Sistem Talimatı (System Prompt / Beceri Tanımı):</label>
+          <textarea id="customAgentPrompt" class="desk-input" style="width:100%;height:62px;margin-bottom:9px;padding:7px;resize:vertical;" placeholder="Bu ajanın nasıl davranacağını ve hangi çıktıları üreteceğini yazın..."></textarea>
+
+          <div style="display:flex;gap:7px;">
+            <button class="btn-assign" style="flex:1;padding:8px;background:linear-gradient(135deg,#10b981,#06b6d4);color:#030712;" onclick="createCustomUserAgent()">➕ Özel Ajanı Ofise Ekle &amp; .MD İndir</button>
+          </div>
+          <div id="customAgentStatusMsg" style="font-size:10.5px;color:#38bdf8;margin-top:8px;">Eklediğiniz ajan anında 3D Ofis Matrisine ve <code>.claude/agents/</code> içine eklenir.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <main class="studio-grid">
     <!-- =================================================================== -->
@@ -583,6 +651,148 @@ def build_embedded_3d_office_html() -> str:
     let currentTabId = 'tab-academic';
     let focusedDeskIndex = -1;
     let totalOfficeXP = 14850;
+    let userConnectedProvider = localStorage.getItem('synax_user_provider') || '';
+    let userConnectedApiKey = localStorage.getItem('synax_user_api_key') || '';
+    let userConnectedModel = localStorage.getItem('synax_user_model') || '';
+
+    function openAccountHubModal() {
+      const m = document.getElementById('accountHubModal');
+      if (userConnectedProvider) document.getElementById('userProviderSelect').value = userConnectedProvider;
+      if (userConnectedApiKey) document.getElementById('userApiKeyInput').value = userConnectedApiKey;
+      if (userConnectedModel) document.getElementById('userModelInput').value = userConnectedModel;
+      m.style.display = 'flex';
+    }
+    function closeAccountHubModal() {
+      document.getElementById('accountHubModal').style.display = 'none';
+    }
+    function saveUserAccountConnection() {
+      userConnectedProvider = document.getElementById('userProviderSelect').value;
+      userConnectedApiKey = document.getElementById('userApiKeyInput').value.trim();
+      userConnectedModel = document.getElementById('userModelInput').value.trim();
+      localStorage.setItem('synax_user_provider', userConnectedProvider);
+      localStorage.setItem('synax_user_api_key', userConnectedApiKey);
+      localStorage.setItem('synax_user_model', userConnectedModel);
+
+      AGENT_DESKS.forEach(d => { d.engine = userConnectedProvider; });
+      renderDesksMatrix();
+      const badge = document.getElementById('connectedAccountBadge');
+      if (badge) badge.innerHTML = `🟢 Bağlı Hesap: ${userConnectedProvider}`;
+      document.getElementById('accountConnStatusMsg').innerHTML = `✅ <strong>${userConnectedProvider}</strong> hesabınız bağlandı! Tüm Pixar ajanları artık kendi hesabınızla çalışıyor.`;
+      appendChatBubble('ai', `🔑 **Hesap Bağlantısı Başarılı!**\n3D Ajan Ofisindeki tüm Pixar ajanları artık bağladığınız **\`${userConnectedProvider}\`** (${userConnectedModel || 'Varsayılan Model'}) hesabınız üzerinden çalışacak şekilde yapılandırıldı.`, 'Hesap Bağlandı');
+    }
+    function clearUserAccountConnection() {
+      userConnectedProvider = '';
+      userConnectedApiKey = '';
+      userConnectedModel = '';
+      localStorage.removeItem('synax_user_provider');
+      localStorage.removeItem('synax_user_api_key');
+      localStorage.removeItem('synax_user_model');
+      document.getElementById('userApiKeyInput').value = '';
+      document.getElementById('userModelInput').value = '';
+      const badge = document.getElementById('connectedAccountBadge');
+      if (badge) badge.innerHTML = `🔑 Kendi Hesabını &amp; Özel Ajanını Bağla`;
+      document.getElementById('accountConnStatusMsg').innerHTML = `● Yerel SYNAX-LLM varsayılan moda döndürüldü.`;
+    }
+
+    async function callBrowserDirectLLM(promptText, sysPrompt) {
+      if (!userConnectedApiKey && !userConnectedProvider.includes('Ollama')) return null;
+      const prov = (userConnectedProvider || '').toLowerCase();
+      const key = userConnectedApiKey;
+      const sys = sysPrompt || 'Sen SYNAX 3D Ajan Ofisinde çalışan uzman bir yapay zeka ajanısın. Yanıtlarını Türkçe, net ve uygulanabilir olarak üret.';
+      try {
+        if (prov.includes('gemini') || key.startsWith('AIza')) {
+          const m = userConnectedModel || 'gemini-2.5-flash';
+          const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: sys + '\n\nGörev: ' + promptText }] }] })
+          });
+          if (r.ok) {
+            const d = await r.json();
+            return d.candidates[0].content.parts[0].text;
+          }
+        } else if (prov.includes('openrouter') || prov.includes('openai') || prov.includes('codex') || key.startsWith('sk-')) {
+          const isOr = prov.includes('openrouter') || key.startsWith('sk-or-');
+          const url = isOr ? 'https://openrouter.ai/api/v1/chat/completions' : 'https://api.openai.com/v1/chat/completions';
+          const m = userConnectedModel || (isOr ? 'google/gemma-3-27b-it:free' : 'gpt-4o-mini');
+          const r = await fetch(url, {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model: m, messages: [{ role: 'system', content: sys }, { role: 'user', content: promptText }] })
+          });
+          if (r.ok) {
+            const d = await r.json();
+            return d.choices[0].message.content;
+          }
+        } else if (prov.includes('ollama')) {
+          const baseUrl = key.startsWith('http') ? key : 'http://127.0.0.1:11434';
+          const m = userConnectedModel || 'qwen2.5-coder:latest';
+          const r = await fetch(`${baseUrl.replace(/\/$/, '')}/api/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model: m, prompt: sys + '\n\nGörev: ' + promptText, stream: false })
+          });
+          if (r.ok) {
+            const d = await r.json();
+            return d.response;
+          }
+        }
+      } catch (_) {}
+      return null;
+    }
+
+    async function createCustomUserAgent() {
+      const name = document.getElementById('customAgentName').value.trim() || 'Özel Uzman Ajan';
+      const role = document.getElementById('customAgentRole').value.trim() || 'Özel Mühendislik & Analiz Ajanı';
+      const sysPrompt = document.getElementById('customAgentPrompt').value.trim() || `Sen ${name} (${role}) ajanısın. Verilen görevleri en yüksek kalitede çöz.`;
+      const provider = userConnectedProvider || document.getElementById('userProviderSelect').value || 'Claude Code';
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || ('custom-' + (AGENT_DESKS.length + 1));
+
+      const newIdx = AGENT_DESKS.length;
+      const newDesk = {
+        id: slug,
+        index: newIdx,
+        u: 0.500, v: 0.480,
+        headU: 0.500, headV: 0.390,
+        bgPos: '50% 15%',
+        xpTag: '+350 XP · ÖZEL AJAN',
+        shortTitle: name.toUpperCase().slice(0, 18),
+        name: `Masa ${newIdx + 1}: ${name}`,
+        role: role,
+        engine: provider,
+        customSystemPrompt: sysPrompt,
+        color: '#f43f5e',
+        active: true,
+        progress: 100,
+        level: 99,
+        speech: 'Özel ajanınız ofise bağlandı ve göreve hazır!',
+        defaultTask: `${role} kapsamında kapsamlı analiz ve çözüm üret`,
+        targetTab: 'tab-handoff'
+      };
+      AGENT_DESKS.push(newDesk);
+      renderDesksMatrix();
+
+      // Save to backend if running locally
+      try {
+        await fetch('/api/register-agent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, role, system_prompt: sysPrompt, provider })
+        });
+      } catch (_) {}
+
+      // Also download the Claude Code .md agent definition file for the user
+      const mdContent = `---\nname: ${slug}\ndescription: ${role}\nprovider: ${provider}\n---\n\n# ${name} (${role})\n\n${sysPrompt}\n`;
+      const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${slug}.claude-agent.md`;
+      a.click();
+
+      document.getElementById('customAgentStatusMsg').innerHTML = `✅ <strong>${name}</strong> ofise eklendi ve Claude Code ajan dosyası (<code>${slug}.claude-agent.md</code>) indirildi!`;
+      appendChatBubble('ai', `➕ **Yeni Özel Ajanınız Ofise Katıldı: \`${name}\` (${role})**\nSol alttaki Ajan Matrisine **Masa ${newIdx + 1}** olarak eklendi ve Claude Code / OpenAI Codex uyumlu ajan tanım dosyanız indirildi. Hemen görev atayabilirsiniz!`, 'Özel Ajan Aktif');
+      closeAccountHubModal();
+    }
 
     // Exact (u, v) normalized coordinates of the 8 Pixar characters on the 16:9 3D Diorama
     // Central SYNAX CORE is at (u: 0.500, v: 0.485)
@@ -1195,13 +1405,24 @@ def build_embedded_3d_office_html() -> str:
         const resp = await fetch('/api/office-chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: taskText, target_agent_id: agentId, engine_provider: engineName })
+          body: JSON.stringify({
+            prompt: taskText,
+            target_agent_id: agentId,
+            engine_provider: userConnectedProvider || engineName,
+            user_api_key: userConnectedApiKey,
+            user_model: userConnectedModel,
+            custom_system_prompt: desk.customSystemPrompt || ''
+          })
         });
         if (resp.ok) workData = await resp.json();
       } catch (_) {}
 
       if (!workData) {
-        workData = synthesizeClientSideWork(taskText, agentId, engineName);
+        workData = synthesizeClientSideWork(taskText, agentId, userConnectedProvider || engineName);
+        const directReply = await callBrowserDirectLLM(taskText, desk.customSystemPrompt);
+        if (directReply) {
+          workData.reply = `🔗 **[Bağlı Hesabınız: \`${userConnectedProvider}\` Yanıtı]:**\n\n${directReply}\n\n---\n` + workData.reply;
+        }
       }
 
       setTimeout(() => {
@@ -1237,13 +1458,22 @@ def build_embedded_3d_office_html() -> str:
         const resp = await fetch('/api/office-chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: prompt, engine_provider: 'Claude Code + Codex + Antigravity' })
+          body: JSON.stringify({
+            prompt: prompt,
+            engine_provider: userConnectedProvider || 'Claude Code + Codex + Antigravity',
+            user_api_key: userConnectedApiKey,
+            user_model: userConnectedModel
+          })
         });
         if (resp.ok) workData = await resp.json();
       } catch (_) {}
 
       if (!workData) {
-        workData = synthesizeClientSideWork(prompt, null, 'Claude Code + Codex + Antigravity');
+        workData = synthesizeClientSideWork(prompt, null, userConnectedProvider || 'Claude Code + Codex + Antigravity');
+        const directReply = await callBrowserDirectLLM(prompt, '');
+        if (directReply) {
+          workData.reply = `🔗 **[Bağlı Hesabınız: \`${userConnectedProvider}\` Yanıtı]:**\n\n${directReply}\n\n---\n` + workData.reply;
+        }
       }
 
       setTimeout(() => {
@@ -1547,6 +1777,23 @@ class AgentOfficeHTTPHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
+        if self.path == "/api/register-agent":
+            length = int(self.headers.get("Content-Length", "0"))
+            raw = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
+            data = json.loads(raw)
+            res = self.orchestrator.producer.computer.register_custom_user_agent(
+                agent_name=data.get("name", "Custom Agent"),
+                agent_role=data.get("role", "Specialist"),
+                system_prompt=data.get("system_prompt", ""),
+                provider=data.get("provider", "Claude Code"),
+            )
+            body = json.dumps(res, ensure_ascii=False).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if self.path in ("/api/office-chat", "/api/chat"):
             length = int(self.headers.get("Content-Length", "0"))
             raw = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
@@ -1558,6 +1805,9 @@ class AgentOfficeHTTPHandler(BaseHTTPRequestHandler):
                 prompt,
                 target_agent_id=target_agent_id,
                 engine_provider=engine_provider,
+                user_api_key=data.get("user_api_key", ""),
+                user_model=data.get("user_model", ""),
+                custom_system_prompt=data.get("custom_system_prompt", ""),
             )
             body = json.dumps(res, ensure_ascii=False).encode("utf-8")
             self.send_response(200)

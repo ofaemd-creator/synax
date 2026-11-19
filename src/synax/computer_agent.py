@@ -307,6 +307,178 @@ class SynaxComputerAgent:
             "workspace_files": self.list_workspace_files()[:10],
         }
 
+    # ------------------------------------------------------------------
+    # 5. User-Connected Account (BYOK / Local CLI) & Custom Agent Bridge
+    # ------------------------------------------------------------------
+    def call_user_connected_account(
+        self,
+        prompt: str,
+        provider: str,
+        api_key: str = "",
+        model_name: str = "",
+        system_prompt: str = "Sen SYNAX 3D Ajan Ofisinde çalışan uzman bir yapay zeka ajanısın. Yanıtlarını Türkçe, net ve uygulanabilir olarak üret.",
+        ollama_url: str = "http://127.0.0.1:11434",
+    ) -> Optional[str]:
+        """
+        Executes real LLM inference using the user's own connected account:
+          - OpenAI / Codex API (`sk-...`)
+          - Anthropic Claude API (`sk-ant-...`)
+          - OpenRouter API (`sk-or-...`)
+          - Google Gemini API (`AIza...`)
+          - Local Ollama (`http://127.0.0.1:11434`)
+          - Local Claude Code CLI (`claude -p`) or OpenAI Codex CLI (`codex`)
+        """
+        prov = (provider or "").lower()
+        key = (api_key or "").strip()
+
+        # 1. OpenAI / OpenRouter compatible JSON REST API
+        if key and ("openai" in prov or "codex" in prov or "openrouter" in prov or key.startswith("sk-or-") or (key.startswith("sk-") and not key.startswith("sk-ant-"))):
+            is_or = "openrouter" in prov or key.startswith("sk-or-")
+            url = "https://openrouter.ai/api/v1/chat/completions" if is_or else "https://api.openai.com/v1/chat/completions"
+            default_m = "google/gemma-3-27b-it:free" if is_or else "gpt-4o-mini"
+            payload = {
+                "model": model_name or default_m,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt},
+                ],
+                "temperature": 0.3,
+                "max_tokens": 900,
+            }
+            try:
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={
+                        "Authorization": f"Bearer {key}",
+                        "Content-Type": "application/json",
+                    },
+                )
+                with urllib.request.urlopen(req, timeout=8) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    return data["choices"][0]["message"]["content"].strip()
+            except Exception as e:
+                return f"⚠️ Bağlı {provider} hesabınızla iletişim kurulurken hata oluştu: `{e}`"
+
+        # 2. Anthropic Claude API
+        if key and ("claude" in prov or "anthropic" in prov or key.startswith("sk-ant-")):
+            payload = {
+                "model": model_name or "claude-3-5-sonnet-latest",
+                "max_tokens": 900,
+                "system": system_prompt,
+                "messages": [{"role": "user", "content": prompt}],
+            }
+            try:
+                req = urllib.request.Request(
+                    "https://api.anthropic.com/v1/messages",
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={
+                        "x-api-key": key,
+                        "anthropic-version": "2023-06-01",
+                        "Content-Type": "application/json",
+                    },
+                )
+                with urllib.request.urlopen(req, timeout=8) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    blocks = data.get("content", [])
+                    if blocks and "text" in blocks[0]:
+                        return blocks[0]["text"].strip()
+            except Exception as e:
+                return f"⚠️ Bağlı Anthropic Claude hesabınızla iletişim hatası: `{e}`"
+
+        # 3. Google Gemini API
+        if key and ("gemini" in prov or "google" in prov or key.startswith("AIza")):
+            m = model_name or "gemini-2.5-flash"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={urllib.parse.quote(key)}"
+            payload = {
+                "contents": [{"parts": [{"text": f"{system_prompt}\n\nGörev: {prompt}"}]}]
+            }
+            try:
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req, timeout=8) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            except Exception as e:
+                return f"⚠️ Bağlı Google Gemini hesabınızla iletişim hatası: `{e}`"
+
+        # 4. Local Ollama on User's Computer
+        if "ollama" in prov:
+            payload = {
+                "model": model_name or "qwen2.5-coder:latest",
+                "prompt": f"{system_prompt}\n\nKullanıcı: {prompt}\nYanıt:",
+                "stream": False,
+            }
+            try:
+                req = urllib.request.Request(
+                    f"{ollama_url.rstrip('/')}/api/generate",
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req, timeout=5) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    return data.get("response", "").strip()
+            except Exception as e:
+                return f"⚠️ Yerel Ollama sunucusuna (`{ollama_url}`) bağlanılamadı: `{e}`"
+
+        return None
+
+    def register_custom_user_agent(
+        self,
+        agent_name: str,
+        agent_role: str,
+        system_prompt: str,
+        provider: str = "Claude Code",
+    ) -> Dict[str, Any]:
+        """
+        Saves a user-created custom agent directly into `.claude/agents/<slug>.md`
+        and `.codex/agents.toml` and `~/SYNAX_Workspace/custom_agents.json` so it
+        works immediately inside the 3D Agent Office, Claude Code, and OpenAI Codex!
+        """
+        slug = re.sub(r"[^a-z0-9]+", "-", normalize_turkish(agent_name)).strip("-") or "custom-agent"
+        custom_dir = self.user_workspace / "custom_agents"
+        custom_dir.mkdir(parents=True, exist_ok=True)
+
+        claude_md = (
+            f"---\n"
+            f"name: {slug}\n"
+            f"description: {agent_role}\n"
+            f"provider: {provider}\n"
+            f"---\n\n"
+            f"# {agent_name} ({agent_role})\n\n"
+            f"{system_prompt}\n"
+        )
+        claude_file = custom_dir / f"{slug}.md"
+        claude_file.write_text(claude_md, encoding="utf-8")
+
+        # Also copy to workspace .claude/agents/ if writable
+        repo_claude_dir = REPO_ROOT / ".claude" / "agents"
+        if repo_claude_dir.exists():
+            (repo_claude_dir / f"{slug}.md").write_text(claude_md, encoding="utf-8")
+
+        codex_snippet = (
+            f"\n[agents.{slug.replace('-', '_')}]\n"
+            f"name = \"{agent_name}\"\n"
+            f"role = \"{agent_role}\"\n"
+            f"provider = \"{provider}\"\n"
+            f"instructions = {json.dumps(system_prompt, ensure_ascii=False)}\n"
+        )
+        codex_file = custom_dir / f"{slug}.codex.toml"
+        codex_file.write_text(codex_snippet.strip() + "\n", encoding="utf-8")
+
+        return {
+            "slug": slug,
+            "name": agent_name,
+            "role": agent_role,
+            "provider": provider,
+            "system_prompt": system_prompt,
+            "claude_agent_path": str(claude_file),
+            "codex_profile_path": str(codex_file),
+        }
+
 
 if __name__ == "__main__":
     agent = SynaxComputerAgent()

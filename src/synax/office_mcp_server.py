@@ -150,17 +150,31 @@ class RealTimeWorkProducer:
         target_agent_id: Optional[str] = None,
         engine_provider: str = "Claude Code + Codex + Antigravity",
         write_files: bool = True,
+        user_api_key: str = "",
+        user_model: str = "",
+        custom_system_prompt: str = "",
     ) -> Dict[str, Any]:
         """
         Executes a real-time mission across all 8 agents (or focuses on `target_agent_id`
-        when a user assigns a specific task to an individual desk).
+        when a user assigns a specific task to an individual desk), optionally using
+        the user's own connected Claude / OpenAI / Gemini / OpenRouter / Ollama account.
         """
         t0 = time.time()
         self.job_counter += 1
         job_id = f"SYNAX-JOB-{self.job_counter:04d}"
 
-        # 1. Masa 1: SYNAX-LLM Turkish NLU
+        # 1. Masa 1: SYNAX-LLM Turkish NLU (+ User Connected Account if provided!)
         llm_out = self.llm.chat(prompt)
+        if user_api_key or "ollama" in engine_provider.lower():
+            live_acc_reply = self.computer.call_user_connected_account(
+                prompt=prompt,
+                provider=engine_provider,
+                api_key=user_api_key,
+                model_name=user_model,
+                system_prompt=custom_system_prompt or "Sen SYNAX 3D Ajan Ofisinde çalışan uzman bir yapay zeka ajanısın. Yanıtlarını Türkçe, net ve uygulanabilir olarak üret.",
+            )
+            if live_acc_reply:
+                llm_out["reply"] = f"🔗 **[Bağlı Hesabınız: `{engine_provider}` ({user_model or 'Canlı Model'}) Yanıtı]:**\n\n{live_acc_reply}"
         bp = self._infer_task_blueprint(prompt)
         kname = bp["kernel_name"]
         p0_name, _, p0_bounds = bp["params"][0]
