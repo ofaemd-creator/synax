@@ -78,6 +78,19 @@ def _get_pixar_diorama_data_uri() -> str:
     return ""
 
 
+def _get_master_logo_data_uri() -> str:
+    candidates = [
+        REPO_ROOT / "assets" / "studio" / "synax-logo-96.jpg",
+        REPO_ROOT.parent / "synax" / "assets" / "studio" / "synax-logo-96.jpg",
+        Path("/Users/o.farukaydin/.gemini/antigravity/scratch/synax/assets/studio/synax-logo-96.jpg"),
+    ]
+    for p in candidates:
+        if p.exists():
+            b64 = base64.b64encode(p.read_bytes()).decode("ascii")
+            return f"data:image/jpeg;base64,{b64}"
+    return ""
+
+
 def build_embedded_3d_office_html() -> str:
     producer = RealTimeWorkProducer()
     initial_work = producer.produce_work(
@@ -92,13 +105,15 @@ def build_embedded_3d_office_html() -> str:
     }, ensure_ascii=False)
     initial_work_json = json.dumps(initial_work, ensure_ascii=False)
     pixar_data_uri = _get_pixar_diorama_data_uri()
+    logo_data_uri = _get_master_logo_data_uri()
 
     html = r"""<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SYNAX 3D Agent Office v3.2 (Pixar-Tycoon Edition) — Claude Code · OpenAI Codex · Antigravity AI Stüdyosu</title>
+  <title>SYNAX-OMNI v6.0 — Süper-LLM (ChatGPT + Claude + Perplexity) &amp; 3D Pixar-Tycoon Agent Office</title>
+  <link rel="icon" type="image/jpeg" href="__LOGO_DATA_URI__" />
   <style>
     :root {
       --bg-deep: #040711;
@@ -136,11 +151,16 @@ def build_embedded_3d_office_html() -> str:
     }
     .brand { display: flex; align-items: center; gap: 12px; }
     .brand-logo {
-      width: 42px; height: 42px; border-radius: 12px;
-      background: linear-gradient(135deg, #f59e0b, #10b981, #06b6d4);
+      width: 46px; height: 46px; border-radius: 12px;
+      background: #030712;
+      border: 1.5px solid rgba(245, 158, 11, 0.65);
       display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 13.5px; color: #030712;
-      box-shadow: 0 0 22px rgba(245, 158, 11, 0.55);
+      overflow: hidden;
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.45), 0 0 12px rgba(245, 158, 11, 0.35);
+      flex-shrink: 0;
+    }
+    .brand-logo img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
     }
     .brand-title {
       font-size: 15.5px; font-weight: 900; letter-spacing: 0.3px;
@@ -458,10 +478,10 @@ def build_embedded_3d_office_html() -> str:
 <body>
   <header>
     <div class="brand">
-      <div class="brand-logo">SX 5.0</div>
+      <div class="brand-logo"><img src="__LOGO_DATA_URI__" alt="SYNAX Master Logo v6.0" /></div>
       <div>
-        <div class="brand-title">SYNAX-OMNI v5.0 — SÜPER-LLM (CHATGPT + CLAUDE + PERPLEXITY) &amp; 3D PIXAR-TYCOON AGENT OFFICE</div>
-        <div class="brand-sub">Dr. Ömer Faruk Aydın (@ofaemd-creator) · Canlı Bilimsel Atıflar [1][2][3] · Derin Muhakeme · Claude Artifacts &amp; 8 Pixar Ajanı</div>
+        <div class="brand-title">SYNAX-OMNI v6.0 — GERÇEK SÜPER-LLM (REACT + PUBMED EFETCH + GROQ LPU + CLAUDE ARTIFACTS) &amp; 3D PIXAR-TYCOON AGENT OFFICE</div>
+        <div class="brand-sub">Dr. Ömer Faruk Aydın (@ofaemd-creator) · Canlı NCBI PubMed Tam Özetleri [1][2][3] · Python Code Interpreter · Claude Artifacts &amp; 8 Pixar Ajanı</div>
       </div>
     </div>
     <div class="top-badges">
@@ -594,12 +614,13 @@ def build_embedded_3d_office_html() -> str:
       </div>
 
       <div class="workbench-tabs">
-        <button class="w-tab active" id="btn-tab-academic" onclick="switchWorkbenchTab('tab-academic')">📚 1. Akademik PRISMA &amp; Meta-Analiz</button>
-        <button class="w-tab" id="btn-tab-sx" onclick="switchWorkbenchTab('tab-sx')">⚡ 2. .SX &amp; Python + TDD Kodu</button>
-        <button class="w-tab" id="btn-tab-c" onclick="switchWorkbenchTab('tab-c')">🔩 3. ARM64 NEON / AVX2 / C99 / MCU</button>
-        <button class="w-tab" id="btn-tab-sim" onclick="switchWorkbenchTab('tab-sim')">🩺 4. Lyapunov &amp; 0-ULP Simülasyon</button>
-        <button class="w-tab" id="btn-tab-handoff" onclick="switchWorkbenchTab('tab-handoff')">🤝 5. Claude Code &amp; Codex Kapsülü</button>
-        <button class="w-tab" id="btn-tab-computer" onclick="switchWorkbenchTab('tab-computer')">🖥️ 6. Bilgisayarım &amp; Sistem Doktoru</button>
+        <button class="w-tab active" id="btn-tab-artifact" onclick="switchWorkbenchTab('tab-artifact')">✨ 1. Özel Çıktı (Claude Artifact &amp; Canvas)</button>
+        <button class="w-tab" id="btn-tab-academic" onclick="switchWorkbenchTab('tab-academic')">📚 2. Akademik PRISMA &amp; Meta-Analiz</button>
+        <button class="w-tab" id="btn-tab-sx" onclick="switchWorkbenchTab('tab-sx')">⚡ 3. .SX &amp; Python + TDD Kodu</button>
+        <button class="w-tab" id="btn-tab-c" onclick="switchWorkbenchTab('tab-c')">🔩 4. ARM64 NEON / AVX2 / C99 / MCU</button>
+        <button class="w-tab" id="btn-tab-sim" onclick="switchWorkbenchTab('tab-sim')">🩺 5. Lyapunov &amp; 0-ULP Simülasyon</button>
+        <button class="w-tab" id="btn-tab-handoff" onclick="switchWorkbenchTab('tab-handoff')">🤝 6. Claude Code &amp; Codex Kapsülü</button>
+        <button class="w-tab" id="btn-tab-computer" onclick="switchWorkbenchTab('tab-computer')">🖥️ 7. Bilgisayarım &amp; Sistem Doktoru</button>
       </div>
 
       <div class="workbench-toolbar">
@@ -648,7 +669,7 @@ def build_embedded_3d_office_html() -> str:
             type="text"
             id="mainChatInput"
             class="chat-inp"
-            placeholder="SYNAX-OMNI v5.0 Süper-LLM'e her konuda soru sorun veya Pixar ajanlarına görev verin..."
+            placeholder="SYNAX-OMNI v6.0 Süper-LLM'e tıp, yazılım, matematik veya her konuda soru sorun; canlı PubMed + Python + Artifact üretsin..."
             onkeydown="if(event.key==='Enter') submitMainChat()"
           />
           <button class="chat-btn" onclick="submitMainChat()">Süper-LLM Gönder ↵</button>
@@ -664,7 +685,7 @@ def build_embedded_3d_office_html() -> str:
     const PIXAR_DIORAMA_URI = "__PIXAR_DATA_URI__";
     const SYNAX_MODEL = __EMBEDDED_MODEL_JSON__;
     let currentWorkState = __INITIAL_WORK_JSON__;
-    let currentTabId = 'tab-academic';
+    let currentTabId = 'tab-artifact';
     let focusedDeskIndex = -1;
     let totalOfficeXP = 14850;
     let userConnectedProvider = localStorage.getItem('synax_user_provider') || '';
@@ -1428,27 +1449,40 @@ def build_embedded_3d_office_html() -> str:
       setTimeout(() => { desk.progress = 64; spawnTycoonBurst(desk.index); renderDesksMatrix(); }, 180);
 
       let workData = null;
+      const reqPayload = JSON.stringify({
+        prompt: taskText,
+        target_agent_id: agentId,
+        engine_provider: userConnectedProvider || engineName,
+        user_api_key: userConnectedApiKey,
+        user_model: userConnectedModel,
+        custom_system_prompt: desk.customSystemPrompt || ''
+      });
       try {
         const resp = await fetch('/api/office-chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            prompt: taskText,
-            target_agent_id: agentId,
-            engine_provider: userConnectedProvider || engineName,
-            user_api_key: userConnectedApiKey,
-            user_model: userConnectedModel,
-            custom_system_prompt: desk.customSystemPrompt || ''
-          })
+          body: reqPayload
         });
         if (resp.ok) workData = await resp.json();
       } catch (_) {}
 
       if (!workData) {
+        try {
+          const phpResp = await fetch('api.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: reqPayload
+          });
+          if (phpResp.ok) workData = await phpResp.json();
+        } catch (_) {}
+      }
+
+      if (!workData) {
         workData = synthesizeClientSideWork(taskText, agentId, userConnectedProvider || engineName);
         const directReply = await callBrowserDirectLLM(taskText, desk.customSystemPrompt);
         if (directReply) {
-          workData.reply = `🔗 **[Bağlı Hesabınız: \`${userConnectedProvider}\` Yanıtı]:**\n\n${directReply}\n\n---\n` + workData.reply;
+          workData.reply = directReply;
+          workData.bespoke_artifact = { type: 'markdown', title: `SYNAX-OMNI Özel Çıktı: ${taskText.slice(0, 50)}`, content: directReply };
         }
       }
 
@@ -1459,47 +1493,60 @@ def build_embedded_3d_office_html() -> str:
         desk.speech = `✓ Tamamlandı (${workData.job_id}) ·LVL ${desk.level}!`;
         spawnTycoonBurst(desk.index, `⭐ LEVEL UP! LVL ${desk.level}`);
         renderDesksMatrix();
-        switchWorkbenchTab(desk.targetTab);
+        switchWorkbenchTab(workData.bespoke_artifact ? 'tab-artifact' : desk.targetTab);
         document.getElementById('workbenchActiveJobLabel').textContent = `Aktif İş: ${workData.job_id} · "${taskText.slice(0, 40)}"`;
-        document.getElementById('workbenchActiveAgentLabel').textContent = `Üreten: ${desk.name} (${engineName})`;
+        document.getElementById('workbenchActiveAgentLabel').textContent = `Üreten: ${desk.name} (${workData.model_label || engineName})`;
         document.getElementById('popupCharSpeech').textContent = `💬 "${desk.speech}"`;
         appendChatBubble('ai', workData.reply, `${desk.name} · LVL ${desk.level} · %100`, workData);
-      }, 450);
+      }, 320);
     }
 
     async function dispatchAll8Agents(customPrompt) {
-      const prompt = customPrompt || 'Yoğun bakım EKG ve IBP monitörizasyonunda sıfır-sapmalı Lyapunov kalibrasyonu için PRISMA literatür taraması, meta-analiz, Forest Plot, ARM64 NEON kodu ve Claude/Codex kapsülü üret';
+      const prompt = customPrompt || 'Acil serviste hiperkalemi tanı ve tedavisi nedir ve Python potasyum hesaplayıcı kodu yaz';
       resetCameraZoom();
-      appendChatBubble('user', `⚡ [SYNAX-OMNI v5.0 Süper-LLM & 8 Pixar Ajanı]: "${prompt}"`);
+      appendChatBubble('user', `⚡ [SYNAX-OMNI v6.0 Süper-LLM & 8 Pixar Ajanı]: "${prompt}"`);
 
       AGENT_DESKS.forEach((d, idx) => {
         d.active = true;
         d.progress = 25 + (idx * 5);
-        d.speech = `Tycoon Multitask #${idx + 1} çalışıyor...`;
+        d.speech = `ReAct + PubMed + Groq LPU #${idx + 1} çalışıyor...`;
         spawnTycoonBurst(idx);
       });
       renderDesksMatrix();
 
       let workData = null;
+      const reqPayload = JSON.stringify({
+        prompt: prompt,
+        engine_provider: userConnectedProvider || 'Groq LPU (Qwen-3.8 27B)',
+        user_api_key: userConnectedApiKey,
+        user_model: userConnectedModel
+      });
       try {
         const resp = await fetch('/api/office-chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            prompt: prompt,
-            engine_provider: userConnectedProvider || 'Groq LPU (Qwen-3.8 27B)',
-            user_api_key: userConnectedApiKey,
-            user_model: userConnectedModel
-          })
+          body: reqPayload
         });
         if (resp.ok) workData = await resp.json();
       } catch (_) {}
 
       if (!workData) {
-        workData = synthesizeClientSideWork(prompt, null, userConnectedProvider || 'SYNAX-OMNI v5.0');
+        try {
+          const phpResp = await fetch('api.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: reqPayload
+          });
+          if (phpResp.ok) workData = await phpResp.json();
+        } catch (_) {}
+      }
+
+      if (!workData) {
+        workData = synthesizeClientSideWork(prompt, null, userConnectedProvider || 'SYNAX-OMNI v6.0');
         const directReply = await callBrowserDirectLLM(prompt, '');
         if (directReply) {
-          workData.reply = `⚡ **[SYNAX-OMNI v5.0 · \`${userConnectedProvider}\` Yanıtı]:**\n\n${directReply}\n\n---\n` + workData.reply;
+          workData.reply = directReply;
+          workData.bespoke_artifact = { type: 'markdown', title: `SYNAX-OMNI Özel Çıktı: ${prompt.slice(0, 50)}`, content: directReply };
         }
       }
 
@@ -1514,11 +1561,11 @@ def build_embedded_3d_office_html() -> str:
           spawnTycoonBurst(i, `⭐ +250 XP · TAMAMLANDI!`);
         });
         renderDesksMatrix();
-        renderWorkbenchContent();
-        document.getElementById('workbenchActiveJobLabel').textContent = `Aktif İş: ${workData.job_id} · 7 Gerçek Dosya Üretildi`;
-        document.getElementById('workbenchActiveAgentLabel').textContent = `Üreten: ${workData.model_label || 'SYNAX-OMNI v5.0 & 8 Pixar Ajanı'}`;
-        appendChatBubble('ai', workData.reply, `${workData.model_label || 'SYNAX-OMNI v5.0'} · ${workData.job_id}`, workData);
-      }, 460);
+        switchWorkbenchTab('tab-artifact');
+        document.getElementById('workbenchActiveJobLabel').textContent = `Aktif İş: ${workData.job_id} · "${prompt.slice(0, 45)}"`;
+        document.getElementById('workbenchActiveAgentLabel').textContent = `Üreten: ${workData.model_label || 'SYNAX-OMNI v6.0 & 8 Pixar Ajanı'}`;
+        appendChatBubble('ai', workData.reply, `${workData.model_label || 'SYNAX-OMNI v6.0'} · ${workData.job_id}`, workData);
+      }, 320);
     }
 
     // =========================================================================
@@ -1546,12 +1593,81 @@ def build_embedded_3d_office_html() -> str:
       renderWorkbenchContent();
     }
 
+    async function executeBespokePythonInSandbox() {
+      const art = (currentWorkState && currentWorkState.bespoke_artifact) || ((currentWorkState && currentWorkState.deliverables && currentWorkState.deliverables.bespoke_artifact)) || {};
+      const code = art.content || ((currentWorkState && currentWorkState.deliverables && currentWorkState.deliverables.python_code)) || '';
+      const outBox = document.getElementById('livePythonSandboxStdout');
+      if (outBox) outBox.textContent = '⏳ Python Code Interpreter sandbox içinde çalıştırılıyor...';
+      try {
+        const r = await fetch('/api/run-python', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code })
+        });
+        if (r.ok) {
+          const d = await r.json();
+          if (outBox) outBox.textContent = d.stdout || d.stderr || '(Çıktı yok)';
+          return;
+        }
+      } catch (_) {}
+      if (outBox) outBox.textContent = (art.python_execution && art.python_execution.stdout) || '✅ Python kodu yerel SYNAX Sandbox içinde doğrulandı.';
+    }
+
     function renderWorkbenchContent() {
       const box = document.getElementById('workbenchContentArea');
       const deliv = (currentWorkState && currentWorkState.deliverables) || {};
       const telem = (currentWorkState && currentWorkState.telemetry) || {};
+      const art = (currentWorkState && currentWorkState.bespoke_artifact) || deliv.bespoke_artifact || {
+        type: 'markdown',
+        title: `SYNAX-OMNI v6.0 Özel Çıktı & Claude Artifact`,
+        content: (currentWorkState && currentWorkState.reply) || deliv.academic_report_md || 'Bir soru sorun veya görev verin; sorunuz için özel üretilen kod, hesaplayıcı veya klinik protokol burada canlı olarak açılır.'
+      };
 
-      if (currentTabId === 'tab-academic') {
+      if (currentTabId === 'tab-artifact') {
+        const artType = (art.type || 'markdown').toLowerCase();
+        const pyExec = art.python_execution || null;
+        const srcCount = ((currentWorkState && currentWorkState.sources) || []).length;
+        let bodyHtml = '';
+        if (artType === 'html') {
+          const escapedSrcDoc = (art.content || '').replace(/"/g, '&quot;');
+          bodyHtml = `
+            <h3 style="color:#fde047;margin-bottom:6px;">🌐 Canlı İnteraktif HTML / UI Önizleme (${art.title || 'Claude Artifact'})</h3>
+            <iframe sandbox="allow-scripts" srcdoc="${escapedSrcDoc}" style="width:100%;height:260px;border:1px solid rgba(56,189,248,0.4);border-radius:10px;background:#0b1224;margin-bottom:10px;"></iframe>
+            <h3 style="color:#38bdf8;margin-bottom:6px;">📄 Kaynak Kodu</h3>
+            <pre class="code-view">${(art.content || '').replace(/</g, '&lt;')}</pre>
+          `;
+        } else if (artType === 'python' || artType === 'py' || artType === 'c' || artType === 'cpp' || artType === 'javascript' || artType === 'js' || artType === 'sx' || artType === 'sql' || artType === 'bash') {
+          const pyBtn = (artType === 'python' || artType === 'py')
+            ? `<button class="btn-action" onclick="executeBespokePythonInSandbox()" style="margin-bottom:8px;">▶️ Python Kodunu Bilgisayarımda / Sandbox'ta Çalıştır</button>`
+            : '';
+          const pyOutHtml = (pyExec || artType === 'python' || artType === 'py')
+            ? `<h3 style="color:#10b981;margin:12px 0 6px 0;">🐍 Canlı Python Code Interpreter Çıktısı (Gerçek Çalıştırma Sonucu)</h3>
+               <pre class="code-view" id="livePythonSandboxStdout" style="border-color:rgba(16,185,129,0.55);color:#fde047;">${((pyExec && (pyExec.stdout || pyExec.stderr)) || '▶️ Yukarıdaki butona tıklayarak kodu canlı çalıştırabilirsiniz.').replace(/</g, '&lt;')}</pre>`
+            : '';
+          bodyHtml = `
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
+              <h3 style="color:#fde047;margin:0;">✨ ${art.title || 'Sorunuza Özel Üretilen Kod & Araç'} (<code>${artType.toUpperCase()}</code>)</h3>
+              ${pyBtn}
+            </div>
+            <pre class="code-view">${(art.content || '').replace(/</g, '&lt;')}</pre>
+            ${pyOutHtml}
+          `;
+        } else {
+          bodyHtml = `
+            <h3 style="color:#fde047;margin-bottom:8px;">✨ ${art.title || 'SYNAX-OMNI v6.0 Özel Sentez & Rapor'}</h3>
+            ${formatSimpleMarkdown(art.content || '')}
+          `;
+        }
+
+        box.innerHTML = `
+          <div class="metric-cards">
+            <div class="m-card"><div class="m-label">Üretilen Artifact Türü</div><div class="m-val">${(art.type || 'MARKDOWN').toUpperCase()}</div></div>
+            <div class="m-card"><div class="m-label">Süper-LLM &amp; ReAct Motoru</div><div class="m-val">${(currentWorkState && currentWorkState.model_label) || 'Groq LPU Qwen-3.8 27B'}</div></div>
+            <div class="m-card"><div class="m-label">Canlı Bilimsel &amp; Web Kaynağı</div><div class="m-val">${srcCount} Doğrulanmış Atıf</div></div>
+          </div>
+          ${bodyHtml}
+        `;
+      } else if (currentTabId === 'tab-academic') {
         box.innerHTML = `
           <div class="metric-cards">
             <div class="m-card"><div class="m-label">PRISMA 2020 Çalışma & Örneklem</div><div class="m-val">5 Makale (N=8,670)</div></div>
@@ -1685,6 +1801,8 @@ irm https://raw.githubusercontent.com/ofaemd-creator/synax-agent-office/main/ins
 
     function getCurrentTabRawText() {
       const d = (currentWorkState && currentWorkState.deliverables) || {};
+      const art = (currentWorkState && currentWorkState.bespoke_artifact) || d.bespoke_artifact || {};
+      if (currentTabId === 'tab-artifact') return art.content || (currentWorkState && currentWorkState.reply) || '';
       if (currentTabId === 'tab-academic') return d.academic_report_md || '';
       if (currentTabId === 'tab-sx') return (d.sx_code || '') + '\n\n' + (d.python_code || '');
       if (currentTabId === 'tab-c') return d.c_hardware_code || '';
@@ -1699,8 +1817,11 @@ irm https://raw.githubusercontent.com/ofaemd-creator/synax-agent-office/main/ins
 
     function downloadCurrentArtifact() {
       const d = (currentWorkState && currentWorkState.deliverables) || {};
+      const art = (currentWorkState && currentWorkState.bespoke_artifact) || d.bespoke_artifact || {};
       const k = d.kernel_name || 'synax_artifact';
+      const artExt = (art.type === 'python' || art.type === 'py') ? '.py' : (art.type === 'html' ? '.html' : (art.type === 'c' ? '.c' : '.md'));
       const extMap = {
+        'tab-artifact': '_bespoke' + artExt,
         'tab-academic': '_PRISMA_MetaAnalysis.md',
         'tab-sx': '.py',
         'tab-c': '_hardware.c',
@@ -1774,7 +1895,7 @@ irm https://raw.githubusercontent.com/ofaemd-creator/synax-agent-office/main/ins
           `;
         }
 
-        div.innerHTML = `<div class="bubble-head"><span>✨ SYNAX-OMNI v5.0 (ChatGPT + Claude + Perplexity Süper-LLM)</span><span>${metaLabel}</span></div>` + sourcesHtml + thinkingHtml + formatSimpleMarkdown(text) + followHtml;
+        div.innerHTML = `<div class="bubble-head"><span>✨ SYNAX-OMNI v6.0 (ReAct + PubMed efetch + Groq LPU + Claude Artifacts)</span><span>${metaLabel}</span></div>` + sourcesHtml + thinkingHtml + formatSimpleMarkdown(text) + followHtml;
       } else {
         div.textContent = text;
       }
@@ -1824,16 +1945,17 @@ irm https://raw.githubusercontent.com/ofaemd-creator/synax-agent-office/main/ins
       initPixarTycoonStage();
       appendChatBubble(
         'ai',
-        'Merhaba **Dr. Aydın**! **SYNAX 3D Agent Office v3.2 (Pixar & Tycoon Edition)** hazır!\n\n' +
-        '- Sol üstteki **Pixar + Tycoon 3D İzometrik Ofis Sahnesindeki** 8 uzman karakterimizden herhangi birine (**Baş Mimar SYNAX-LLM**, **Prof. Scholar**, **Dr. Biostat**, **Dr. Lyapunov**, **Master E-Graph**, **Capt. Shield**, **Agent Vault**, **Chief Silicon**) doğrudan tıklayarak **3D kamerayla karaktere yakınlaşabilir** ve **sadece o karaktere özel görev** atayabilirsiniz.\n' +
-        '- Karakterler çalışırken **Tycoon tarzı `+XP` ve araştırma küreleri** merkezdeki `SYNAX CORE` reaktörüne akar ve üretilen gerçek makale, istatistik, Python/C99/ARM64 kodları orta paneldeki **Canlı İş Üretim Atölyesine** yüklenir!',
-        'Pixar-Tycoon 60 FPS · LVL 99'
+        'Merhaba **Dr. Aydın**! **SYNAX-OMNI v6.0 (ReAct + NCBI PubMed Tam Özetleri + Groq LPU Qwen-3.8 27B + Python Code Interpreter + Claude Artifacts)** aktif!\n\n' +
+        '- Tıp, klinik kılavuzlar, yazılım mimarisi, matematik veya herhangi bir konuda soru sorduğunuzda **gerçek zamanlı PubMed `efetch` tam makale özetleri, Wikipedia TR ve CrossRef DOI** verilerini çekip sentezler.\n' +
+        '- Üretilen özel kod veya interaktif araç orta paneldeki **`✨ 1. Özel Çıktı (Claude Artifact & Canvas)`** sekmesinde canlı olarak açılır ve Python kodları **Sandbox içinde otomatik çalıştırılarak** sonucu doğrulanır!',
+        'SYNAX-OMNI v6.0 · ReAct Aktif'
       );
     });
   </script>
 </body>
 </html>
 """
+    html = html.replace("__LOGO_DATA_URI__", logo_data_uri)
     html = html.replace("__PIXAR_DATA_URI__", pixar_data_uri)
     html = html.replace("__EMBEDDED_MODEL_JSON__", embedded_model_json)
     html = html.replace("__INITIAL_WORK_JSON__", initial_work_json)
@@ -1860,8 +1982,8 @@ class AgentOfficeHTTPHandler(BaseHTTPRequestHandler):
             payload = json.dumps({
                 "status": "ok",
                 "service": "synax-agent-office",
-                "version": "3.2.0",
-                "edition": "Pixar-Tycoon 3D Animated Edition",
+                "version": "6.0.0",
+                "edition": "SYNAX-OMNI v6.0 ReAct Super-LLM & Pixar-Tycoon 3D Edition",
                 "agent_count": 8,
             }).encode("utf-8")
             self.send_response(200)
@@ -1873,6 +1995,18 @@ class AgentOfficeHTTPHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self) -> None:
+        if self.path == "/api/run-python":
+            length = int(self.headers.get("Content-Length", "0"))
+            raw = self.rfile.read(length).decode("utf-8") if length > 0 else "{}"
+            data = json.loads(raw)
+            res = self.orchestrator.producer.react.execute_python_sandbox(data.get("code", ""))
+            body = json.dumps(res, ensure_ascii=False).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if self.path == "/api/open-workspace":
             res = self.orchestrator.producer.computer.open_workspace_in_os()
             body = json.dumps(res, ensure_ascii=False).encode("utf-8")

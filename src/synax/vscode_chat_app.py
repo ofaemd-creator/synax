@@ -289,6 +289,15 @@ class SynaxVSCodeAppHandler(BaseHTTPRequestHandler):
         self._send_bytes(b"Not Found", "text/plain", status=404)
 
     def do_POST(self) -> None:
+        if self.path == "/api/run-python":
+            length = int(self.headers.get("Content-Length", "0"))
+            raw = self.rfile.read(length).decode("utf-8", errors="replace") if length > 0 else "{}"
+            data = json.loads(raw)
+            orch = get_office_orchestrator()
+            res = orch.producer.react.execute_python_sandbox(data.get("code", ""))
+            body = json.dumps(res, ensure_ascii=False).encode("utf-8")
+            self._send_bytes(body, "application/json; charset=utf-8")
+            return
         if self.path == "/api/open-workspace":
             orch = get_office_orchestrator()
             res = orch.producer.computer.open_workspace_in_os()

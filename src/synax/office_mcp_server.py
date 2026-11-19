@@ -45,23 +45,25 @@ from synax.academic_skills import (
 )
 from synax.computer_agent import SynaxComputerAgent
 from synax.super_llm import SynaxOmniSuperLLM
+from synax.react_agent_engine import SynaxReActEngine
 
 
 class RealTimeWorkProducer:
     """
     Executes both coordinated 8-agent office missions (`produce_work`) and
     individual per-agent task assignments (`assign_single_agent_task`),
-    powered by SYNAX-OMNI v5.0 Super-LLM (Perplexity live RAG citations +
-    Claude Chain-of-Thought & Artifacts + ChatGPT/Groq LPU multi-turn fluency).
+    powered by SYNAX-OMNI v6.0 ReAct Super-LLM (Live PubMed efetch abstracts +
+    MeSH translation + Python Code Interpreter + Bespoke Claude Artifacts).
     """
 
     def __init__(self, output_root: Optional[Path] = None) -> None:
+        self.react = SynaxReActEngine()
         self.omni = SynaxOmniSuperLLM()
         self.llm = self.omni.base_llm
         self.scholar = self.omni.scholar
         self.biostat = self.omni.biostat
         self.power_skills = ClaudeCodexSkillPack()
-        self.computer = self.omni.computer
+        self.computer = self.react.computer
         self.output_root = output_root or self.computer.user_workspace
         self.output_root.mkdir(parents=True, exist_ok=True)
         self.job_counter = 0
@@ -164,10 +166,10 @@ class RealTimeWorkProducer:
         self.job_counter += 1
         job_id = f"SYNAX-JOB-{self.job_counter:04d}"
 
-        # 1. Masa 1: SYNAX-OMNI v5.0 Super-LLM (Perplexity Live RAG + Claude CoT/Artifacts + Groq LPU)
+        # 1. Masa 1: SYNAX-OMNI v6.0 ReAct Super-LLM (Live PubMed Abstracts + Python Sandbox + Bespoke Artifact)
         llm_out = self.llm.chat(prompt)
         if write_files:
-            omni_out = self.omni.generate_super_response(
+            omni_out = self.react.run_agent_turn(
                 prompt=prompt,
                 mode="omni",
                 target_agent_id=target_agent_id,
@@ -176,14 +178,21 @@ class RealTimeWorkProducer:
                 user_model=user_model,
                 custom_system_prompt=custom_system_prompt,
             )
-            llm_out["reply"] = omni_out["answer_markdown"]
+            omni_out["model_label"] = "SYNAX-OMNI v6.0 · Groq LPU (Qwen-3.8-27B + Canlı PubMed/Web RAG)"
+            llm_out["reply"] = omni_out["reply"]
         else:
             sources_init = self.omni.gather_perplexity_sources(prompt)
             omni_out = {
-                "model_label": "SYNAX-OMNI v5.0 · Groq LPU (Qwen-3.8-27B + Canlı RAG)",
+                "model_label": "SYNAX-OMNI v6.0 · Groq LPU (Qwen-3.8-27B + Canlı PubMed/Web RAG)",
                 "sources": sources_init,
-                "thinking_steps": self.omni.build_thinking_trace(prompt, "omni", sources_init, target_agent_id, "SYNAX-OMNI v5.0"),
+                "thinking_steps": self.omni.build_thinking_trace(prompt, "omni", sources_init, target_agent_id, "SYNAX-OMNI v6.0"),
                 "follow_ups": self.omni._generate_followup_suggestions(prompt),
+                "bespoke_artifact": {
+                    "title": "SYNAX-OMNI v6.0 Canlı Çıktı & Kod Atölyesi",
+                    "type": "markdown",
+                    "content": llm_out["reply"],
+                    "python_execution": None,
+                },
             }
         bp = self._infer_task_blueprint(prompt)
         kname = bp["kernel_name"]
@@ -571,37 +580,33 @@ class RealTimeWorkProducer:
             else "Simülasyon doğrulandı (`0-ULP`)"
         )
 
-        rich_reply = (
-            f"{header_note}\n\n"
-            f"{llm_out['reply']}"
-            f"{extra_knowledge_section}\n\n"
-            f"---\n"
-            f"### 📦 Bilgisayarınıza (`{job_dir}`) ve Canlı Atölyeye Kaydedilen 7 Gerçek Çıktı:\n"
-            f"1. 🖥️ **Bilgisayar & Donanım Derleme (`{diag['cpu_brand']}`):** {bench_str}\n"
-            f"2. 📚 **Akademik PRISMA 2020 & Meta-Analiz (`Masa 2 & 3`):** `{len(scholar_out['included_studies'])}` hakemli çalışma ($N={biostat_out['total_sample_n']:,}$), Havuzlanmış Etki **`d = {biostat_out['pooled_effect_d']}`** (`p {biostat_out['p_value']}`), Forest Plot, IMRaD makale taslağı ve BibTeX/Vancouver kaynakça.\n"
-            f"3. 📄 **`{kname}.sx` & `{kname}.py` (`Masa 1 & 8`):** Çalıştırılabilir Python modülü + Otomatik `unittest/pytest` TDD test paketi.\n"
-            f"4. 🔩 **`{kname}_hardware.c` (`Masa 8`):** `ARM64 NEON`, `x86_64 AVX2`, `ANSI C11` ve `Q16.16 MCU` donanım kodu.\n"
-            f"5. 🩺 **Lyapunov & 0-ULP Kanıtı (`Masa 4 & 5`):** $V_1 = {v_start:.4f} \\rightarrow V_{{20}} = {v_end:.6f}$ (**`%{suppression_pct}`** sıfır-sapma) · `[{lo_out}, {hi_out}] 0-ULP SAFE`.\n"
-            f"6. 🤝 **Claude Code & OpenAI Codex Kapsülü (`Masa 6 & 7`):** **`-%{token_savings_pct}`** token tasarruflu (`{compressed_tokens_est} token`) `SHA-256` devir kapsülü."
-        )
+        rich_reply = f"{llm_out['reply']}{extra_knowledge_section}"
+        bespoke_art = omni_out.get("bespoke_artifact") or {
+            "title": f"SYNAX-OMNI Çıktısı: {prompt[:46]}",
+            "type": "markdown",
+            "content": rich_reply,
+            "python_execution": None,
+        }
 
         return {
-            "office_version": "5.0.0",
+            "office_version": "6.0.0",
             "job_id": job_id,
             "prompt": prompt,
             "target_agent_id": target_agent_id,
             "engine_provider": engine_provider,
-            "model_label": omni_out.get("model_label", "SYNAX-OMNI v5.0"),
+            "model_label": omni_out.get("model_label", "SYNAX-OMNI v6.0"),
             "reply": rich_reply,
             "sources": omni_out.get("sources", []),
             "thinking_steps": omni_out.get("thinking_steps", []),
             "follow_ups": omni_out.get("follow_ups", []),
+            "bespoke_artifact": bespoke_art,
             "intent": llm_out["intent"],
             "confidence": llm_out["confidence"],
             "active_agent_count": sum(1 for d in desks if d["active"]),
             "total_agent_count": 8,
             "desks": desks,
             "deliverables": {
+                "bespoke_artifact": bespoke_art,
                 "kernel_name": kname,
                 "sx_code": sx_source,
                 "python_code": py_source,

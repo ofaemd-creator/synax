@@ -356,7 +356,7 @@ class SynaxComputerAgent:
                         {"role": "user", "content": prompt},
                     ],
                     "temperature": 0.35,
-                    "max_tokens": 950,
+                    "max_tokens": 3000,
                 }
                 try:
                     req = urllib.request.Request(
@@ -368,7 +368,7 @@ class SynaxComputerAgent:
                             "User-Agent": "curl/8.4.0",
                         },
                     )
-                    with urllib.request.urlopen(req, timeout=9) as resp:
+                    with urllib.request.urlopen(req, timeout=18) as resp:
                         data = json.loads(resp.read().decode("utf-8"))
                         content = data["choices"][0]["message"]["content"].strip()
                         # Strip <think>...</think> blocks if model emits reasoning tags
