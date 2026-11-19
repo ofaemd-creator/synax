@@ -308,28 +308,75 @@ class SynaxComputerAgent:
         }
 
     # ------------------------------------------------------------------
-    # 5. User-Connected Account (BYOK / Local CLI) & Custom Agent Bridge
+    # 5. User-Connected Account (Groq LPU / BYOK / Local CLI) & Custom Agent Bridge
     # ------------------------------------------------------------------
+    def load_saved_user_account(self) -> Dict[str, Any]:
+        """Reads local private ~/.synax/user_accounts.json (never committed to git)."""
+        cfg_file = Path.home() / ".synax" / "user_accounts.json"
+        if cfg_file.exists():
+            try:
+                return json.loads(cfg_file.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return {}
+
     def call_user_connected_account(
         self,
         prompt: str,
-        provider: str,
+        provider: str = "",
         api_key: str = "",
         model_name: str = "",
-        system_prompt: str = "Sen SYNAX 3D Ajan Ofisinde çalışan uzman bir yapay zeka ajanısın. Yanıtlarını Türkçe, net ve uygulanabilir olarak üret.",
+        system_prompt: str = "Sen Dr. Ömer Faruk Aydın tarafından geliştirilen SYNAX 3D Pixar-Tycoon Ajan Ofisinde çalışan uzman bir yapay zeka ajanısın. Yanıtlarını Türkçe, kapsamlı, net ve doğrudan uygulanabilir olarak üret.",
         ollama_url: str = "http://127.0.0.1:11434",
     ) -> Optional[str]:
         """
         Executes real LLM inference using the user's own connected account:
+          - Groq LPU Ultra-Fast API (`gsk_...` -> `qwen/qwen3.8-27b`, `openai/gpt-oss-20b`, `openai/gpt-oss-120b`)
           - OpenAI / Codex API (`sk-...`)
           - Anthropic Claude API (`sk-ant-...`)
           - OpenRouter API (`sk-or-...`)
           - Google Gemini API (`AIza...`)
           - Local Ollama (`http://127.0.0.1:11434`)
-          - Local Claude Code CLI (`claude -p`) or OpenAI Codex CLI (`codex`)
+        If `api_key` is empty, automatically checks `~/.synax/user_accounts.json` and `GROQ_API_KEY`.
         """
-        prov = (provider or "").lower()
-        key = (api_key or "").strip()
+        saved = self.load_saved_user_account()
+        key = (api_key or "").strip() or os.environ.get("GROQ_API_KEY", "").strip() or saved.get("groq_api_key", "").strip()
+        prov = (provider or saved.get("default_provider", "")).lower()
+
+        # 0. Groq LPU Ultra-Fast API (`gsk_...`)
+        if key and (key.startswith("gsk_") or "groq" in prov):
+            candidates = [model_name] if model_name else ["qwen/qwen3.8-27b", "openai/gpt-oss-20b", "openai/gpt-oss-120b"]
+            for m in candidates:
+                if not m:
+                    continue
+                payload = {
+                    "model": m,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": prompt},
+                    ],
+                    "temperature": 0.35,
+                    "max_tokens": 950,
+                }
+                try:
+                    req = urllib.request.Request(
+                        "https://api.groq.com/openai/v1/chat/completions",
+                        data=json.dumps(payload).encode("utf-8"),
+                        headers={
+                            "Authorization": f"Bearer {key}",
+                            "Content-Type": "application/json",
+                            "User-Agent": "curl/8.4.0",
+                        },
+                    )
+                    with urllib.request.urlopen(req, timeout=9) as resp:
+                        data = json.loads(resp.read().decode("utf-8"))
+                        content = data["choices"][0]["message"]["content"].strip()
+                        # Strip <think>...</think> blocks if model emits reasoning tags
+                        content = re.sub(r"<think>[\s\S]*?</think>", "", content).strip()
+                        if content:
+                            return content
+                except Exception:
+                    continue
 
         # 1. OpenAI / OpenRouter compatible JSON REST API
         if key and ("openai" in prov or "codex" in prov or "openrouter" in prov or key.startswith("sk-or-") or (key.startswith("sk-") and not key.startswith("sk-ant-"))):

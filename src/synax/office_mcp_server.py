@@ -44,23 +44,24 @@ from synax.academic_skills import (
     ClaudeCodexSkillPack,
 )
 from synax.computer_agent import SynaxComputerAgent
+from synax.super_llm import SynaxOmniSuperLLM
 
 
 class RealTimeWorkProducer:
     """
     Executes both coordinated 8-agent office missions (`produce_work`) and
     individual per-agent task assignments (`assign_single_agent_task`),
-    producing real code, hardware firmware, native clang -O3 compiled binaries,
-    computer diagnostics, PRISMA systematic reviews, biostatistical meta-analyses,
-    TDD suites, and Claude/Codex handoff capsules directly in ~/SYNAX_Workspace.
+    powered by SYNAX-OMNI v5.0 Super-LLM (Perplexity live RAG citations +
+    Claude Chain-of-Thought & Artifacts + ChatGPT/Groq LPU multi-turn fluency).
     """
 
     def __init__(self, output_root: Optional[Path] = None) -> None:
-        self.llm = SynaxTurkishLLM()
-        self.scholar = AcademicLiteratureAgent()
-        self.biostat = BiostatAndCritiqueAgent()
+        self.omni = SynaxOmniSuperLLM()
+        self.llm = self.omni.base_llm
+        self.scholar = self.omni.scholar
+        self.biostat = self.omni.biostat
         self.power_skills = ClaudeCodexSkillPack()
-        self.computer = SynaxComputerAgent()
+        self.computer = self.omni.computer
         self.output_root = output_root or self.computer.user_workspace
         self.output_root.mkdir(parents=True, exist_ok=True)
         self.job_counter = 0
@@ -163,18 +164,27 @@ class RealTimeWorkProducer:
         self.job_counter += 1
         job_id = f"SYNAX-JOB-{self.job_counter:04d}"
 
-        # 1. Masa 1: SYNAX-LLM Turkish NLU (+ User Connected Account if provided!)
+        # 1. Masa 1: SYNAX-OMNI v5.0 Super-LLM (Perplexity Live RAG + Claude CoT/Artifacts + Groq LPU)
         llm_out = self.llm.chat(prompt)
-        if user_api_key or "ollama" in engine_provider.lower():
-            live_acc_reply = self.computer.call_user_connected_account(
+        if write_files:
+            omni_out = self.omni.generate_super_response(
                 prompt=prompt,
-                provider=engine_provider,
-                api_key=user_api_key,
-                model_name=user_model,
-                system_prompt=custom_system_prompt or "Sen SYNAX 3D Ajan Ofisinde çalışan uzman bir yapay zeka ajanısın. Yanıtlarını Türkçe, net ve uygulanabilir olarak üret.",
+                mode="omni",
+                target_agent_id=target_agent_id,
+                engine_provider=engine_provider,
+                user_api_key=user_api_key,
+                user_model=user_model,
+                custom_system_prompt=custom_system_prompt,
             )
-            if live_acc_reply:
-                llm_out["reply"] = f"🔗 **[Bağlı Hesabınız: `{engine_provider}` ({user_model or 'Canlı Model'}) Yanıtı]:**\n\n{live_acc_reply}"
+            llm_out["reply"] = omni_out["answer_markdown"]
+        else:
+            sources_init = self.omni.gather_perplexity_sources(prompt)
+            omni_out = {
+                "model_label": "SYNAX-OMNI v5.0 · Groq LPU (Qwen-3.8-27B + Canlı RAG)",
+                "sources": sources_init,
+                "thinking_steps": self.omni.build_thinking_trace(prompt, "omni", sources_init, target_agent_id, "SYNAX-OMNI v5.0"),
+                "follow_ups": self.omni._generate_followup_suggestions(prompt),
+            }
         bp = self._infer_task_blueprint(prompt)
         kname = bp["kernel_name"]
         p0_name, _, p0_bounds = bp["params"][0]
@@ -576,12 +586,16 @@ class RealTimeWorkProducer:
         )
 
         return {
-            "office_version": "4.0.0",
+            "office_version": "5.0.0",
             "job_id": job_id,
             "prompt": prompt,
             "target_agent_id": target_agent_id,
             "engine_provider": engine_provider,
+            "model_label": omni_out.get("model_label", "SYNAX-OMNI v5.0"),
             "reply": rich_reply,
+            "sources": omni_out.get("sources", []),
+            "thinking_steps": omni_out.get("thinking_steps", []),
+            "follow_ups": omni_out.get("follow_ups", []),
             "intent": llm_out["intent"],
             "confidence": llm_out["confidence"],
             "active_agent_count": sum(1 for d in desks if d["active"]),

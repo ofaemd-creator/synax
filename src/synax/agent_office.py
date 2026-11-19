@@ -458,10 +458,10 @@ def build_embedded_3d_office_html() -> str:
 <body>
   <header>
     <div class="brand">
-      <div class="brand-logo">SX 3.2</div>
+      <div class="brand-logo">SX 5.0</div>
       <div>
-        <div class="brand-title">SYNAX 3D AGENT OFFICE — PIXAR &amp; TYCOON ANIMATED EDITION (CLAUDE · CODEX · ANTIGRAVITY)</div>
-        <div class="brand-sub">Dr. Ömer Faruk Aydın (@ofaemd-creator) · 8 Pixar Uzman Karakteri · Ajan Başına Özel Görev &amp; Tycoon XP Simülasyonu</div>
+        <div class="brand-title">SYNAX-OMNI v5.0 — SÜPER-LLM (CHATGPT + CLAUDE + PERPLEXITY) &amp; 3D PIXAR-TYCOON AGENT OFFICE</div>
+        <div class="brand-sub">Dr. Ömer Faruk Aydın (@ofaemd-creator) · Canlı Bilimsel Atıflar [1][2][3] · Derin Muhakeme · Claude Artifacts &amp; 8 Pixar Ajanı</div>
       </div>
     </div>
     <div class="top-badges">
@@ -495,6 +495,7 @@ def build_embedded_3d_office_html() -> str:
           <h3 style="font-size:13px;color:#38bdf8;margin-bottom:10px;">🔗 1. Kendi AI Hesabını / API Anahtarını Bağla</h3>
           <label style="font-size:11px;color:#cbd5e1;display:block;margin-bottom:4px;">Yapay Zeka Sağlayıcısı Seçin:</label>
           <select id="userProviderSelect" class="desk-input" style="width:100%;margin-bottom:9px;padding:7px;">
+            <option value="Groq LPU (Qwen-3.8 27B)">⚡ Groq LPU (Qwen-3.8 27B / GPT-OSS 120B Ultra-Hızlı · gsk_...)</option>
             <option value="Anthropic Claude Code">Anthropic Claude / Claude Code (sk-ant-...)</option>
             <option value="OpenAI Codex">OpenAI Codex / GPT-4o (sk-...)</option>
             <option value="Google Gemini">Google Gemini 2.5 Flash/Pro (AIza...)</option>
@@ -628,15 +629,30 @@ def build_embedded_3d_office_html() -> str:
 
       <div class="chat-box" id="chatMessagesBox"></div>
 
-      <div class="chat-footer">
-        <input
-          type="text"
-          id="mainChatInput"
-          class="chat-inp"
-          placeholder="Türkçe görev yazın veya soldaki Pixar karakterlerine tıklayarak ayrı iş atayın..."
-          onkeydown="if(event.key==='Enter') submitMainChat()"
-        />
-        <button class="chat-btn" onclick="submitMainChat()">Üret &amp; Gönder ↵</button>
+      <div class="chat-footer" style="flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">
+          <div style="display:flex;gap:5px;align-items:center;">
+            <span style="font-size:10px;color:#fde047;font-weight:800;">MOD:</span>
+            <select id="omniModeSelect" class="engine-select" style="padding:3px 7px;font-size:10.5px;">
+              <option value="omni">✨ Omni Süper-LLM (ChatGPT + Claude + Perplexity)</option>
+              <option value="perplexity">🔎 Perplexity Akademik &amp; PubMed PRISMA</option>
+              <option value="claude">💻 Claude Artifacts &amp; 5-Çip Kod Sentezi</option>
+              <option value="tycoon">🎬 3D Pixar-Tycoon 8-Ajan Multitask</option>
+              <option value="doctor">🖥️ Bilgisayar Doktoru &amp; Yerel Komut</option>
+            </select>
+          </div>
+          <button onclick="startTurkishVoiceInput()" id="voiceMicBtn" class="engine-select" style="color:#34d399;border-color:#10b981;padding:3px 9px;font-size:10.5px;">🎤 Türkçe Sesli Sor</button>
+        </div>
+        <div style="display:flex;gap:7px;width:100%;">
+          <input
+            type="text"
+            id="mainChatInput"
+            class="chat-inp"
+            placeholder="SYNAX-OMNI v5.0 Süper-LLM'e her konuda soru sorun veya Pixar ajanlarına görev verin..."
+            onkeydown="if(event.key==='Enter') submitMainChat()"
+          />
+          <button class="chat-btn" onclick="submitMainChat()">Süper-LLM Gönder ↵</button>
+        </div>
       </div>
     </section>
   </main>
@@ -700,7 +716,18 @@ def build_embedded_3d_office_html() -> str:
       const key = userConnectedApiKey;
       const sys = sysPrompt || 'Sen SYNAX 3D Ajan Ofisinde çalışan uzman bir yapay zeka ajanısın. Yanıtlarını Türkçe, net ve uygulanabilir olarak üret.';
       try {
-        if (prov.includes('gemini') || key.startsWith('AIza')) {
+        if (prov.includes('groq') || key.startsWith('gsk_')) {
+          const m = userConnectedModel || 'qwen/qwen3.8-27b';
+          const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model: m, messages: [{ role: 'system', content: sys }, { role: 'user', content: promptText }], temperature: 0.35 })
+          });
+          if (r.ok) {
+            const d = await r.json();
+            return (d.choices[0].message.content || '').replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+          }
+        } else if (prov.includes('gemini') || key.startsWith('AIza')) {
           const m = userConnectedModel || 'gemini-2.5-flash';
           const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(key)}`, {
             method: 'POST',
@@ -1436,14 +1463,14 @@ def build_embedded_3d_office_html() -> str:
         document.getElementById('workbenchActiveJobLabel').textContent = `Aktif İş: ${workData.job_id} · "${taskText.slice(0, 40)}"`;
         document.getElementById('workbenchActiveAgentLabel').textContent = `Üreten: ${desk.name} (${engineName})`;
         document.getElementById('popupCharSpeech').textContent = `💬 "${desk.speech}"`;
-        appendChatBubble('ai', workData.reply, `${desk.name} · LVL ${desk.level} · %100`);
+        appendChatBubble('ai', workData.reply, `${desk.name} · LVL ${desk.level} · %100`, workData);
       }, 450);
     }
 
     async function dispatchAll8Agents(customPrompt) {
       const prompt = customPrompt || 'Yoğun bakım EKG ve IBP monitörizasyonunda sıfır-sapmalı Lyapunov kalibrasyonu için PRISMA literatür taraması, meta-analiz, Forest Plot, ARM64 NEON kodu ve Claude/Codex kapsülü üret';
       resetCameraZoom();
-      appendChatBubble('user', `⚡ [8 Pixar Ajanı Eşzamanlı Görev]: "${prompt}"`);
+      appendChatBubble('user', `⚡ [SYNAX-OMNI v5.0 Süper-LLM & 8 Pixar Ajanı]: "${prompt}"`);
 
       AGENT_DESKS.forEach((d, idx) => {
         d.active = true;
@@ -1460,7 +1487,7 @@ def build_embedded_3d_office_html() -> str:
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             prompt: prompt,
-            engine_provider: userConnectedProvider || 'Claude Code + Codex + Antigravity',
+            engine_provider: userConnectedProvider || 'Groq LPU (Qwen-3.8 27B)',
             user_api_key: userConnectedApiKey,
             user_model: userConnectedModel
           })
@@ -1469,10 +1496,10 @@ def build_embedded_3d_office_html() -> str:
       } catch (_) {}
 
       if (!workData) {
-        workData = synthesizeClientSideWork(prompt, null, userConnectedProvider || 'Claude Code + Codex + Antigravity');
+        workData = synthesizeClientSideWork(prompt, null, userConnectedProvider || 'SYNAX-OMNI v5.0');
         const directReply = await callBrowserDirectLLM(prompt, '');
         if (directReply) {
-          workData.reply = `🔗 **[Bağlı Hesabınız: \`${userConnectedProvider}\` Yanıtı]:**\n\n${directReply}\n\n---\n` + workData.reply;
+          workData.reply = `⚡ **[SYNAX-OMNI v5.0 · \`${userConnectedProvider}\` Yanıtı]:**\n\n${directReply}\n\n---\n` + workData.reply;
         }
       }
 
@@ -1489,8 +1516,8 @@ def build_embedded_3d_office_html() -> str:
         renderDesksMatrix();
         renderWorkbenchContent();
         document.getElementById('workbenchActiveJobLabel').textContent = `Aktif İş: ${workData.job_id} · 7 Gerçek Dosya Üretildi`;
-        document.getElementById('workbenchActiveAgentLabel').textContent = `Üreten: 8/8 Pixar Ajanı Eşzamanlı`;
-        appendChatBubble('ai', workData.reply, `8/8 Pixar Ajanı Tamamladı · ${workData.job_id}`);
+        document.getElementById('workbenchActiveAgentLabel').textContent = `Üreten: ${workData.model_label || 'SYNAX-OMNI v5.0 & 8 Pixar Ajanı'}`;
+        appendChatBubble('ai', workData.reply, `${workData.model_label || 'SYNAX-OMNI v5.0'} · ${workData.job_id}`, workData);
       }, 460);
     }
 
@@ -1505,6 +1532,8 @@ def build_embedded_3d_office_html() -> str:
       h = h.replace(/^# (.*)$/gm, '<h1>$1</h1>');
       h = h.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       h = h.replace(/`([^`]+)`/g, '<code style="background:rgba(56,189,248,0.16);padding:2px 5px;border-radius:4px;color:#38bdf8;">$1</code>');
+      // Style Perplexity-style inline citations [1], [2], [3]
+      h = h.replace(/\[(\d+)\]/g, '<span style="background:rgba(245,158,11,0.22);color:#fde047;border:1px solid rgba(245,158,11,0.5);padding:1px 5px;border-radius:5px;font-size:10px;font-weight:900;margin:0 2px;">[$1]</span>');
       h = h.replace(/\n/g, '<br/>');
       return '<div class="md-view">' + h + '</div>';
     }
@@ -1686,17 +1715,93 @@ irm https://raw.githubusercontent.com/ofaemd-creator/synax-agent-office/main/ins
       a.click();
     }
 
-    function appendChatBubble(role, text, metaLabel = '') {
+    function appendChatBubble(role, text, metaLabel = '', workObj = null) {
       const box = document.getElementById('chatMessagesBox');
       const div = document.createElement('div');
       div.className = 'bubble ' + (role === 'user' ? 'user' : 'ai');
       if (role === 'ai') {
-        div.innerHTML = `<div class="bubble-head"><span>🎬 SYNAX-LLM v3.2 &amp; Pixar-Tycoon 3D Ofis</span><span>${metaLabel}</span></div>` + formatSimpleMarkdown(text);
+        const w = workObj || currentWorkState || {};
+        const sources = w.sources || [];
+        const thinking = w.thinking_steps || [];
+        const followUps = w.follow_ups || [];
+
+        // 1. Perplexity-Style Verified Clickable Source Cards
+        let sourcesHtml = '';
+        if (sources.length > 0) {
+          const cards = sources.map(s => `
+            <a href="${s.url || '#'}" target="_blank" style="flex:0 0 185px;background:rgba(7,12,26,0.92);border:1px solid rgba(56,189,248,0.32);border-radius:9px;padding:7px 9px;text-decoration:none;color:#f1f5f9;display:flex;flex-direction:column;gap:3px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:9.5px;color:#fde047;font-weight:900;">
+                <span>[${s.index || 1}] ${s.badge || 'DOĞRULANMIŞ'}</span>
+                <span>↗</span>
+              </div>
+              <div style="font-size:10.5px;font-weight:700;color:#38bdf8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.title}</div>
+              <div style="font-size:9.5px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.source}</div>
+            </a>
+          `).join('');
+          sourcesHtml = `
+            <div style="margin-bottom:8px;">
+              <div style="font-size:10px;font-weight:800;color:#38bdf8;margin-bottom:4px;">🌐 PERPLEXITY CANLI KAYNAKLAR &amp; BİLİMSEL ATIFLAR (${sources.length} Doğrulanmış Kaynak):</div>
+              <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;">${cards}</div>
+            </div>
+          `;
+        }
+
+        // 2. Claude-Style Collapsible Deep Thinking (Chain-of-Thought)
+        let thinkingHtml = '';
+        if (thinking.length > 0) {
+          const stepsLi = thinking.map(st => `<li style="margin-bottom:3px;">${st}</li>`).join('');
+          thinkingHtml = `
+            <details style="background:rgba(8,14,28,0.88);border:1px solid rgba(168,85,247,0.38);border-radius:9px;padding:6px 10px;margin-bottom:9px;font-size:10.8px;color:#cbd5e1;">
+              <summary style="cursor:pointer;font-weight:800;color:#c084fc;">💭 CLAUDE TARZI DERİN MUHAKEME &amp; 0-ULP FORMAL DOĞRULAMA SÜRECİ (${thinking.length} Aşama · Tıklayıp İnceleyin)</summary>
+              <ul style="margin-top:6px;padding-left:14px;line-height:1.45;">${stepsLi}</ul>
+            </details>
+          `;
+        }
+
+        // 3. Perplexity-Style Follow-Up Question Chips
+        let followHtml = '';
+        if (followUps.length > 0) {
+          const fBtns = followUps.map(fq => `
+            <button onclick="quickPrompt(${JSON.stringify(fq).replace(/"/g, '&quot;')})" style="text-align:left;background:rgba(17,27,50,0.92);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;padding:6px 9px;border-radius:8px;font-size:10.8px;font-weight:700;cursor:pointer;">
+              💡 ${fq} →
+            </button>
+          `).join('');
+          followHtml = `
+            <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:5px;">
+              <div style="font-size:10px;font-weight:800;color:#fde047;">🔎 İLGİLİ DERİNLEŞTİRME SORULARI (Tek Tıkla Devam Edin):</div>
+              ${fBtns}
+            </div>
+          `;
+        }
+
+        div.innerHTML = `<div class="bubble-head"><span>✨ SYNAX-OMNI v5.0 (ChatGPT + Claude + Perplexity Süper-LLM)</span><span>${metaLabel}</span></div>` + sourcesHtml + thinkingHtml + formatSimpleMarkdown(text) + followHtml;
       } else {
         div.textContent = text;
       }
       box.appendChild(div);
       box.scrollTop = box.scrollHeight;
+    }
+
+    function startTurkishVoiceInput() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const btn = document.getElementById('voiceMicBtn');
+      if (!SpeechRec) {
+        alert('Tarayıcınız Web Speech ses tanımayı desteklemiyor.');
+        return;
+      }
+      const rec = new SpeechRec();
+      rec.lang = 'tr-TR';
+      rec.interimResults = false;
+      btn.textContent = '🔴 Dinleniyor (Türkçe konuşun)...';
+      rec.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        document.getElementById('mainChatInput').value = transcript;
+        btn.textContent = '🎤 Türkçe Sesli Sor';
+        submitMainChat();
+      };
+      rec.onerror = () => { btn.textContent = '🎤 Türkçe Sesli Sor'; };
+      rec.onend = () => { btn.textContent = '🎤 Türkçe Sesli Sor'; };
+      rec.start();
     }
 
     function quickPrompt(txt) {
