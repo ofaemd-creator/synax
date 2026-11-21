@@ -46,6 +46,7 @@ from synax.academic_skills import (
     Q1ManuscriptAuthorAgent,
     AutonomousPeerReviewerAgent,
     Q1PublicationPipeline,
+    SynaxAcademic21SkillsEngine,
     ClaudeCodexSkillPack,
 )
 from synax.verification import NumericalVerifier, VerificationStatus, VerificationCertificate
@@ -72,6 +73,7 @@ class RealTimeWorkProducer:
         self.humanizer = AcademicHumanizerAndEditorAgent()
         self.peer_reviewer = AutonomousPeerReviewerAgent()
         self.q1_pipeline = Q1PublicationPipeline()
+        self.skills_21_engine = SynaxAcademic21SkillsEngine()
         self.power_skills = ClaudeCodexSkillPack()
         self.computer = self.react.computer
         self.output_root = output_root or self.computer.user_workspace
@@ -802,6 +804,20 @@ MCP_TOOLS: List[Dict[str, Any]] = [
         }
     },
     {
+        "name": "synax_execute_academic_21_skill",
+        "description": "Execute any of the 21 specialized SYNAX Academic & Scientific Skills standalone (1: scientific-writing, 2: scientific-critical-thinking, 3: statistical-analysis, 4: citation-management, 5: peer-review, 6: venue-templates, 7: literature-review, 8: hypothesis-generation, 9: scientific-brainstorming, 10: scientific-visualization, 11: scientific-schematics, 12: scientific-slides, 13: academic-language-editing, 14: academic-translation, 15: academic-pdf-evidence, 16: academic-journal-selection, 17: academic-revision-response, 18: academic-integrity-audit, 19: academic-literature-discovery, 20: academic-publication-pipeline, 21: humanizer).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "skill_id": {"type": "string", "description": "Skill ID from the 21 academic skills"},
+                "topic_or_text": {"type": "string", "description": "Research topic, manuscript draft, or document text"},
+                "target_journal": {"type": "string", "description": "Target Q1 SCIE journal"},
+                "equator_guideline": {"type": "string", "description": "EQUATOR guideline"}
+            },
+            "required": ["skill_id", "topic_or_text"]
+        }
+    },
+    {
         "name": "synax_llm_chat_tr",
         "description": "Converse with SYNAX-LLM (v3.0) in natural Turkish or English.",
         "inputSchema": {
@@ -906,6 +922,14 @@ def run_mcp_stdio_loop() -> None:
                     target_journal=targs.get("target_journal", "Nature Medicine / Intensive Care Medicine (Q1 SCIE)"),
                     equator_guideline=targs.get("equator_guideline", "PRISMA_2020"),
                     try_live=False,
+                )
+                text_out = json.dumps(res, ensure_ascii=False, indent=2)
+            elif tname == "synax_execute_academic_21_skill":
+                res = producer.skills_21_engine.execute_skill(
+                    skill_id=targs.get("skill_id", "academic-publication-pipeline"),
+                    topic_or_text=targs.get("topic_or_text", "Autonomous Biomedical Telemetry Calibration"),
+                    target_journal=targs.get("target_journal", "Nature Medicine / Intensive Care Medicine (Q1 SCIE)"),
+                    equator_guideline=targs.get("equator_guideline", "PRISMA_2020"),
                 )
                 text_out = json.dumps(res, ensure_ascii=False, indent=2)
             elif tname == "synax_llm_chat_tr":
