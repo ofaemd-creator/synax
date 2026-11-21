@@ -1,4 +1,4 @@
-# OpenAI Codex CLI Native MCP & 8-Agent Office Configuration (v3.0.0)
+# OpenAI Codex CLI Native MCP & Academic Q1 Office Configuration (v6.3.0)
 [mcp_servers.synax_agent_office]
 command = "python3"
 args = ["/Users/o.farukaydin/.gemini/antigravity/scratch/synax/src/synax/office_mcp_server.py", "--stdio"]
@@ -10,6 +10,18 @@ tool = "synax_academic_literature_review"
 [agents.biostat_analyst]
 role = "Biostatistical Meta-Analysis, Forest Plot & IMRaD Manuscript Agent"
 tool = "synax_academic_literature_review"
+
+[agents.q1_manuscript_author]
+role = "Q1 SCIE Manuscript, LaTeX, Cover Letter & EQUATOR Compliance Authoring Agent"
+tool = "synax_q1_manuscript_writer"
+
+[agents.academic_humanizer_editor]
+role = "Scientific Editing, De-AI-ification & AMA/Nature Prose Humanization Agent"
+tool = "synax_academic_humanizer_editor"
+
+[agents.scie_peer_reviewer]
+role = "3-Referee SCIE Pre-Submission Peer Review, Auto-Upgrade & Rebuttal Agent"
+tool = "synax_scie_peer_review_simulator"
 
 [agents.biomed_lyapunov]
 role = "Contractive Lyapunov-Kalman Zero-Drift Biomedical Firmware Agent"

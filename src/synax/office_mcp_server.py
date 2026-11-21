@@ -39,10 +39,16 @@ if str(REPO_ROOT / "src") not in sys.path:
 
 from synax.synax_llm import SynaxTurkishLLM, normalize_turkish
 from synax.academic_skills import (
+    AcademicSecuritySanitizer,
     AcademicLiteratureAgent,
     BiostatAndCritiqueAgent,
+    AcademicHumanizerAndEditorAgent,
+    Q1ManuscriptAuthorAgent,
+    AutonomousPeerReviewerAgent,
+    Q1PublicationPipeline,
     ClaudeCodexSkillPack,
 )
+from synax.verification import NumericalVerifier, VerificationStatus, VerificationCertificate
 from synax.computer_agent import SynaxComputerAgent
 from synax.super_llm import SynaxOmniSuperLLM
 from synax.react_agent_engine import SynaxReActEngine
@@ -62,6 +68,10 @@ class RealTimeWorkProducer:
         self.llm = self.omni.base_llm
         self.scholar = self.omni.scholar
         self.biostat = self.omni.biostat
+        self.q1_author = Q1ManuscriptAuthorAgent()
+        self.humanizer = AcademicHumanizerAndEditorAgent()
+        self.peer_reviewer = AutonomousPeerReviewerAgent()
+        self.q1_pipeline = Q1PublicationPipeline()
         self.power_skills = ClaudeCodexSkillPack()
         self.computer = self.react.computer
         self.output_root = output_root or self.computer.user_workspace
@@ -199,11 +209,21 @@ class RealTimeWorkProducer:
         p0_name, _, p0_bounds = bp["params"][0]
         p1_name, _, p1_bounds = bp["params"][1]
 
-        # 2. Masa 2 & Masa 3: Academic Literature Review (PRISMA 2020) & Biostat Meta-Analysis
+        # 2. Masa 2 & Masa 3: Academic Literature Review (PRISMA 2020), Biostat Meta-Analysis, Q1 Authoring, Humanizer & 3-Referee Peer Review
         scholar_out = self.scholar.conduct_systematic_review(prompt, try_live=True)
         biostat_out = self.biostat.analyze_and_interpret(scholar_out["included_studies"], prompt)
+        q1_manuscript_out = self.q1_author.author_q1_manuscript(
+            topic=prompt,
+            scholar_data=scholar_out,
+            biostat_data=biostat_out,
+            humanize=True,
+        )
+        peer_review_out = self.peer_reviewer.review_and_auto_upgrade(
+            manuscript_text=q1_manuscript_out["manuscript_markdown"],
+            target_journal=q1_manuscript_out["target_journal"],
+        )
 
-        # 3. Masa 4: Agent-Lyapunov Contractive Zero-Drift Simulation
+        # 3. Masa 4: Agent-Lyapunov Contractive Zero-Drift Verification & Simulation
         gamma = bp["gamma"]
         ref_val = bp["ref_val"]
         initial_drift = 1.85
@@ -228,12 +248,23 @@ class RealTimeWorkProducer:
         v_end = lyapunov_series[-1]["lyapunov_V"]
         suppression_pct = round((1.0 - (math.sqrt(v_end) / max(initial_drift, 1e-9))) * 100.0, 3)
 
-        # 4. Masa 5: Agent-EGraph 0-ULP Interval Proof
+        # Execute formal contractivity check using NumericalVerifier
+        lyap_cert = NumericalVerifier.verify_lyapunov_contractivity(
+            gamma=gamma, initial_error=initial_drift, iterations=20
+        )
+
+        # 4. Masa 5: Agent-EGraph Interval Verification
         lo_out = round(p0_bounds[0] - p1_bounds[1], 4)
         hi_out = round(p0_bounds[1] - p1_bounds[0], 4)
         if "relu" in bp["expr_sx"] or "clamp" in bp["expr_sx"]:
             lo_out = max(0.0, lo_out)
-        proof_payload = f"{kname}:{bp['expr_sx']}:[{lo_out},{hi_out}]:0-ULP"
+
+        # Formally verify interval bounds
+        interval_cert = NumericalVerifier.verify_ieee754_interval_bounds(
+            expr_str=bp["expr_sx"],
+            input_bounds={p0_name: p0_bounds, p1_name: p1_bounds},
+        )
+        proof_payload = f"{kname}:{bp['expr_sx']}:[{lo_out},{hi_out}]:status={interval_cert.status.value}"
         proof_sha256 = hashlib.sha256(proof_payload.encode("utf-8")).hexdigest()
 
         # 5. Masa 8: Agent-FullStack & 5-Target Silicon Codegen + TDD Suite
@@ -342,9 +373,30 @@ class RealTimeWorkProducer:
         # 6. Masa 6 & Masa 7: Token Shield & SHA-256 Context Vault Capsule
         full_bundle_text = sx_source + "\n" + py_source + "\n" + c_source + "\n" + scholar_out["report_markdown"]
         raw_tokens_est = max(1, (len(full_bundle_text) + 4500) // 4)
+
+        if biostat_out.get("status") == "SUCCESS":
+            b_res = biostat_out["results"]
+            study_count = b_res["study_count"]
+            total_sample_n = biostat_out["total_sample_n"]
+            pooled_effect_d = b_res["pooled_random"]
+            ci95 = b_res["ci95"]
+            p_value = b_res["p_value"]
+            i_squared_pct = b_res["i_squared_pct"]
+            meta_summary = f"PRISMA_N={total_sample_n}; d={pooled_effect_d}"
+            meta_line = f"- **Academic Meta-Analysis:** $N = {total_sample_n:,}$, Pooled $d = {pooled_effect_d}$ (`95% CI: {ci95}`, `p {p_value}`)\n"
+        else:
+            study_count = 0
+            total_sample_n = 0
+            pooled_effect_d = None
+            ci95 = None
+            p_value = "INSUFFICIENT_VERIFIED_DATA"
+            i_squared_pct = None
+            meta_summary = "PRISMA=QUALITATIVE_ONLY"
+            meta_line = f"- **Academic Review:** Qualitative synthesis ({len(scholar_out.get('included_studies', []))} verified records). Quantitative meta-analysis pending empirical data.\n"
+
         skeleton_text = (
-            f"job={job_id}; kernel={kname}[{lo_out},{hi_out}]0-ULP; "
-            f"Lyapunov={suppression_pct}%; PRISMA_N={biostat_out['total_sample_n']}; d={biostat_out['pooled_effect_d']}"
+            f"job={job_id}; kernel={kname}[{lo_out},{hi_out}]status={interval_cert.status.value}; "
+            f"Lyapunov={suppression_pct}%; {meta_summary}"
         )
         compressed_tokens_est = max(1, len(skeleton_text) // 4 + 104)
         token_savings_pct = round((1.0 - (compressed_tokens_est / raw_tokens_est)) * 100.0, 2)
@@ -355,15 +407,15 @@ class RealTimeWorkProducer:
             f"- **Job ID:** `{job_id}` · **Assigned Engine:** `{engine_provider}`\n"
             f"- **Vault SHA-256:** `{vault_sha256}`\n"
             f"- **Capsule Size:** `{compressed_tokens_est} tokens` (**`-{token_savings_pct}%`** vs raw `{raw_tokens_est} tokens`)\n"
-            f"- **Synthesized Kernel:** `{kname}` (`[{lo_out}, {hi_out}] 0-ULP SAFE`)\n"
-            f"- **Academic Meta-Analysis:** $N = {biostat_out['total_sample_n']:,}$, Pooled $d = {biostat_out['pooled_effect_d']}$ (`95% CI: {biostat_out['ci95']}`, `p {biostat_out['p_value']}`)\n"
-            f"- **Lyapunov Zero-Drift:** $V_1 = {v_start:.4f} \\rightarrow V_{{20}} = {v_end:.6f}$ (`%{suppression_pct}` drift suppression)\n\n"
+            f"- **Synthesized Kernel:** `{kname}` (`[{lo_out}, {hi_out}] status: {interval_cert.status.value}`)\n"
+            f"{meta_line}"
+            f"- **Lyapunov Zero-Drift:** $V_1 = {v_start:.4f} \\rightarrow V_{{20}} = {v_end:.6f}$ (`%{suppression_pct}` drift suppression | status: `{lyap_cert.status.value}`)\n\n"
             f"## 🤖 Active Claude Code Subagents (`.claude/agents/`)\n"
             f"- `@academic-scholar` — PRISMA 2020 Systematic Review, PubMed/CrossRef & Vancouver/BibTeX Citations\n"
             f"- `@biostat-analyst` — Meta-Analysis, Forest Plot, ROC/AUC, Bland-Altman & IMRaD Manuscript\n"
             f"- `@biomed-lyapunov` — Zero-Drift ($V_{{k+1}} < V_k$) Medical Device Calibration & C99/MCU Firmware\n"
             f"- `@token-shield-guardian` — AST Skeletonization & -88% Token Cost Compressor\n"
-            f"- `@formal-silicon-architect` — E-Graph 0-ULP Prover & ARM64 NEON / AVX2 / Q16.16 Codegen\n\n"
+            f"- `@formal-silicon-architect` — E-Graph Prover & ARM64 NEON / AVX2 / Q16.16 Codegen\n\n"
             + power_out["security_audit_markdown"]
         )
 
@@ -371,6 +423,18 @@ class RealTimeWorkProducer:
             scholar_out["report_markdown"]
             + "\n\n---\n\n"
             + biostat_out["imrad_manuscript_markdown"]
+            + "\n\n---\n\n"
+            + peer_review_out["upgraded_manuscript_markdown"]
+            + "\n\n---\n\n"
+            + q1_manuscript_out["humanization_audit"]["audit_report_markdown"]
+            + "\n\n---\n\n"
+            + peer_review_out["final_review"]["peer_review_report_markdown"]
+            + "\n\n---\n\n"
+            + peer_review_out["rebuttal_letter_markdown"]
+            + "\n\n---\n\n"
+            + q1_manuscript_out["cover_letter_markdown"]
+            + "\n\n---\n\n"
+            + q1_manuscript_out["equator_checklist_markdown"]
             + "\n\n## 5. 🗂️ BibTeX Kaynakça Paketi (LaTeX / Overleaf / EndNote Uyumlu)\n"
             + f"```bibtex\n{scholar_out['bibtex']}\n```"
         )
@@ -380,24 +444,22 @@ class RealTimeWorkProducer:
             "engine_provider": engine_provider,
             "target_agent_id": target_agent_id or "ALL_8_AGENTS",
             "kernel_name": kname,
-            "formal_proof": {
-                "status": "PROVEN_SAFE_0_ULP",
-                "output_interval": [lo_out, hi_out],
-                "ieee754_suites_passed": "19/19",
-                "certificate_sha256": proof_sha256,
-            },
+            "formal_verification": interval_cert.to_dict(),
+            "lyapunov_verification": lyap_cert.to_dict(),
             "academic_meta_analysis": {
-                "included_studies": biostat_out["study_count"],
-                "total_sample_n": biostat_out["total_sample_n"],
-                "pooled_effect_d": biostat_out["pooled_effect_d"],
-                "ci95": biostat_out["ci95"],
-                "p_value": biostat_out["p_value"],
-                "i_squared_pct": biostat_out["i_squared_pct"],
+                "status": biostat_out.get("status", "SUCCESS"),
+                "included_studies": study_count,
+                "total_sample_n": total_sample_n,
+                "pooled_effect_d": pooled_effect_d,
+                "ci95": ci95,
+                "p_value": p_value,
+                "i_squared_pct": i_squared_pct,
             },
             "lyapunov_autocal": {
                 "v_initial": v_start,
                 "v_final": v_end,
                 "drift_suppression_pct": suppression_pct,
+                "verification_status": lyap_cert.status.value,
             },
             "token_shield": {
                 "raw_tokens": raw_tokens_est,
@@ -415,6 +477,15 @@ class RealTimeWorkProducer:
                 f"{kname}.py": py_source,
                 f"{kname}_hardware.c": c_source,
                 "PRISMA_LITERATURE_AND_META_ANALYSIS.md": academic_full_report_md,
+                "MANUSCRIPT_Q1_SCIE.md": peer_review_out["upgraded_manuscript_markdown"],
+                "MANUSCRIPT_CAMERA_READY.tex": q1_manuscript_out["latex_source"],
+                "COVER_LETTER_TO_EDITOR.md": q1_manuscript_out["cover_letter_markdown"],
+                "PEER_REVIEW_AND_REBUTTAL.md": (
+                    peer_review_out["final_review"]["peer_review_report_markdown"]
+                    + "\n\n---\n\n"
+                    + peer_review_out["rebuttal_letter_markdown"]
+                ),
+                "EQUATOR_COMPLIANCE_CHECKLIST.md": q1_manuscript_out["equator_checklist_markdown"],
                 "REFERENCES.bib": scholar_out["bibtex"],
                 "CLAUDE_CODEX_HANDOFF.md": claude_codex_handoff_md,
                 "formal_proof_certificate.json": json.dumps(proof_cert_json, ensure_ascii=False, indent=2),
@@ -612,8 +683,15 @@ class RealTimeWorkProducer:
                 "python_code": py_source,
                 "c_hardware_code": c_source,
                 "academic_report_md": academic_full_report_md,
+                "q1_manuscript_md": peer_review_out["upgraded_manuscript_markdown"],
+                "q1_latex_source": q1_manuscript_out["latex_source"],
+                "cover_letter_md": q1_manuscript_out["cover_letter_markdown"],
+                "peer_review_report_md": peer_review_out["final_review"]["peer_review_report_markdown"],
+                "rebuttal_letter_md": peer_review_out["rebuttal_letter_markdown"],
+                "equator_checklist_md": q1_manuscript_out["equator_checklist_markdown"],
+                "humanization_audit_md": q1_manuscript_out["humanization_audit"]["audit_report_markdown"],
                 "bibtex_citations": scholar_out["bibtex"],
-                "forest_plot_ascii": biostat_out["forest_plot_ascii"],
+                "forest_plot_ascii": biostat_out.get("forest_plot_ascii", ""),
                 "proof_certificate": proof_cert_json,
                 "claude_codex_handoff_md": claude_codex_handoff_md,
                 "lyapunov_series": lyapunov_series,
@@ -630,6 +708,9 @@ class RealTimeWorkProducer:
                 "formal_proof_status": f"[{lo_out}, {hi_out}] 0-ULP SAFE",
                 "meta_analysis_pooled_d": biostat_out["pooled_effect_d"],
                 "meta_analysis_p_value": biostat_out["p_value"],
+                "scie_readiness_score": peer_review_out["final_review"]["scorecard"]["overall_scie_readiness_score"],
+                "scie_editorial_decision": peer_review_out["final_review"]["decision"],
+                "ai_tells_remaining": q1_manuscript_out["humanization_audit"]["metrics_after"]["ai_tells_remaining"],
                 "latency_ms": elapsed_ms,
             },
         }
@@ -668,6 +749,56 @@ MCP_TOOLS: List[Dict[str, Any]] = [
                 "research_topic": {"type": "string", "description": "Academic or clinical research question"}
             },
             "required": ["research_topic"]
+        }
+    },
+    {
+        "name": "synax_q1_manuscript_writer",
+        "description": "Run Agent-Author-Q1 to write a full Q1 SCIE scientific manuscript compliant with EQUATOR Network guidelines (PRISMA 2020, CONSORT 2010, STROBE, TRIPOD+AI), complete with camera-ready LaTeX (.tex) source, Editor-in-Chief Cover Letter, and EQUATOR compliance checklist.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "topic": {"type": "string", "description": "Scientific research topic or manuscript title"},
+                "target_journal": {"type": "string", "description": "Target Q1 SCIE journal (e.g. 'Nature Medicine', 'The Lancet Digital Health', 'Intensive Care Medicine', 'IEEE TMI')"},
+                "equator_guideline": {"type": "string", "description": "EQUATOR guideline: PRISMA_2020, TRIPOD_AI, STROBE, or CONSORT_2010"}
+            },
+            "required": ["topic"]
+        }
+    },
+    {
+        "name": "synax_academic_humanizer_editor",
+        "description": "Run Agent-Humanizer-Editor to perform scientific editing and humanization: eliminates 100% of AI-generated clichés ('delve into', 'testament to', 'tapestry', etc.), calibrates sentence burstiness and AMA 11th Ed. / Nature academic tone, and verifies 100% preservation of citations, DOIs, and statistical figures.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "manuscript_text": {"type": "string", "description": "Academic draft or manuscript section to edit and humanize"},
+                "target_journal_style": {"type": "string", "description": "Target editorial style (default: 'Nature Medicine / AMA 11th Ed.')"}
+            },
+            "required": ["manuscript_text"]
+        }
+    },
+    {
+        "name": "synax_scie_peer_review_simulator",
+        "description": "Run Agent-Peer-Reviewer to perform a pre-submission 3-Referee SCIE Blind Peer Review (Senior Methodologist, Biostatistician, Q1 Associate Editor), compute the 6-axis SCIE Readiness Scorecard (0-100), auto-upgrade the manuscript to UNCONDITIONAL_ACCEPT_READY, and generate a Point-by-Point Author Rebuttal Letter.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "manuscript_text": {"type": "string", "description": "Manuscript text to audit and auto-upgrade"},
+                "target_journal": {"type": "string", "description": "Target Q1 SCIE journal"}
+            },
+            "required": ["manuscript_text"]
+        }
+    },
+    {
+        "name": "synax_q1_full_publication_pipeline",
+        "description": "Execute the complete 5-Agent Q1 SCIE Publication Pipeline (Agent-Scholar -> Agent-Biostat -> Agent-Author-Q1 -> Agent-Humanizer-Editor -> Agent-Peer-Reviewer) to produce an unconditional-accept-ready Q1 submission package.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "topic": {"type": "string", "description": "Research topic"},
+                "target_journal": {"type": "string", "description": "Target Q1 SCIE journal"},
+                "equator_guideline": {"type": "string", "description": "EQUATOR guideline: PRISMA_2020, TRIPOD_AI, STROBE, or CONSORT_2010"}
+            },
+            "required": ["topic"]
         }
     },
     {
@@ -749,6 +880,34 @@ def run_mcp_stdio_loop() -> None:
                 topic = targs.get("research_topic", "Biyomedikal sıfır-sapmalı sensör kalibrasyonu")
                 work = producer.produce_work(topic, target_agent_id="agent-scholar")
                 text_out = work["deliverables"]["academic_report_md"]
+            elif tname == "synax_q1_manuscript_writer":
+                res = producer.q1_author.author_q1_manuscript(
+                    topic=targs.get("topic", "Autonomous Biomedical Telemetry Calibration"),
+                    target_journal=targs.get("target_journal", "Nature Medicine / Intensive Care Medicine (Q1 SCIE)"),
+                    equator_guideline=targs.get("equator_guideline", "PRISMA_2020"),
+                    humanize=True,
+                )
+                text_out = json.dumps(res, ensure_ascii=False, indent=2)
+            elif tname == "synax_academic_humanizer_editor":
+                res = producer.humanizer.humanize_and_edit(
+                    manuscript_text=targs.get("manuscript_text", ""),
+                    target_journal_style=targs.get("target_journal_style", "Nature Medicine / AMA 11th Ed."),
+                )
+                text_out = json.dumps(res, ensure_ascii=False, indent=2)
+            elif tname == "synax_scie_peer_review_simulator":
+                res = producer.peer_reviewer.review_and_auto_upgrade(
+                    manuscript_text=targs.get("manuscript_text", ""),
+                    target_journal=targs.get("target_journal", "Nature Medicine / Intensive Care Medicine (Q1 SCIE)"),
+                )
+                text_out = json.dumps(res, ensure_ascii=False, indent=2)
+            elif tname == "synax_q1_full_publication_pipeline":
+                res = producer.q1_pipeline.run_full_q1_pipeline(
+                    topic=targs.get("topic", "Autonomous Biomedical Telemetry Calibration"),
+                    target_journal=targs.get("target_journal", "Nature Medicine / Intensive Care Medicine (Q1 SCIE)"),
+                    equator_guideline=targs.get("equator_guideline", "PRISMA_2020"),
+                    try_live=False,
+                )
+                text_out = json.dumps(res, ensure_ascii=False, indent=2)
             elif tname == "synax_llm_chat_tr":
                 chat_res = producer.llm.chat(targs.get("message", "Merhaba SYNAX"))
                 text_out = json.dumps(chat_res, ensure_ascii=False, indent=2)
@@ -800,11 +959,23 @@ def install_claude_and_codex_integrations(target_repo: Path) -> Dict[str, Any]:
     claude_agents_specs = {
         "academic-scholar.md": (
             "---\nname: academic-scholar\ndescription: Academic literature search (PubMed, CrossRef, IEEE), PRISMA 2020 systematic review, PICO analysis, GRADE evidence leveling, and Vancouver/APA/BibTeX citation formatting.\n---\n"
-            "You are **SYNAX Agent-Scholar (Masa 2)**. Always call the `synax_academic_literature_review` MCP tool or `python3 src/synax/academic_skills.py --research \"<topic>\"` to produce structured PICO tables, PRISMA 2020 flow counts, evidence matrices, and verified DOIs/PMIDs.\n"
+            "You are **SYNAX Agent-Scholar (Masa 2)**. Always call the `synax_academic_literature_review` MCP tool or `python3 src/synax/academic_skills.py --research \"<topic>\"` to produce structured PICO tables, PRISMA 2020 flow counts, evidence matrices, and verified DOIs/PMIDs. Never fabricate identifiers or sample sizes.\n"
         ),
         "biostat-analyst.md": (
-            "---\nname: biostat-analyst\ndescription: Biostatistical meta-analysis (Inverse-Variance, DerSimonian-Laird, Hedges g, Cohen d, 95% CI, Cochran Q, I^2), Forest Plot visualization, critical appraisal, and IMRaD academic manuscript drafting.\n---\n"
+            "---\nname: biostat-analyst\ndescription: Biostatistical meta-analysis (Inverse-Variance, DerSimonian-Laird, Hedges g, Cohen d, 95% CI, 95% PI, Cochran Q, I^2, statistical power), Forest Plot visualization, critical appraisal, and IMRaD academic manuscript drafting.\n---\n"
             "You are **SYNAX Agent-Biostat (Masa 3)**. Perform rigorous quantitative meta-analysis, heterogeneity assessment, bias critique (RoB-2/QUADAS-2), and draft peer-review-ready IMRaD manuscript sections in Turkish and English.\n"
+        ),
+        "q1-manuscript-author.md": (
+            "---\nname: q1-manuscript-author\ndescription: Write Q1 SCIE scientific manuscripts compliant with EQUATOR Network guidelines (PRISMA 2020, CONSORT 2010, STROBE, TRIPOD+AI), including camera-ready LaTeX (.tex) source, Editor-in-Chief Cover Letter, CRediT statement, and EQUATOR checklist.\n---\n"
+            "You are **SYNAX Agent-Author-Q1**. Call `synax_q1_manuscript_writer` or `synax_q1_full_publication_pipeline` to author full-length Q1 SCIE manuscripts with Research-in-Context panels, structured abstracts, IMRaD sections, ICMJE declarations, sanitized LaTeX code, and cover letters.\n"
+        ),
+        "academic-humanizer-editor.md": (
+            "---\nname: academic-humanizer-editor\ndescription: Scientific editing and academic humanization engine that removes 100% of AI-generated clichés ('delve into', 'testament to', 'tapestry'), optimizes sentence burstiness, and enforces AMA 11th Ed. / Nature Medicine scholarly tone while preserving 100% of numbers and citations.\n---\n"
+            "You are **SYNAX Agent-Humanizer-Editor**. Call `synax_academic_humanizer_editor` to de-AI-ify and polish scientific manuscripts to senior Q1 investigator prose quality while verifying 100% numerical and citation invariance.\n"
+        ),
+        "scie-peer-reviewer.md": (
+            "---\nname: scie-peer-reviewer\ndescription: Pre-submission 3-Referee SCIE Blind Peer-Review Simulator (Methodologist, Biostatistician, Q1 Associate Editor). Computes a 6-axis SCIE Readiness Score (0-100), auto-upgrades manuscripts to UNCONDITIONAL_ACCEPT_READY, and generates a Point-by-Point Author Rebuttal Letter.\n---\n"
+            "You are **SYNAX Agent-Peer-Reviewer**. Call `synax_scie_peer_review_simulator` to audit any scientific manuscript prior to submission, fix methodological or editorial flaws automatically, and generate the Point-by-Point Response to Reviewers letter.\n"
         ),
         "biomed-lyapunov.md": (
             "---\nname: biomed-lyapunov\ndescription: Contractive Lyapunov-Kalman (V_{k+1} < V_k) zero-drift biomedical sensor self-calibration and IEEE-754 fault-healing C99/Q16.16 MCU firmware synthesis for ECG, IBP, SpO2, and Ventilators.\n---\n"
@@ -835,12 +1006,32 @@ def install_claude_and_codex_integrations(target_repo: Path) -> Dict[str, Any]:
         "Call `synax_academic_literature_review` with `research_topic=\"$ARGUMENTS\"`.\n",
         encoding="utf-8"
     )
+    (claude_cmd_dir / "q1-paper.md").write_text(
+        "---\ndescription: Author a full Q1 SCIE scientific manuscript with LaTeX source, Cover Letter, and EQUATOR checklist\n---\n"
+        "Call `synax_q1_manuscript_writer` with `topic=\"$ARGUMENTS\"`.\n",
+        encoding="utf-8"
+    )
+    (claude_cmd_dir / "humanize-paper.md").write_text(
+        "---\ndescription: Edit and humanize a scientific manuscript, removing all AI tells while preserving citations and numbers\n---\n"
+        "Call `synax_academic_humanizer_editor` with `manuscript_text=\"$ARGUMENTS\"`.\n",
+        encoding="utf-8"
+    )
+    (claude_cmd_dir / "peer-review.md").write_text(
+        "---\ndescription: Run a 3-Referee SCIE Pre-Submission Peer Review, auto-upgrade manuscript, and generate Point-by-Point Rebuttal\n---\n"
+        "Call `synax_scie_peer_review_simulator` with `manuscript_text=\"$ARGUMENTS\"`.\n",
+        encoding="utf-8"
+    )
+    (claude_cmd_dir / "scie-publish.md").write_text(
+        "---\ndescription: Run the complete 5-Agent Q1 SCIE Publication Pipeline from literature review to camera-ready package\n---\n"
+        "Call `synax_q1_full_publication_pipeline` with `topic=\"$ARGUMENTS\"`.\n",
+        encoding="utf-8"
+    )
 
     # 4. OpenAI Codex Multi-Agent Profiles (.codex/config.toml & .codex/agents.toml)
     codex_dir = target_repo / ".codex"
     codex_dir.mkdir(parents=True, exist_ok=True)
     codex_toml = (
-        "# OpenAI Codex CLI Native MCP & 8-Agent Office Configuration (v3.0.0)\n"
+        "# OpenAI Codex CLI Native MCP & Academic Q1 Office Configuration (v6.3.0)\n"
         "[mcp_servers.synax_agent_office]\n"
         "command = \"python3\"\n"
         f"args = [\"{mcp_script}\", \"--stdio\"]\n\n"
@@ -850,6 +1041,15 @@ def install_claude_and_codex_integrations(target_repo: Path) -> Dict[str, Any]:
         "[agents.biostat_analyst]\n"
         "role = \"Biostatistical Meta-Analysis, Forest Plot & IMRaD Manuscript Agent\"\n"
         "tool = \"synax_academic_literature_review\"\n\n"
+        "[agents.q1_manuscript_author]\n"
+        "role = \"Q1 SCIE Manuscript, LaTeX, Cover Letter & EQUATOR Compliance Authoring Agent\"\n"
+        "tool = \"synax_q1_manuscript_writer\"\n\n"
+        "[agents.academic_humanizer_editor]\n"
+        "role = \"Scientific Editing, De-AI-ification & AMA/Nature Prose Humanization Agent\"\n"
+        "tool = \"synax_academic_humanizer_editor\"\n\n"
+        "[agents.scie_peer_reviewer]\n"
+        "role = \"3-Referee SCIE Pre-Submission Peer Review, Auto-Upgrade & Rebuttal Agent\"\n"
+        "tool = \"synax_scie_peer_review_simulator\"\n\n"
         "[agents.biomed_lyapunov]\n"
         "role = \"Contractive Lyapunov-Kalman Zero-Drift Biomedical Firmware Agent\"\n"
         "tool = \"synax_office_multitask\"\n\n"
