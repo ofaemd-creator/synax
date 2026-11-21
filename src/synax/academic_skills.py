@@ -2220,7 +2220,7 @@ class SynaxAcademic21SkillsEngine:
                 f"## 3. Visual Integrity Audit Checklist (Tufte & Nature Figure Guidelines)\n"
                 f"- **Zero Axis Truncation:** Confidence interval axes include the null line ($d = 0.0$).\n"
                 f"- **Colorblind Accessibility:** Uses Okabe-Ito (`#0072B2`, `#E69F00`, `#56B4E9`) safe contrast.\n"
-                f"- **Error Bars Explicitly Defined:** All error bars represent exact 95% Confidence Intervals ($\pm 1.96 \\times SE$).\n"
+                f"- **Error Bars Explicitly Defined:** All error bars represent exact 95% Confidence Intervals ($\\pm 1.96 \\times SE$).\n"
             )
             return {
                 "skill_id": "scientific-visualization",
