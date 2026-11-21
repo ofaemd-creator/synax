@@ -18,31 +18,11 @@ This skill equips **Claude Code**, **OpenAI Codex**, **Google Antigravity**, **C
 4. **Autonomous Workspace Agent Dispatch (`/code`)**:
    - Trigger `src/synax/agent.py` (backed by Claude, Gemini, OpenRouter, Groq, or Ollama) with `TELEGRAM_ALLOWED_CHAT_IDS` access control.
 
-## Environment Variables (Security First)
-
-Never hardcode tokens. Configure via environment variables:
-
-```bash
-export TELEGRAM_BOT_TOKEN="<your-botfather-token>"
-export TELEGRAM_CHAT_ID="<your-chat-id>"
-export TELEGRAM_ALLOWED_CHAT_IDS="<your-chat-id>"
-```
-
 ## CLI Usage
 
 ```bash
-# Check bot & hardware status
 ./synax telegram --status
-
-# Test any bot command locally without needing a live token
 ./synax telegram --cmd "/egraph (a * b + c) + (x - x)"
 ./synax telegram --cmd "/prove relu(a - b)"
-./synax telegram --cmd "/check relu(a - b) * 0.5"
-./synax telegram --cmd "/run relu(a - b)"
-
-# Send a notification from Claude Code / Codex / Antigravity to your phone
-./synax telegram --send "Derleme ve 19/19 IEEE-754 doğrulaması tamamlandı!"
-
-# Run the live Long-Polling Telegram Bot daemon
 ./synax telegram --poll
 ```
