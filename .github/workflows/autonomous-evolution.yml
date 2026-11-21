@@ -1,0 +1,65 @@
+name: "🧬 SYNAX Autonomous Self-Evolution & Skill Growth Daemon"
+
+on:
+  schedule:
+    # Runs automatically every 6 hours to synthesize new skills, run tests, and upgrade the website
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      custom_topic:
+        description: "Optional new scientific or engineering skill topic to synthesize"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  autonomous-self-evolution:
+    name: "Autonomous Skill Synthesis, Verification Gate & Website Refresh"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Execute Autonomous Self-Evolution Cycle
+        env:
+          PYTHONPATH: src
+        run: |
+          if [ -n "${{ github.event.inputs.custom_topic }}" ]; then
+            python3 src/synax/self_evolution_engine.py --evolve-cycle --topic "${{ github.event.inputs.custom_topic }}"
+          else
+            python3 src/synax/self_evolution_engine.py --evolve-cycle
+          fi
+
+      - name: Run Full Self-Verification & Unit Test Suite
+        env:
+          PYTHONPATH: src
+        run: |
+          python3 -m unittest discover -s tests -v
+
+      - name: Refresh Live Web Studio HTML & Evolution Feed
+        env:
+          PYTHONPATH: src
+        run: |
+          python3 src/synax/agent_office.py --export-html docs/office.html
+          cp docs/office.html docs/index.html
+
+      - name: Commit & Push Evolved Skills and Website Improvements
+        run: |
+          git config user.name "SYNAX Autonomous Evolution Agent"
+          git config user.email "research@synaxcode.org"
+          git add skills/ docs/
+          if ! git diff --staged --quiet; then
+            git commit -m "feat(self-evolution): autonomous skill acquisition & website telemetry upgrade [skip ci]"
+            git push origin HEAD:main
+          else
+            echo "No new changes to commit."
+          fi
