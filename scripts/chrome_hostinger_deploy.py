@@ -130,6 +130,10 @@ def main() -> int:
         upload_file_famulus(f"{pub}/index.html", index_file)
         if (sites_dir / "office.html").exists():
             upload_file_famulus(f"{pub}/office.html", sites_dir / "office.html")
+        if (sites_dir / "api.php").exists():
+            upload_file_famulus(f"{pub}/api.php", sites_dir / "api.php")
+        if (sites_dir / "evolution_feed.json").exists():
+            upload_file_famulus(f"{pub}/evolution_feed.json", sites_dir / "evolution_feed.json")
         upload_file_famulus(f"{pub}/dashboard.html", sites_dir / "dashboard.html")
         upload_file_famulus(f"{pub}/dashboard/index.html", sites_dir / "dashboard.html")
         if (BASE_DIR / "dashboard_data.json").exists():

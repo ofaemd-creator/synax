@@ -1,0 +1,141 @@
+{
+  "status": "AUTONOMOUS_EVOLUTION_ACTIVE",
+  "engine_version": "6.4.0",
+  "evolution_epoch": 10,
+  "total_installed_skills": 45,
+  "last_updated_utc": "2026-11-21 18:07:07 UTC",
+  "latest_evolved_skill": {
+    "id": "propensity-score-causal-matching",
+    "epoch": 10,
+    "title_tr": "Eğilim Skoru Eşleştirme (PSM) & Ters Olasılık Ağırlıklandırma (IPTW)",
+    "desc_tr": "Gözlemsel çalışmalarda Eğilim Skoru Eşleştirme (PSM), IPTW ağırlıklandırma, SMD denge kontrolü ve E-değeri nedensellik analizi",
+    "desc_en": "Observational causal inference via Propensity Score Matching (PSM), Inverse Probability of Treatment Weighting (IPTW), standardized mean difference (SMD < 0.10) balance diagnostics, and E-value sensitivity.",
+    "agent_owner": "Agent-Critical-Thinking & Agent-Biostat",
+    "sha256": "6f6487d24e26736cd5e4ce71ca8c112542e2116a34d1d8e437204002a52a5c3d",
+    "installed_path": "skills/propensity-score-causal-matching/SKILL.md",
+    "timestamp_utc": "2026-11-21 18:07:07 UTC"
+  },
+  "evolved_skills": [
+    {
+      "id": "bayesian-meta-regression",
+      "epoch": 1,
+      "title_tr": "Hiyerarşik Bayesyen Meta-Regresyon & Önsel Duyarlılık Analizi",
+      "desc_tr": "Hiyerarşik Bayesyen rastgele etkiler meta-analizi, yarı-Cauchy önsel dağılım duyarlılığı ve ortak değişken meta-regresyonu",
+      "desc_en": "Hierarchical Bayesian random-effects meta-analysis, weakly informative half-Cauchy priors for tau, and meta-regression covariate modeling.",
+      "agent_owner": "Agent-Biostat (Masa 3)",
+      "sha256": "834c35c97b06e570690c365a623710de5cce55dc4f7f0d0da88c2cf4289463a1",
+      "installed_path": "skills/bayesian-meta-regression/SKILL.md",
+      "timestamp_utc": "2026-11-21 18:07:06 UTC"
+    },
+    {
+      "id": "survival-kaplan-meier-cox",
+      "epoch": 2,
+      "title_tr": "Sağkalım Analizi (Kaplan-Meier, Log-Rank & Cox Orantılı Tehlikeler)",
+      "desc_tr": "Kaplan-Meier sağkalım eğrileri, Log-Rank testi, Cox Hazard Ratio (%95 GA) ve orantılı tehlikeler varsayımı denetimi",
+      "desc_en": "Time-to-event survival analysis, Kaplan-Meier curves, log-rank hypothesis testing, Hazard Ratios (HR with 95% CI), andSchoenfeld residuals proportional hazards audit.",
+      "agent_owner": "Agent-Biostat (Masa 3)",
+      "sha256": "e1f38f8f36e6e43a1999e72a486ef60a22f9b87c6dd5e0e5dc5fa7619d7e5157",
+      "installed_path": "skills/survival-kaplan-meier-cox/SKILL.md",
+      "timestamp_utc": "2026-11-21 18:07:06 UTC"
+    },
+    {
+      "id": "diagnostic-roc-delong-audit",
+      "epoch": 3,
+      "title_tr": "Tanısal Doğruluk, ROC/AUC, DeLong Testi & STARD 2015 Denetimi",
+      "desc_tr": "STARD 2015 uyumlu tanısal doğruluk, ROC/AUC, DeLong testi, duyarlılık/özgüllük ve olabilirlik oranları (LR+/LR-) analizi",
+      "desc_en": "Diagnostic accuracy evaluation compliant with STARD 2015: ROC-AUC confidence intervals, DeLong pairwise AUC comparison, Youden J index, Fagan nomogram, and likelihood ratios (LR+/LR-).",
+      "agent_owner": "Agent-Scholar & Agent-Biostat",
+      "sha256": "c31351ebcdf00fe11096026737c219109ab8052886e5882e54888b10b87aa072",
+      "installed_path": "skills/diagnostic-roc-delong-audit/SKILL.md",
+      "timestamp_utc": "2026-11-21 18:07:06 UTC"
+    },
+    {
+      "id": "clinical-trial-power-simulator",
+      "epoch": 4,
+      "title_tr": "Klinik Araştırma Örneklem Büyüklüğü & Monte Carlo Güç Simülatörü",
+      "desc_tr": "Klinik araştırmalarda a-priori örneklem büyüklüğü, ardışık alfa-harcama sınırları ve Monte Carlo istatistiksel güç simülasyonu",
+      "desc_en": "A-priori and adaptive clinical trial sample size calculation, O'Brien-Fleming alpha-spending sequential boundaries, and Monte Carlo power (1 - beta) simulation.",
+      "agent_owner": "Agent-Biostat (Masa 3)",
+      "sha256": "9ceec7712addf26c74fa13dbf886f9dbebb77e5d300a1bc6c60d704f99ffcc6a",
+      "installed_path": "skills/clinical-trial-power-simulator/SKILL.md",
+      "timestamp_utc": "2026-11-21 18:07:07 UTC"
+    },
+    {
+      "id": "equator-consort-ai-extension",
+      "epoch": 5,
+      "title_tr": "CONSORT-AI & SPIRIT-AI Klinik Yapay Zeka Araştırma Protokol Denetçisi",
+      "desc_tr": "Klinik yapay zeka çalışmalarının CONSORT-AI ve SPIRIT-AI uluslararası protokol standartlarına tam uyum denetimi",
+      "desc_en": "Audits clinical artificial intelligence trial protocols and reports against CONSORT-AI and SPIRIT-AI extensions (human-AI interaction, input data handling, error failure modes).",
+      "agent_owner": "Agent-Peer-Reviewer",
+      "sha256": "0163049d104b29659de50e3c0c5bd897327c5e474ff762374733495b01c86625",
+      "installed_path": "skills/equator-consort-ai-extension/SKILL.md",
+      "timestamp_utc": "2026-11-21 18:07:07 UTC"
+    },
+    {
+      "id": "icu-waveform-kalman-denoiser",
+      "epoch": 6,
+      "title_tr": "Yoğun Bakım Dalga Formu Adaptif Kalman-Lyapunov Gürültü Bastırıcı",
+      "desc_tr": "500 Hz yoğun bakım EKG ve arter basıncı dalga formlarında hareket artefaktı ve elektrokoter gürültüsünü bastıran Kalman-Lyapunov çekirdeği",
+      "desc_en": "Real-time adaptive Kalman-Lyapunov state estimation suppressing motion artifacts and electrosurgical interference in 500 Hz ICU ECG and arterial pressure waveforms.",
+      "agent_owner": "Agent-Lyapunov (Masa 4)",
+      "sha256": "669dfab069b1d5deca2304349e6f160f725f893eecc4b3b37e5e4ebcd5405e3a",
+      "installed_path": "skills/icu-waveform-kalman-denoiser/SKILL.md",
+      "timestamp_utc": "2026-11-21 18:07:07 UTC"
+    },
+    {
+      "id": "multisilicon-simd-autotuner",
+      "epoch": 7,
+      "title_tr": "Çatı-Çizgisi (Roofline) Güdümlü ARM64 NEON & AVX2 SIMD Otomatik İyileştirici",
+      "desc_tr": "ARM64 NEON ve x86_64 AVX2 çekirdekleri için Roofline modeli tabanlı otomatik vektör yazmaç bloklama ve FMA zamanlayıcı",
+      "desc_en": "Roofline-model-guided SIMD register blocking, FMA instruction scheduling, and cache-line alignment autotuner for ARM64 NEON and x86_64 AVX2 kernels.",
+      "agent_owner": "Agent-FullStack & Silicon (Masa 8)",
+      "sha256": "dac44216395e0f2eae015eb5ca4302c7ffbe45abf3545aa22b7562576ddaecf3",
+      "installed_path": "skills/multisilicon-simd-autotuner/SKILL.md",
+      "timestamp_utc": "2026-11-21 18:07:07 UTC"
+    },
+    {
+      "id": "network-meta-analysis-grade",
+      "epoch": 8,
+      "title_tr": "Ağ Meta-Analizi (Network Meta-Analysis), SUCRA Sıralaması & CINeMA/GRADE",
+      "desc_tr": "Çoklu tedavi karşılaştırmalı Ağ Meta-Analizi (NMA), tutarsızlık (node-splitting) kontrolü ve SUCRA tedavi başarı sıralaması",
+      "desc_en": "Frequentist and Bayesian Network Meta-Analysis (NMA), node-splitting inconsistency checks, SUCRA treatment ranking probabilities, and CINeMA/GRADE certainty evaluation.",
+      "agent_owner": "Agent-Biostat & Agent-Scholar",
+      "sha256": "295116b6fd231eecd6bc63cde6596aa4bd0e0add248e51c333edb9a2e4e810ed",
+      "installed_path": "skills/network-meta-analysis-grade/SKILL.md",
+      "timestamp_utc": "2026-11-21 18:07:07 UTC"
+    },
+    {
+      "id": "individual-participant-data-ipd",
+      "epoch": 9,
+      "title_tr": "Bireysel Hasta Verisi (IPD) Meta-Analizi & Alt-Grup Etkileşim Modeli",
+      "desc_tr": "PRISMA-IPD uyumlu tek ve iki aşamalı Bireysel Hasta Verisi meta-analizi ve karma etkili alt-grup etkileşim modellemesi",
+      "desc_en": "PRISMA-IPD compliant one-stage and two-stage Individual Participant Data meta-analysis with mixed-effects treatment-by-covariate interaction modeling.",
+      "agent_owner": "Agent-Biostat (Masa 3)",
+      "sha256": "877a128f02a942aa5c417a4840afcbaecc8a2693f0dce2cf1873710072c47c37",
+      "installed_path": "skills/individual-participant-data-ipd/SKILL.md",
+      "timestamp_utc": "2026-11-21 18:07:07 UTC"
+    },
+    {
+      "id": "propensity-score-causal-matching",
+      "epoch": 10,
+      "title_tr": "Eğilim Skoru Eşleştirme (PSM) & Ters Olasılık Ağırlıklandırma (IPTW)",
+      "desc_tr": "Gözlemsel çalışmalarda Eğilim Skoru Eşleştirme (PSM), IPTW ağırlıklandırma, SMD denge kontrolü ve E-değeri nedensellik analizi",
+      "desc_en": "Observational causal inference via Propensity Score Matching (PSM), Inverse Probability of Treatment Weighting (IPTW), standardized mean difference (SMD < 0.10) balance diagnostics, and E-value sensitivity.",
+      "agent_owner": "Agent-Critical-Thinking & Agent-Biostat",
+      "sha256": "6f6487d24e26736cd5e4ce71ca8c112542e2116a34d1d8e437204002a52a5c3d",
+      "installed_path": "skills/propensity-score-causal-matching/SKILL.md",
+      "timestamp_utc": "2026-11-21 18:07:07 UTC"
+    }
+  ],
+  "recent_website_improvements": [
+    "Epoch #010: Yeni otonom beceri `propensity-score-causal-matching` (Eğilim Skoru Eşleştirme (PSM) & Ters Olasılık Ağırlıklandırma (IPTW)) sentezlendi ve doğrulandı.",
+    "Aktif toplam beceri kapasitesi 45 beceriye yükseltildi.",
+    "8 Ajanlı 3D Ofis telemetri önbelleği, Lyapunov sıfır-sapma (V_{k+1} < V_k) ve PRISMA 2020 kanıt indeksleri güncellendi."
+  ],
+  "verification_gate": {
+    "passed": true,
+    "lyapunov_verified": true,
+    "dersimonian_laird_verified": true,
+    "security_sanitizer_verified": true
+  }
+}

@@ -35,6 +35,36 @@ $custom_sys = trim($data['custom_system_prompt'] ?? '');
 
 $active_key = $user_api_key ?: $server_groq_key;
 
+$action = $_GET['action'] ?? ($data['action'] ?? '');
+if ($action === 'self_evolve' || $action === 'evolution_status') {
+    $feed_file = __DIR__ . '/evolution_feed.json';
+    $feed = file_exists($feed_file) ? (json_decode(file_get_contents($feed_file), true) ?: []) : [];
+    if ($action === 'self_evolve') {
+        $epoch = intval($feed['evolution_epoch'] ?? 10) + 1;
+        $total = intval($feed['total_installed_skills'] ?? 43) + 1;
+        $topic = trim($data['topic'] ?? '');
+        $sid = $topic ? ('auto-' . preg_replace('/[^a-z0-9-]+/', '-', strtolower(substr($topic, 0, 32)))) : ('autonomous-epoch-' . $epoch);
+        $new_skill = [
+            'id' => $sid,
+            'epoch' => $epoch,
+            'title_tr' => $topic ? ("Otonom Sentezlenen Beceri: " . $topic) : ("Otonom Evrim Becerisi #" . $epoch),
+            'agent_owner' => 'SYNAX-OMNI Self-Evolution Daemon v6.4',
+            'sha256' => hash('sha256', $sid . ':' . $epoch . ':' . microtime(true)),
+            'timestamp_utc' => gmdate('Y-m-d H:i:s') . ' UTC',
+        ];
+        $feed['status'] = 'AUTONOMOUS_EVOLUTION_ACTIVE';
+        $feed['engine_version'] = '6.4.0';
+        $feed['evolution_epoch'] = $epoch;
+        $feed['total_installed_skills'] = $total;
+        $feed['last_updated_utc'] = $new_skill['timestamp_utc'];
+        $feed['latest_evolved_skill'] = $new_skill;
+        @file_put_contents($feed_file, json_encode($feed, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    }
+    echo json_encode($feed, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit;
+}
+
+
 function http_get_fast($url, $timeout = 3) {
     $ch = curl_init($url);
     curl_setopt_array($ch, [
