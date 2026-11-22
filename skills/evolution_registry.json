@@ -1,6 +1,6 @@
 {
   "engine_version": "6.4.0",
-  "evolution_epoch": 11,
+  "evolution_epoch": 12,
   "base_skills_count": 21,
   "evolved_skills": [
     {
@@ -16,14 +16,14 @@
     },
     {
       "id": "survival-kaplan-meier-cox",
-      "epoch": 2,
+      "epoch": 12,
       "title_tr": "Sağkalım Analizi (Kaplan-Meier, Log-Rank & Cox Orantılı Tehlikeler)",
       "desc_tr": "Kaplan-Meier sağkalım eğrileri, Log-Rank testi, Cox Hazard Ratio (%95 GA) ve orantılı tehlikeler varsayımı denetimi",
       "desc_en": "Time-to-event survival analysis, Kaplan-Meier curves, log-rank hypothesis testing, Hazard Ratios (HR with 95% CI), andSchoenfeld residuals proportional hazards audit.",
       "agent_owner": "Agent-Biostat (Masa 3)",
-      "sha256": "e1f38f8f36e6e43a1999e72a486ef60a22f9b87c6dd5e0e5dc5fa7619d7e5157",
+      "sha256": "7c379191f70fc6f7bd6bba5e3dc3bb7f414a10a160a5cd069c73837bd6a27824",
       "installed_path": "skills/survival-kaplan-meier-cox/SKILL.md",
-      "timestamp_utc": "2026-11-21 18:07:06 UTC"
+      "timestamp_utc": "2026-11-22 14:17:37 UTC"
     },
     {
       "id": "diagnostic-roc-delong-audit",
@@ -411,8 +411,35 @@
         "Aktif toplam beceri kapasitesi 46 beceriye yükseltildi.",
         "8 Ajanlı 3D Ofis telemetri önbelleği, Lyapunov sıfır-sapma (V_{k+1} < V_k) ve PRISMA 2020 kanıt indeksleri güncellendi."
       ]
+    },
+    {
+      "epoch": 12,
+      "timestamp_utc": "2026-11-22 14:17:37 UTC",
+      "synthesized_skill": {
+        "id": "survival-kaplan-meier-cox",
+        "epoch": 12,
+        "title_tr": "Sağkalım Analizi (Kaplan-Meier, Log-Rank & Cox Orantılı Tehlikeler)",
+        "desc_tr": "Kaplan-Meier sağkalım eğrileri, Log-Rank testi, Cox Hazard Ratio (%95 GA) ve orantılı tehlikeler varsayımı denetimi",
+        "desc_en": "Time-to-event survival analysis, Kaplan-Meier curves, log-rank hypothesis testing, Hazard Ratios (HR with 95% CI), andSchoenfeld residuals proportional hazards audit.",
+        "agent_owner": "Agent-Biostat (Masa 3)",
+        "sha256": "7c379191f70fc6f7bd6bba5e3dc3bb7f414a10a160a5cd069c73837bd6a27824",
+        "installed_path": "skills/survival-kaplan-meier-cox/SKILL.md",
+        "timestamp_utc": "2026-11-22 14:17:37 UTC"
+      },
+      "verification_gate": {
+        "passed": true,
+        "lyapunov_verified": true,
+        "dersimonian_laird_verified": true,
+        "security_sanitizer_verified": true
+      },
+      "total_installed_skills": 46,
+      "website_improvements": [
+        "Epoch #012: Yeni otonom beceri `survival-kaplan-meier-cox` (Sağkalım Analizi (Kaplan-Meier, Log-Rank & Cox Orantılı Tehlikeler)) sentezlendi ve doğrulandı.",
+        "Aktif toplam beceri kapasitesi 46 beceriye yükseltildi.",
+        "8 Ajanlı 3D Ofis telemetri önbelleği, Lyapunov sıfır-sapma (V_{k+1} < V_k) ve PRISMA 2020 kanıt indeksleri güncellendi."
+      ]
     }
   ],
   "total_installed_skills": 46,
-  "last_updated_utc": "2026-11-22 05:47:30 UTC"
+  "last_updated_utc": "2026-11-22 14:17:37 UTC"
 }
