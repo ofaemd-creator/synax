@@ -3,7 +3,7 @@ name: equator-consort-ai-extension
 description: Audits clinical artificial intelligence trial protocols and reports against CONSORT-AI and SPIRIT-AI extensions (human-AI interaction, input data handling, error failure modes). (Klinik yapay zeka çalışmalarının CONSORT-AI ve SPIRIT-AI uluslararası protokol standartlarına tam uyum denetimi)
 ---
 
-# SYNAX Self-Evolved Skill (Epoch #005): `equator-consort-ai-extension` — CONSORT-AI & SPIRIT-AI Klinik Yapay Zeka Araştırma Protokol Denetçisi
+# SYNAX Self-Evolved Skill (Epoch #015): `equator-consort-ai-extension` — CONSORT-AI & SPIRIT-AI Klinik Yapay Zeka Araştırma Protokol Denetçisi
 
 - **Synthesized By:** `Agent-Peer-Reviewer` (SYNAX Autonomous Self-Evolution Engine v6.4.0)
 - **Turkish Capability:** Klinik yapay zeka çalışmalarının CONSORT-AI ve SPIRIT-AI uluslararası protokol standartlarına tam uyum denetimi
