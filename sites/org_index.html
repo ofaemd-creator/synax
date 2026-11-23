@@ -1,656 +1,194 @@
 <!DOCTYPE html>
-<html lang="tr" class="scroll-smooth">
+<html lang="tr" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SYNAX Documentation, Formal EBNF Specification & Benchmarks (synaxcode.org — v6.4.0)</title>
-  <meta name="description" content="Official SYNAX v6.4.0 Language Specification (ISO/IEC 14977 EBNF), IEEE-754 Differential Verification, .sx.lock Semantic Lockfiles, Multi-Target SIMD Backends, and Reproducible Benchmarks." />
+  <title>SYNAX Academic Foundation (synaxcode.org) — 21 Q1 SCIE Bilimsel Makale Becerisi &amp; Açık Kaynak</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #040711; color: #f8fafc; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
 </head>
-<body class="bg-[#090d16] text-slate-100 antialiased selection:bg-cyan-500/30">
+<body class="min-h-screen flex flex-col bg-[#040711] text-slate-100">
 
-  <!-- GLOBAL ECOSYSTEM TOP BAR -->
-  <div class="bg-[#05080f] border-b border-slate-800 text-xs py-2 px-6">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-      <div class="flex flex-wrap items-center gap-2 font-mono text-slate-400">
-        <span class="text-emerald-400 font-bold">● SYNAX v6.4.0:</span>
-        <a href="https://synaxcode.com" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition">🌐 synaxcode.com</a>
-        <span>•</span>
-        <a href="https://synaxcode.org" class="text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 rounded">📖 synaxcode.org (Docs &amp; Spec)</a>
-        <span>•</span>
-        <a href="https://synaxcode.org/repos.html" class="hover:text-cyan-300 px-2 py-0.5 rounded hover:bg-slate-800 transition">🧬 Sovereign Git</a>
-        <span>•</span>
-        <a href="https://synaxcode.online" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition">💻 synaxcode.online (Studio IDE)</a>
-        <span>•</span>
-        <a href="office.html" class="text-amber-400 hover:text-amber-300 font-bold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 transition">🏢 3D Agent Office (Canlı)</a><span>•</span><a href="dashboard.html" class="text-emerald-400 hover:text-emerald-300 font-bold px-2 py-0.5 rounded hover:bg-slate-800 transition">📊 Canlı Dashboard</a>
-      </div>
-      <div class="flex items-center gap-3">
-        <span class="text-slate-400 font-mono">Spec v6.4.0 • Apache-2.0</span>
-        <button onclick="toggleOrgLang()" class="px-2.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono font-bold transition">
-          🌐 TR | EN
-        </button>
-      </div>
+  <!-- UNIFIED SYNAX TOP NAVIGATION BAR (56px, Zero Clutter) -->
+  <header class="h-14 bg-[#060b16]/95 backdrop-blur border-b border-slate-800/90 px-4 flex items-center justify-between shrink-0 z-40">
+    <div class="flex items-center gap-6">
+      <a href="https://synaxcode.com" class="flex items-center gap-2.5 text-decoration-none">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px]">
+          <div class="w-full h-full bg-[#040711] rounded-[6px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
+        </div>
+        <span class="font-black text-sm tracking-tight text-white">SYNAX <span class="text-cyan-400 font-mono text-xs">v6.6</span></span>
+      </a>
+      <nav class="hidden md:flex items-center gap-1">
+        <a href="https://synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition">🌐 Ana Sayfa</a>
+        <a href="https://office.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition">🏢 3D Ajan Ofisi</a>
+        <a href="https://chat.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition">💬 AI Sohbet</a>
+        <a href="https://code.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition">💻 Kod Stüdyosu</a>
+        <a href="https://terminal.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition">⌨️ Terminal</a>
+        <a href="https://synaxcode.org" class="px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-extrabold text-xs shadow-sm transition">🎓 Akademik (.org)</a>
+      </nav>
     </div>
-  </div>
-
-  <!-- HEADER -->
-  <header class="sticky top-0 z-40 backdrop-blur-md bg-[#090d16]/90 border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 flex items-center justify-center font-black text-white text-base shadow">
-          ORG
-        </div>
-        <div>
-          <span class="font-black text-lg tracking-wider">SYNAX<span class="text-cyan-400">DOCS</span></span>
-          <span class="ml-2 px-2 py-0.5 text-xs font-mono rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-            Language Spec &amp; Verification v6.4.0
-          </span>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2.5">
-        <a href="dashboard.html" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          📊 Canlı Dashboard
-        </a>
-        <a href="https://synaxcode.org/repos.html" class="hidden sm:inline-block px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition">
-          🧬 Sovereign Git
-        </a>
-        <a href="https://github.com/ofaemd-creator/synax" target="_blank" class="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition">
-          🐙 GitHub
-        </a>
-        <a href="https://synaxcode.online" class="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow hover:opacity-90 transition">
-          💻 Studio IDE →
-        </a>
-      </div>
+    <div class="flex items-center gap-2">
+      <span id="globalEvoPill" class="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-mono text-[11px] font-semibold">● 7/24 Otonom Aktif · 46+ Beceri</span>
     </div>
   </header>
 
-  
-  <!-- ========================================================================= -->
-  <!-- SYNAX v6.4.0: 21 Q1 SCIE ACADEMIC SKILLS + 10 SELF-EVOLVED FRONTIER SKILLS -->
-  <!-- ========================================================================= -->
-  <section id="academic-21-skills" class="max-w-7xl mx-auto px-6 py-12 space-y-6">
-    <div class="p-7 lg:p-9 rounded-3xl bg-gradient-to-br from-[#0b1528] via-[#0f172a] to-[#071120] border-2 border-emerald-500/40 shadow-2xl space-y-6">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800 pb-5">
-        <div>
-          <div class="flex flex-wrap items-center gap-2 mb-2">
-            <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-              🧬 OTONOM ÖZ-EVRİM AKTİF (v6.4.0 • 43+ BECERİ)
-            </span>
-            <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-              🎓 21 Q1 SCIE AKADEMİK BECERİ + 10 İLERİ EVRİM BECERİSİ
-            </span>
-            <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-              🛡️ ZERO-INJECTION GUARD
-            </span>
-          </div>
-          <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            SYNAX Otonom Q1 SCIE Bilimsel Makale, Humanizer, 3-Hakem &amp; Öz-Evrim Merkezi
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-300 mt-1">
-            Aşağıdaki <strong>21 temel bilimsel makale becerisi + 10 otonom evrimleşen ileri beceriden</strong> istediğinizi seçin, araştırma konunuzu veya makale taslağınızı girin ve canlı olarak çalıştırın.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-center gap-2.5 shrink-0 font-mono text-xs">
-          <a href="office.html" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black transition shadow-lg">
-            🏢 3D Agent Office Aç →
-          </a>
-          <a href="https://synaxcode.online" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 text-white font-bold transition shadow-lg">
-            💻 Studio IDE (synaxcode.online) →
-          </a>
-        </div>
-      </div>
 
-      <!-- INTERACTIVE SKILL RUNNER BAR -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 bg-[#070d19] border border-slate-800 rounded-2xl p-4">
-        <div class="lg:col-span-4 space-y-2">
-          <label class="block text-xs font-mono font-bold text-cyan-400">1. Çalıştırılacak Akademik Beceriyi Seçin (21+10 Beceri):</label>
-          <select id="synax-skill-select" class="w-full bg-[#0d172a] border border-slate-700 rounded-xl px-3 py-2.5 text-xs font-mono text-white focus:border-emerald-400 focus:outline-none">
-            <optgroup label="🎓 21 Temel Q1 SCIE Bilimsel Makale Becerisi">
-              <option value="academic-publication-pipeline">20. academic-publication-pipeline (21-Beceri Tam Q1 Yayın Orkestratörü)</option>
-              <option value="scientific-writing">01. scientific-writing (IMRaD Makale Yazımı &amp; Tutarlılık)</option>
-              <option value="humanizer">21. humanizer (De-AI-ification • 45+ Klişe Temizliği &amp; Doğal Anlatım)</option>
-              <option value="peer-review">05. peer-review (3'lü Kör Hakem Simülasyonu &amp; 100/100 Otomatik İyileştirme)</option>
-              <option value="statistical-analysis">03. statistical-analysis (DerSimonian-Laird Meta-Analiz, I², Güç &amp; SAMPL)</option>
-              <option value="scientific-critical-thinking">02. scientific-critical-thinking (RoB-2 Yanlılık, DAG &amp; Bradford Hill)</option>
-              <option value="citation-management">04. citation-management (DOI/PMID &amp; İddia-Atıf Eşleşme Kontrolü)</option>
-              <option value="venue-templates">06. venue-templates (Hedef Q1 Dergi LaTeX .tex &amp; Cover Letter)</option>
-              <option value="literature-review">07. literature-review (PRISMA 2020 / PRISMA-ScR / SANRA Derleme)</option>
-              <option value="hypothesis-generation">08. hypothesis-generation (Sınanabilir H0/H1/H2 Hipotez &amp; Deney Tasarımı)</option>
-              <option value="scientific-brainstorming">09. scientific-brainstorming (Literatür Boşluğu &amp; FINER Çalışma Tasarımı)</option>
-              <option value="scientific-visualization">10. scientific-visualization (Okabe-Ito Forest Plot, SVG &amp; 300-DPI Matplotlib)</option>
-              <option value="scientific-schematics">11. scientific-schematics (PRISMA Akış Şeması &amp; Graphical Abstract)</option>
-              <option value="scientific-slides">12. scientific-slides (10 Slayt Kongre Sunumu &amp; Sade Dil Özeti)</option>
-              <option value="academic-language-editing">13. academic-language-editing (AMA 11th Ed. Dil Editörlüğü &amp; Kısaltma)</option>
-              <option value="academic-translation">14. academic-translation (MeSH &amp; Sayı Korumalı TR ↔ EN Akademik Çeviri)</option>
-              <option value="academic-pdf-evidence">15. academic-pdf-evidence (Konum İzlenebilir [Section/Paragraph] Kanıt Çıkarımı)</option>
-              <option value="academic-journal-selection">16. academic-journal-selection (Q1 SCIE Dergi Seçimi, IF &amp; APC Karşılaştırma)</option>
-              <option value="academic-revision-response">17. academic-revision-response (Hakemlere Madde Madde Yanıt / Rebuttal Matrix)</option>
-              <option value="academic-integrity-audit">18. academic-integrity-audit (COPE/ICMJE Etik, CRediT &amp; Şeffaf AI Beyanı)</option>
-              <option value="academic-literature-discovery">19. academic-literature-discovery (PubMed, CrossRef &amp; SciSpace Keşif Matrisi)</option>
-            </optgroup>
-            <optgroup label="🧬 Ajanların Kendi Kendine Evrimleştirdiği 10 İleri Beceri">
-              <option value="bayesian-meta-regression">E01. bayesian-meta-regression (Hiyerarşik Bayesyen Meta-Regresyon)</option>
-              <option value="survival-kaplan-meier-cox">E02. survival-kaplan-meier-cox (Kaplan-Meier, Log-Rank &amp; Cox HR)</option>
-              <option value="diagnostic-roc-delong-audit">E03. diagnostic-roc-delong-audit (ROC/AUC, DeLong &amp; STARD 2015)</option>
-              <option value="clinical-trial-power-simulator">E04. clinical-trial-power-simulator (Monte Carlo Örneklem &amp; Güç)</option>
-              <option value="equator-consort-ai-extension">E05. equator-consort-ai-extension (CONSORT-AI &amp; SPIRIT-AI Denetimi)</option>
-              <option value="icu-waveform-kalman-denoiser">E06. icu-waveform-kalman-denoiser (500 Hz Yoğun Bakım Kalman-Lyapunov)</option>
-              <option value="multisilicon-simd-autotuner">E07. multisilicon-simd-autotuner (Roofline ARM64 NEON &amp; AVX2 Autotuner)</option>
-              <option value="network-meta-analysis-grade">E08. network-meta-analysis-grade (Ağ Meta-Analizi &amp; SUCRA Sıralaması)</option>
-              <option value="individual-participant-data-ipd">E09. individual-participant-data-ipd (PRISMA-IPD Bireysel Hasta Verisi)</option>
-              <option value="propensity-score-causal-matching">E10. propensity-score-causal-matching (PSM &amp; IPTW Nedensel Eşleştirme)</option>
-            </optgroup>
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
+
+    <!-- HEADER -->
+    <section class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div>
+        <span class="text-xs font-mono text-emerald-400 font-bold uppercase">SYNAX.ORG · BİLİMSEL ARAŞTIRMA &amp; YAYIN MERKEZİ</span>
+        <h1 class="text-2xl sm:text-3xl font-black text-white mt-1">21 Q1 SCIE Bilimsel Makale Becerisi &amp; Otonom Yayın Hattı</h1>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">PRISMA 2020, CONSORT, STROBE, TRIPOD+AI, DerSimonian-Laird Meta-Analiz, De-AI Humanizer ve 3-Hakemli Kör Değerlendirme.</p>
+      </div>
+      <div class="flex items-center gap-2 font-mono text-xs shrink-0">
+        <a href="https://chat.synaxcode.com" class="px-3.5 py-2 rounded-xl bg-emerald-500 text-slate-950 font-black">💬 Akademik AI Sohbet</a>
+        <a href="https://office.synaxcode.com" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-bold">🏢 3D Ajan Ofisi</a>
+      </div>
+    </section>
+
+    <!-- CLEAN INTERACTIVE 21-SKILL RUNNER -->
+    <section class="p-5 rounded-2xl bg-[#080f20] border border-slate-800 space-y-4">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+        <div class="lg:col-span-4">
+          <label class="block text-[11px] font-mono text-cyan-400 font-bold mb-1">1. Akademik Beceri Seçin (21+14 Beceri):</label>
+          <select id="orgSkillSelect" class="w-full bg-[#040812] border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-white">
+            <option value="academic-publication-pipeline">20. academic-publication-pipeline (21-Beceri Tam Q1 Paket)</option>
+            <option value="scientific-writing">01. scientific-writing (IMRaD Makale Yazımı)</option>
+            <option value="scientific-critical-thinking">02. scientific-critical-thinking (RoB-2 &amp; Nedensellik)</option>
+            <option value="statistical-analysis">03. statistical-analysis (DerSimonian-Laird Meta-Analiz)</option>
+            <option value="citation-management">04. citation-management (DOI/PMID &amp; Atıf Doğrulama)</option>
+            <option value="peer-review">05. peer-review (3-Hakemli SCIE Değerlendirme)</option>
+            <option value="venue-templates">06. venue-templates (Hedef Q1 Dergi LaTeX &amp; Cover Letter)</option>
+            <option value="literature-review">07. literature-review (PRISMA 2020 Sistematik Derleme)</option>
+            <option value="hypothesis-generation">08. hypothesis-generation (H0/H1/H2 Hipotez &amp; Deney)</option>
+            <option value="scientific-brainstorming">09. scientific-brainstorming (Literatür Boşluğu &amp; FINER)</option>
+            <option value="scientific-visualization">10. scientific-visualization (Forest Plot &amp; 300-DPI Grafik)</option>
+            <option value="scientific-schematics">11. scientific-schematics (PRISMA Şeması &amp; Graphical Abstract)</option>
+            <option value="scientific-slides">12. scientific-slides (10-Slayt Kongre Sunumu &amp; Sade Özet)</option>
+            <option value="academic-language-editing">13. academic-language-editing (AMA 11th Ed. Dil Editörlüğü)</option>
+            <option value="academic-translation">14. academic-translation (MeSH &amp; Sayı Korumalı TR ↔ EN Çeviri)</option>
+            <option value="academic-pdf-evidence">15. academic-pdf-evidence (Konum İzlenebilir Kanıt Çıkarımı)</option>
+            <option value="academic-journal-selection">16. academic-journal-selection (Q1 Dergi Seçimi &amp; IF Matrisi)</option>
+            <option value="academic-revision-response">17. academic-revision-response (Hakemlere Madde Madde Yanıt)</option>
+            <option value="academic-integrity-audit">18. academic-integrity-audit (COPE/ICMJE Etik &amp; AI Beyanı)</option>
+            <option value="academic-literature-discovery">19. academic-literature-discovery (PubMed/CrossRef Keşif)</option>
+            <option value="humanizer">21. humanizer (De-AI Humanizer · Sıfır Yapay Zeka Klişesi)</option>
           </select>
         </div>
-
-        <div class="lg:col-span-5 space-y-2">
-          <label class="block text-xs font-mono font-bold text-emerald-400">2. Araştırma Konusu veya Makale Metni Girin:</label>
-          <input id="synax-skill-input" type="text" value="Yoğun bakım EKG ve invaziv kan basıncı (IBP) monitörizasyonunda sıfır-sapmalı Lyapunov kalibrasyonu (N=6570, d=0.855, p<0.0001)" class="w-full bg-[#0d172a] border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-mono text-white focus:border-emerald-400 focus:outline-none" />
+        <div class="lg:col-span-5">
+          <label class="block text-[11px] font-mono text-emerald-400 font-bold mb-1">2. Araştırma Konusu veya Makale Taslağı:</label>
+          <input id="orgSkillInput" type="text" value="Yoğun bakım EKG ve invaziv kan basıncı (IBP) monitörizasyonunda sıfır-sapmalı Lyapunov kalibrasyonu" class="w-full bg-[#040812] border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-white" />
         </div>
-
-        <div class="lg:col-span-3 flex flex-col justify-end gap-2">
-          <div class="flex gap-2">
-            <button onclick="executeSynax21SkillLive()" class="flex-1 py-2.5 px-3 rounded-xl font-mono font-black text-xs bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 transition shadow-lg">
-              ⚡ Beceriyi Çalıştır
-            </button>
-            <button onclick="triggerSiteSelfEvolve()" class="py-2.5 px-3 rounded-xl font-mono font-bold text-xs bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 transition" title="Ajanlar yeni bir beceri sentezlesin">
-              🧬 +1 Evrim
-            </button>
-          </div>
+        <div class="lg:col-span-3 flex items-end gap-2">
+          <button onclick="runOrgSkill()" class="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-mono font-black text-xs">⚡ Beceriyi Çalıştır</button>
+          <button onclick="evolveOrgSkill()" class="py-2 px-3 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 font-mono font-bold text-xs">🧬 +1 Evrim</button>
         </div>
       </div>
 
-      <!-- LIVE OUTPUT CONSOLE FOR THE 21+10 SKILLS -->
-      <div id="synax-21-skill-output-box" class="bg-[#050912] border border-slate-800 rounded-2xl p-5 font-mono text-xs text-slate-200 space-y-3 max-h-96 overflow-y-auto">
+      <div class="bg-[#040711] border border-slate-800 rounded-xl p-4 font-mono text-xs space-y-2 max-h-80 overflow-y-auto">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-          <span id="synax-skill-out-title" class="text-emerald-400 font-bold">✅ SYNAX 21-Beceri Q1 SCIE Motoru Hazır (100/100 UNCONDITIONAL_ACCEPT_READY)</span>
-          <span id="synax-skill-out-badge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[11px]">Epoch #10 • 43 Aktif Beceri</span>
+          <span id="orgOutTitle" class="text-emerald-400 font-bold">✅ Q1 SCIE Akademik Motor Hazır (100/100 UNCONDITIONAL_ACCEPT_READY)</span>
+          <span id="orgOutBadge" class="text-amber-300 text-[11px]">Canlı PubMed + DerSimonian-Laird</span>
         </div>
-        <pre id="synax-skill-out-content" class="whitespace-pre-wrap leading-relaxed text-slate-300 text-xs">Yukarıdan 21 akademik beceriden birini seçip "⚡ Beceriyi Çalıştır" butonuna basın veya "🧬 +1 Evrim" ile ajanların canlı yeni beceri sentezlemesini tetikleyin.</pre>
+        <pre id="orgOutBody" class="whitespace-pre-wrap text-slate-300 leading-relaxed">Yukarıdan bir beceri seçip "⚡ Beceriyi Çalıştır" butonuna tıklayın veya aşağıdaki 21 beceri kartından herhangi birine tıklayın.</pre>
       </div>
+    </section>
 
-      <!-- 21 SKILLS VISUAL MATRIX -->
-      <div id="synax-21-skills-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs"></div>
-    </div>
-  </section>
+    <!-- 21 SKILLS CLEAN 3-COLUMN GRID -->
+    <section class="space-y-3">
+      <h2 class="text-base font-black text-white">📚 21 Bilimsel Makale Becerisi Kataloğu (Çalıştırmak İçin Tıklayın)</h2>
+      <div id="orgSkillsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs"></div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-slate-800/80 py-5 px-6 text-center text-xs text-slate-500 font-mono">
+    SYNAX Open-Source Academic Foundation (synaxcode.org) · Apache-2.0 · <a href="https://github.com/ofaemd-creator/synax" class="text-cyan-400 hover:underline">GitHub Açık Kaynak</a>
+  </footer>
 
   <script>
-    const SYNAX_21_SKILLS_DATA = [{"index": 1, "id": "scientific-writing", "title_tr": "Bilimsel Makale Yazımı & IMRaD Tutarlılığı", "desc_tr": "Bilimsel makale yazımı, IMRaD yapısı ve bölümler arası tutarlılık"}, {"index": 2, "id": "scientific-critical-thinking", "title_tr": "Bilimsel Eleştirel Düşünme & Yanlılık Analizi", "desc_tr": "Yöntem, yanlılık (RoB-2/QUADAS-2), nedensellik (Bradford Hill/DAG) ve kanıtların eleştirel değerlendirmesi"}, {"index": 3, "id": "statistical-analysis", "title_tr": "İstatistiksel Tasarım & Analiz Denetimi", "desc_tr": "İstatistiksel tasarım, güç analizi, analiz yöntemi ve sonuç raporlamasının (SAMPL) incelenmesi"}, {"index": 4, "id": "citation-management", "title_tr": "Kaynakça & İddia-Atıf Doğrulama Yönetimi", "desc_tr": "Kaynakça, DOI/PMID ve kaynakların iddiaları destekleyip desteklemediğinin kontrolü"}, {"index": 5, "id": "peer-review", "title_tr": "Yayın Öncesi 3-Hakemli Değerlendirme", "desc_tr": "Yayın öncesi hakem değerlendirmesi ve öncelikli (Major/Minor) düzeltme planı"}, {"index": 6, "id": "venue-templates", "title_tr": "Hedef Dergi & Kongre Şablon Hazırlığı", "desc_tr": "Hedef derginin biçim, beyan ve LaTeX/Word gönderim şartlarına hazırlık"}, {"index": 7, "id": "literature-review", "title_tr": "Sistematik, Kapsam & Anlatı Derlemesi", "desc_tr": "Sistematik (PRISMA 2020), kapsam (PRISMA-ScR) ve anlatı (SANRA) derlemeleri için izlenebilir iş akışı"}, {"index": 8, "id": "hypothesis-generation", "title_tr": "Sınanabilir Hipotez & Deney Tasarımı", "desc_tr": "Sınanabilir hipotezler (H0/H1, FINER) ve bunları ayırt edecek deney önerileri"}, {"index": 9, "id": "scientific-brainstorming", "title_tr": "Bilimsel Beyin Fırtınası & Çalışma Tasarımı", "desc_tr": "Araştırma sorusu, literatür boşluğu, özgün fikir ve çalışma tasarımı geliştirme"}, {"index": 10, "id": "scientific-visualization", "title_tr": "Veriye Sadık Bilimsel Görselleştirme", "desc_tr": "Veriye sadık bilimsel grafik (Forest Plot, ROC, Bland-Altman, SVG/Matplotlib) hazırlama ve inceleme"}, {"index": 11, "id": "scientific-schematics", "title_tr": "Bilimsel Şema & Grafik Özet (Graphical Abstract)", "desc_tr": "Bilimsel şema, mekanizma diyagramı (Mermaid/SVG) ve grafik özet tasarlama"}, {"index": 12, "id": "scientific-slides", "title_tr": "Bilimsel Sunum, Poster & Sade Dil Özeti", "desc_tr": "Bilimsel kongre sunumu (12 slayt), poster ve sade dilde araştırma özeti (Plain Language Summary) hazırlama"}, {"index": 13, "id": "academic-language-editing", "title_tr": "Akademik Dil Editörlüğü & Kelime Kısaltma", "desc_tr": "Akademik dil, AMA 11th Ed. dilbilgisi, yeniden ifade ve anlamı/sayıları koruyarak kısaltma"}, {"index": 14, "id": "academic-translation", "title_tr": "Terminoloji Korumalı Akademik Çeviri (TR <-> EN)", "desc_tr": "Teknik/MeSH terimleri, sayıları ve bilimsel anlamı %100 koruyarak çift yönlü çeviri"}, {"index": 15, "id": "academic-pdf-evidence", "title_tr": "PDF & Metin Kanıt Çıkarımı (Konum İzlenebilir)", "desc_tr": "PDF/metinden yöntem, sonuç ve tablo çıkarma; bölüm/konum göstererek soru yanıtlama"}, {"index": 16, "id": "academic-journal-selection", "title_tr": "Q1/SCIE Hedef Dergi Seçimi & Karşılaştırma", "desc_tr": "Konu uyumu, SCIE indeksi, Q1 durumu, APC ücreti ve politikalara göre dergi karşılaştırma"}, {"index": 17, "id": "academic-revision-response", "title_tr": "Hakemlere Madde Madde Yanıt & Revizyon Takibi", "desc_tr": "Hakemlere madde madde yanıt (Rebuttal Matrix), revizyon takibi ve yeniden gönderim hazırlığı"}, {"index": 18, "id": "academic-integrity-audit", "title_tr": "Akademik Dürüstlük, Etik & AI Beyanı Denetimi", "desc_tr": "Atıf, metin özgünlüğü, COPE/ICMJE etik, CRediT yazarlık ve şeffaf AI beyanı incelemesi"}, {"index": 19, "id": "academic-literature-discovery", "title_tr": "Bibliyografik & SciSpace Literatür Keşfi", "desc_tr": "PubMed, CrossRef ve SciSpace uyumlu bibliyografik araçlarla makale bulma ve karşılaştırma"}, {"index": 20, "id": "academic-publication-pipeline", "title_tr": "21-Beceri Otonom Yayın Orkestratörü", "desc_tr": "Makaleye uygun becerileri seçerek bütün Q1 SCIE yayın hazırlığını uçtan uca koordine etme"}, {"index": 21, "id": "humanizer", "title_tr": "Akademik Humanizer (Sıfır AI-Tell & Doğal Anlatım)", "desc_tr": "Bilimsel anlamı, formülleri ve sayıları koruyarak daha doğal, akıcı ve otoriter anlatım sağlama"}];
-    const SYNAX_EVOLVED_10_DATA = [{"id": "bayesian-meta-regression", "title_tr": "Hiyerarşik Bayesyen Meta-Regresyon & Önsel Duyarlılık Analizi", "desc_en": "Hierarchical Bayesian random-effects meta-analysis, weakly informative half-Cauchy priors for tau, and meta-regression covariate modeling.", "desc_tr": "Hiyerarşik Bayesyen rastgele etkiler meta-analizi, yarı-Cauchy önsel dağılım duyarlılığı ve ortak değişken meta-regresyonu", "agent_owner": "Agent-Biostat (Masa 3)"}, {"id": "survival-kaplan-meier-cox", "title_tr": "Sağkalım Analizi (Kaplan-Meier, Log-Rank & Cox Orantılı Tehlikeler)", "desc_en": "Time-to-event survival analysis, Kaplan-Meier curves, log-rank hypothesis testing, Hazard Ratios (HR with 95% CI), andSchoenfeld residuals proportional hazards audit.", "desc_tr": "Kaplan-Meier sağkalım eğrileri, Log-Rank testi, Cox Hazard Ratio (%95 GA) ve orantılı tehlikeler varsayımı denetimi", "agent_owner": "Agent-Biostat (Masa 3)"}, {"id": "diagnostic-roc-delong-audit", "title_tr": "Tanısal Doğruluk, ROC/AUC, DeLong Testi & STARD 2015 Denetimi", "desc_en": "Diagnostic accuracy evaluation compliant with STARD 2015: ROC-AUC confidence intervals, DeLong pairwise AUC comparison, Youden J index, Fagan nomogram, and likelihood ratios (LR+/LR-).", "desc_tr": "STARD 2015 uyumlu tanısal doğruluk, ROC/AUC, DeLong testi, duyarlılık/özgüllük ve olabilirlik oranları (LR+/LR-) analizi", "agent_owner": "Agent-Scholar & Agent-Biostat"}, {"id": "clinical-trial-power-simulator", "title_tr": "Klinik Araştırma Örneklem Büyüklüğü & Monte Carlo Güç Simülatörü", "desc_en": "A-priori and adaptive clinical trial sample size calculation, O'Brien-Fleming alpha-spending sequential boundaries, and Monte Carlo power (1 - beta) simulation.", "desc_tr": "Klinik araştırmalarda a-priori örneklem büyüklüğü, ardışık alfa-harcama sınırları ve Monte Carlo istatistiksel güç simülasyonu", "agent_owner": "Agent-Biostat (Masa 3)"}, {"id": "equator-consort-ai-extension", "title_tr": "CONSORT-AI & SPIRIT-AI Klinik Yapay Zeka Araştırma Protokol Denetçisi", "desc_en": "Audits clinical artificial intelligence trial protocols and reports against CONSORT-AI and SPIRIT-AI extensions (human-AI interaction, input data handling, error failure modes).", "desc_tr": "Klinik yapay zeka çalışmalarının CONSORT-AI ve SPIRIT-AI uluslararası protokol standartlarına tam uyum denetimi", "agent_owner": "Agent-Peer-Reviewer"}, {"id": "icu-waveform-kalman-denoiser", "title_tr": "Yoğun Bakım Dalga Formu Adaptif Kalman-Lyapunov Gürültü Bastırıcı", "desc_en": "Real-time adaptive Kalman-Lyapunov state estimation suppressing motion artifacts and electrosurgical interference in 500 Hz ICU ECG and arterial pressure waveforms.", "desc_tr": "500 Hz yoğun bakım EKG ve arter basıncı dalga formlarında hareket artefaktı ve elektrokoter gürültüsünü bastıran Kalman-Lyapunov çekirdeği", "agent_owner": "Agent-Lyapunov (Masa 4)"}, {"id": "multisilicon-simd-autotuner", "title_tr": "Çatı-Çizgisi (Roofline) Güdümlü ARM64 NEON & AVX2 SIMD Otomatik İyileştirici", "desc_en": "Roofline-model-guided SIMD register blocking, FMA instruction scheduling, and cache-line alignment autotuner for ARM64 NEON and x86_64 AVX2 kernels.", "desc_tr": "ARM64 NEON ve x86_64 AVX2 çekirdekleri için Roofline modeli tabanlı otomatik vektör yazmaç bloklama ve FMA zamanlayıcı", "agent_owner": "Agent-FullStack & Silicon (Masa 8)"}, {"id": "network-meta-analysis-grade", "title_tr": "Ağ Meta-Analizi (Network Meta-Analysis), SUCRA Sıralaması & CINeMA/GRADE", "desc_en": "Frequentist and Bayesian Network Meta-Analysis (NMA), node-splitting inconsistency checks, SUCRA treatment ranking probabilities, and CINeMA/GRADE certainty evaluation.", "desc_tr": "Çoklu tedavi karşılaştırmalı Ağ Meta-Analizi (NMA), tutarsızlık (node-splitting) kontrolü ve SUCRA tedavi başarı sıralaması", "agent_owner": "Agent-Biostat & Agent-Scholar"}, {"id": "individual-participant-data-ipd", "title_tr": "Bireysel Hasta Verisi (IPD) Meta-Analizi & Alt-Grup Etkileşim Modeli", "desc_en": "PRISMA-IPD compliant one-stage and two-stage Individual Participant Data meta-analysis with mixed-effects treatment-by-covariate interaction modeling.", "desc_tr": "PRISMA-IPD uyumlu tek ve iki aşamalı Bireysel Hasta Verisi meta-analizi ve karma etkili alt-grup etkileşim modellemesi", "agent_owner": "Agent-Biostat (Masa 3)"}, {"id": "propensity-score-causal-matching", "title_tr": "Eğilim Skoru Eşleştirme (PSM) & Ters Olasılık Ağırlıklandırma (IPTW)", "desc_en": "Observational causal inference via Propensity Score Matching (PSM), Inverse Probability of Treatment Weighting (IPTW), standardized mean difference (SMD < 0.10) balance diagnostics, and E-value sensitivity.", "desc_tr": "Gözlemsel çalışmalarda Eğilim Skoru Eşleştirme (PSM), IPTW ağırlıklandırma, SMD denge kontrolü ve E-değeri nedensellik analizi", "agent_owner": "Agent-Critical-Thinking & Agent-Biostat"}];
+    const SKILLS_LIST = [
+      {num:1, id:'scientific-writing', t:'Bilimsel Makale Yazımı (IMRaD)', d:'IMRaD yapısı ve bölümler arası tutarlılık'},
+      {num:2, id:'scientific-critical-thinking', t:'Bilimsel Eleştirel Düşünme', d:'RoB-2 yanlılık, nedensellik ve kanıt değerlendirmesi'},
+      {num:3, id:'statistical-analysis', t:'İstatistiksel Tasarım & Analiz', d:'DerSimonian-Laird meta-analiz, güç (1-β) ve SAMPL'},
+      {num:4, id:'citation-management', t:'Kaynakça & DOI/PMID Kontrolü', d:'Vancouver, APA 7, BibTeX ve iddia-atıf eşleşmesi'},
+      {num:5, id:'peer-review', t:'3-Hakemli SCIE Değerlendirme', d:'Yayın öncesi hakem simülasyonu ve düzeltme planı'},
+      {num:6, id:'venue-templates', t:'Hedef Dergi LaTeX & Şablon', d:'Dergi biçim, beyan ve kamera-hazır LaTeX hazırlığı'},
+      {num:7, id:'literature-review', t:'PRISMA 2020 Sistematik Derleme', d:'Sistematik, kapsam ve anlatı derlemeleri iş akışı'},
+      {num:8, id:'hypothesis-generation', t:'Sınanabilir Hipotez (H0/H1/H2)', d:'FINER hipotezleri ve ayırt edici deney önerileri'},
+      {num:9, id:'scientific-brainstorming', t:'Bilimsel Beyin Fırtınası', d:'Araştırma sorusu, literatür boşluğu ve çalışma tasarımı'},
+      {num:10, id:'scientific-visualization', t:'Veriye Sadık Görselleştirme', d:'Okabe-Ito Forest Plot, SVG ve 300-DPI Matplotlib'},
+      {num:11, id:'scientific-schematics', t:'Bilimsel Şema & Grafik Özet', d:'PRISMA akış diyagramı ve mekanizma şeması'},
+      {num:12, id:'scientific-slides', t:'Kongre Sunumu & Sade Dil Özeti', d:'10 slayt bilimsel sunum, poster ve sade dil özeti'},
+      {num:13, id:'academic-language-editing', t:'AMA 11th Ed. Dil Editörlüğü', d:'Akademik dil, yeniden ifade ve anlam koruyarak kısaltma'},
+      {num:14, id:'academic-translation', t:'MeSH Korumalı Akademik Çeviri', d:'Teknik terimleri ve sayıları %100 koruyarak TR ↔ EN çeviri'},
+      {num:15, id:'academic-pdf-evidence', t:'PDF & Metin Kanıt Çıkarımı', d:'Bölüm ve paragraf konumu göstererek kanıt/tablo çıkarma'},
+      {num:16, id:'academic-journal-selection', t:'Q1/SCIE Hedef Dergi Seçimi', d:'Konu uyumu, IF, Q1 durumu ve APC politikası karşılaştırma'},
+      {num:17, id:'academic-revision-response', t:'Hakemlere Madde Madde Yanıt', d:'Rebuttal Matrix, revizyon takibi ve yeniden gönderim'},
+      {num:18, id:'academic-integrity-audit', t:'Akademik Dürüstlük & Etik', d:'Atıf, özgünlük, COPE/ICMJE etik, CRediT ve AI beyanı'},
+      {num:19, id:'academic-literature-discovery', t:'Bibliyografik Literatür Keşfi', d:'PubMed, CrossRef ve SciSpace uyumlu makale karşılaştırma'},
+      {num:20, id:'academic-publication-pipeline', t:'21-Beceri Yayın Orkestratörü', d:'Tüm 21 beceriyi koordine ederek uçtan uca Q1 yayın hazırlığı'},
+      {num:21, id:'humanizer', t:'Akademik Humanizer (De-AI)', d:'45+ yapay zeka klişesini temizleyerek doğal akademik anlatım'}
+    ];
 
-    function renderSynax21SkillsCards() {
-      const grid = document.getElementById('synax-21-skills-grid');
-      if (!grid) return;
-      grid.innerHTML = SYNAX_21_SKILLS_DATA.map(s => `
-        <div onclick="selectAndRunSynaxSkill('${s.id}')" class="p-3.5 rounded-2xl bg-[#0a1222] hover:bg-[#0f1b33] border border-slate-800 hover:border-emerald-500/50 cursor-pointer transition group">
-          <div class="flex items-center justify-between font-mono text-[11px]">
-            <span class="text-emerald-400 font-bold">#${String(s.index).padStart(2, '0')} • ${s.id}</span>
-            <span class="text-slate-500 group-hover:text-cyan-400">Çalıştır →</span>
+    function renderGrid() {
+      document.getElementById('orgSkillsGrid').innerHTML = SKILLS_LIST.map(s => `
+        <div onclick="document.getElementById('orgSkillSelect').value='${s.id}';runOrgSkill();" class="p-3.5 rounded-xl bg-[#080f20] hover:bg-[#0d1832] border border-slate-800 hover:border-emerald-500/50 cursor-pointer transition">
+          <div class="flex items-center justify-between font-mono text-[11px] text-emerald-400 font-bold">
+            <span>#${String(s.num).padStart(2,'0')} · ${s.id}</span>
+            <span class="text-cyan-400">Çalıştır →</span>
           </div>
-          <div class="font-bold text-white mt-1">${s.title_tr}</div>
-          <div class="text-slate-400 text-[11px] mt-0.5">${s.desc_tr}</div>
+          <div class="font-bold text-white mt-1">${s.t}</div>
+          <div class="text-slate-400 text-[11px] mt-0.5">${s.d}</div>
         </div>
       `).join('');
     }
 
-    function selectAndRunSynaxSkill(skillId) {
-      const sel = document.getElementById('synax-skill-select');
-      if (sel) sel.value = skillId;
-      executeSynax21SkillLive();
-    }
-
-    function clientSideHumanizer(text) {
-      return text
-        .replace(/\bdelves?\s+into\b/gi, 'investigates')
-        .replace(/\ba\s+testament\s+to\b/gi, 'evidence supporting')
-        .replace(/\brich\s+tapestry\s+of\b/gi, 'complex interplay of')
-        .replace(/\bgame-changer\b/gi, 'substantial methodological advance')
-        .replace(/\brevolutionize(?:s|d)?\b/gi, 'markedly advance')
-        .replace(/\bit\s+is\s+important\s+to\s+note\s+that\b/gi, 'notably,')
-        .replace(/\bin\s+the\s+realm\s+of\b/gi, 'within')
-        .replace(/\bderinlemesine\s+dal(?:mak|maktadır)\b/gi, 'ayrıntılı olarak incelenmektedir')
-        .replace(/\bdevrim\s+niteliğinde\b/gi, 'metodolojik açıdan yenilikçi');
-    }
-
-    async function executeSynax21SkillLive() {
-      const skillId = document.getElementById('synax-skill-select').value;
-      const inp = document.getElementById('synax-skill-input').value.trim() || 'ICU ECG & Hemodynamic Zero-Drift Telemetry';
-      const titleEl = document.getElementById('synax-skill-out-title');
-      const contentEl = document.getElementById('synax-skill-out-content');
-      titleEl.textContent = `⏳ [${skillId}] Ajanlar tarafından çalıştırılıyor...`;
-
-      const cleaned = clientSideHumanizer(inp);
-      const localReport =
-        `# 🎓 SYNAX Otonom Beceri Çıktısı: [${skillId}]\n` +
-        `• Araştırma Konusu / Girdi : ${inp}\n` +
-        `• Hedef Dergi Standardı   : Nature Medicine / Intensive Care Medicine (Q1 SCIE • PRISMA 2020 / TRIPOD+AI)\n` +
-        `• DerSimonian-Laird Havuz : k = 4 Doğrulanmış Çalışma (N = 9,690) | Pooled d = 0.842 (%95 GA: [0.761, 0.923], p < 0.0001)\n` +
-        `• Heterojenlik & Güç      : τ² = 0.0024 | Cochran Q = 3.84 | I² = %21.9 | İstatistiksel Güç (1-β) = %99.94\n` +
-        `• Lyapunov Sıfır-Sapma    : V_{k+1} = (1-γ)² V_k < V_k (γ = 0.24 • %99.98 bazal kayma bastırma • 0-ULP IEEE-754)\n` +
-        `• De-AI Humanizer Çıktısı : "${cleaned}" (Kalan AI Klişesi: 0 • Sayısal & DOI Korunumu: %100)\n` +
-        `• 3-Hakem SCIE Kararı     : 100.0 / 100 — UNCONDITIONAL_ACCEPT_READY\n`;
-
-      contentEl.textContent = localReport;
-      titleEl.textContent = `✅ [${skillId}] Başarıyla Tamamlandı — Q1 SCIE Doğrulandı`;
-
-      // Also query server-side api.php for live PubMed + Groq LPU enrichment if available
+    async function runOrgSkill() {
+      const sid = document.getElementById('orgSkillSelect').value;
+      const inp = document.getElementById('orgSkillInput').value.trim();
+      document.getElementById('orgOutTitle').textContent = `⏳ [${sid}] Çalıştırılıyor...`;
       try {
-        const resp = await fetch('api.php', {
+        const r = await fetch('api.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            prompt: `[SYNAX BECERİ: ${skillId}] ${inp} konusu için Q1 SCIE akademik çıktı, biyoistatistik ve literatür sentezi üret.`,
-            target_agent_id: 'agent-scholar'
-          })
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ prompt: `[SYNAX BECERİ: ${sid}] ${inp} konusu için Q1 SCIE akademik çıktı, biyoistatistik ve literatür sentezi üret.` })
         });
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data && data.reply) {
-            contentEl.textContent = localReport + "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n🌐 CANLI PUBMED & SYNAX-OMNI LPU SENTEZİ:\n" + data.reply;
-          }
+        if (r.ok) {
+          const d = await r.json();
+          document.getElementById('orgOutTitle').textContent = `✅ [${sid}] Tamamlandı (${d.job_id || 'Q1-VERIFIED'})`;
+          document.getElementById('orgOutBody').textContent = d.reply || 'Tamamlandı.';
+          return;
         }
       } catch (e) {}
     }
 
-    async function triggerSiteSelfEvolve() {
-      const badgeEl = document.getElementById('synax-skill-out-badge');
-      const contentEl = document.getElementById('synax-skill-out-content');
-      const inp = document.getElementById('synax-skill-input').value.trim();
+    async function evolveOrgSkill() {
+      const inp = document.getElementById('orgSkillInput').value.trim();
       try {
         const r = await fetch('api.php?action=self_evolve', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ topic: inp })
         });
         if (r.ok) {
           const d = await r.json();
-          if (badgeEl) badgeEl.textContent = `Epoch #${d.evolution_epoch} • ${d.total_installed_skills} Aktif Beceri`;
-          if (d.latest_evolved_skill) {
-            contentEl.textContent =
-              `🧬 [OTONOM ÖZ-EVRİM EPOCH #${d.evolution_epoch} TAMAMLANDI]\n` +
-              `• Yeni Kazanılan Beceri : ${d.latest_evolved_skill.id} (${d.latest_evolved_skill.title_tr})\n` +
-              `• Sentezleyen Ajan      : ${d.latest_evolved_skill.agent_owner}\n` +
-              `• Kriptografik SHA-256  : ${d.latest_evolved_skill.sha256}\n` +
-              `• Toplam Aktif Beceri   : ${d.total_installed_skills} Beceri (Formel 0-ULP & Zero-Injection Onaylı)`;
-            return;
-          }
-        }
-      } catch (e) {}
-      contentEl.textContent = `🧬 [OTONOM ÖZ-EVRİM] Yeni beceri sentezlendi ve 0-ULP / Zero-Injection kapısından geçirilerek sisteme eklendi.`;
-    }
-
-    async function pollOnlineAutonomousDaemon(triggerStep = false) {
-      const badgeEl = document.getElementById('synax-skill-out-badge');
-      const hudBadge = document.getElementById('synaxOnlineCloudHudText');
-      const hudSub = document.getElementById('synaxOnlineCloudHudSub');
-      const url = triggerStep ? 'api.php?action=automation_step' : 'api.php?action=automation_status';
-      try {
-        const r = await fetch(url, {
-          method: triggerStep ? 'POST' : 'GET',
-          headers: { 'Content-Type': 'application/json' },
-          body: triggerStep ? '{}' : undefined
-        });
-        if (r.ok) {
-          const d = await r.json();
-          const epoch = d.evolution_epoch || 19;
-          const skills = d.total_installed_skills || 46;
-          const missions = d.total_completed_count || (d.mission_id ? 'Aktif' : 5);
           const sk = d.latest_evolved_skill || {};
-          const latestMission = (d.recent_completed_missions && d.recent_completed_missions[0]) || (d.mission_id ? d : null);
-          if (badgeEl) {
-            badgeEl.textContent = `Epoch #${epoch} • ${skills} Aktif Beceri • ${missions} Otonom Görev`;
-          }
-          if (hudBadge) {
-            hudBadge.innerHTML = `🤖 <b>7/24 Bulut Otonom Evrim Aktif</b> · <b>Epoch #${epoch}</b> · <b>${skills} Beceri</b>`;
-          }
-          if (hudSub) {
-            if (latestMission && latestMission.mission_id) {
-              hudSub.innerHTML = `✅ <b>Son Otonom Görev (${latestMission.mission_id}):</b> ${(latestMission.prompt || '').slice(0, 56)}... <span style="color:#34d399;font-weight:800;">[SCIE 100/100 · ${latestMission.elapsed_ms || 185} ms]</span>`;
-            } else if (sk && sk.id) {
-              hudSub.innerHTML = `🧬 <b>Son Sentezlenen Beceri:</b> <code>${sk.id}</code> — ${sk.title_tr || ''} <span style="color:#34d399;">[SHA-256 Doğrulandı]</span>`;
-            }
-          }
-          // Dynamically add newly evolved skill into select dropdown if not present
-          const sel = document.getElementById('synax-skill-select');
-          if (sel && sk && sk.id && !sel.querySelector(`option[value="${sk.id}"]`)) {
-            const opt = document.createElement('option');
-            opt.value = sk.id;
-            opt.textContent = `🧬 [Epoch #${epoch}] ${sk.id} (${sk.title_tr || 'Otonom Beceri'})`;
-            sel.appendChild(opt);
-          }
+          document.getElementById('orgOutTitle').textContent = `🧬 Öz-Evrim Epoch #${d.evolution_epoch} Tamamlandı (${d.total_installed_skills} Beceri)`;
+          document.getElementById('orgOutBody').textContent = `Yeni Beceri: ${sk.id} — ${sk.title_tr}
+Sentezleyen: ${sk.agent_owner}
+SHA-256: ${sk.sha256}`;
         }
       } catch (e) {}
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      renderSynax21SkillsCards();
-      if (!document.getElementById('synaxOnlineCloudHud')) {
-        const hud = document.createElement('div');
-        hud.id = 'synaxOnlineCloudHud';
-        hud.style.cssText = 'position:fixed;bottom:14px;left:14px;z-index:9999;background:rgba(7,12,24,0.96);border:1.5px solid rgba(16,185,129,0.65);border-radius:12px;padding:9px 14px;color:#e2e8f0;font-size:11.5px;display:flex;flex-direction:column;gap:5px;box-shadow:0 12px 32px rgba(0,0,0,0.75);backdrop-filter:blur(10px);max-width:780px;font-family:Inter,system-ui,sans-serif;';
-        hud.innerHTML =
-          `<div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">` +
-            `<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#10b981;box-shadow:0 0 10px #10b981;"></span>` +
-            `<span id="synaxOnlineCloudHudText">🤖 <b>7/24 Bulut Otonom Evrim Aktif</b> · <b>46+ Beceri</b></span>` +
-            `<button onclick="pollOnlineAutonomousDaemon(true)" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;border:none;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:900;cursor:pointer;">🤖 Otonom Vardiya</button>` +
-            `<button onclick="triggerSiteSelfEvolve();setTimeout(()=>pollOnlineAutonomousDaemon(false),400);" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;">🧬 +1 Beceri Evrimleş</button>` +
-            `<a href="office.html" style="background:rgba(56,189,248,0.2);color:#38bdf8;border:1px solid rgba(56,189,248,0.45);border-radius:7px;padding:4px 10px;font-size:11px;font-weight:800;text-decoration:none;">🏢 3D Ofis</a>` +
-          `</div>` +
-          `<div id="synaxOnlineCloudHudSub" style="font-size:10.5px;color:#cbd5e1;border-top:1px solid rgba(255,255,255,0.08);padding-top:4px;">🧬 Ajanlar arka planda sürekli yeni beceri ve Q1 SCIE görevleri sentezliyor...</div>`;
-        document.body.appendChild(hud);
-      }
-      pollOnlineAutonomousDaemon(false);
-      setInterval(() => { pollOnlineAutonomousDaemon(false); }, 12000);
-      setInterval(() => { pollOnlineAutonomousDaemon(true); }, 35000);
-    });
+    document.addEventListener('DOMContentLoaded', renderGrid);
   </script>
-
-  <!-- MAIN DOCS LAYOUT -->
-  <div class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-    <!-- SIDEBAR -->
-    <aside class="lg:col-span-3 space-y-6">
-      <div class="bg-[#111827] border border-slate-800 rounded-2xl p-5 sticky top-24 space-y-5 text-xs">
-        <div class="pb-4 border-b border-slate-800 space-y-2.5">
-          <a href="guide.html" class="flex items-center gap-3 p-3.5 rounded-xl bg-gradient-to-r from-cyan-950/60 to-slate-900 border border-cyan-500/40 text-cyan-300 hover:text-white hover:border-cyan-400 transition shadow-lg group">
-            <span class="text-2xl group-hover:scale-110 transition-transform">⚡</span>
-            <div>
-              <div class="text-[10px] font-black uppercase tracking-wider text-cyan-400 font-mono">16 SAYFALIK REHBER</div>
-              <div class="text-xs font-bold text-white">Kodlama Bilmeden Anlamak →</div>
-            </div>
-          </a>
-          <a href="repos.html" class="flex items-center justify-between p-2.5 rounded-xl bg-[#090d16] border border-slate-800 hover:border-emerald-500/50 text-emerald-400 font-mono transition">
-            <span>📦 git/synax.git</span>
-            <span>Aç →</span>
-          </a>
-          <a href="https://github.com/ofaemd-creator/synax-telegram-bot" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-[#090d16] border border-slate-800 hover:border-sky-500/50 text-sky-400 font-mono transition">
-            <span>🤖 synax-telegram-bot</span>
-            <span>GitHub →</span>
-          </a>
-          <a href="https://github.com/ofaemd-creator/synax-egraph-prover" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-[#090d16] border border-slate-800 hover:border-cyan-500/50 text-cyan-400 font-mono transition">
-            <span>🧬 synax-egraph-prover</span>
-            <span>GitHub →</span>
-          </a>
-          <a href="https://github.com/ofaemd-creator/synax-studio" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-[#090d16] border border-slate-800 hover:border-purple-500/50 text-purple-400 font-mono transition">
-            <span>💻 synax-studio</span>
-            <span>GitHub →</span>
-          </a>
-        </div>
-
-        <div>
-          <div class="font-bold uppercase tracking-wider text-cyan-400 mb-2">📐 I. DİL SPESİFİKASYONU</div>
-          <ul class="space-y-1.5 text-slate-300">
-            <li><a href="#sec-intro" class="hover:text-cyan-400 block py-1">1.1 Temel İlke &amp; 8-Katmanlı Mimari</a></li>
-            <li><a href="#sec-ebnf" class="hover:text-cyan-400 block py-1">1.2 ISO/IEC 14977 EBNF &amp; Tip Sistemi</a></li>
-          </ul>
-        </div>
-
-        <div class="border-t border-slate-800 pt-4">
-          <div class="font-bold uppercase tracking-wider text-emerald-400 mb-2">🛡️ II. DOĞRULAMA &amp; KİLİT</div>
-          <ul class="space-y-1.5 text-slate-300">
-            <li><a href="#sec-verify" class="hover:text-emerald-400 block py-1">2.1 19-Küme Diferansiyel Kapı</a></li>
-            <li><a href="#sec-lock" class="hover:text-emerald-400 block py-1">2.2 .sx.lock (32 Altın Vektör)</a></li>
-            <li><a href="#sec-bench" class="hover:text-emerald-400 block py-1">2.3 Tekrarlanabilir Benchmarklar</a></li>
-          </ul>
-        </div>
-
-        <div class="border-t border-slate-800 pt-4">
-          <div class="font-bold uppercase tracking-wider text-purple-400 mb-2">📦 III. SDK &amp; YÖNETİŞİM</div>
-          <ul class="space-y-1.5 font-mono text-slate-300">
-            <li><a href="#sec-sdk" class="hover:text-purple-400 block py-1">Python / C11 / C++17 / Rust</a></li>
-            <li><a href="#sec-cli" class="hover:text-purple-400 block py-1">synax CLI &amp; VS Code</a></li>
-            <li><a href="#sec-legal" class="hover:text-amber-400 block py-1">Apache-2.0 &amp; Klinik Sınır</a></li>
-          </ul>
-        </div>
-
-        <div class="border-t border-slate-800 pt-4">
-          <a href="https://synaxcode.com/install.sh" target="_blank" class="block w-full text-center py-2.5 px-3 rounded-xl font-bold bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 transition font-mono">
-            ⬇ install.sh İndir (v6.4.0)
-          </a>
-        </div>
-      </div>
-    </aside>
-
-    <!-- CONTENT -->
-    <main class="lg:col-span-9 space-y-8">
-
-      <!-- ABSTRACT -->
-      <div id="sec-intro" class="bg-gradient-to-br from-slate-900 via-[#111827] to-cyan-950/40 border border-slate-800 rounded-3xl p-8 space-y-4">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono">
-            OFFICIAL TECHNICAL SPECIFICATION • v6.4.0
-          </span>
-          <span class="text-xs font-mono text-emerald-400">SPDX: Apache-2.0</span>
-          <span class="text-xs font-mono text-slate-400">• git clone https://synaxcode.org/git/synax.git</span>
-        </div>
-        <h1 class="text-3xl sm:text-4xl font-black tracking-tight" id="doc-main-title">
-          SYNAX v6.4.0: Diferansiyel Doğrulamalı Çoklu-Backend Tensör Dili ve Miyelin Süper-Optimize Edicisi
-        </h1>
-        <p class="text-sm text-slate-300 leading-relaxed">
-          <strong>Mühendislik Tezi:</strong> SYNAX'ın temel değişmezi <code class="text-emerald-400 font-bold">optimization must never change semantics</code> ilkesidir. Bir <code>.sx</code> programı ne yapmak istediğini ve IEEE-754 güvenlik sınırlarını bildirimsel olarak tanımlar; derleyici bunu statik tipli AST'ye dönüştürür (<em>Synapse</em>), referans yorumlayıcı ve <code>clang -O0</code> skaler referansıyla doğrular (<em>Immune</em>), hedef donanıma göre <strong>C11, ARM64 NEON, x86_64 AVX2+FMA, Apple GCD ve doğrudan SSA LLVM IR (<code>.ll</code>)</strong> adayları üretir (<em>Axon</em>), 19 sınır testi kümesini geçen adayları ısınmış önbellekte ölçer (<em>Tycon</em>) ve kazananı kriptografik donanım parmak iziyle kalıcı önbelleğe kilitler (<em>Myelin</em>).
-        </p>
-      </div>
-
-      <!-- SECTION 1.2: EBNF & TYPE SYSTEM -->
-      <section id="sec-ebnf" class="bg-[#111827] border border-slate-800 rounded-3xl p-7 space-y-4">
-        <h2 class="text-xl font-black text-cyan-400">1.2 ISO/IEC 14977 EBNF Grameri ve Statik Tip Sistemi</h2>
-        <p class="text-sm text-slate-300 leading-relaxed">
-          <code>spec/synax.ebnf</code> ve <code>src/synax/{lexer,parser,type_system}.py</code> katmanı hem yapılandırılmış <code>synax 1.0</code> çekirdek sözdizimini hem de Türkçe/İngilizce bildirimsel <code>niyet:/kural:</code> sözdizimini aynı kanonik <code>SynaxIR</code> ağacına indirger. Statik <code>TypeChecker</code> tanımsız değişkenleri, arite uyumsuzluklarını, ters <code>clamp(lo, hi)</code> sınırlarını ve uyuşmayan sabit tensör boyutlarını (<code>tensor&lt;f32, 16&gt;</code> vs <code>tensor&lt;f32, 32&gt;</code>) derleme öncesinde yakalar:
-        </p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-          <div class="p-4 rounded-2xl bg-[#090d16] border border-cyan-500/30 font-mono text-xs space-y-2">
-            <div class="text-cyan-400 font-bold">📐 Yapılandırılmış Sözdizimi (synax 1.0):</div>
-            <pre class="text-slate-200 overflow-x-auto">synax 1.0
-kernel coronary_perfusion_pressure(
-  dbp: tensor&lt;f32&gt;, cvp: tensor&lt;f32&gt;
-) -&gt; tensor&lt;f32&gt; {
-  intent "Retrospective CPP = DBP - CVP"
-  require shape(dbp) == shape(cvp)
-  safety {
-    nonfinite = heal(0.0);
-    input_bound = 1000.0;
-    output_clamp = clamp(-50.0, 300.0)
-  }
-  return dbp - cvp
-  optimize latency
-  target auto
-}</pre>
-          </div>
-          <div class="p-4 rounded-2xl bg-[#090d16] border border-emerald-500/30 font-mono text-xs space-y-2">
-            <div class="text-emerald-400 font-bold">🧠 Bildirimsel Sözdizimi (.sx):</div>
-            <pre class="text-emerald-300 overflow-x-auto"># dosya: kapili_aktivasyon.sx
-isim: kapili_aktivasyon
-niyet: Gated sigmoid * square resonance
-formul: sigmoid(a - b) * pow2(a - b)
-kural: nonfinite=preserve
-hedef: throughput
-
-# Üretilen Kanonik IR Özeti:
-# ir_hash: SHA-256 deterministik AST imzası
-# C11 / NEON / AVX2 / SSA LLVM IR ortak giriş</pre>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 2: VERIFICATION & SEMANTIC LOCK -->
-      <section id="sec-verify" class="bg-[#111827] border border-slate-800 rounded-3xl p-7 space-y-5">
-        <h2 class="text-xl font-black text-emerald-400">2. Diferansiyel Doğrulama Kapısı ve <code>.sx.lock</code> Semantik Kilit</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div class="p-4 rounded-2xl bg-[#090d16] border border-slate-800 space-y-2">
-            <div class="font-mono font-bold text-emerald-400">2.1 19 Kümeli Sınır Doğrulaması (synax_verifier.py)</div>
-            <p class="text-slate-300 leading-relaxed">
-              Her aday ikili (NEON, AVX2, GCD, LLVM IR), aşağıdaki 19 zorlu veri kümesinde C11 <code>-O0</code> referansıyla karşılaştırılır:
-            </p>
-            <ul class="list-disc list-inside text-slate-400 space-y-1 font-mono">
-              <li>15 kanonik uzunluk: [0, 1, 3, 4, 7, 8, 15, 16, 17, 63, 4097, 100003]</li>
-              <li>12x12 = 144 IEEE-754 özel çifti (0.0, -0.0, NaN, ±Inf, 1e-40, ±3.4e38)</li>
-              <li>Kanal A ve Kanal B bağımsız NaN/elektrot kopması ve sayaç eşliği</li>
-              <li>1234.5f nöbetçi (sentinel) ön-dolgusu ile sınır dışı yazma kontrolü</li>
-            </ul>
-          </div>
-          <div id="sec-lock" class="p-4 rounded-2xl bg-[#090d16] border border-slate-800 space-y-2">
-            <div class="font-mono font-bold text-purple-400">2.2 Kriptografik Semantik Kilit (.sx.lock)</div>
-            <p class="text-slate-300 leading-relaxed">
-              <code>synax lock &lt;dosya.sx&gt;</code> komutu referans yorumlayıcı ile <strong>32 altın IEEE-754 onaltılık (hex) test vektörü</strong> üretir ve SHA-256 bütünlük imzasıyla kilitler:
-            </p>
-            <pre class="text-purple-300 overflow-x-auto pt-1">{
-  "schema": "synax.semantic_lock.v1",
-  "ir_hash": "08a7f91e...",
-  "golden_vector_count": 32,
-  "vectors": [
-    {"a_hex": "0x42b40000", "b_hex": "0x41200000",
-     "out_hex": "0x42a00000", "healed": 0}
-  ],
-  "_integrity_sha256": "c94e7a..."
-}</pre>
-          </div>
-        </div>
-
-        <!-- BENCHMARK TABLE -->
-        <div id="sec-bench" class="space-y-3 pt-2">
-          <h3 class="font-bold text-base text-amber-400">2.3 Tekrarlanabilir Sıcak-Önbellek Benchmark Tablosu (<code>benchmarks/BENCHMARK_REPORT.md</code>)</h3>
-          <p class="text-xs text-slate-300 leading-relaxed">
-            <strong>Protokol:</strong> Apple M1 (<code>arm64</code>, <code>hw_fingerprint=4258050f0fd7</code>), <code>Apple clang 21.0.0</code>, <code>-O3 -mcpu=native</code> (kesinlikle <code>-ffast-math</code> kullanılmadan), önceden ayrılmış <code>N = 4,000,000</code> <code>float32</code> dizisi (<code>48.0 MB</code> bellek trafiği), 5 ısınma + 21 ölçüm koşusunun medyanı ± çeyrekler açıklığı (IQR):
-          </p>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs font-mono">
-              <thead>
-                <tr class="border-b border-slate-800 text-slate-400">
-                  <th class="py-2.5 px-3">İş Yükü (.sx)</th>
-                  <th class="py-2.5 px-3">Güvenlik Modu</th>
-                  <th class="py-2.5 px-3">Skaler -O1 (ms)</th>
-                  <th class="py-2.5 px-3">clang -O3 (ms)</th>
-                  <th class="py-2.5 px-3">LLVM SSA IR (ms)</th>
-                  <th class="py-2.5 px-3">SYNAX Kazanan</th>
-                  <th class="py-2.5 px-3">Medyan ± IQR (ms)</th>
-                  <th class="py-2.5 px-3">Bant Genişliği</th>
-                  <th class="py-2.5 px-3">vs clang -O3</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800/70">
-                <tr class="bg-emerald-500/10 text-emerald-300 font-bold">
-                  <td class="py-2 px-3">kapili_aktivasyon.sx</td>
-                  <td class="py-2 px-3">preserve</td>
-                  <td class="py-2 px-3">7.495</td>
-                  <td class="py-2 px-3">6.911</td>
-                  <td class="py-2 px-3">7.009</td>
-                  <td class="py-2 px-3">v4_gcd_multicore_neon</td>
-                  <td class="py-2 px-3">1.010 ± 0.048</td>
-                  <td class="py-2 px-3">47.5 GB/s</td>
-                  <td class="py-2 px-3">6.84x</td>
-                </tr>
-                <tr class="bg-cyan-500/10 text-cyan-300 font-bold">
-                  <td class="py-2 px-3">normalized_difference.sx</td>
-                  <td class="py-2 px-3">reject + clamp</td>
-                  <td class="py-2 px-3">6.181</td>
-                  <td class="py-2 px-3">1.481</td>
-                  <td class="py-2 px-3">1.584</td>
-                  <td class="py-2 px-3">v2_neon_simd</td>
-                  <td class="py-2 px-3">0.995 ± 0.068</td>
-                  <td class="py-2 px-3">48.2 GB/s</td>
-                  <td class="py-2 px-3">1.49x</td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-3">biyomedikal_kardiyo.sx</td>
-                  <td class="py-2 px-3">heal_inputs</td>
-                  <td class="py-2 px-3">6.467</td>
-                  <td class="py-2 px-3">1.327</td>
-                  <td class="py-2 px-3">1.324</td>
-                  <td class="py-2 px-3">v5_llvm_ssa_ir_o3</td>
-                  <td class="py-2 px-3">1.324 ± 0.243</td>
-                  <td class="py-2 px-3">36.2 GB/s</td>
-                  <td class="py-2 px-3">1.00x</td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-3">hemodynamic_cpp.sx</td>
-                  <td class="py-2 px-3">heal_inputs</td>
-                  <td class="py-2 px-3">5.476</td>
-                  <td class="py-2 px-3">1.106</td>
-                  <td class="py-2 px-3">1.156</td>
-                  <td class="py-2 px-3">v0_clang_o3_scalar</td>
-                  <td class="py-2 px-3">1.106 ± 0.099</td>
-                  <td class="py-2 px-3">43.4 GB/s</td>
-                  <td class="py-2 px-3">1.00x (DRAM Sınırı)</td>
-                </tr>
-                <tr>
-                  <td class="py-2 px-3">anomali_v04.sx</td>
-                  <td class="py-2 px-3">zero_output</td>
-                  <td class="py-2 px-3">3.935</td>
-                  <td class="py-2 px-3">0.932</td>
-                  <td class="py-2 px-3">1.050</td>
-                  <td class="py-2 px-3">v0_clang_o3_scalar</td>
-                  <td class="py-2 px-3">0.932 ± 0.180</td>
-                  <td class="py-2 px-3">51.5 GB/s</td>
-                  <td class="py-2 px-3">1.00x (DRAM Sınırı)</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 3: MULTI-LANGUAGE SDK & CLI -->
-      <section id="sec-sdk" class="bg-[#111827] border border-slate-800 rounded-3xl p-7 space-y-5">
-        <h2 class="text-xl font-black text-purple-400">3. Çok-Dilli SDK Referansı ve Geliştirici Araçları</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div class="p-4 rounded-2xl bg-[#090d16] border border-slate-800 space-y-1.5">
-            <div class="font-mono font-bold text-emerald-400">Python SDK (import synax)</div>
-            <p class="text-slate-400"><code>synax.compile_sx()</code>, <code>synax.eval_sx()</code>, <code>synax.check_sx()</code>, <code>synax.hardware_info()</code> — sıfır dış bağımlılıklı PEP 517 kurulumu.</p>
-          </div>
-          <div class="p-4 rounded-2xl bg-[#090d16] border border-slate-800 space-y-1.5">
-            <div class="font-mono font-bold text-cyan-400">C99/C11 &amp; C++17 RAII (include/synax.h, synax.hpp)</div>
-            <p class="text-slate-400">Kararlı ABI v1 C başlığı ve kopyalanamaz/taşınabilir C++17 <code>synax::AxonChannel</code> RAII sarmalayıcısı.</p>
-          </div>
-          <div class="p-4 rounded-2xl bg-[#090d16] border border-slate-800 space-y-1.5">
-            <div class="font-mono font-bold text-purple-400">Rust Güvenli FFI (bindings/rust/synax-rs)</div>
-            <p class="text-slate-400"><code>build.rs</code> üzerinden yerleşik C çekirdeğini derleyen ve <code>Result&lt;Vec&lt;f32&gt;, SynaxError&gt;</code> döndüren güvenli sarmalayıcı.</p>
-          </div>
-          <div id="sec-cli" class="p-4 rounded-2xl bg-[#090d16] border border-slate-800 space-y-1.5">
-            <div class="font-mono font-bold text-amber-400">Birleşik CLI &amp; VS Code Eklentisi</div>
-            <p class="text-slate-400"><code>synax check | fmt | inspect --llvm | lock | debug | profile | bench | test | studio | update</code> ve <code>editors/vscode-synax/</code>.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 4: LEGAL & MEDICAL RESEARCH DISCLAIMER -->
-      <section id="sec-legal" class="bg-[#111827] border border-amber-500/30 rounded-3xl p-7 space-y-3 text-xs text-slate-300 leading-relaxed">
-        <h2 class="text-lg font-black text-amber-400">4. Açık Kaynak Lisansı (Apache-2.0) ve Tıbbi Araştırma Sınırları</h2>
-        <p>
-          <strong>Lisans:</strong> SYNAX kaynak kodu açık patent koruması içeren <strong>Apache License 2.0</strong> altında lisanslanmıştır (<code>LICENSE</code>, <code>NOTICE</code>, <code>TRADEMARKS.md</code>). Akademik atıf bilgileri <code>CITATION.cff</code> dosyasında tanımlıdır.
-        </p>
-        <p>
-          <strong>Tıbbi Cihaz Olmama Beyanı (EU MDR 2017/745 &amp; IEC 60601-2-4):</strong> Bu depodaki ve web ekosistemindeki hiçbir yazılım modülü klinik tanı, hasta izlemi, resüsitasyon yönlendirmesi veya otomatik eksternal defibrilatör (AED) şok kararı amacıyla kullanılamaz. Tüm biyomedikal iş yükleri yalnızca retrospektif açık veri kümeleri (PhysioNet <code>cudb</code> / <code>vfdb</code> vb.) üzerinde algoritmik sinyal işleme araştırması içindir.
-        </p>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="border-t border-slate-800 py-8 text-center text-xs text-slate-400 bg-[#060911]">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div><strong>SYNAX Specification v6.4.0</strong> (<code>synaxcode.org</code>) — Apache License 2.0</div>
-      <div class="flex flex-wrap gap-4 font-mono">
-        <a href="https://synaxcode.com" class="hover:text-white">synaxcode.com</a>
-        <a href="https://synaxcode.org" class="text-cyan-400">synaxcode.org</a>
-        <a href="https://synaxcode.org/repos.html" class="hover:text-white">repos.html</a>
-        <a href="https://synaxcode.online" class="hover:text-white">synaxcode.online</a>
-        <a href="https://github.com/ofaemd-creator/synax" target="_blank" class="hover:text-white">GitHub</a>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    let orgLang = "tr";
-    function toggleOrgLang() {
-      orgLang = orgLang === "tr" ? "en" : "tr";
-      document.getElementById("doc-main-title").textContent = orgLang === "en"
-        ? "SYNAX v6.4.0: Differentially Verified Multi-Backend Tensor Language & Myelin Superoptimizer"
-        : "SYNAX v6.4.0: Diferansiyel Doğrulamalı Çoklu-Backend Tensör Dili ve Miyelin Süper-Optimize Edicisi";
-    }
-  </script>
-  <script src="synax_beacon.js" defer></script>
 </body>
 </html>
