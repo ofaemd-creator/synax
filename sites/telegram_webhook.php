@@ -609,6 +609,48 @@ $tr_query = implode(' ', array_slice($core_words, 0, 5)) ?: mb_substr($effective
 $en_query = !empty($en_terms) ? implode(' ', array_slice($en_terms, 0, 2)) : $tr_query;
 
 $sources = [];
+// 1. Live DuckDuckGo Web Search + Google News RSS
+$ddg_html = http_get_quick('https://html.duckduckgo.com/html/?q=' . urlencode($tr_query), 3);
+if ($ddg_html && preg_match_all('/<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>(.*?)<\/a>[\s\S]*?<a[^>]+class="result__snippet"[^>]*>(.*?)<\/a>/is', $ddg_html, $ddg_m, PREG_SET_ORDER)) {
+    foreach (array_slice($ddg_m, 0, 2) as $dm) {
+        $raw_href = html_entity_decode($dm[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        if (preg_match('/uddg=([^&]+)/', $raw_href, $um)) $raw_href = urldecode($um[1]);
+        $d_title = trim(html_entity_decode(strip_tags($dm[2]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $d_snip = trim(html_entity_decode(strip_tags($dm[3]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $d_host = parse_url($raw_href, PHP_URL_HOST) ?: 'Web';
+        if ($d_title && $d_snip && strpos($raw_href, 'http') === 0) {
+            $sources[] = [
+                'index' => count($sources) + 1,
+                'title' => $d_title,
+                'source' => "Canlı Web · $d_host",
+                'url' => $raw_href,
+                'snippet' => mb_substr($d_snip, 0, 340),
+            ];
+        }
+    }
+}
+$gnews_xml = http_get_quick('https://news.google.com/rss/search?q=' . urlencode($tr_query) . '&hl=tr&gl=TR&ceid=TR:tr', 2);
+if ($gnews_xml) {
+    $gx = @simplexml_load_string($gnews_xml);
+    if ($gx && isset($gx->channel->item)) {
+        foreach (array_slice(iterator_to_array($gx->channel->item, false), 0, 1) as $ni) {
+            $nt = trim((string)$ni->title);
+            $nl = trim((string)$ni->link);
+            $ns = isset($ni->source) ? trim((string)$ni->source) : 'Google Haberler';
+            if ($nt) {
+                $sources[] = [
+                    'index' => count($sources) + 1,
+                    'title' => $nt,
+                    'source' => "Canlı Haber · $ns",
+                    'url' => $nl,
+                    'snippet' => $nt,
+                ];
+            }
+        }
+    }
+}
+
+// 2. Live NCBI PubMed Search
 $esearch_json = http_get_quick('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode($en_query) . '&retmax=3&sort=relevance&retmode=json', 3);
 if ($esearch_json) {
     $es_data = json_decode($esearch_json, true);

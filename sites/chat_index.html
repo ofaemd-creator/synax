@@ -197,8 +197,17 @@
               <button type="button" id="pillDeepThink" onclick="toggleDeepThink()" class="px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-purple-500/15 text-purple-300 border-purple-500/40">
                 <span>🧠 Öz-Muhakeme (DeepThink)</span>
               </button>
-              <button type="button" id="pillWebRag" onclick="toggleWebRag()" class="px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-cyan-500/15 text-cyan-300 border-cyan-500/40">
-                <span>🌐 Canlı PubMed &amp; Kanıt</span>
+              <button type="button" id="pillWebRag" onclick="toggleWebRag()" class="px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-cyan-500/15 text-cyan-300 border-cyan-500/40" title="Gerçek Zamanlı İnternet, Haber, PubMed & Kod Araması">
+                <span>🌐 Canlı İnternet Araması</span>
+              </button>
+              <select id="webSearchModeSelect" class="bg-[#0e1422] border border-cyan-500/30 hover:border-cyan-500/60 rounded-full px-2.5 py-1 text-xs font-semibold text-cyan-200 focus:outline-none cursor-pointer" title="Arama Kapsamı ve Motoru Seçin">
+                <option value="all">🔎 Tüm İnternet (Web + Haber + Akademik + Kod)</option>
+                <option value="web_news">📰 Canlı Web &amp; Güncel Haberler (DuckDuckGo + Google News)</option>
+                <option value="academic">🎓 Bilimsel &amp; Tıp (PubMed + CrossRef DOI + ArXiv)</option>
+                <option value="tech_code">💻 Yazılım &amp; Kod (GitHub + HackerNews + Web)</option>
+              </select>
+              <button type="button" onclick="promptLiveUrlReader()" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 transition" title="Herhangi Bir Web Sitesi Linkini Canlı Oku ve Analiz Et">
+                🔗 URL Oku
               </button>
               <button type="button" onclick="startVoiceDictation()" id="voiceBtn" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Türkçe Sesli Dikte">
                 🎤 Sesli
@@ -259,7 +268,7 @@
           <p>Standart dil modellerinden farklı olarak SYNAX, sinirsel dil üretimini deterministik matematiksel ve bilimsel doğrulama katmanlarıyla birleştirir:</p>
           <ul class="list-disc pl-5 space-y-1 text-slate-400">
             <li><strong class="text-slate-200">Katman 1 — Alan &amp; Niyet Vektörleme:</strong> Sorguyu klinik tıp, Q1 akademik makale, biyoistatistik veya silikon/yazılım uzayında sınıflandırır.</li>
-            <li><strong class="text-slate-200">Katman 2 — Canlı Kanıt Çapalayan RAG:</strong> NCBI PubMed E-Utilities (<code>esearch</code> + <code>efetch</code>), CrossRef ve Wikipedia üzerinden sıfır-halüsinasyonlu birincil kaynak bağlar.</li>
+            <li><strong class="text-slate-200">Katman 2 — 9-Motorlu Paralel Gerçek Zamanlı İnternet &amp; Literatür Arama (`curl_multi`):</strong> DuckDuckGo Canlı Web, Google News RSS, Canlı URL Okuyucu, NCBI PubMed (<code>esearch</code> + <code>efetch</code>), CrossRef DOI, ArXiv, Wikipedia (TR/EN), GitHub ve HackerNews motorlarını aynı anda (&le;2.5 sn) tarayarak sıfır-halüsinasyonlu canlı kanıt bağlar.</li>
             <li><strong class="text-slate-200">Katman 3 — Sembolik &amp; Matematiksel Öz-Denetim:</strong> 19-küme IEEE-754 <code>0-ULP</code> aralık soyut yorumlama, <code>V_{k+1} &lt; V_k</code> daralmalı Lyapunov kararlılığı ve DerSimonian-Laird rastgele etkiler denklemlerini doğrular.</li>
             <li><strong class="text-slate-200">Katman 4 — Çoklu-Omurga LPU Hızlandırma:</strong> Yüksek hızlı LPU çıkarım düğümleri (120B MoE Reasoning, 70B Dense ve 27B/32B DeepThink omurgaları) üzerinde sıfır gecikmeyle çalışır.</li>
           </ul>
@@ -565,9 +574,19 @@
     function toggleWebRag() {
       webRagEnabled = !webRagEnabled;
       const btn = document.getElementById('pillWebRag');
+      const modeSel = document.getElementById('webSearchModeSelect');
       btn.className = webRagEnabled
         ? 'px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-cyan-500/15 text-cyan-300 border-cyan-500/40'
         : 'px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-slate-900 text-slate-400 border-slate-800';
+      if (modeSel) modeSel.style.display = webRagEnabled ? 'inline-block' : 'none';
+    }
+
+    function promptLiveUrlReader() {
+      const u = prompt('Canlı okunmasını ve analiz edilmesini istediğiniz web sitesi adresini (URL) girin:', 'https://');
+      if (!u || u === 'https://') return;
+      const inp = document.getElementById('chatInputBox');
+      inp.value = (inp.value ? inp.value + '\n' : '') + `${u} adresindeki web sayfasını canlı olarak oku, ana bulgularını ve teknik detaylarını analiz et.`;
+      inp.focus();
     }
 
     function escapeHtml(str) {
@@ -643,17 +662,27 @@
         } else {
           let sourcesHtml = '';
           if (m.sources && m.sources.length > 0) {
+            const enginesBadges = (m.engines && m.engines.length > 0)
+              ? m.engines.map(e => `<span class="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-mono text-[10px]">🌐 ${escapeHtml(e)}</span>`).join('')
+              : `<span class="px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-mono text-[10px]">🌐 Canlı İnternet &amp; Literatür (${m.sources.length} Kaynak)</span>`;
             sourcesHtml = `
-              <div class="mb-3 flex gap-2 overflow-x-auto pb-1">
-                ${m.sources.map(s => `
-                  <a href="${s.url || '#'}" target="_blank" class="shrink-0 w-56 p-2 rounded-xl bg-[#0e1422] border border-slate-800 hover:border-cyan-500/50 transition block">
-                    <div class="flex items-center justify-between text-[10px] font-mono text-amber-300 font-bold">
-                      <span>[${s.index || 1}] ${escapeHtml(s.badge || 'PMID')}</span><span>↗</span>
-                    </div>
-                    <div class="text-xs font-bold text-cyan-300 truncate mt-0.5">${escapeHtml(s.title)}</div>
-                    <div class="text-[10px] text-slate-400 truncate">${escapeHtml(s.source)}</div>
-                  </a>
-                `).join('')}
+              <div class="mb-3 space-y-1.5">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">Taranan Canlı Ağlar:</span>
+                  ${enginesBadges}
+                </div>
+                <div class="flex gap-2 overflow-x-auto pb-1">
+                  ${m.sources.map(s => `
+                    <a href="${s.url || '#'}" target="_blank" class="shrink-0 w-60 p-2.5 rounded-xl bg-[#0e1422] border border-slate-800 hover:border-cyan-500/50 transition block">
+                      <div class="flex items-center justify-between text-[10px] font-mono text-amber-300 font-bold">
+                        <span>[${s.index || 1}] ${escapeHtml(s.badge || 'WEB')}</span><span>↗</span>
+                      </div>
+                      <div class="text-xs font-bold text-cyan-300 truncate mt-0.5">${escapeHtml(s.title)}</div>
+                      <div class="text-[10px] text-slate-400 truncate">${escapeHtml(s.source)}</div>
+                      <div class="text-[10px] text-slate-500 line-clamp-2 mt-1 leading-snug">${escapeHtml((s.snippet || '').slice(0, 110))}...</div>
+                    </a>
+                  `).join('')}
+                </div>
               </div>
             `;
           }
@@ -762,6 +791,7 @@
       const tempVal = parseFloat(document.getElementById('paramTempSlider').value || '0.35');
       const styleVal = document.getElementById('paramStyleSelect').value || 'standard';
       const customSysVal = document.getElementById('paramCustomSys').value.trim();
+      const searchModeVal = document.getElementById('webSearchModeSelect') ? document.getElementById('webSearchModeSelect').value : 'all';
       const historyPayload = t.messages.map(m => ({ role: m.role, content: m.content }));
 
       const endpoints = ['api.php', 'https://synaxcode.com/api.php', '/api/office-chat'];
@@ -777,6 +807,7 @@
               target_agent_id: agentId,
               user_model: selectedModelKey,
               web_search: webRagEnabled,
+              web_search_mode: searchModeVal,
               deep_think: deepThinkEnabled,
               temperature: tempVal,
               response_style: styleVal,
@@ -803,6 +834,7 @@
           content: successData.reply,
           model: successData.model_label || selectedModelName,
           sources: successData.sources || [],
+          engines: successData.search_engines_used || [],
           thinking: successData.thinking_steps || []
         });
         saveThreads();

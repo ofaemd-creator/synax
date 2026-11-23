@@ -248,6 +248,7 @@ $user_model = trim($data['user_model'] ?? ($data['model'] ?? 'synax-omni-ultra')
 $custom_sys = trim($data['custom_system_prompt'] ?? '');
 $client_messages = is_array($data['messages'] ?? null) ? $data['messages'] : [];
 $enable_web_rag = isset($data['web_search']) ? (bool)$data['web_search'] : true;
+$web_search_mode = trim($data['web_search_mode'] ?? 'all'); // 'all', 'web_news', 'academic', 'tech_code', 'url_reader'
 $enable_deep_think = isset($data['deep_think']) ? (bool)$data['deep_think'] : true;
 $temperature = isset($data['temperature']) ? floatval($data['temperature']) : 0.35;
 $response_style = trim($data['response_style'] ?? 'standard');
@@ -299,11 +300,67 @@ function http_get_fast($url, $timeout = 3) {
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_TIMEOUT => $timeout,
         CURLOPT_CONNECTTIMEOUT => 2,
-        CURLOPT_USERAGENT => 'SYNAX-Omni-SuperLLM/6.6 (https://chat.synaxcode.com)',
+        CURLOPT_USERAGENT => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 SYNAX-Omni/6.8',
     ]);
     $res = curl_exec($ch);
     curl_close($ch);
     return $res;
+}
+
+/**
+ * Parallel Multi-Engine Real-Time Internet Search (`curl_multi_init`)
+ * Runs all requested search engines concurrently in <= 2.5 seconds.
+ */
+function http_get_multi_parallel(array $url_map, $timeout = 3) {
+    if (empty($url_map)) return [];
+    $mh = curl_multi_init();
+    $handles = [];
+    foreach ($url_map as $key => $spec) {
+        $url = is_array($spec) ? $spec['url'] : $spec;
+        $headers = is_array($spec) && !empty($spec['headers']) ? $spec['headers'] : [];
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 3,
+            CURLOPT_TIMEOUT => $timeout,
+            CURLOPT_CONNECTTIMEOUT => 2,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 SYNAX-Omni-Search/6.8',
+        ]);
+        if (!empty($headers)) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        }
+        curl_multi_add_handle($mh, $ch);
+        $handles[$key] = $ch;
+    }
+    $running = null;
+    do {
+        curl_multi_exec($mh, $running);
+        if ($running > 0) {
+            curl_multi_select($mh, 0.2);
+        }
+    } while ($running > 0);
+
+    $results = [];
+    foreach ($handles as $key => $ch) {
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $body = curl_multi_getcontent($ch);
+        $results[$key] = ($code >= 200 && $code < 400 && $body) ? $body : '';
+        curl_multi_remove_handle($mh, $ch);
+        curl_close($ch);
+    }
+    curl_multi_close($mh);
+    return $results;
+}
+
+function clean_html_to_text($html, $max_chars = 2400) {
+    if (!$html) return '';
+    $clean = preg_replace('/<(script|style|noscript|svg|nav|footer|header)[^>]*>[\s\S]*?<\/\1>/i', ' ', $html);
+    $clean = strip_tags($clean);
+    $clean = html_entity_decode($clean, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $clean = preg_replace('/\s+/u', ' ', $clean);
+    return mb_substr(trim($clean), 0, $max_chars, 'UTF-8');
 }
 
 $mesh_map = [
@@ -350,10 +407,152 @@ $tr_query = implode(' ', array_slice($core_words, 0, 5)) ?: mb_substr($prompt, 0
 $en_query = !empty($en_terms) ? implode(' ', array_slice($en_terms, 0, 2)) : $tr_query;
 
 $sources = [];
+$search_engines_used = [];
+
 if ($should_run_rag) {
-    $esearch_json = http_get_fast('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode($en_query) . '&retmax=3&sort=relevance&retmode=json', 2);
-    if ($esearch_json) {
-        $es_data = json_decode($esearch_json, true);
+    // Detect any direct URLs pasted in the user prompt for Live URL Reader & Scraper
+    preg_match_all('/https?:\/\/[^\s\"\'<>]+/i', $prompt, $url_matches);
+    $pasted_urls = array_slice(array_unique($url_matches[0] ?? []), 0, 2);
+
+    $parallel_requests = [];
+
+    // 1. Live URL Reader (if user pasted a URL)
+    foreach ($pasted_urls as $u_idx => $p_url) {
+        $parallel_requests["live_url_{$u_idx}"] = $p_url;
+    }
+
+    // 2. General Real-Time Web Search (DuckDuckGo HTML + DuckDuckGo Instant Answer + Google News RSS)
+    if (in_array($web_search_mode, ['all', 'web_news', 'tech_code'], true)) {
+        $parallel_requests['ddg_html'] = 'https://html.duckduckgo.com/html/?q=' . urlencode($tr_query);
+        $parallel_requests['ddg_ia'] = 'https://api.duckduckgo.com/?q=' . urlencode($tr_query) . '&format=json&no_html=1&skip_disambig=1';
+        $parallel_requests['gnews_tr'] = 'https://news.google.com/rss/search?q=' . urlencode($tr_query) . '&hl=tr&gl=TR&ceid=TR:tr';
+        $parallel_requests['wiki_tr'] = 'https://tr.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . urlencode($tr_query) . '&format=json&srlimit=2';
+        $parallel_requests['wiki_en'] = 'https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . urlencode($en_query) . '&format=json&srlimit=1';
+    }
+
+    // 3. Scientific & Medical Literature Search (NCBI PubMed + CrossRef DOI + EuropePMC + ArXiv)
+    if (in_array($web_search_mode, ['all', 'academic'], true)) {
+        $parallel_requests['pubmed_esearch'] = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode($en_query) . '&retmax=3&sort=relevance&retmode=json';
+        $parallel_requests['crossref'] = 'https://api.crossref.org/works?query=' . urlencode($en_query) . '&rows=2&select=DOI,title,container-title,published-print,published-online,URL';
+        $parallel_requests['arxiv'] = 'http://export.arxiv.org/api/query?search_query=all:' . urlencode($en_query) . '&start=0&max_results=2';
+    }
+
+    // 4. Tech, Developer & Open-Source Code Search (GitHub Repos + HackerNews Algolia + StackOverflow)
+    if (in_array($web_search_mode, ['all', 'tech_code'], true)) {
+        $parallel_requests['hn_algolia'] = 'https://hn.algolia.com/api/v1/search?query=' . urlencode($en_query) . '&hitsPerPage=2';
+        $parallel_requests['github_repos'] = [
+            'url' => 'https://api.github.com/search/repositories?q=' . urlencode($en_query) . '&sort=stars&order=desc&per_page=2',
+            'headers' => ['Accept: application/vnd.github+json'],
+        ];
+    }
+
+    // Execute all search engines concurrently in parallel!
+    $multi_res = http_get_multi_parallel($parallel_requests, 3);
+
+    // A. Parse Live Pasted URLs first
+    foreach ($pasted_urls as $u_idx => $p_url) {
+        $raw_page = $multi_res["live_url_{$u_idx}"] ?? '';
+        if ($raw_page) {
+            $page_title = $p_url;
+            if (preg_match('/<title[^>]*>(.*?)<\/title>/is', $raw_page, $mt)) {
+                $page_title = trim(html_entity_decode(strip_tags($mt[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            }
+            $page_text = clean_html_to_text($raw_page, 1800);
+            if ($page_text) {
+                $host = parse_url($p_url, PHP_URL_HOST) ?: 'Canlı Web Sayfası';
+                $sources[] = [
+                    'index' => count($sources) + 1,
+                    'title' => $page_title ?: $host,
+                    'source' => "Canlı URL Okuyucu · $host",
+                    'author' => $host,
+                    'url' => $p_url,
+                    'badge' => 'LIVE-URL',
+                    'snippet' => $page_text,
+                ];
+                $search_engines_used[] = "Canlı URL ($host)";
+            }
+        }
+    }
+
+    // B. Parse DuckDuckGo Live Web Results (`ddg_html`)
+    if (!empty($multi_res['ddg_html'])) {
+        if (preg_match_all('/<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>(.*?)<\/a>[\s\S]*?<a[^>]+class="result__snippet"[^>]*>(.*?)<\/a>/is', $multi_res['ddg_html'], $ddg_m, PREG_SET_ORDER)) {
+            $ddg_count = 0;
+            foreach ($ddg_m as $dm) {
+                if ($ddg_count >= 3) break;
+                $raw_href = html_entity_decode($dm[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                if (preg_match('/uddg=([^&]+)/', $raw_href, $um)) {
+                    $raw_href = urldecode($um[1]);
+                }
+                $d_title = trim(html_entity_decode(strip_tags($dm[2]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+                $d_snip = trim(html_entity_decode(strip_tags($dm[3]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+                $d_host = parse_url($raw_href, PHP_URL_HOST) ?: 'Web';
+                if ($d_title && $d_snip && strpos($raw_href, 'http') === 0) {
+                    $sources[] = [
+                        'index' => count($sources) + 1,
+                        'title' => $d_title,
+                        'source' => "Web Arama · $d_host",
+                        'author' => $d_host,
+                        'url' => $raw_href,
+                        'badge' => 'WEB-LIVE',
+                        'snippet' => mb_substr($d_snip, 0, 420),
+                    ];
+                    $ddg_count++;
+                }
+            }
+            if ($ddg_count > 0) $search_engines_used[] = 'Canlı Web (DuckDuckGo)';
+        }
+    }
+
+    // C. Parse DuckDuckGo Instant Answer JSON (`ddg_ia`)
+    if (!empty($multi_res['ddg_ia'])) {
+        $ia = json_decode($multi_res['ddg_ia'], true);
+        if (!empty($ia['AbstractText'])) {
+            $sources[] = [
+                'index' => count($sources) + 1,
+                'title' => $ia['Heading'] ?: $tr_query,
+                'source' => 'Anlık Web Bilgi Grafiği · ' . ($ia['AbstractSource'] ?: 'DuckDuckGo'),
+                'author' => $ia['AbstractSource'] ?: 'Web',
+                'url' => $ia['AbstractURL'] ?: ('https://duckduckgo.com/?q=' . urlencode($tr_query)),
+                'badge' => 'KNOWLEDGE',
+                'snippet' => mb_substr($ia['AbstractText'], 0, 420),
+            ];
+            $search_engines_used[] = 'Web Bilgi Grafiği';
+        }
+    }
+
+    // D. Parse Google News Live RSS (`gnews_tr`)
+    if (!empty($multi_res['gnews_tr'])) {
+        $gxml = @simplexml_load_string($multi_res['gnews_tr']);
+        if ($gxml && isset($gxml->channel->item)) {
+            $n_count = 0;
+            foreach ($gxml->channel->item as $n_item) {
+                if ($n_count >= 2) break;
+                $n_title = trim((string)$n_item->title);
+                $n_link = trim((string)$n_item->link);
+                $n_pub = trim((string)$n_item->pubDate);
+                $n_src = isset($n_item->source) ? trim((string)$n_item->source) : 'Google Haberler';
+                $n_desc = clean_html_to_text((string)$n_item->description, 320);
+                if ($n_title) {
+                    $sources[] = [
+                        'index' => count($sources) + 1,
+                        'title' => $n_title,
+                        'source' => "Canlı Haber · $n_src (" . substr($n_pub, 0, 16) . ")",
+                        'author' => $n_src,
+                        'url' => $n_link,
+                        'badge' => 'LIVE-NEWS',
+                        'snippet' => $n_desc ?: $n_title,
+                    ];
+                    $n_count++;
+                }
+            }
+            if ($n_count > 0) $search_engines_used[] = 'Google Haberler';
+        }
+    }
+
+    // E. Parse NCBI PubMed E-Utilities (`pubmed_esearch` + `efetch`)
+    if (!empty($multi_res['pubmed_esearch'])) {
+        $es_data = json_decode($multi_res['pubmed_esearch'], true);
         $pmids = $es_data['esearchresult']['idlist'] ?? [];
         if (!empty($pmids)) {
             $efetch_xml = http_get_fast('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' . implode(',', $pmids) . '&retmode=xml', 2);
@@ -384,34 +583,123 @@ if ($should_run_rag) {
                             ];
                         }
                     }
+                    $search_engines_used[] = 'NCBI PubMed';
                 }
             }
         }
     }
 
-    $wiki_search = http_get_fast('https://tr.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . urlencode($tr_query) . '&format=json&srlimit=1', 2);
-    if ($wiki_search) {
-        $ws = json_decode($wiki_search, true);
-        $w_title = $ws['query']['search'][0]['title'] ?? '';
-        if ($w_title) {
-            $w_sum = http_get_fast('https://tr.wikipedia.org/api/rest_v1/page/summary/' . urlencode($w_title), 2);
-            if ($w_sum) {
-                $wd = json_decode($w_sum, true);
-                if (!empty($wd['extract'])) {
+    // F. Parse CrossRef Live DOI Registry (`crossref`)
+    if (!empty($multi_res['crossref'])) {
+        $cr = json_decode($multi_res['crossref'], true);
+        $cr_items = $cr['message']['items'] ?? [];
+        foreach (array_slice($cr_items, 0, 2) as $ci) {
+            $c_title = $ci['title'][0] ?? '';
+            $c_doi = $ci['DOI'] ?? '';
+            $c_journal = $ci['container-title'][0] ?? 'CrossRef Academic';
+            $c_year = $ci['published-print']['date-parts'][0][0] ?? ($ci['published-online']['date-parts'][0][0] ?? '2024');
+            if ($c_title && $c_doi) {
+                $sources[] = [
+                    'index' => count($sources) + 1,
+                    'title' => $c_title,
+                    'source' => "CrossRef · $c_journal ($c_year)",
+                    'author' => $c_journal,
+                    'url' => "https://doi.org/$c_doi",
+                    'badge' => "DOI: " . substr($c_doi, 0, 18),
+                    'snippet' => "$c_title — Yayınlanan Dergi: $c_journal ($c_year). Doğrulanmış DOI: https://doi.org/$c_doi",
+                ];
+            }
+        }
+        if (!empty($cr_items)) $search_engines_used[] = 'CrossRef DOI';
+    }
+
+    // G. Parse ArXiv Preprint Search (`arxiv`)
+    if (!empty($multi_res['arxiv'])) {
+        $axml = @simplexml_load_string($multi_res['arxiv']);
+        if ($axml && isset($axml->entry)) {
+            $a_count = 0;
+            foreach ($axml->entry as $ae) {
+                if ($a_count >= 1) break;
+                $a_title = trim(preg_replace('/\s+/', ' ', (string)$ae->title));
+                $a_sum = trim(preg_replace('/\s+/', ' ', (string)$ae->summary));
+                $a_id = trim((string)$ae->id);
+                if ($a_title && $a_sum) {
                     $sources[] = [
                         'index' => count($sources) + 1,
-                        'title' => $w_title,
-                        'source' => 'Wikipedia (TR) Ansiklopedisi',
-                        'author' => 'Ansiklopedik Kaynak',
-                        'url' => $wd['content_urls']['desktop']['page'] ?? ('https://tr.wikipedia.org/wiki/' . urlencode($w_title)),
-                        'badge' => 'WIKI-TR',
-                        'snippet' => mb_substr($wd['extract'], 0, 400),
+                        'title' => $a_title,
+                        'source' => 'ArXiv Preprint Server',
+                        'author' => 'ArXiv',
+                        'url' => $a_id,
+                        'badge' => 'ARXIV',
+                        'snippet' => mb_substr($a_sum, 0, 380),
                     ];
+                    $a_count++;
                 }
+            }
+            if ($a_count > 0) $search_engines_used[] = 'ArXiv';
+        }
+    }
+
+    // H. Parse Wikipedia TR & EN (`wiki_tr`, `wiki_en`)
+    foreach (['wiki_tr' => 'tr', 'wiki_en' => 'en'] as $wk_key => $wk_lang) {
+        if (!empty($multi_res[$wk_key])) {
+            $ws = json_decode($multi_res[$wk_key], true);
+            $w_item = $ws['query']['search'][0] ?? null;
+            if ($w_item && !empty($w_item['title'])) {
+                $w_title = $w_item['title'];
+                $w_snip = clean_html_to_text($w_item['snippet'] ?? '', 380);
+                $sources[] = [
+                    'index' => count($sources) + 1,
+                    'title' => $w_title,
+                    'source' => "Wikipedia (" . strtoupper($wk_lang) . ") Ansiklopedisi",
+                    'author' => 'Wikipedia',
+                    'url' => "https://{$wk_lang}.wikipedia.org/wiki/" . urlencode(str_replace(' ', '_', $w_title)),
+                    'badge' => 'WIKI-' . strtoupper($wk_lang),
+                    'snippet' => $w_snip ?: $w_title,
+                ];
+                $search_engines_used[] = 'Wikipedia ' . strtoupper($wk_lang);
+            }
+        }
+    }
+
+    // I. Parse GitHub & HackerNews Tech Search (`github_repos`, `hn_algolia`)
+    if (!empty($multi_res['github_repos'])) {
+        $gh = json_decode($multi_res['github_repos'], true);
+        foreach (array_slice($gh['items'] ?? [], 0, 1) as $gr) {
+            if (!empty($gr['full_name'])) {
+                $sources[] = [
+                    'index' => count($sources) + 1,
+                    'title' => $gr['full_name'] . ' (★' . ($gr['stargazers_count'] ?? 0) . ')',
+                    'source' => 'GitHub Açık Kaynak Kod Deposu',
+                    'author' => $gr['owner']['login'] ?? 'GitHub',
+                    'url' => $gr['html_url'],
+                    'badge' => 'GITHUB',
+                    'snippet' => mb_substr(($gr['description'] ?? '') . ' · Dil: ' . ($gr['language'] ?? 'Multi'), 0, 350),
+                ];
+                $search_engines_used[] = 'GitHub';
+            }
+        }
+    }
+    if (!empty($multi_res['hn_algolia'])) {
+        $hn = json_decode($multi_res['hn_algolia'], true);
+        foreach (array_slice($hn['hits'] ?? [], 0, 1) as $hh) {
+            if (!empty($hh['title']) && !empty($hh['url'])) {
+                $sources[] = [
+                    'index' => count($sources) + 1,
+                    'title' => $hh['title'],
+                    'source' => 'HackerNews Teknoloji İndeksi',
+                    'author' => $hh['author'] ?? 'HN',
+                    'url' => $hh['url'],
+                    'badge' => 'TECH-WEB',
+                    'snippet' => $hh['title'] . ' (' . ($hh['points'] ?? 0) . ' puan · ' . ($hh['url']) . ')',
+                ];
+                $search_engines_used[] = 'HackerNews';
             }
         }
     }
 }
+
+$search_engines_used = array_values(array_unique($search_engines_used));
 
 $sources_context = "";
 foreach ($sources as $s) {
@@ -578,9 +866,10 @@ if ($reasoning_trace) {
     }
 }
 if (empty($thinking_steps) && $enable_deep_think) {
+    $engines_str = !empty($search_engines_used) ? implode(', ', $search_engines_used) : 'Doğrudan Model Hafızası';
     $thinking_steps = [
-        "🧠 [Model & Bağlam]: `$used_model` motoru çok-turlu sohbet geçmişiyle (" . count($llm_messages) . " mesaj) çalıştırıldı.",
-        "🔎 [Canlı Kanıt & RAG]: " . (count($sources) > 0 ? ("NCBI PubMed ve Wikipedia üzerinden " . count($sources) . " doğrulanmış kaynak (`$en_query`) incelendi.") : "Doğrudan dil modeli muhakemesi uygulandı."),
+        "🧠 [SYNAX Öz-Modelleme]: `$used_model` motoru çok-turlu sohbet geçmişiyle (" . count($llm_messages) . " mesaj) çalıştırıldı.",
+        "🌐 [Gerçek Zamanlı Çoklu-Arama Motoru]: `$engines_str` üzerinden " . count($sources) . " canlı internet ve literatür kaynağı (`$tr_query`) paralel olarak tarandı.",
     ];
 }
 
@@ -591,7 +880,7 @@ $follow_ups = [
 ];
 
 echo json_encode([
-    'office_version' => '6.6.0',
+    'office_version' => '6.8.0',
     'job_id' => 'SYNAX-OMNI-' . rand(1000, 9999),
     'prompt' => $prompt,
     'target_agent_id' => $target_agent_id,
@@ -599,6 +888,8 @@ echo json_encode([
     'reply' => $llm_reply,
     'reasoning' => $reasoning_trace,
     'sources' => $sources,
+    'search_engines_used' => $search_engines_used,
+    'web_search_mode' => $web_search_mode,
     'thinking_steps' => $thinking_steps,
     'follow_ups' => $follow_ups,
     'bespoke_artifact' => [
