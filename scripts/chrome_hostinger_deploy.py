@@ -156,14 +156,18 @@ def main() -> int:
         if domain in ("synaxcode.com", "synaxcode.org"):
             upload_file_famulus(f"{pub}/repos.html", sites_dir / "repos_index.html")
 
-    print("\n📂 Ana /public_html dizini senkronize ediliyor...")
-    upload_file_famulus("/public_html/index.html", sites_dir / "com_index.html")
-    upload_file_famulus("/public_html/office.html", sites_dir / "office.html")
-    upload_file_famulus("/public_html/studio.html", studio_html)
-    upload_file_famulus("/public_html/api.php", sites_dir / "api.php")
-    upload_file_famulus("/public_html/evolution_feed.json", sites_dir / "evolution_feed.json")
+        # Also deploy subdomain / subdirectory apps: office, chat, code, terminal
+        for sub_dir, sub_html in [
+            ("office", sites_dir / "office.html"),
+            ("chat", sites_dir / "chat_index.html"),
+            ("code", sites_dir / "code_index.html"),
+            ("terminal", sites_dir / "terminal_index.html"),
+        ]:
+            upload_file_famulus(f"{pub}/{sub_dir}/index.html", sub_html)
+            upload_file_famulus(f"{pub}/{sub_dir}/api.php", sites_dir / "api.php")
+            upload_file_famulus(f"{pub}/{sub_dir}/evolution_feed.json", sites_dir / "evolution_feed.json")
 
-    print("\n🎉 TÜM SİTELER (synaxcode.com, synaxcode.org, synaxcode.online) CANLI OLARAK GÜNCELLENDİ!")
+    print("\n🎉 TÜM SİTELER VE SUBDOMAINLER (office, chat, code, terminal .synaxcode.com) CANLI OLARAK GÜNCELLENDİ!")
     return 0
 
 
