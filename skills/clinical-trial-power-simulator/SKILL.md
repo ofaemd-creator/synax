@@ -3,7 +3,7 @@ name: clinical-trial-power-simulator
 description: A-priori and adaptive clinical trial sample size calculation, O'Brien-Fleming alpha-spending sequential boundaries, and Monte Carlo power (1 - beta) simulation. (Klinik araştırmalarda a-priori örneklem büyüklüğü, ardışık alfa-harcama sınırları ve Monte Carlo istatistiksel güç simülasyonu)
 ---
 
-# SYNAX Self-Evolved Skill (Epoch #004): `clinical-trial-power-simulator` — Klinik Araştırma Örneklem Büyüklüğü & Monte Carlo Güç Simülatörü
+# SYNAX Self-Evolved Skill (Epoch #014): `clinical-trial-power-simulator` — Klinik Araştırma Örneklem Büyüklüğü & Monte Carlo Güç Simülatörü
 
 - **Synthesized By:** `Agent-Biostat (Masa 3)` (SYNAX Autonomous Self-Evolution Engine v6.4.0)
 - **Turkish Capability:** Klinik araştırmalarda a-priori örneklem büyüklüğü, ardışık alfa-harcama sınırları ve Monte Carlo istatistiksel güç simülasyonu
