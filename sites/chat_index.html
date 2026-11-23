@@ -523,6 +523,18 @@
         </div>
 
         <div id="cxSkillMasteryGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+
+        <!-- Anti-Loop Circuit Breaker & Truth-vs-Noise Quarantine Shield -->
+        <div class="p-3 rounded-xl bg-[#070b14] border border-cyan-500/30 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="font-bold text-cyan-300">🛡️ Kısır Döngü Kırıcı (Anti-Loop Circuit Breaker) &amp; Hata/Öğrenim Ayrıştırma Kalkanı</div>
+            <span id="cxBreakerStatusBadge" class="px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-[10px] font-bold">ARMED_OPTIMAL</span>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Öğrenim süreci ile hatalı/tekrarlı süreçleri birbirinden ayırır. Tekrarlı döngüleri (<code class="text-cyan-300">similar_text &gt; %68</code>), düşük entropili verileri ve hata çıktılarını kalıcı belleğe (<code class="text-purple-300">Memory Vault</code>) sokmadan karantinaya alır ve dikey (orthogonal) optimal karara yönelir.
+          </p>
+          <div id="cxQuarantineList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1 text-[11px]"></div>
+        </div>
       </div>
 
     </div>
@@ -662,7 +674,23 @@
       const elLyap = document.getElementById('cxLyapunovResidual');
       if (elLyap) elLyap.textContent = `V_k = ${stab.lyapunov_V_residual || 0.000038}`;
       const elRules = document.getElementById('cxReinforcedRules');
-      if (elRules) elRules.textContent = `${stab.self_reinforced_rules_count || 29} Pekiştirilmiş Kural`;
+      if (elRules) elRules.textContent = `${stab.self_reinforced_rules_count || 29} Pekiştirilmiş Kural · ${stab.blocked_loops_count || 0} Kırılan Döngü`;
+
+      const elBrk = document.getElementById('cxBreakerStatusBadge');
+      if (elBrk) elBrk.textContent = `${stab.circuit_breaker_status || 'ARMED_OPTIMAL'} (Kırılan Loop: ${stab.blocked_loops_count || 0} · İzole Hata: ${stab.quarantined_noise_count || 0})`;
+
+      const qBox = document.getElementById('cxQuarantineList');
+      if (qBox && Array.isArray(cx.quarantine_audit_log)) {
+        qBox.innerHTML = cx.quarantine_audit_log.slice(0, 6).map(q => `
+          <div class="p-2 rounded-lg bg-[#0b1220] border border-slate-800 flex items-start justify-between gap-2">
+            <div>
+              <span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 font-mono text-[10px] font-bold mr-1.5">${escapeHtml(q.type || 'GUARD')}</span>
+              <span class="text-slate-300">${escapeHtml(q.reason || '')}</span>
+            </div>
+            <span class="text-[10px] font-mono text-emerald-400 shrink-0">${escapeHtml(q.action || 'PROTECTED')}</span>
+          </div>
+        `).join('');
+      }
 
       const prof = cx.personalization_profile || {};
       const elIntBadge = document.getElementById('cxIntervalBadge');
@@ -1345,13 +1373,27 @@
         renderThreadsSidebar();
         renderActiveThreadMessages();
       }
-      // Initial autonomous cortex sync + continuous background self-feeding loop every 30 seconds without waiting for user input!
+      // Initial autonomous cortex sync + jittered background self-feeding with exponential backoff & tab-visibility guard (never enters a runaway request loop!)
       refreshAutonomousCortex(false);
-      setInterval(() => {
-        if (!isGenerating) {
-          refreshAutonomousCortex(true);
-        }
-      }, 30000);
+      let bgFeedFailures = 0;
+      async function scheduleNextAutonomousFeed() {
+        const baseSec = parseInt((document.getElementById('profIntervalSelect') && document.getElementById('profIntervalSelect').value) || '30', 10);
+        const backoffMultiplier = Math.min(4, Math.pow(1.5, bgFeedFailures));
+        const jitterMs = Math.floor(Math.random() * 4000);
+        const waitMs = Math.max(20000, Math.round(baseSec * 1000 * backoffMultiplier) + jitterMs);
+        setTimeout(async () => {
+          if (!isGenerating && document.visibilityState === 'visible') {
+            try {
+              await refreshAutonomousCortex(true);
+              bgFeedFailures = 0;
+            } catch (e) {
+              bgFeedFailures++;
+            }
+          }
+          scheduleNextAutonomousFeed();
+        }, waitMs);
+      }
+      scheduleNextAutonomousFeed();
     });
   </script>
 </body>
