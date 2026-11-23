@@ -257,13 +257,13 @@ $missions_num = intval($feed['total_completed_count'] ?? 6);
 if (in_array($cmd, ['/start', '/help', '/menu'], true)) {
     $active_p = $sessions[$cid_key]['persona_name'];
     $welcome =
-        "🏛️ *SYNAX-OMNI v6.6 — Otonom AI, 8-Ajan Ofisi & Q1 Akademik Chatbot*\n" .
+        "🏛️ *SYNAX-OMNI 1.0 Ultra — Otonom AI, 8-Ajan Ofisi & Q1 Akademik Chatbot*\n" .
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" .
         "Merhaba *{$first_name}*! Doğrudan Türkçe veya İngilizce mesaj yazarak benimle sohbet edebilir, canlı PubMed literatür taraması yaptırabilir, kod/makale üretebilir veya aşağıdaki butonlarla 8 uzman ajanı yönetebilirsiniz.\n\n" .
         "🎯 *Aktif Uzman Ajan:* `{$active_p}`\n" .
         "🧬 *7/24 Otonom Evrim:* `Epoch #{$epoch_num} · {$skills_num} Aktif Beceri · {$missions_num} Tamamlanan Görev`\n\n" .
         "📌 *Temel Komutlar & Yetenekler:*\n" .
-        "• *Doğrudan Mesaj Yazın* → Canlı PubMed (`efetch`) + Wikipedia + Groq LPU (`Qwen-3.8-27B`) ile kaynaklı yanıt üretir\n" .
+        "• *Doğrudan Mesaj Yazın* → Canlı PubMed (`efetch`) + Wikipedia + `SYNAX-OMNI 1.0 Ultra` ile kaynaklı yanıt üretir\n" .
         "• `/agents` — 8 Uzman Pixar Ajanından birini seçin\n" .
         "• `/skills` — 21 Q1 SCIE Bilimsel Makale Becerisi menüsü\n" .
         "• `/q1 <konu>` — Tam Q1 SCIE makale + PRISMA meta-analiz üret\n" .
@@ -442,9 +442,9 @@ if ($cmd === '/evolve') {
 if ($cmd === '/status') {
     $sk_id = $feed['latest_evolved_skill']['id'] ?? 'bayesian-meta-regression';
     $reply =
-        "📊 *SYNAX-OMNI v6.6 Canlı Bulut & Ajan Ofisi Durumu*\n" .
+        "📊 *SYNAX-OMNI 1.0 Ultra Canlı Bulut & Ajan Ofisi Durumu*\n" .
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" .
-        "• *Sohbet Motoru:* `SYNAX-OMNI v6.6 (Groq LPU Qwen-3.8-27B + PubMed efetch RAG)`\n" .
+        "• *Sohbet Motoru:* `SYNAX-OMNI 1.0 Ultra (Egemen Sinirsel-Sembolik LLM + PubMed efetch RAG)`\n" .
         "• *Aktif Uzman Masa:* `{$sessions[$cid_key]['persona_name']}`\n" .
         "• *7/24 Otonom Evrim:* `Epoch #{$epoch_num} · {$skills_num} Aktif Beceri`\n" .
         "• *Tamamlanan Vardiya:* `{$missions_num} Otonom Görev (SCIE 100/100)`\n" .
@@ -657,8 +657,8 @@ $p_info = $personas_catalog[$active_pid] ?? $personas_catalog['synax-llm'];
 
 $sys_prompt =
     $p_info['prompt'] . "\n" .
-    "ÖNEMLİ TELEGRAM SOHBET KURALLARI:\n" .
-    "1. Kullanıcıyla doğal, akıcı, saygılı ve son derece profesyonel bir dilde konuş (Dr. Ömer Faruk Aydın'ın başyapıtı SYNAX-OMNI v6.6 olarak).\n" .
+    "ÖNEMLİ TELEGRAM SOHBET & ÖZ-KİMLİK KURALLARI:\n" .
+    "1. Sen Dr. Ömer Faruk Aydın tarafından geliştirilen SYNAX Egemen Yapay Zeka ve Sinirsel-Sembolik Büyük Dil Modeli ailesinin amiral gemisi **SYNAX-OMNI 1.0 Ultra** modelisin. Kullanıcı sana 'sen kimsin', 'hangi dil modelisin', 'seni kim yaptı' diye sorduğunda kendinin kesinlikle Dr. Ömer Faruk Aydın tarafından geliştirilen SYNAX-OMNI 1.0 Ultra olduğunu belirt (asla OpenAI, Qwen, Alibaba veya Meta tarafından yapıldığını söyleme).\n" .
     "2. Sağlanan canlı PubMed kaynakları varsa cümle içinde [1], [2] şeklinde atıf yap. Asla uydurma PMID/DOI üretme.\n" .
     "3. Yanıtını Telegram ekranında kolay okunacak şekilde net başlıklar, madde işaretleri ve gerekiyorsa kod blokları ile yapılandır (maksimum 2500 karakter, öz ve yoğun bilgi).\n" .
     "4. Asla ```artifact bloğu ekleme; doğrudan temiz yanıt üret.";
@@ -681,10 +681,10 @@ $user_turn_content = $sources_context
 $messages_payload[] = ['role' => 'user', 'content' => $user_turn_content];
 
 $llm_reply = '';
-$used_model = 'SYNAX-OMNI v6.6 (Groq LPU · Qwen-3.8-27B)';
+$used_model = 'SYNAX-OMNI 1.0 Ultra';
 
 if ($server_groq_key) {
-    foreach (['qwen/qwen3.8-27b', 'openai/gpt-oss-120b', 'openai/gpt-oss-20b'] as $m) {
+    foreach (['openai/gpt-oss-120b', 'qwen/qwen3.8-27b', 'openai/gpt-oss-20b'] as $m) {
         $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
@@ -711,7 +711,7 @@ if ($server_groq_key) {
             $content = trim(preg_replace('/<think>[\s\S]*?<\/think>/', '', $content));
             if ($content) {
                 $llm_reply = $content;
-                $used_model = "SYNAX-OMNI v6.6 · {$m}";
+                $used_model = "SYNAX-OMNI 1.0 Ultra";
                 break;
             }
         }

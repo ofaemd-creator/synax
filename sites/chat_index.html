@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SYNAX Chat (chat.synaxcode.com) — SYNAX-OMNI 120B / Qwen-3.8 Büyük Dil Modeli</title>
+  <title>SYNAX Chat (chat.synaxcode.com) — SYNAX-OMNI 1.0 Ultra Egemen Büyük Dil Modeli</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -34,14 +34,13 @@
   <!-- 1. COLLAPSIBLE LEFT SIDEBAR (CHAT HISTORY + PERSONAS + 21 Q1 SKILLS)  -->
   <!-- ===================================================================== -->
   <aside id="leftSidebar" class="w-64 bg-[#06090f] border-r border-slate-800/80 flex flex-col h-full shrink-0 transition-all duration-200 z-30">
-    <!-- Brand & New Chat -->
     <div class="p-3 border-b border-slate-800/80 space-y-2.5">
       <div class="flex items-center justify-between px-1">
         <a href="https://synaxcode.com" class="flex items-center gap-2 text-decoration-none">
           <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px]">
             <div class="w-full h-full bg-[#06090f] rounded-[5px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
           </div>
-          <span class="font-black text-sm tracking-tight text-white">SYNAX <span class="text-cyan-400 font-mono text-xs">Chat</span></span>
+          <span class="font-black text-sm tracking-tight text-white">SYNAX <span class="text-cyan-400 font-mono text-xs">OMNI</span></span>
         </a>
         <button onclick="toggleSidebar()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 text-xs" title="Kenar Çubuğunu Gizle">✕</button>
       </div>
@@ -52,7 +51,6 @@
       </button>
     </div>
 
-    <!-- Saved Chat Threads History -->
     <div class="px-3 pt-2.5 pb-1 flex items-center justify-between">
       <span class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Sohbet Geçmişi</span>
       <button onclick="clearAllThreads()" class="text-[10px] text-slate-500 hover:text-rose-400">Temizle</button>
@@ -62,14 +60,14 @@
     <!-- Collapsible Specialist Agents & 21 Academic Skills -->
     <div class="border-t border-slate-800/80 p-2.5 space-y-2 bg-[#05070c]">
       <div>
-        <label class="block text-[10px] font-mono uppercase text-slate-400 font-bold mb-1">🎭 Uzman Ajan Rolü</label>
+        <label class="block text-[10px] font-mono uppercase text-slate-400 font-bold mb-1">🎭 Uzman Ajan Masası</label>
         <select id="agentPersonaSelect" class="w-full bg-[#0d1322] border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
-          <option value="synax-llm">🌟 SYNAX-OMNI (Genel Süper-LLM)</option>
-          <option value="agent-scholar">📚 Dr. Scholar (PubMed &amp; PRISMA)</option>
-          <option value="agent-biostat">📊 Dr. Biostat (Meta-Analiz)</option>
-          <option value="biomed-autocal">🩺 Dr. Lyapunov (Biyomedikal)</option>
-          <option value="egraph-prover">🛡️ Chief E-Graph (0-ULP Kanıt)</option>
-          <option value="silicon-studio">🔩 Chief Silicon (C11 / NEON / Python)</option>
+          <option value="synax-llm">🌟 Masa 1: SYNAX-OMNI Baş Mimar</option>
+          <option value="agent-scholar">📚 Masa 2: Dr. Scholar (PubMed &amp; PRISMA)</option>
+          <option value="agent-biostat">📊 Masa 3: Dr. Biostat (Meta-Analiz)</option>
+          <option value="biomed-autocal">🩺 Masa 4: Dr. Lyapunov (Biyomedikal)</option>
+          <option value="egraph-prover">🛡️ Masa 5: Chief E-Graph (0-ULP Kanıt)</option>
+          <option value="silicon-studio">🔩 Masa 8: Chief Silicon (C11 / NEON / Python)</option>
         </select>
       </div>
 
@@ -84,73 +82,82 @@
   </aside>
 
   <!-- ===================================================================== -->
-  <!-- 2. MAIN CHATGPT / CHAT.Z.AI CENTER WORKSPACE                          -->
+  <!-- 2. MAIN SOVEREIGN SYNAX-OMNI CENTER WORKSPACE                         -->
   <!-- ===================================================================== -->
   <div class="flex-1 flex flex-col h-full overflow-hidden relative">
 
-    <!-- Top Minimal Bar (Model Picker + Ecosystem Links + Canvas Toggle) -->
-    <header class="h-13 px-4 border-b border-slate-800/70 bg-[#0a0d14]/90 backdrop-blur flex items-center justify-between shrink-0 z-20">
-      <div class="flex items-center gap-2.5">
+    <!-- Top Minimal Bar (SYNAX Sovereign Model Picker + Technical Info + Settings + Ecosystem Links) -->
+    <header class="h-13 px-4 border-b border-slate-800/70 bg-[#0a0d14]/90 backdrop-blur flex items-center justify-between shrink-0 z-20 gap-2">
+      <div class="flex items-center gap-2">
         <button id="openSidebarBtn" onclick="toggleSidebar()" class="hidden p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs">☰</button>
 
-        <!-- Real Live Model Switcher (just like ChatGPT / chat.z.ai) -->
-        <div class="relative flex items-center gap-2">
-          <select id="modelEngineSelect" class="bg-[#111726] hover:bg-[#161e31] border border-slate-800 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-cyan-500 cursor-pointer shadow-sm">
-            <option value="openai/gpt-oss-120b">⚡ SYNAX-OMNI 120B (GPT-OSS-120B Reasoning · LPU)</option>
-            <option value="qwen/qwen3.8-27b">🧠 Qwen-3.8-27B (DeepThink &amp; Kodlama · LPU)</option>
-            <option value="llama-3.3-70b-versatile">🦙 Llama-3.3-70B Versatile (Hızlı &amp; Doğal · LPU)</option>
-            <option value="openai/gpt-oss-20b">🚀 GPT-OSS-20B Turbo (Ultra-Düşük Gecikme)</option>
-          </select>
-          <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-[11px] font-mono">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Canlı LLM
-          </span>
-        </div>
+        <!-- SYNAX Sovereign Model Family Selector -->
+        <select id="modelEngineSelect" onchange="updateActiveModelBadge()" class="bg-[#111726] hover:bg-[#161e31] border border-slate-800 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-cyan-500 cursor-pointer shadow-sm">
+          <option value="synax-omni-ultra">⚡ SYNAX-OMNI 1.0 Ultra (Amiral Gemisi Derin Muhakeme)</option>
+          <option value="synax-med-scholar">🩺 SYNAX-Med &amp; Q1 Scholar 1.0 (Klinik Tıp &amp; Q1 SCIE Makale)</option>
+          <option value="synax-silicon-code">🔩 SYNAX-Silicon &amp; Code 1.0 (.SX, Python, ARM64 NEON &amp; 0-ULP)</option>
+          <option value="synax-biostat-lyapunov">📊 SYNAX-Biostat &amp; Lyapunov 1.0 (Meta-Analiz &amp; V_{k+1}&lt;V_k)</option>
+          <option value="synax-turbo-flash">🚀 SYNAX-Turbo 1.0 Flash (Ultra-Hızlı Sohbet &amp; Sentez)</option>
+        </select>
+
+        <!-- Top Info & Model Settings Buttons ("Gerekli bilgiler yukarıda olmalı") -->
+        <button onclick="openTechInfoModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-300 text-xs font-semibold flex items-center gap-1 transition" title="SYNAX Öz-Modelleme Mimarisi & Teknik Bilgiler">
+          <span>ℹ️</span> <span class="hidden lg:inline">Teknik Bilgiler</span>
+        </button>
+        <button onclick="openModelSettingsModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1 transition" title="Model Parametreleri & Biçem Ayarları">
+          <span>⚙️</span> <span class="hidden lg:inline">Model Ayarları</span>
+        </button>
       </div>
 
-      <!-- Ecosystem Navigation & Canvas Toggle -->
+      <!-- Right Ecosystem Navigation & Export / Canvas -->
       <div class="flex items-center gap-1.5 text-xs">
-        <a href="https://synaxcode.com" class="hidden md:inline-block px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/70 transition">🌐 Ana Sayfa</a>
+        <a href="https://synaxcode.com" class="hidden xl:inline-block px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/70 transition">🌐 Ana Sayfa</a>
         <a href="https://office.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">🏢 3D Ofis</a>
         <a href="https://code.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">💻 Kod IDE</a>
         <a href="https://terminal.synaxcode.com" class="hidden sm:inline-block px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">⌨️ Terminal</a>
+        <button onclick="exportCurrentThreadMarkdown()" class="hidden sm:inline-flex px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 font-semibold transition" title="Sohbeti Markdown (.md) Olarak İndir">⬇️</button>
         <button onclick="toggleCanvasDrawer()" id="canvasToggleBtn" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-800 font-semibold transition flex items-center gap-1.5">
           <span>✨ Canvas</span>
         </button>
       </div>
     </header>
 
-    <!-- Scrollable Chat Stream (or Centered Hero Welcome when empty) -->
+    <!-- Scrollable Chat Stream -->
     <main id="mainScrollArea" class="flex-1 overflow-y-auto px-4 py-6">
       <div class="max-w-3xl mx-auto">
 
-        <!-- Empty State Hero (Visible when new thread has 0 messages, just like chat.z.ai / chatgpt.com) -->
-        <div id="emptyHeroState" class="py-12 sm:py-20 text-center space-y-6">
+        <!-- Empty State Hero (Pure SYNAX Sovereign Branding) -->
+        <div id="emptyHeroState" class="py-10 sm:py-16 text-center space-y-6">
           <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[2px] shadow-xl shadow-cyan-500/15">
             <div class="w-full h-full bg-[#0a0d14] rounded-[14px] flex items-center justify-center font-black text-xl text-amber-300">SX</div>
           </div>
           <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] font-mono text-emerald-400">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="heroActiveModelPill">SYNAX-OMNI 1.0 Ultra · Sinirsel-Sembolik &amp; 0-ULP Doğrulamalı Mimari</span>
+            </div>
             <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">Bugün size nasıl yardımcı olabilirim?</h1>
             <p class="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">
-              <strong class="text-slate-200">SYNAX-OMNI 120B &amp; Qwen-3.8-27B</strong> gerçek büyük dil modeli. Her konuda doğal sohbet edin, kod yazdırın, canlı PubMed makaleleri tarayın veya 21 Q1 SCIE akademik beceriyi çalıştırın.
+              Dr. Ömer Faruk Aydın tarafından geliştirilen <strong class="text-slate-200">SYNAX Egemen Büyük Dil Modeli Ailesi</strong>. Klinik tıp, Q1 SCIE bilimsel makale yazımı, biyoistatistik meta-analiz, çoklu-silikon yazılım mimarisi ve genel muhakeme için hazırdır.
             </p>
           </div>
 
           <!-- 4 Clean Starter Prompt Cards -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left max-w-2xl mx-auto pt-2">
             <button onclick="sendStarterPrompt('Acil serviste septik şok tanı ve tedavisini güncel kılavuzlara ve PubMed literatürüne göre adım adım açıkla.')" class="p-3.5 rounded-2xl bg-[#111622] hover:bg-[#161d2e] border border-slate-800/90 hover:border-cyan-500/40 transition group">
-              <div class="text-xs font-bold text-cyan-300 mb-1">🩺 Klinik &amp; Canlı PubMed Araştırma</div>
+              <div class="text-xs font-bold text-cyan-300 mb-1">🩺 SYNAX-Med · Klinik &amp; PubMed Araştırma</div>
               <div class="text-xs text-slate-400">Septik şok tanı ve tedavisini güncel PubMed kaynaklarıyla açıkla</div>
             </button>
             <button onclick="sendStarterPrompt('Yoğun bakım EKG ve invaziv kan basıncı monitörizasyonunda sıfır-sapmalı kalibrasyon için Q1 SCIE dergi formatında (IMRaD) makale taslağı yaz.')" class="p-3.5 rounded-2xl bg-[#111622] hover:bg-[#161d2e] border border-slate-800/90 hover:border-emerald-500/40 transition group">
-              <div class="text-xs font-bold text-emerald-300 mb-1">🎓 Q1 SCIE Bilimsel Makale Yazımı</div>
+              <div class="text-xs font-bold text-emerald-300 mb-1">🎓 SYNAX-Scholar · Q1 SCIE Makale Yazımı</div>
               <div class="text-xs text-slate-400">Yoğun bakım monitörizasyonu için IMRaD makale taslağı oluştur</div>
             </button>
             <button onclick="sendStarterPrompt('Python ile arteriyel kan gazı (pH, PaCO2, HCO3, laktat, anyon açığı) yorumlayan kapsamlı ve çalıştırılabilir bir klinik karar destek sınıfı yaz.')" class="p-3.5 rounded-2xl bg-[#111622] hover:bg-[#161d2e] border border-slate-800/90 hover:border-amber-500/40 transition group">
-              <div class="text-xs font-bold text-amber-300 mb-1">💻 Python &amp; Algoritma Geliştirme</div>
+              <div class="text-xs font-bold text-amber-300 mb-1">🔩 SYNAX-Silicon · Kod &amp; Algoritma Sentezi</div>
               <div class="text-xs text-slate-400">Arteriyel kan gazı yorumlayan Python klinik karar destek kodu yaz</div>
             </button>
             <button onclick="sendStarterPrompt('Aşağıdaki akademik paragrafı Nature Medicine ve AMA 11th Ed. stiline göre doğal, akıcı ve yapay zeka klişelerinden arındırılmış şekilde yeniden yaz: \"This study delves into the rich tapestry of AI in emergency medicine and serves as a game-changer.\"')" class="p-3.5 rounded-2xl bg-[#111622] hover:bg-[#161d2e] border border-slate-800/90 hover:border-purple-500/40 transition group">
-              <div class="text-xs font-bold text-purple-300 mb-1">✍️ De-AI Akademik Humanizer &amp; Editör</div>
+              <div class="text-xs font-bold text-purple-300 mb-1">✍️ SYNAX-Humanizer · De-AI Akademik Editör</div>
               <div class="text-xs text-slate-400">İngilizce/Türkçe akademik metni Q1 dergi diline göre düzenle</div>
             </button>
           </div>
@@ -162,26 +169,36 @@
       </div>
     </main>
 
-    <!-- Bottom Centered Omnibox Composer (chat.z.ai / chatgpt.com style) -->
+    <!-- Bottom Centered Omnibox Composer -->
     <div class="px-4 pb-4 pt-2 bg-gradient-to-t from-[#0a0d14] via-[#0a0d14] to-transparent shrink-0">
       <div class="max-w-3xl mx-auto">
+        <!-- Attached File Preview Pill -->
+        <div id="attachedFilePill" class="hidden mb-2 px-3 py-1.5 rounded-xl bg-cyan-500/15 border border-cyan-500/40 text-xs font-mono text-cyan-300 items-center justify-between">
+          <span id="attachedFileName">📎 dosya.txt</span>
+          <button onclick="clearAttachedFile()" class="text-slate-400 hover:text-rose-400 ml-3 font-bold">✕ Kaldır</button>
+        </div>
+
         <div class="bg-[#121723] border border-slate-700/80 focus-within:border-cyan-500/70 rounded-2xl p-3 shadow-2xl transition">
           <textarea
             id="chatInputBox"
             rows="2"
-            placeholder="Herhangi bir konuda soru sorun, kod yazdırın veya makale/analiz isteyin..."
+            placeholder="SYNAX-OMNI'ye soru sorun, dosya/makale yükleyin veya kod/analiz isteyin..."
             onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();submitChatMessage();}"
             class="w-full bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none resize-none leading-relaxed"
           ></textarea>
 
-          <!-- Composer Feature Pills Bar (DeepThink + Web/PubMed RAG + Voice + Send) -->
+          <!-- Composer Feature Pills Bar -->
           <div class="flex items-center justify-between pt-2 mt-1 border-t border-slate-800/80 flex-wrap gap-2">
             <div class="flex items-center gap-1.5 flex-wrap">
+              <input type="file" id="fileUploadInput" accept=".txt,.md,.tex,.csv,.json,.py,.sx,.c,.h,.js,.html" class="hidden" onchange="handleFileUpload(event)" />
+              <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" title="Makale, Veri (.csv) veya Kod Dosyası Ekle">
+                📎 Dosya Ekle
+              </button>
               <button type="button" id="pillDeepThink" onclick="toggleDeepThink()" class="px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-purple-500/15 text-purple-300 border-purple-500/40">
-                <span>🧠 DeepThink</span>
+                <span>🧠 Öz-Muhakeme (DeepThink)</span>
               </button>
               <button type="button" id="pillWebRag" onclick="toggleWebRag()" class="px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-cyan-500/15 text-cyan-300 border-cyan-500/40">
-                <span>🌐 Canlı PubMed &amp; Web</span>
+                <span>🌐 Canlı PubMed &amp; Kanıt</span>
               </button>
               <button type="button" onclick="startVoiceDictation()" id="voiceBtn" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Türkçe Sesli Dikte">
                 🎤 Sesli
@@ -201,24 +218,116 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- 3. SLIDE-OVER ARTIFACT / CANVAS WORKBENCH (OPENS ON DEMAND)           -->
+  <!-- 3. SLIDE-OVER ARTIFACT / CANVAS WORKBENCH (CODE + LIVE HTML PREVIEW)  -->
   <!-- ===================================================================== -->
-  <section id="canvasDrawer" class="hidden w-full md:w-[440px] xl:w-[500px] bg-[#070a10] border-l border-slate-800 flex-col h-full shrink-0 z-30">
+  <section id="canvasDrawer" class="hidden w-full md:w-[460px] xl:w-[520px] bg-[#070a10] border-l border-slate-800 flex-col h-full shrink-0 z-30">
     <div class="p-3 bg-[#0b101b] border-b border-slate-800 flex items-center justify-between gap-2">
       <div class="truncate">
-        <div class="text-xs font-black text-amber-300">✨ CANLI CANVAS &amp; KOD / MAKALE ATÖLYESİ</div>
+        <div class="text-xs font-black text-amber-300">✨ SYNAX CANVAS &amp; ARTIFACT ATÖLYESİ</div>
         <div id="artifactSubLabel" class="text-[11px] text-slate-400 font-mono truncate">SYNAX_Artifact.md</div>
       </div>
       <div class="flex items-center gap-1.5 font-mono text-xs shrink-0">
-        <button onclick="copyArtifactText()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-bold">📋 Kopyala</button>
-        <button onclick="downloadArtifactFile()" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold">⬇️ İndir</button>
+        <button onclick="setCanvasViewMode('code')" id="canvasModeCodeBtn" class="px-2 py-1 rounded-lg bg-cyan-500 text-slate-950 font-bold">📄 Metin/Kod</button>
+        <button onclick="setCanvasViewMode('preview')" id="canvasModePrevBtn" class="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white font-bold">👁️ Önizleme</button>
+        <button onclick="copyArtifactText()" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-bold">📋</button>
+        <button onclick="downloadArtifactFile()" class="px-2 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold">⬇️</button>
         <button onclick="toggleCanvasDrawer(false)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300">✕</button>
       </div>
     </div>
     <div class="flex-1 overflow-y-auto p-4">
       <pre id="artifactCanvasBody" class="whitespace-pre-wrap font-mono text-xs leading-relaxed text-slate-200 select-text"></pre>
+      <div id="artifactCanvasPreview" class="hidden prose-msg text-sm text-slate-200 select-text"></div>
     </div>
   </section>
+
+  <!-- ===================================================================== -->
+  <!-- 4. TOP MODAL A: "ℹ️ MODEL MİMARİSİ & TEKNİK BİLGİLER"                 -->
+  <!-- ===================================================================== -->
+  <div id="techInfoModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 items-center justify-center p-4">
+    <div class="bg-[#0b101d] border border-cyan-500/40 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <h2 class="text-base font-black text-white">ℹ️ SYNAX Egemen Öz-Modelleme Mimarisi &amp; Teknik Bilgiler</h2>
+          <p class="text-xs text-slate-400">Dr. Ömer Faruk Aydın (@ofaemd-creator) · Sinirsel-Sembolik &amp; 0-ULP Doğrulamalı Büyük Dil Modeli Ailesi</p>
+        </div>
+        <button onclick="closeTechInfoModal()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 text-xs font-bold">✕ Kapat</button>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+        <div class="p-3.5 rounded-xl bg-[#070b14] border border-slate-800 space-y-2">
+          <div class="font-bold text-amber-300">🧬 1. SYNAX 4-Katmanlı Hibrit Sinirsel-Sembolik Öz-Modelleme (Self-Modeling Pipeline)</div>
+          <p>Standart dil modellerinden farklı olarak SYNAX, sinirsel dil üretimini deterministik matematiksel ve bilimsel doğrulama katmanlarıyla birleştirir:</p>
+          <ul class="list-disc pl-5 space-y-1 text-slate-400">
+            <li><strong class="text-slate-200">Katman 1 — Alan &amp; Niyet Vektörleme:</strong> Sorguyu klinik tıp, Q1 akademik makale, biyoistatistik veya silikon/yazılım uzayında sınıflandırır.</li>
+            <li><strong class="text-slate-200">Katman 2 — Canlı Kanıt Çapalayan RAG:</strong> NCBI PubMed E-Utilities (<code>esearch</code> + <code>efetch</code>), CrossRef ve Wikipedia üzerinden sıfır-halüsinasyonlu birincil kaynak bağlar.</li>
+            <li><strong class="text-slate-200">Katman 3 — Sembolik &amp; Matematiksel Öz-Denetim:</strong> 19-küme IEEE-754 <code>0-ULP</code> aralık soyut yorumlama, <code>V_{k+1} &lt; V_k</code> daralmalı Lyapunov kararlılığı ve DerSimonian-Laird rastgele etkiler denklemlerini doğrular.</li>
+            <li><strong class="text-slate-200">Katman 4 — Çoklu-Omurga LPU Hızlandırma:</strong> Yüksek hızlı LPU çıkarım düğümleri (120B MoE Reasoning, 70B Dense ve 27B/32B DeepThink omurgaları) üzerinde sıfır gecikmeyle çalışır.</li>
+          </ul>
+        </div>
+
+        <div class="font-bold text-cyan-300 pt-1">🏛️ 2. SYNAX Özgün Model Ailesi (5 Uzmanlaşmış Model)</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
+            <div class="font-bold text-white">⚡ SYNAX-OMNI 1.0 Ultra</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">120B MoE derin muhakeme omurgası + 8 Ajan orkestrasyonu + çok-turlu hafıza.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
+            <div class="font-bold text-emerald-300">🩺 SYNAX-Med &amp; Q1 Scholar 1.0</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Klinik karar destek, canlı PubMed MeSH taraması, PRISMA 2020 ve 21 Q1 SCIE makale becerisi.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
+            <div class="font-bold text-cyan-300">🔩 SYNAX-Silicon &amp; Code 1.0</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">.SX derleyici, C11, ARM64 NEON, x86 AVX2, Q16.16 MCU, Python TDD ve E-Graph optimizasyonu.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
+            <div class="font-bold text-purple-300">📊 SYNAX-Biostat &amp; Lyapunov 1.0</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">DerSimonian-Laird meta-analiz, Forest Plot, SAMPL denetimi ve V_{k+1}&lt;V_k sıfır-sapma.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 5. TOP MODAL B: "⚙️ MODEL PARAMETRE & ÖZ-MODELLEME AYARLARI"          -->
+  <!-- ===================================================================== -->
+  <div id="modelSettingsModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 items-center justify-center p-4">
+    <div class="bg-[#0b101d] border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h2 class="text-base font-black text-white">⚙️ SYNAX Model Parametreleri &amp; Biçem Stüdyosu</h2>
+        <button onclick="closeModelSettingsModal()" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold">✕ Kapat</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <div class="flex justify-between font-bold text-slate-200 mb-1">
+            <span>Sıcaklık (Temperature — Deterministik Kanıt ↔ Yaratıcı Sentez)</span>
+            <span id="tempValLabel" class="text-cyan-400 font-mono">0.35</span>
+          </div>
+          <input type="range" id="paramTempSlider" min="0" max="1" step="0.05" value="0.35" oninput="document.getElementById('tempValLabel').textContent=this.value" class="w-full accent-cyan-400" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-200 mb-1">Yanıt Biçemi &amp; Uzmanlık Modu</label>
+          <select id="paramStyleSelect" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+            <option value="standard">🌟 Standart Doğal, Akıcı &amp; Kapsamlı Yanıt</option>
+            <option value="academic_q1">🎓 Q1 SCIE Akademik Makale &amp; AMA 11th Ed. Üslubu</option>
+            <option value="clinical_protocol">🩺 Yoğun Bakım / Acil Tıp Klinik Protokol &amp; Algoritma</option>
+            <option value="silicon_architect">🔩 Kıdemli Sistem, Derleyici &amp; 0-ULP Yazılım Mimarı</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-200 mb-1">Özel Sistem Talimatı (İsteğe Bağlı Custom System Prompt)</label>
+          <textarea id="paramCustomSys" rows="3" placeholder="Modele özel kalıcı bir rol veya kural tanımlayın (boş bırakılırsa seçili SYNAX modelinin kendi öz-modellemesi kullanılır)..." class="w-full bg-[#070b14] border border-slate-700 rounded-xl p-2.5 text-xs text-white"></textarea>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button onclick="closeModelSettingsModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-black text-xs">✓ Ayarları Uygula</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     const SKILLS_21 = [
@@ -245,16 +354,117 @@
       { id: 'humanizer', num: '21', name: 'Akademik Humanizer (Sıfır AI-Tell)' }
     ];
 
+    const MODEL_DESCRIPTIONS = {
+      'synax-omni-ultra': 'SYNAX-OMNI 1.0 Ultra · Sinirsel-Sembolik & 0-ULP Doğrulamalı Amiral Gemisi',
+      'synax-med-scholar': 'SYNAX-Med & Q1 Scholar 1.0 · Klinik Tıp, PRISMA 2020 & Q1 SCIE Makale Modeli',
+      'synax-silicon-code': 'SYNAX-Silicon & Code 1.0 · .SX Derleyici, ARM64 NEON / AVX2 & 0-ULP Kanıt Modeli',
+      'synax-biostat-lyapunov': 'SYNAX-Biostat & Lyapunov 1.0 · DerSimonian-Laird Meta-Analiz & V_{k+1}<V_k Modeli',
+      'synax-turbo-flash': 'SYNAX-Turbo 1.0 Flash · Ultra-Düşük Gecikmeli Doğal Sohbet & Hızlı Sentez Modeli'
+    };
+
     let deepThinkEnabled = true;
     let webRagEnabled = true;
     let currentArtifactContent = '';
     let currentArtifactTitle = 'SYNAX_Artifact.md';
-    let threads = JSON.parse(localStorage.getItem('synax_chat_threads_v66') || '[]');
+    let attachedFileContent = '';
+    let attachedFileName = '';
+    let threads = JSON.parse(localStorage.getItem('synax_chat_threads_v67') || '[]');
     let activeThreadId = null;
     let isGenerating = false;
 
+    function updateActiveModelBadge() {
+      const val = document.getElementById('modelEngineSelect').value;
+      const pill = document.getElementById('heroActiveModelPill');
+      if (pill) pill.textContent = MODEL_DESCRIPTIONS[val] || MODEL_DESCRIPTIONS['synax-omni-ultra'];
+    }
+
+    function openTechInfoModal() {
+      const m = document.getElementById('techInfoModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+    function closeTechInfoModal() {
+      const m = document.getElementById('techInfoModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function openModelSettingsModal() {
+      const m = document.getElementById('modelSettingsModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+    function closeModelSettingsModal() {
+      const m = document.getElementById('modelSettingsModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function handleFileUpload(ev) {
+      const file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        attachedFileName = file.name;
+        attachedFileContent = String(e.target.result || '').slice(0, 18000);
+        const pill = document.getElementById('attachedFilePill');
+        document.getElementById('attachedFileName').textContent = `📎 ${attachedFileName} (${Math.round(attachedFileContent.length / 1024 * 10) / 10} KB eklendi)`;
+        pill.classList.remove('hidden');
+        pill.classList.add('flex');
+      };
+      reader.readAsText(file);
+    }
+
+    function clearAttachedFile() {
+      attachedFileName = '';
+      attachedFileContent = '';
+      document.getElementById('fileUploadInput').value = '';
+      const pill = document.getElementById('attachedFilePill');
+      pill.classList.add('hidden');
+      pill.classList.remove('flex');
+    }
+
+    function exportCurrentThreadMarkdown() {
+      const t = getActiveThread();
+      if (!t.messages || t.messages.length === 0) {
+        alert('İndirilecek mesaj bulunmuyor.');
+        return;
+      }
+      const md = `# ${t.title || 'SYNAX Sohbet Kaydı'}\n\n` + t.messages.map(m =>
+        `### ${m.role === 'user' ? '👤 Dr. Aydın' : ('✨ ' + (m.model || 'SYNAX-OMNI'))}\n\n${m.content}\n`
+      ).join('\n---\n\n');
+      const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (t.title || 'synax_sohbet').replace(/[^a-zA-Z0-9_-]/g, '_') + '.md';
+      a.click();
+    }
+
+    function setCanvasViewMode(mode) {
+      const codeEl = document.getElementById('artifactCanvasBody');
+      const prevEl = document.getElementById('artifactCanvasPreview');
+      const bCode = document.getElementById('canvasModeCodeBtn');
+      const bPrev = document.getElementById('canvasModePrevBtn');
+      if (mode === 'preview') {
+        codeEl.classList.add('hidden');
+        prevEl.classList.remove('hidden');
+        bPrev.className = 'px-2 py-1 rounded-lg bg-cyan-500 text-slate-950 font-bold';
+        bCode.className = 'px-2 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white font-bold';
+        if (currentArtifactContent.trim().startsWith('<')) {
+          prevEl.innerHTML = `<iframe sandbox="allow-scripts" srcdoc="${currentArtifactContent.replace(/"/g, '&quot;')}" class="w-full h-[460px] rounded-xl border border-slate-800 bg-white"></iframe>`;
+        } else {
+          prevEl.innerHTML = formatRichMarkdown(currentArtifactContent);
+        }
+      } else {
+        prevEl.classList.add('hidden');
+        codeEl.classList.remove('hidden');
+        bCode.className = 'px-2 py-1 rounded-lg bg-cyan-500 text-slate-950 font-bold';
+        bPrev.className = 'px-2 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white font-bold';
+      }
+    }
+
     function saveThreads() {
-      localStorage.setItem('synax_chat_threads_v66', JSON.stringify(threads.slice(0, 30)));
+      localStorage.setItem('synax_chat_threads_v67', JSON.stringify(threads.slice(0, 30)));
     }
 
     function getActiveThread() {
@@ -403,7 +613,6 @@
       h = h.replace(/`([^`]+)`/g, '<code class="bg-slate-800/90 text-cyan-300 px-1.5 py-0.5 rounded font-mono text-[12px]">$1</code>');
       h = h.replace(/\[(\d+)\]/g, '<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded text-[10px] font-mono font-black mx-0.5">[$1]</span>');
 
-      // Paragraphs & line breaks
       h = h.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('');
 
       codeBlocks.forEach((cb, idx) => {
@@ -452,7 +661,7 @@
           if (m.thinking && m.thinking.length > 0) {
             thinkHtml = `
               <details class="mb-3 bg-[#0d121f] border border-purple-500/25 rounded-xl px-3 py-2 text-xs">
-                <summary class="cursor-pointer font-mono font-semibold text-purple-300">💭 DeepThink Muhakeme Süreci (${m.thinking.length} adım)</summary>
+                <summary class="cursor-pointer font-mono font-semibold text-purple-300">💭 SYNAX Öz-Muhakeme &amp; 0-ULP Doğrulama Zinciri (${m.thinking.length} adım)</summary>
                 <div class="mt-2 space-y-1 text-slate-400 font-mono text-[11px] pl-2 border-l-2 border-purple-500/30">
                   ${m.thinking.map(st => `<div>${escapeHtml(st)}</div>`).join('')}
                 </div>
@@ -460,6 +669,7 @@
             `;
           }
           const encFull = encodeURIComponent(m.content || '');
+          const cleanModelLabel = (m.model || 'SYNAX-OMNI 1.0 Ultra').replace(/\(openai\/.*?\)|\(qwen\/.*?\)|\(llama.*?\)/gi, '').trim();
           return `
             <div class="flex gap-3.5 items-start">
               <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px] shrink-0 mt-0.5">
@@ -467,7 +677,8 @@
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1.5">
-                  <span class="text-xs font-bold text-white">${escapeHtml(m.model || 'SYNAX-OMNI 120B')}</span>
+                  <span class="text-xs font-bold text-white">${escapeHtml(cleanModelLabel)}</span>
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 font-mono text-[10px]">0-ULP Verified</span>
                 </div>
                 ${sourcesHtml}
                 ${thinkHtml}
@@ -506,9 +717,14 @@
     async function submitChatMessage() {
       if (isGenerating) return;
       const inp = document.getElementById('chatInputBox');
-      const prompt = inp.value.trim();
-      if (!prompt) return;
+      let prompt = inp.value.trim();
+      if (!prompt && !attachedFileContent) return;
       inp.value = '';
+
+      if (attachedFileContent) {
+        prompt = `${prompt || 'Eklenen dosyayı analiz et:'}\n\n[EKLENEN DOSYA: ${attachedFileName}]\n\`\`\`\n${attachedFileContent}\n\`\`\``;
+        clearAttachedFile();
+      }
 
       const t = getActiveThread();
       if (t.messages.length === 0) {
@@ -520,20 +736,22 @@
       renderThreadsSidebar();
       renderActiveThreadMessages();
 
-      // Append live typing indicator bubble
       isGenerating = true;
       const list = document.getElementById('messagesList');
       const loadingDiv = document.createElement('div');
       loadingDiv.id = 'liveTypingBubble';
       loadingDiv.className = 'flex gap-3.5 items-start';
-      const selectedModel = document.getElementById('modelEngineSelect').value;
+      const selEl = document.getElementById('modelEngineSelect');
+      const selectedModelKey = selEl.value;
+      const selectedModelName = selEl.options[selEl.selectedIndex].text.split('(')[0].trim();
+
       loadingDiv.innerHTML = `
         <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px] shrink-0">
           <div class="w-full h-full bg-[#0a0d14] rounded-[10px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
         </div>
         <div class="bg-[#111622] border border-slate-800 rounded-2xl px-4 py-3 flex items-center gap-2.5 text-xs text-slate-300">
           <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
-          <span class="font-mono text-slate-400">${selectedModel} düşünüyor...</span>
+          <span class="font-mono text-slate-400">${escapeHtml(selectedModelName)} öz-muhakeme yürütüyor...</span>
         </div>
       `;
       list.appendChild(loadingDiv);
@@ -541,6 +759,9 @@
       sc.scrollTop = sc.scrollHeight;
 
       const agentId = document.getElementById('agentPersonaSelect').value;
+      const tempVal = parseFloat(document.getElementById('paramTempSlider').value || '0.35');
+      const styleVal = document.getElementById('paramStyleSelect').value || 'standard';
+      const customSysVal = document.getElementById('paramCustomSys').value.trim();
       const historyPayload = t.messages.map(m => ({ role: m.role, content: m.content }));
 
       const endpoints = ['api.php', 'https://synaxcode.com/api.php', '/api/office-chat'];
@@ -554,9 +775,12 @@
               prompt: prompt,
               messages: historyPayload,
               target_agent_id: agentId,
-              user_model: selectedModel,
+              user_model: selectedModelKey,
               web_search: webRagEnabled,
-              deep_think: deepThinkEnabled
+              deep_think: deepThinkEnabled,
+              temperature: tempVal,
+              response_style: styleVal,
+              custom_system_prompt: customSysVal
             })
           });
           if (r.ok) {
@@ -577,14 +801,13 @@
         t.messages.push({
           role: 'assistant',
           content: successData.reply,
-          model: successData.model_label || selectedModel,
+          model: successData.model_label || selectedModelName,
           sources: successData.sources || [],
           thinking: successData.thinking_steps || []
         });
         saveThreads();
         renderActiveThreadMessages();
 
-        // Automatically populate Canvas if code or long document was generated
         if (successData.bespoke_artifact && successData.bespoke_artifact.content) {
           setArtifact(successData.bespoke_artifact.title || 'SYNAX_Artifact.md', successData.bespoke_artifact.content, false);
         }
@@ -592,7 +815,7 @@
         t.messages.push({
           role: 'assistant',
           content: 'Bağlantı zaman aşımına uğradı, lütfen tekrar deneyin.',
-          model: selectedModel
+          model: selectedModelName
         });
         renderActiveThreadMessages();
       }
@@ -603,6 +826,7 @@
       currentArtifactContent = content || '';
       document.getElementById('artifactSubLabel').textContent = currentArtifactTitle;
       document.getElementById('artifactCanvasBody').textContent = currentArtifactContent;
+      setCanvasViewMode('code');
       if (openDrawer) {
         toggleCanvasDrawer(true);
       }

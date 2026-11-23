@@ -242,13 +242,53 @@ if ($action === 'evolution_status' || $action === 'automation_status') {
 // ============================================================================
 $prompt = trim($data['prompt'] ?? $data['message'] ?? 'Merhaba');
 $target_agent_id = $data['target_agent_id'] ?? 'synax-llm';
-$engine_provider = $data['engine_provider'] ?? 'SYNAX-OMNI v6.6 (Groq LPU)';
+$engine_provider = $data['engine_provider'] ?? 'SYNAX-OMNI 1.0 Ultra';
 $user_api_key = trim($data['user_api_key'] ?? '');
-$user_model = trim($data['user_model'] ?? ($data['model'] ?? ''));
+$user_model = trim($data['user_model'] ?? ($data['model'] ?? 'synax-omni-ultra'));
 $custom_sys = trim($data['custom_system_prompt'] ?? '');
 $client_messages = is_array($data['messages'] ?? null) ? $data['messages'] : [];
 $enable_web_rag = isset($data['web_search']) ? (bool)$data['web_search'] : true;
 $enable_deep_think = isset($data['deep_think']) ? (bool)$data['deep_think'] : true;
+$temperature = isset($data['temperature']) ? floatval($data['temperature']) : 0.35;
+$response_style = trim($data['response_style'] ?? 'standard');
+
+// Sovereign SYNAX Model Family Mapping -> LPU Compute Routing & Specialized Self-Modeling Prompts
+$synax_models_catalog = [
+    'synax-omni-ultra' => [
+        'label' => 'SYNAX-OMNI 1.0 Ultra',
+        'subtitle' => 'Amiral Gemisi Derin Muhakeme & Genel Zeka Modeli',
+        'backbone' => 'openai/gpt-oss-120b',
+        'sys_focus' => 'Genel derin muhakeme, klinik karar destek, bilimsel araştırma ve ileri yazılım mimarisini birleştiren amiral gemisi SYNAX-OMNI 1.0 Ultra modelisin.',
+    ],
+    'synax-med-scholar' => [
+        'label' => 'SYNAX-Med & Q1 Scholar 1.0',
+        'subtitle' => 'Klinik Tıp, Yoğun Bakım, PRISMA 2020 & Q1 SCIE Makale Modeli',
+        'backbone' => 'openai/gpt-oss-120b',
+        'sys_focus' => 'Klinik tıp, acil tıp, yoğun bakım hemodinamisi, NCBI PubMed kanıt sentezi, PRISMA 2020 ve Q1 SCIE (Nature Medicine, The Lancet, ICM) makale yazımında uzmanlaşmış SYNAX-Med & Q1 Scholar 1.0 modelisin.',
+    ],
+    'synax-silicon-code' => [
+        'label' => 'SYNAX-Silicon & Code 1.0',
+        'subtitle' => '.SX Derleyici, Python, C11, ARM64 NEON / AVX2 & 0-ULP Kanıt Modeli',
+        'backbone' => 'qwen/qwen3.8-27b',
+        'sys_focus' => 'Yazılım mühendisliği, Python, C11, ARM64 NEON, x86_64 AVX2, Q16.16 gömülü sistemler, E-Graph eşitlik doygunluğu ve 19-küme IEEE-754 0-ULP formal doğrulamada uzmanlaşmış SYNAX-Silicon & Code 1.0 modelisin.',
+    ],
+    'synax-biostat-lyapunov' => [
+        'label' => 'SYNAX-Biostat & Lyapunov 1.0',
+        'subtitle' => 'DerSimonian-Laird Meta-Analiz & V_{k+1} < V_k Sıfır-Sapma Modeli',
+        'backbone' => 'openai/gpt-oss-120b',
+        'sys_focus' => 'Biyoistatistiksel meta-analiz (DerSimonian-Laird rastgele etkiler, tau², Cochran Q, I², Forest Plot, SAMPL) ve daralmalı Lyapunov-Kalman (V_{k+1} < V_k) sıfır-sapma sensör kalibrasyonunda uzmanlaşmış SYNAX-Biostat & Lyapunov 1.0 modelisin.',
+    ],
+    'synax-turbo-flash' => [
+        'label' => 'SYNAX-Turbo 1.0 Flash',
+        'subtitle' => 'Ultra-Düşük Gecikmeli Doğal Sohbet & Hızlı Sentez Modeli',
+        'backbone' => 'llama-3.3-70b-versatile',
+        'sys_focus' => 'Çok hızlı, akıcı, net ve pratik yanıtlar üreten SYNAX-Turbo 1.0 Flash modelisin.',
+    ],
+];
+
+$selected_synax_spec = $synax_models_catalog[$user_model] ?? $synax_models_catalog['synax-omni-ultra'];
+$sovereign_model_label = $selected_synax_spec['label'];
+$preferred_backbone = $selected_synax_spec['backbone'];
 
 $active_key = $user_api_key ?: $server_groq_key;
 
@@ -378,12 +418,23 @@ foreach ($sources as $s) {
     $sources_context .= "[{$s['index']}] {$s['title']} ({$s['source']}): {$s['snippet']} (URL: {$s['url']})\n";
 }
 
+$style_instruction = "";
+if ($response_style === 'academic_q1') {
+    $style_instruction = "\nBiçem Kuralı: Yanıtını AMA Manual of Style (11th Ed.) ve Nature Medicine / Q1 SCIE akademik makale üslubuyla, yapay zeka klişelerinden tamamen arındırılmış otoriter bir bilimsel dille yaz.";
+} elseif ($response_style === 'clinical_protocol') {
+    $style_instruction = "\nBiçem Kuralı: Yanıtını yoğun bakım / acil tıp uzman hekimi düzeyinde, tanı kriterleri, dozlar, algoritmik basamaklar ve kırmızı bayrakları içeren net bir klinik protokol olarak yapılandır.";
+} elseif ($response_style === 'silicon_architect') {
+    $style_instruction = "\nBiçem Kuralı: Yanıtını kıdemli sistem ve derleyici mimarı düzeyinde, 0-ULP IEEE-754 güvenliği, zaman karmaşıklığı ve temiz, üretim kalitesinde kod bloklarıyla yapılandır.";
+}
+
 $system_prompt = $custom_sys ?: (
-    "Sen **SYNAX-OMNI v6.6** Süper Dil Modelisin (Dr. Ömer Faruk Aydın tarafından geliştirilen, ChatGPT, Claude ve chat.z.ai kalitesinde çalışan çok amaçlı büyük dil modeli). " .
-    "KURALLAR:\n" .
-    "1. Kullanıcının her sorusuna (günlük sohbet, tıp, yoğun bakım, acil tıp, akademik makale yazımı, biyoistatistik, yazılım mühendisliği, matematik, çeviri veya genel kültür) doğrudan, doğal, akıcı ve eksiksiz yanıt ver. Asla şablon veya alakasız konu dışı metin kullanma!\n" .
-    "2. Eğer kullanıcı bilimsel/tıbbi bir soru sorduysa ve sana CANLI KAYNAKLAR sağlandıysa cümle içinde `[1]`, `[2]` şeklinde atıflar yap.\n" .
-    "3. Kod, algoritma, tablo veya makale istendiğinde tam ve doğrudan çalıştırılabilir/yayınlanabilir kalitede üret."
+    "Sen **{$sovereign_model_label}** modelisin — Dr. Ömer Faruk Aydın (@ofaemd-creator) tarafından geliştirilen **SYNAX Egemen Yapay Zeka ve Sinirsel-Sembolik Büyük Dil Modeli** ailesinin üyesisin. " .
+    $selected_synax_spec['sys_focus'] . $style_instruction . "\n" .
+    "KİMLİK VE YANIT KURALLARI:\n" .
+    "1. Kimliğin veya hangi model olduğun sorulduğunda ASLA OpenAI, ChatGPT, Alibaba, Qwen veya Meta/Llama olduğunu söyleme! Her zaman Dr. Ömer Faruk Aydın tarafından geliştirilen **{$sovereign_model_label}** (SYNAX Sinirsel-Sembolik & 0-ULP Doğrulamalı Büyük Dil Modeli) olduğunu belirt.\n" .
+    "2. Kullanıcının her sorusuna doğrudan, doğal, akıcı ve eksiksiz yanıt ver. Asla hazır şablon veya konu dışı metin kullanma.\n" .
+    "3. Eğer kullanıcı bilimsel/tıbbi bir soru sorduysa ve sana CANLI KAYNAKLAR sağlandıysa cümle içinde `[1]`, `[2]` şeklinde atıflar yap.\n" .
+    "4. Kod, algoritma, tablo veya makale istendiğinde tam ve doğrudan çalıştırılabilir/yayınlanabilir kalitede üret."
 );
 
 // Build multi-turn messages array for the LLM
@@ -413,21 +464,16 @@ if (!empty($llm_messages) && $llm_messages[count($llm_messages) - 1]['role'] ===
 
 $llm_reply = "";
 $reasoning_trace = "";
-$used_model = "SYNAX-OMNI v6.6 (GPT-OSS-120B)";
+$used_model = $sovereign_model_label;
 
 if ($active_key) {
-    $default_chain = ['openai/gpt-oss-120b', 'qwen/qwen3.8-27b', 'llama-3.3-70b-versatile', 'openai/gpt-oss-20b'];
-    if ($user_model && !in_array($user_model, $default_chain, true)) {
-        array_unshift($default_chain, $user_model);
-    } elseif ($user_model) {
-        $default_chain = array_values(array_unique(array_merge([$user_model], $default_chain)));
-    }
+    $default_chain = array_values(array_unique([$preferred_backbone, 'openai/gpt-oss-120b', 'qwen/qwen3.8-27b', 'llama-3.3-70b-versatile', 'openai/gpt-oss-20b']));
     foreach ($default_chain as $m) {
         $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
         $post_body = json_encode([
             'model' => $m,
             'messages' => $llm_messages,
-            'temperature' => 0.4,
+            'temperature' => max(0.0, min(1.0, $temperature)),
             'max_tokens' => 4096,
         ]);
         curl_setopt_array($ch, [
@@ -456,14 +502,14 @@ if ($active_key) {
             }
             if ($raw_content) {
                 $llm_reply = $raw_content;
-                $used_model = "SYNAX-OMNI v6.6 ($m)";
+                $used_model = $sovereign_model_label;
                 break;
             }
         }
     }
 }
 
-// Secondary zero-key live cloud LLM fallback (Pollinations OpenAI GPT-OSS-20B)
+// Secondary zero-key live cloud LLM fallback
 if (!$llm_reply) {
     $ch = curl_init('https://text.pollinations.ai/openai');
     curl_setopt_array($ch, [
@@ -472,7 +518,7 @@ if (!$llm_reply) {
         CURLOPT_POSTFIELDS => json_encode([
             'model' => 'openai',
             'messages' => $llm_messages,
-            'temperature' => 0.4,
+            'temperature' => max(0.0, min(1.0, $temperature)),
         ]),
         CURLOPT_TIMEOUT => 15,
         CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'User-Agent: SYNAX-Omni/6.6'],
@@ -485,7 +531,7 @@ if (!$llm_reply) {
         $p_content = trim($pj['choices'][0]['message']['content'] ?? '');
         if ($p_content) {
             $llm_reply = $p_content;
-            $used_model = "SYNAX-OMNI v6.6 (Cloud Reasoning LLM)";
+            $used_model = $sovereign_model_label;
         }
     }
 }
