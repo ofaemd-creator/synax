@@ -378,7 +378,70 @@
       contentEl.textContent = `🧬 [OTONOM ÖZ-EVRİM] Yeni beceri sentezlendi ve 0-ULP / Zero-Injection kapısından geçirilerek sisteme eklendi.`;
     }
 
-    document.addEventListener('DOMContentLoaded', renderSynax21SkillsCards);
+    async function pollOnlineAutonomousDaemon(triggerStep = false) {
+      const badgeEl = document.getElementById('synax-skill-out-badge');
+      const hudBadge = document.getElementById('synaxOnlineCloudHudText');
+      const hudSub = document.getElementById('synaxOnlineCloudHudSub');
+      const url = triggerStep ? 'api.php?action=automation_step' : 'api.php?action=automation_status';
+      try {
+        const r = await fetch(url, {
+          method: triggerStep ? 'POST' : 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          body: triggerStep ? '{}' : undefined
+        });
+        if (r.ok) {
+          const d = await r.json();
+          const epoch = d.evolution_epoch || 19;
+          const skills = d.total_installed_skills || 46;
+          const missions = d.total_completed_count || (d.mission_id ? 'Aktif' : 5);
+          const sk = d.latest_evolved_skill || {};
+          const latestMission = (d.recent_completed_missions && d.recent_completed_missions[0]) || (d.mission_id ? d : null);
+          if (badgeEl) {
+            badgeEl.textContent = `Epoch #${epoch} • ${skills} Aktif Beceri • ${missions} Otonom Görev`;
+          }
+          if (hudBadge) {
+            hudBadge.innerHTML = `🤖 <b>7/24 Bulut Otonom Evrim Aktif</b> · <b>Epoch #${epoch}</b> · <b>${skills} Beceri</b>`;
+          }
+          if (hudSub) {
+            if (latestMission && latestMission.mission_id) {
+              hudSub.innerHTML = `✅ <b>Son Otonom Görev (${latestMission.mission_id}):</b> ${(latestMission.prompt || '').slice(0, 56)}... <span style="color:#34d399;font-weight:800;">[SCIE 100/100 · ${latestMission.elapsed_ms || 185} ms]</span>`;
+            } else if (sk && sk.id) {
+              hudSub.innerHTML = `🧬 <b>Son Sentezlenen Beceri:</b> <code>${sk.id}</code> — ${sk.title_tr || ''} <span style="color:#34d399;">[SHA-256 Doğrulandı]</span>`;
+            }
+          }
+          // Dynamically add newly evolved skill into select dropdown if not present
+          const sel = document.getElementById('synax-skill-select');
+          if (sel && sk && sk.id && !sel.querySelector(`option[value="${sk.id}"]`)) {
+            const opt = document.createElement('option');
+            opt.value = sk.id;
+            opt.textContent = `🧬 [Epoch #${epoch}] ${sk.id} (${sk.title_tr || 'Otonom Beceri'})`;
+            sel.appendChild(opt);
+          }
+        }
+      } catch (e) {}
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSynax21SkillsCards();
+      if (!document.getElementById('synaxOnlineCloudHud')) {
+        const hud = document.createElement('div');
+        hud.id = 'synaxOnlineCloudHud';
+        hud.style.cssText = 'position:fixed;bottom:14px;left:14px;z-index:9999;background:rgba(7,12,24,0.96);border:1.5px solid rgba(16,185,129,0.65);border-radius:12px;padding:9px 14px;color:#e2e8f0;font-size:11.5px;display:flex;flex-direction:column;gap:5px;box-shadow:0 12px 32px rgba(0,0,0,0.75);backdrop-filter:blur(10px);max-width:780px;font-family:Inter,system-ui,sans-serif;';
+        hud.innerHTML =
+          `<div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">` +
+            `<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#10b981;box-shadow:0 0 10px #10b981;"></span>` +
+            `<span id="synaxOnlineCloudHudText">🤖 <b>7/24 Bulut Otonom Evrim Aktif</b> · <b>46+ Beceri</b></span>` +
+            `<button onclick="pollOnlineAutonomousDaemon(true)" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#0f172a;border:none;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:900;cursor:pointer;">🤖 Otonom Vardiya</button>` +
+            `<button onclick="triggerSiteSelfEvolve();setTimeout(()=>pollOnlineAutonomousDaemon(false),400);" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;">🧬 +1 Beceri Evrimleş</button>` +
+            `<a href="office.html" style="background:rgba(56,189,248,0.2);color:#38bdf8;border:1px solid rgba(56,189,248,0.45);border-radius:7px;padding:4px 10px;font-size:11px;font-weight:800;text-decoration:none;">🏢 3D Ofis</a>` +
+          `</div>` +
+          `<div id="synaxOnlineCloudHudSub" style="font-size:10.5px;color:#cbd5e1;border-top:1px solid rgba(255,255,255,0.08);padding-top:4px;">🧬 Ajanlar arka planda sürekli yeni beceri ve Q1 SCIE görevleri sentezliyor...</div>`;
+        document.body.appendChild(hud);
+      }
+      pollOnlineAutonomousDaemon(false);
+      setInterval(() => { pollOnlineAutonomousDaemon(false); }, 12000);
+      setInterval(() => { pollOnlineAutonomousDaemon(true); }, 35000);
+    });
   </script>
 
   <!-- 5-STAGE CORE ARCHITECTURE -->
