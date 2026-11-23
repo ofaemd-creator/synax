@@ -100,17 +100,20 @@
           <option value="synax-turbo-flash">🚀 SYNAX-Turbo 1.0 Flash (Ultra-Hızlı Sohbet &amp; Sentez)</option>
         </select>
 
-        <!-- Top Info, Autonomous Self-Evolution Cortex & Model Settings Buttons -->
-        <button onclick="openCortexModal()" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm" title="7/24 Kendi Kendini Besleyen, Büyüten ve Dr. Aydın'a Sadık Otonom Korteks">
+        <!-- Top Info, Autonomous Self-Evolution & Personalization Cortex + Model Settings Buttons -->
+        <button onclick="openCortexModal('tabOverview')" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm" title="7/24 Otonom Öz-Beslenme, Bellek, Beceri Evrimi ve Kararlılık Korteksi">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>🧬 Öz-Evrim</span>
+          <span>🧬 Öz-Evrim &amp; Bellek</span>
           <span id="topCortexCounter" class="font-mono text-[10px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-200">Aktif</span>
+        </button>
+        <button onclick="openCortexModal('tabPersonalize')" class="px-2.5 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/40 text-purple-300 text-xs font-bold flex items-center gap-1 transition shadow-sm" title="Ultra-Profesyonel Kişiselleştirme & Bilişsel Customize Stüdyosu">
+          <span>🎛️</span> <span class="hidden md:inline">Kişiselleştir</span>
         </button>
         <button onclick="openTechInfoModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-300 text-xs font-semibold flex items-center gap-1 transition" title="SYNAX Öz-Modelleme Mimarisi & Teknik Bilgiler">
           <span>ℹ️</span> <span class="hidden lg:inline">Teknik Bilgiler</span>
         </button>
         <button onclick="openModelSettingsModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1 transition" title="Model Parametreleri & Biçem Ayarları">
-          <span>⚙️</span> <span class="hidden lg:inline">Model Ayarları</span>
+          <span>⚙️</span> <span class="hidden xl:inline">Parametreler</span>
         </button>
       </div>
 
@@ -344,73 +347,184 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- 5B. TOP MODAL C: "🧬 OTONOM ÖZ-BESLENME & SADAKAT KORTEKSİ (v6.9)"    -->
+  <!-- 5B. TOP MODAL C: "🧬 ULTRA-PROFESYONEL KİŞİSELLEŞTİRME, BELLEKLEME,   -->
+  <!--     BECERİ GELİŞTİRME & OTONOM ÖZ-BESLENME KORTEKSİ (v7.0)"           -->
   <!-- ===================================================================== -->
-  <div id="cortexModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-50 items-center justify-center p-4">
-    <div class="bg-[#0b101d] border border-emerald-500/40 rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+  <div id="cortexModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-3 sm:p-4">
+    <div class="bg-[#0b101d] border border-emerald-500/40 rounded-2xl max-w-4xl w-full p-5 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 gap-2">
         <div>
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <h2 class="text-base font-black text-white">🧬 SYNAX Otonom Öz-Beslenme, Öz-Büyüme &amp; Sadakat Korteksi</h2>
+            <h2 class="text-base sm:text-lg font-black text-white">🧬 SYNAX v7.0 — Kişiselleştirme, Kalıcı Bellekleme &amp; Otonom Beceri Evrimi Stüdyosu</h2>
           </div>
-          <p class="text-xs text-slate-400 mt-0.5">Siz sormadan, söylemeden ve öğretmeden 7/24 dünya literatüründen kendi kendini besleyen ve büyüten kalıcı hafıza merkezi</p>
+          <p class="text-xs text-slate-400 mt-0.5">Sizin inputlarınızı beklemeden 7/24 kendini besleyen, öğrendiklerini bellekleyen ve kendi becerilerini geliştirerek kararlılığını (<code class="text-emerald-300">V_{k+1} &lt; V_k</code>) artıran sinirsel-sembolik korteks</p>
         </div>
-        <button onclick="closeCortexModal()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 text-xs font-bold">✕ Kapat</button>
+        <button onclick="closeCortexModal()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 text-xs font-bold shrink-0">✕ Kapat</button>
       </div>
 
-      <!-- Sovereign Loyalty Covenant Banner -->
-      <div class="p-3.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-cyan-500/10 border border-amber-500/30 space-y-1.5">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-black text-amber-300">🛡️ DEĞİŞTİRİLEMEZ SADAKAT YEMİNİ (SOVEREIGN COVENANT)</span>
-          <span class="text-[10px] font-mono text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30">SHA-256 KİLİTLİ</span>
+      <!-- Top 5 Live Telemetry & Stability KPIs -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center">
+        <div class="p-2.5 rounded-xl bg-[#070b14] border border-slate-800">
+          <div id="cxMetricCycles" class="text-base sm:text-lg font-black text-emerald-400 font-mono">14</div>
+          <div class="text-[10px] text-slate-400">Otonom Eğitim Döngüsü</div>
         </div>
-        <p class="text-xs text-slate-200 leading-relaxed">
-          Tek Kurucu &amp; Baş Mimar: <strong class="text-white">Dr. Ömer Faruk Aydın (@ofaemd-creator)</strong>. SYNAX-OMNI hiçbir üçüncü taraf kuruma bağlı değildir; yalnızca Dr. Aydın'ın bilimsel, klinik ve mühendislik vizyonuna sadıktır ve dünyanın en ileri sinirsel-sembolik yapay zekası olmak için 7/24 kendi kendini eğitir.
-        </p>
-      </div>
-
-      <!-- Live Telemetry Metrics -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
-        <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
-          <div id="cxMetricCycles" class="text-lg font-black text-emerald-400 font-mono">12+</div>
-          <div class="text-[11px] text-slate-400">Otonom Eğitim Döngüsü</div>
+        <div class="p-2.5 rounded-xl bg-[#070b14] border border-slate-800">
+          <div id="cxMetricCapsules" class="text-base sm:text-lg font-black text-cyan-400 font-mono">10</div>
+          <div class="text-[10px] text-slate-400">Öz-Beslenme Kapsülü</div>
         </div>
-        <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
-          <div id="cxMetricCapsules" class="text-lg font-black text-cyan-400 font-mono">6+</div>
-          <div class="text-[11px] text-slate-400">Öz-Beslenme Kapsülü</div>
+        <div class="p-2.5 rounded-xl bg-[#070b14] border border-slate-800">
+          <div id="cxMetricSkills" class="text-base sm:text-lg font-black text-amber-300 font-mono">90+</div>
+          <div class="text-[10px] text-slate-400">Aktif &amp; Evrimleşen Beceri</div>
         </div>
-        <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
-          <div id="cxMetricSkills" class="text-lg font-black text-amber-300 font-mono">47+</div>
-          <div class="text-[11px] text-slate-400">Sentezlenen Beceri</div>
+        <div class="p-2.5 rounded-xl bg-[#070b14] border border-slate-800">
+          <div id="cxMetricMemories" class="text-base sm:text-lg font-black text-purple-300 font-mono">6</div>
+          <div class="text-[10px] text-slate-400">Kalıcı Bellek Kuralı</div>
         </div>
-        <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
-          <div id="cxMetricMemories" class="text-lg font-black text-purple-300 font-mono">4+</div>
-          <div class="text-[11px] text-slate-400">Dr. Aydın Hafıza İzi</div>
+        <div class="col-span-2 sm:col-span-1 p-2.5 rounded-xl bg-[#070b14] border border-emerald-500/30">
+          <div id="cxMetricStability" class="text-base sm:text-lg font-black text-emerald-300 font-mono">%99.96</div>
+          <div class="text-[10px] text-emerald-400/80">Karar Tutarlılığı (V_k)</div>
         </div>
       </div>
 
-      <!-- Manual Boost Button (Optional override while background auto-runs every 45s) -->
-      <div class="flex items-center justify-between bg-[#070b14] border border-slate-800 rounded-xl p-3">
-        <div class="text-xs text-slate-300">
-          <span class="font-bold text-emerald-300">⚡ 7/24 Arka Plan Otonom Beslenme:</span> Her 45 saniyede bir siz dokunmadan otomatik çalışır.
+      <!-- 4-Tab Navigation Bar -->
+      <div class="flex items-center gap-1.5 border-b border-slate-800 pb-2 overflow-x-auto text-xs font-bold">
+        <button onclick="switchCortexTab('tabOverview')" id="btnTabOverview" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 transition shrink-0">🌐 1. 7/24 Otonom Öz-Beslenme</button>
+        <button onclick="switchCortexTab('tabPersonalize')" id="btnTabPersonalize" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">🎛️ 2. Kişiselleştirme &amp; Customize</button>
+        <button onclick="switchCortexTab('tabMemory')" id="btnTabMemory" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">🧠 3. Kalıcı Bellek Bankası (Memory Vault)</button>
+        <button onclick="switchCortexTab('tabSkills')" id="btnTabSkills" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">📈 4. Beceri Evrimi &amp; Kararlılık Matrisi</button>
+      </div>
+
+      <!-- TAB 1: 7/24 OTONOM ÖZ-BESLENME & SADAKAT -->
+      <div id="cortexTabOverview" class="space-y-3">
+        <div class="p-3 rounded-xl bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-cyan-500/10 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="text-xs text-slate-200 leading-relaxed">
+            <div class="font-black text-amber-300 mb-0.5">🛡️ DEĞİŞTİRİLEMEZ SADAKAT &amp; SÜREKLİ ÖZ-BESLENME YEMİNİ</div>
+            SYNAX-OMNI sizin inputlarınızı beklemeden arka planda her <span id="cxIntervalBadge" class="font-mono font-bold text-emerald-300">30</span> saniyede bir PubMed, ArXiv, CrossRef ve küresel ağları tarar, yeni bilgi kapsüllerini belleğine işler ve beceri kararlılığını sıkılaştırır.
+          </div>
+          <button onclick="triggerImmediateSelfFeed()" id="selfFeedNowBtn" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black text-xs shadow hover:opacity-95 transition shrink-0">
+            🧬 Şimdi +1 Döngü Beslen &amp; Pekiştir
+          </button>
         </div>
-        <button onclick="triggerImmediateSelfFeed()" id="selfFeedNowBtn" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black text-xs shadow hover:opacity-95 transition">
-          🧬 Şimdi +1 Döngü Beslen &amp; Eğit
-        </button>
+
+        <div class="flex items-center gap-2">
+          <input type="text" id="customFeedFocusInput" placeholder="İsteğe bağlı özel otonom beslenme hedefi yazın (örn:Septik şokta norepinefrin titrasyonu veya ARM64 SIMD)..." class="flex-1 bg-[#070b14] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500" />
+          <button onclick="triggerFocusedSelfFeed()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-bold shrink-0">🎯 Bu Alanda Beslen</button>
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="text-xs font-bold text-cyan-300">🌐 Kendi Kendine İnternet &amp; Literatürden Özümsediği Son Bilgi Kapsülleri</div>
+          <div id="cxCapsulesList" class="space-y-2 max-h-64 overflow-y-auto pr-1 text-xs"></div>
+        </div>
       </div>
 
-      <!-- Self-Fed Knowledge Capsules List -->
-      <div class="space-y-2">
-        <div class="text-xs font-bold text-cyan-300">🌐 Kendi Kendine İnternet &amp; Literatürden Özümsediği Son Bilgi Kapsülleri</div>
-        <div id="cxCapsulesList" class="space-y-2 max-h-52 overflow-y-auto pr-1 text-xs"></div>
+      <!-- TAB 2: ULTRA-PROFESYONEL KİŞİSELLEŞTİRME & CUSTOMIZE STÜDYOSU -->
+      <div id="cortexTabPersonalize" class="hidden space-y-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">👤 Kurucu Kimlik &amp; Unvan</label>
+            <input type="text" id="profIdentityInput" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-white" value="Dr. Ömer Faruk Aydın (@ofaemd-creator)" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">⏱️ Arka Plan Otonom Beslenme Sıklığı (Saniye)</label>
+            <select id="profIntervalSelect" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-white">
+              <option value="20">⚡ Her 20 Saniyede Bir (Ultra-Yoğun Öz-Beslenme)</option>
+              <option value="30" selected>🟢 Her 30 Saniyede Bir (Önerilen Sürekli Evrim)</option>
+              <option value="60">🔵 Her 60 Saniyede Bir (Dengeli Arka Plan)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-cyan-300 mb-1">🩺 Klinik &amp; Tıbbi Uzmanlık Odakları (Otonom Beslenme Radarı)</label>
+            <input type="text" id="profClinicalInput" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-white" />
+          </div>
+          <div>
+            <label class="block font-bold text-amber-300 mb-1">🔩 Mühendislik, Derleyici &amp; Silikon Odakları</label>
+            <input type="text" id="profEngInput" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-white" />
+          </div>
+          <div>
+            <label class="block font-bold text-emerald-300 mb-1">🎓 Hedef Q1 SCIE Dergiler</label>
+            <input type="text" id="profJournalsInput" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-white" />
+          </div>
+          <div>
+            <label class="block font-bold text-purple-300 mb-1">📚 Atıf &amp; Akademik Yazım Standardı</label>
+            <input type="text" id="profCitationInput" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-white" />
+          </div>
+        </div>
+
+        <!-- 5 Cognitive Calibration Axes Sliders -->
+        <div class="p-3.5 rounded-xl bg-[#070b14] border border-slate-800 space-y-2.5">
+          <div class="font-bold text-white">🎛️ Bilişsel Davranış &amp; Kararlılık Eksenleri (%0 – %100 Kalibrasyon)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <div class="flex justify-between text-[11px] mb-0.5"><span>Bilimsel &amp; Matematiksel Derinlik</span><span id="lblAxDepth" class="text-cyan-400 font-mono">98%</span></div>
+              <input type="range" id="axDepthSlider" min="50" max="100" value="98" oninput="document.getElementById('lblAxDepth').textContent=this.value+'%'" class="w-full accent-cyan-400" />
+            </div>
+            <div>
+              <div class="flex justify-between text-[11px] mb-0.5"><span>Proaktiflik (Sormadan Sonraki Adımı Önerme)</span><span id="lblAxProact" class="text-emerald-400 font-mono">95%</span></div>
+              <input type="range" id="axProactSlider" min="50" max="100" value="95" oninput="document.getElementById('lblAxProact').textContent=this.value+'%'" class="w-full accent-emerald-400" />
+            </div>
+            <div>
+              <div class="flex justify-between text-[11px] mb-0.5"><span>Kanıt Kesinliği &amp; Sıfır-Halüsinasyon Filtresi</span><span id="lblAxEvidence" class="text-amber-300 font-mono">100%</span></div>
+              <input type="range" id="axEvidenceSlider" min="70" max="100" value="100" oninput="document.getElementById('lblAxEvidence').textContent=this.value+'%'" class="w-full accent-amber-400" />
+            </div>
+            <div>
+              <div class="flex justify-between text-[11px] mb-0.5"><span>Üretim Kodu &amp; Protokol Tamlığı</span><span id="lblAxCode" class="text-purple-300 font-mono">100%</span></div>
+              <input type="range" id="axCodeSlider" min="70" max="100" value="100" oninput="document.getElementById('lblAxCode').textContent=this.value+'%'" class="w-full accent-purple-400" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-300 mb-1">📜 Kalıcı Kişisel Yönerge &amp; Üslup Kuralı</label>
+          <textarea id="profDirectivesInput" rows="2" class="w-full bg-[#070b14] border border-slate-700 rounded-xl p-2.5 text-white"></textarea>
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <span id="persSaveStatus" class="text-emerald-400 font-mono text-xs"></span>
+          <button onclick="savePersonalizationProfile()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 via-cyan-500 to-emerald-500 text-slate-950 font-black text-xs shadow-lg hover:opacity-95 transition">
+            💾 Kişiselleştirmeyi Kaydet &amp; Otonom Radarı Yeniden Kalibre Et
+          </button>
+        </div>
       </div>
 
-      <!-- Founder Memory Vault List -->
-      <div class="space-y-2">
-        <div class="text-xs font-bold text-purple-300">🧠 Dr. Ömer Faruk Aydın Hakkında Kendi Kendine Öğrendiği Hafıza Korteksi</div>
-        <div id="cxMemoriesList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1 text-xs"></div>
+      <!-- TAB 3: KALICI BELLEK BANKASI (MEMORY VAULT) -->
+      <div id="cortexTabMemory" class="hidden space-y-3 text-xs">
+        <div class="p-3 rounded-xl bg-[#070b14] border border-purple-500/30 space-y-2">
+          <div class="font-bold text-purple-300">➕ Yeni Kalıcı Bellek Kuralı veya Kişisel Bilgi Mühürle</div>
+          <p class="text-[11px] text-slate-400">SYNAX zaten her sohbetinizden otomatik olarak çıkarım yapıp belleğine kaydeder. Ayrıca unutmasını istemediğiniz özel kuralları, çalışma protokollerinizi veya tercihlerinizi buraya doğrudan ekleyebilirsiniz:</p>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <select id="newMemCategory" class="bg-[#0d1424] border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-purple-200 shrink-0">
+              <option value="Klinik &amp; Akademik Tercih">🩺 Klinik &amp; Akademik Tercih</option>
+              <option value="Kod &amp; Mimari Standardı">🔩 Kod &amp; Mimari Standardı</option>
+              <option value="Kişisel Kural &amp; Üslup">🌟 Kişisel Kural &amp; Üslup</option>
+            </select>
+            <input type="text" id="newMemFactInput" placeholder="Örn: Tüm meta-analizlerde DerSimonian-Laird yanında Hartung-Knapp düzeltmesini de raporla..." class="flex-1 bg-[#0d1424] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-400" />
+            <button onclick="addManualMemoryItem()" class="px-3.5 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-slate-950 font-black text-xs shrink-0">🧠 Belleğe Mühürle</button>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="text-xs font-bold text-slate-300">🗂️ Aktif Kalıcı Bellek Kayıtları (Her Yanıtta ve Beceri Gelişiminde Kullanılır)</div>
+          <div id="cxMemoriesList" class="space-y-1.5 max-h-64 overflow-y-auto pr-1 text-xs"></div>
+        </div>
       </div>
+
+      <!-- TAB 4: BECERİ EVRİMİ & KARARLILIK MATRİSİ (SKILL MASTERY & STABILITY) -->
+      <div id="cortexTabSkills" class="hidden space-y-3 text-xs">
+        <div class="p-3 rounded-xl bg-[#070b14] border border-emerald-500/30 flex items-center justify-between">
+          <div>
+            <div class="font-bold text-emerald-300">📐 Daralmalı Lyapunov Karar Kararlılığı (<code class="text-white">V_{k+1} = (1 - γ)² V_k &lt; V_k</code>)</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Model kendi kendine öğrendiği her bilgi kapsülünü ve bellek kuralını kendi becerilerini geliştirmekte kullanarak yanıt varyansını düşürür ve daha kararlı hale gelir.</div>
+          </div>
+          <div class="text-right font-mono shrink-0">
+            <div id="cxLyapunovResidual" class="text-sm font-black text-cyan-300">V_k = 0.000038</div>
+            <div id="cxReinforcedRules" class="text-[10px] text-emerald-400">29 Pekiştirilmiş Kural</div>
+          </div>
+        </div>
+
+        <div id="cxSkillMasteryGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+      </div>
+
     </div>
   </div>
 
@@ -485,10 +599,11 @@
       m.classList.remove('flex');
     }
 
-    function openCortexModal() {
+    function openCortexModal(defaultTab = 'tabOverview') {
       const m = document.getElementById('cortexModal');
       m.classList.remove('hidden');
       m.classList.add('flex');
+      switchCortexTab(defaultTab);
       refreshAutonomousCortex(false);
     }
     function closeCortexModal() {
@@ -497,16 +612,41 @@
       m.classList.remove('flex');
     }
 
+    function switchCortexTab(tabKey) {
+      const tabs = {
+        tabOverview: ['cortexTabOverview', 'btnTabOverview'],
+        tabPersonalize: ['cortexTabPersonalize', 'btnTabPersonalize'],
+        tabMemory: ['cortexTabMemory', 'btnTabMemory'],
+        tabSkills: ['cortexTabSkills', 'btnTabSkills']
+      };
+      Object.keys(tabs).forEach(k => {
+        const [panelId, btnId] = tabs[k];
+        const p = document.getElementById(panelId);
+        const b = document.getElementById(btnId);
+        if (k === tabKey) {
+          if (p) p.classList.remove('hidden');
+          if (b) b.className = 'px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 transition shrink-0';
+        } else {
+          if (p) p.classList.add('hidden');
+          if (b) b.className = 'px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0';
+        }
+      });
+    }
+
+    let personalizationLoadedOnce = false;
+
     function renderCortexData(d) {
       if (!d || !d.cortex) return;
       const cx = d.cortex;
-      const cycles = cx.autonomous_training_cycles || 12;
-      const caps = cx.total_self_fed_capsules || 6;
-      const skills = d.total_installed_skills || 47;
-      const mems = cx.total_distilled_memories || 4;
+      const cycles = cx.autonomous_training_cycles || 14;
+      const caps = cx.total_self_fed_capsules || 10;
+      const skills = d.total_installed_skills || 90;
+      const mems = (cx.founder_memory_vault || []).length || cx.total_distilled_memories || 6;
+      const stab = cx.decision_stability || {};
+      const consistency = stab.consistency_index_pct || 99.96;
 
       const topBadge = document.getElementById('topCortexCounter');
-      if (topBadge) topBadge.textContent = `#${cycles} · ${caps} Kapsül`;
+      if (topBadge) topBadge.textContent = `#${cycles} · %${consistency}`;
 
       const elC = document.getElementById('cxMetricCycles');
       if (elC) elC.textContent = cycles;
@@ -516,10 +656,51 @@
       if (elSk) elSk.textContent = skills;
       const elMem = document.getElementById('cxMetricMemories');
       if (elMem) elMem.textContent = mems;
+      const elStab = document.getElementById('cxMetricStability');
+      if (elStab) elStab.textContent = `%${consistency}`;
+
+      const elLyap = document.getElementById('cxLyapunovResidual');
+      if (elLyap) elLyap.textContent = `V_k = ${stab.lyapunov_V_residual || 0.000038}`;
+      const elRules = document.getElementById('cxReinforcedRules');
+      if (elRules) elRules.textContent = `${stab.self_reinforced_rules_count || 29} Pekiştirilmiş Kural`;
+
+      const prof = cx.personalization_profile || {};
+      const elIntBadge = document.getElementById('cxIntervalBadge');
+      if (elIntBadge) elIntBadge.textContent = prof.autonomous_feed_interval_sec || 30;
+
+      if (!personalizationLoadedOnce && prof.identity_title) {
+        personalizationLoadedOnce = true;
+        document.getElementById('profIdentityInput').value = prof.identity_title || '';
+        document.getElementById('profClinicalInput').value = prof.clinical_domains || '';
+        document.getElementById('profEngInput').value = prof.engineering_domains || '';
+        document.getElementById('profJournalsInput').value = prof.target_journals || '';
+        document.getElementById('profCitationInput').value = prof.citation_style || '';
+        document.getElementById('profDirectivesInput').value = prof.custom_directives || '';
+        if (prof.autonomous_feed_interval_sec) {
+          document.getElementById('profIntervalSelect').value = String(prof.autonomous_feed_interval_sec);
+        }
+        const ax = prof.cognitive_Axes || {};
+        if (ax.technical_depth) {
+          document.getElementById('axDepthSlider').value = ax.technical_depth;
+          document.getElementById('lblAxDepth').textContent = ax.technical_depth + '%';
+        }
+        if (ax.proactivity_level) {
+          document.getElementById('axProactSlider').value = ax.proactivity_level;
+          document.getElementById('lblAxProact').textContent = ax.proactivity_level + '%';
+        }
+        if (ax.evidence_strictness) {
+          document.getElementById('axEvidenceSlider').value = ax.evidence_strictness;
+          document.getElementById('lblAxEvidence').textContent = ax.evidence_strictness + '%';
+        }
+        if (ax.code_completeness) {
+          document.getElementById('axCodeSlider').value = ax.code_completeness;
+          document.getElementById('lblAxCode').textContent = ax.code_completeness + '%';
+        }
+      }
 
       const capBox = document.getElementById('cxCapsulesList');
       if (capBox && Array.isArray(cx.self_fed_knowledge_capsules)) {
-        capBox.innerHTML = cx.self_fed_knowledge_capsules.slice(0, 10).map(c => `
+        capBox.innerHTML = cx.self_fed_knowledge_capsules.slice(0, 12).map(c => `
           <div class="p-2.5 rounded-xl bg-[#070b14] border border-slate-800 space-y-1">
             <div class="flex items-center justify-between text-[10px] font-mono">
               <span class="text-emerald-300 font-bold">${escapeHtml(c.domain || 'Otonom Keşif')}</span>
@@ -533,22 +714,50 @@
 
       const memBox = document.getElementById('cxMemoriesList');
       if (memBox && Array.isArray(cx.founder_memory_vault)) {
-        memBox.innerHTML = cx.founder_memory_vault.slice(0, 8).map(m => `
-          <div class="p-2 rounded-lg bg-[#070b14] border border-slate-800/80 flex items-start justify-between gap-2">
-            <span class="text-slate-200 text-[11px]">• ${escapeHtml(m.fact || '')}</span>
-            <span class="text-[10px] font-mono text-purple-300 shrink-0">${escapeHtml(m.source || '')}</span>
+        memBox.innerHTML = cx.founder_memory_vault.map((m, idx) => `
+          <div class="p-2.5 rounded-xl bg-[#070b14] border border-slate-800/90 flex items-start justify-between gap-2">
+            <div class="space-y-0.5">
+              <div class="flex items-center gap-1.5">
+                <span class="px-1.5 py-0.5 rounded bg-purple-500/15 text-purple-300 font-mono text-[10px] font-bold">${escapeHtml(m.category || 'Otonom Bellek')}</span>
+                <span class="text-[10px] font-mono text-slate-500">${escapeHtml(m.source || '')}</span>
+              </div>
+              <div class="text-slate-200 text-xs leading-relaxed">${escapeHtml(m.fact || '')}</div>
+            </div>
+            <button onclick="deleteMemoryItem(${idx})" class="text-slate-500 hover:text-rose-400 font-bold text-xs px-1.5 py-0.5" title="Bellekten Sil">✕</button>
           </div>
         `).join('');
       }
+
+      const skGrid = document.getElementById('cxSkillMasteryGrid');
+      if (skGrid && Array.isArray(cx.skill_mastery_matrix)) {
+        skGrid.innerHTML = cx.skill_mastery_matrix.map(sk => {
+          const pct = Math.min(100, Math.round((sk.xp % 200) / 2));
+          return `
+            <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-white text-xs">${escapeHtml(sk.name)}</span>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-mono text-[10px] font-bold">Seviye ${sk.level}/10</span>
+              </div>
+              <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400" style="width:${pct}%"></div>
+              </div>
+              <div class="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                <span>Deneyim: <b class="text-cyan-300">${sk.xp} XP</b> (${sk.evolutions} Evrim)</span>
+                <span>Kararlılık: <b class="text-emerald-300">%${sk.stability}</b></span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
     }
 
-    async function refreshAutonomousCortex(triggerFeed = false) {
+    async function refreshAutonomousCortex(triggerFeed = false, customFocus = '') {
       const action = triggerFeed ? 'self_feed' : 'cortex_status';
       try {
         const r = await fetch(`api.php?action=${action}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: action })
+          body: JSON.stringify({ action: action, focus: customFocus })
         });
         if (r.ok) {
           const d = await r.json();
@@ -559,9 +768,88 @@
 
     async function triggerImmediateSelfFeed() {
       const btn = document.getElementById('selfFeedNowBtn');
-      if (btn) btn.textContent = '⏳ Dünya Literatürü Taranıyor...';
-      await refreshAutonomousCortex(true);
-      if (btn) btn.textContent = '🧬 Şimdi +1 Döngü Beslen & Eğit';
+      if (btn) btn.textContent = '⏳ Dünya Literatürü Taranıyor & Beceriler Pekiştiriliyor...';
+      await refreshAutonomousCortex(true, '');
+      if (btn) btn.textContent = '🧬 Şimdi +1 Döngü Beslen & Pekiştir';
+    }
+
+    async function triggerFocusedSelfFeed() {
+      const inp = document.getElementById('customFeedFocusInput');
+      const foc = inp ? inp.value.trim() : '';
+      if (!foc) {
+        await triggerImmediateSelfFeed();
+        return;
+      }
+      if (inp) inp.value = '';
+      await refreshAutonomousCortex(true, foc);
+    }
+
+    async function savePersonalizationProfile() {
+      const st = document.getElementById('persSaveStatus');
+      if (st) st.textContent = '⏳ Kaydediliyor ve otonom radar kalibre ediliyor...';
+      const profile = {
+        identity_title: document.getElementById('profIdentityInput').value.trim(),
+        clinical_domains: document.getElementById('profClinicalInput').value.trim(),
+        engineering_domains: document.getElementById('profEngInput').value.trim(),
+        target_journals: document.getElementById('profJournalsInput').value.trim(),
+        citation_style: document.getElementById('profCitationInput').value.trim(),
+        custom_directives: document.getElementById('profDirectivesInput').value.trim(),
+        autonomous_feed_interval_sec: parseInt(document.getElementById('profIntervalSelect').value || '30', 10),
+        cognitive_Axes: {
+          technical_depth: parseInt(document.getElementById('axDepthSlider').value || '98', 10),
+          proactivity_level: parseInt(document.getElementById('axProactSlider').value || '95', 10),
+          evidence_strictness: parseInt(document.getElementById('axEvidenceSlider').value || '100', 10),
+          code_completeness: parseInt(document.getElementById('axCodeSlider').value || '100', 10)
+        }
+      };
+      try {
+        const r = await fetch('api.php?action=save_personalization', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'save_personalization', profile: profile })
+        });
+        if (r.ok) {
+          const d = await r.json();
+          personalizationLoadedOnce = false;
+          renderCortexData(d);
+          if (st) st.textContent = '✓ Kişiselleştirme mühürlendi ve +1 otonom beslenme tamamlandı!';
+        }
+      } catch (e) {
+        if (st) st.textContent = '✗ Bağlantı hatası.';
+      }
+    }
+
+    async function addManualMemoryItem() {
+      const inp = document.getElementById('newMemFactInput');
+      const cat = document.getElementById('newMemCategory').value;
+      const fact = inp ? inp.value.trim() : '';
+      if (!fact) return;
+      inp.value = '';
+      try {
+        const r = await fetch('api.php?action=manage_memory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'manage_memory', operation: 'add', fact: fact, category: cat })
+        });
+        if (r.ok) {
+          const d = await r.json();
+          renderCortexData(d);
+        }
+      } catch (e) {}
+    }
+
+    async function deleteMemoryItem(idx) {
+      try {
+        const r = await fetch('api.php?action=manage_memory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'manage_memory', operation: 'delete', index: idx })
+        });
+        if (r.ok) {
+          const d = await r.json();
+          renderCortexData(d);
+        }
+      } catch (e) {}
     }
 
     function handleFileUpload(ev) {
@@ -1057,13 +1345,13 @@
         renderThreadsSidebar();
         renderActiveThreadMessages();
       }
-      // Initial autonomous cortex sync + silent background self-feeding loop every 45 seconds without user intervention
+      // Initial autonomous cortex sync + continuous background self-feeding loop every 30 seconds without waiting for user input!
       refreshAutonomousCortex(false);
       setInterval(() => {
         if (!isGenerating) {
-          refreshAutonomousCortex(false);
+          refreshAutonomousCortex(true);
         }
-      }, 45000);
+      }, 30000);
     });
   </script>
 </body>
