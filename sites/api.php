@@ -21,6 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 $server_groq_key = getenv('GROQ_API_KEY') ?: '';
+if (file_exists(dirname(__DIR__) . '/.synax_env.php')) {
+    include dirname(__DIR__) . '/.synax_env.php';
+}
 if (file_exists(__DIR__ . '/.synax_env.php')) {
     include __DIR__ . '/.synax_env.php';
 }
@@ -235,14 +238,17 @@ if ($action === 'evolution_status' || $action === 'automation_status') {
 }
 
 // ============================================================================
-// 2. LIVE PUBMED E-UTILITIES + WIKIPEDIA + GROQ LPU REACT INFERENCE
+// 2. LIVE MULTI-TURN LLM (GPT-OSS-120B / QWEN-3.8-27B / LLAMA-3.3-70B) + RAG
 // ============================================================================
-$prompt = trim($data['prompt'] ?? $data['message'] ?? 'Merhaba SYNAX');
+$prompt = trim($data['prompt'] ?? $data['message'] ?? 'Merhaba');
 $target_agent_id = $data['target_agent_id'] ?? 'synax-llm';
-$engine_provider = $data['engine_provider'] ?? 'SYNAX-OMNI v6.5 (Groq LPU + Canlı RAG)';
+$engine_provider = $data['engine_provider'] ?? 'SYNAX-OMNI v6.6 (Groq LPU)';
 $user_api_key = trim($data['user_api_key'] ?? '');
-$user_model = trim($data['user_model'] ?? '');
+$user_model = trim($data['user_model'] ?? ($data['model'] ?? ''));
 $custom_sys = trim($data['custom_system_prompt'] ?? '');
+$client_messages = is_array($data['messages'] ?? null) ? $data['messages'] : [];
+$enable_web_rag = isset($data['web_search']) ? (bool)$data['web_search'] : true;
+$enable_deep_think = isset($data['deep_think']) ? (bool)$data['deep_think'] : true;
 
 $active_key = $user_api_key ?: $server_groq_key;
 
@@ -253,7 +259,7 @@ function http_get_fast($url, $timeout = 3) {
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_TIMEOUT => $timeout,
         CURLOPT_CONNECTTIMEOUT => 2,
-        CURLOPT_USERAGENT => 'SYNAX-Omni-SuperLLM/6.5 (https://synaxcode.online)',
+        CURLOPT_USERAGENT => 'SYNAX-Omni-SuperLLM/6.6 (https://chat.synaxcode.com)',
     ]);
     $res = curl_exec($ch);
     curl_close($ch);
@@ -289,6 +295,9 @@ foreach ($mesh_map as $tr_k => $en_v) {
     }
 }
 
+$is_greeting = (bool)preg_match('/^(merhaba|selam|nasılsın|hey|hi|hello|iyi günler|iyi akşamlar|günaydın|teşekkürler|sağ ol)[\s\?\!\.]*$/iu', $prompt);
+$should_run_rag = $enable_web_rag && !$is_greeting && (mb_strlen($prompt, 'UTF-8') > 10);
+
 $stop_words = ['bana','için','göre','anlat','açıkla','yaz','üret','oluştur','hesaplayan','bir','ve','ile','nasıl','nedir','nelerdir','güncel','kılavuzlara','python','kodu','fonksiyon','uygulama','lütfen','detaylı','hakkında','bilgi','ver'];
 preg_match_all('/[\p{L}\p{N}\-]+/u', $prompt, $m_words);
 $core_words = [];
@@ -301,62 +310,64 @@ $tr_query = implode(' ', array_slice($core_words, 0, 5)) ?: mb_substr($prompt, 0
 $en_query = !empty($en_terms) ? implode(' ', array_slice($en_terms, 0, 2)) : $tr_query;
 
 $sources = [];
-$esearch_json = http_get_fast('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode($en_query) . '&retmax=3&sort=relevance&retmode=json', 3);
-if ($esearch_json) {
-    $es_data = json_decode($esearch_json, true);
-    $pmids = $es_data['esearchresult']['idlist'] ?? [];
-    if (!empty($pmids)) {
-        $efetch_xml = http_get_fast('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' . implode(',', $pmids) . '&retmode=xml', 3);
-        if ($efetch_xml) {
-            $xml = @simplexml_load_string($efetch_xml);
-            if ($xml && isset($xml->PubmedArticle)) {
-                foreach ($xml->PubmedArticle as $art) {
-                    $pmid = (string)($art->MedlineCitation->PMID ?? '');
-                    $title = (string)($art->MedlineCitation->Article->ArticleTitle ?? '');
-                    $journal = (string)($art->MedlineCitation->Article->Journal->Title ?? 'PubMed Journal');
-                    $year = (string)($art->MedlineCitation->Article->Journal->JournalIssue->PubDate->Year ?? '2024');
-                    $abst = '';
-                    if (isset($art->MedlineCitation->Article->Abstract->AbstractText)) {
-                        foreach ($art->MedlineCitation->Article->Abstract->AbstractText as $ab_part) {
-                            $abst .= (string)$ab_part . ' ';
+if ($should_run_rag) {
+    $esearch_json = http_get_fast('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode($en_query) . '&retmax=3&sort=relevance&retmode=json', 2);
+    if ($esearch_json) {
+        $es_data = json_decode($esearch_json, true);
+        $pmids = $es_data['esearchresult']['idlist'] ?? [];
+        if (!empty($pmids)) {
+            $efetch_xml = http_get_fast('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' . implode(',', $pmids) . '&retmode=xml', 2);
+            if ($efetch_xml) {
+                $xml = @simplexml_load_string($efetch_xml);
+                if ($xml && isset($xml->PubmedArticle)) {
+                    foreach ($xml->PubmedArticle as $art) {
+                        $pmid = (string)($art->MedlineCitation->PMID ?? '');
+                        $title = (string)($art->MedlineCitation->Article->ArticleTitle ?? '');
+                        $journal = (string)($art->MedlineCitation->Article->Journal->Title ?? 'PubMed Journal');
+                        $year = (string)($art->MedlineCitation->Article->Journal->JournalIssue->PubDate->Year ?? '2024');
+                        $abst = '';
+                        if (isset($art->MedlineCitation->Article->Abstract->AbstractText)) {
+                            foreach ($art->MedlineCitation->Article->Abstract->AbstractText as $ab_part) {
+                                $abst .= (string)$ab_part . ' ';
+                            }
                         }
-                    }
-                    $abst = trim($abst) ?: $title;
-                    if ($title) {
-                        $sources[] = [
-                            'index' => count($sources) + 1,
-                            'title' => $title,
-                            'source' => "PubMed · $journal ($year)",
-                            'author' => 'PubMed Indexed Study',
-                            'url' => "https://pubmed.ncbi.nlm.nih.gov/$pmid/",
-                            'badge' => "PMID: $pmid",
-                            'snippet' => mb_substr($abst, 0, 420),
-                        ];
+                        $abst = trim($abst) ?: $title;
+                        if ($title) {
+                            $sources[] = [
+                                'index' => count($sources) + 1,
+                                'title' => $title,
+                                'source' => "PubMed · $journal ($year)",
+                                'author' => 'PubMed Indexed Study',
+                                'url' => "https://pubmed.ncbi.nlm.nih.gov/$pmid/",
+                                'badge' => "PMID: $pmid",
+                                'snippet' => mb_substr($abst, 0, 420),
+                            ];
+                        }
                     }
                 }
             }
         }
     }
-}
 
-$wiki_search = http_get_fast('https://tr.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . urlencode($tr_query) . '&format=json&srlimit=1', 2);
-if ($wiki_search) {
-    $ws = json_decode($wiki_search, true);
-    $w_title = $ws['query']['search'][0]['title'] ?? '';
-    if ($w_title) {
-        $w_sum = http_get_fast('https://tr.wikipedia.org/api/rest_v1/page/summary/' . urlencode($w_title), 2);
-        if ($w_sum) {
-            $wd = json_decode($w_sum, true);
-            if (!empty($wd['extract'])) {
-                $sources[] = [
-                    'index' => count($sources) + 1,
-                    'title' => $w_title,
-                    'source' => 'Wikipedia (TR) Ansiklopedisi',
-                    'author' => 'Ansiklopedik Kaynak',
-                    'url' => $wd['content_urls']['desktop']['page'] ?? ('https://tr.wikipedia.org/wiki/' . urlencode($w_title)),
-                    'badge' => 'WIKI-TR',
-                    'snippet' => mb_substr($wd['extract'], 0, 400),
-                ];
+    $wiki_search = http_get_fast('https://tr.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . urlencode($tr_query) . '&format=json&srlimit=1', 2);
+    if ($wiki_search) {
+        $ws = json_decode($wiki_search, true);
+        $w_title = $ws['query']['search'][0]['title'] ?? '';
+        if ($w_title) {
+            $w_sum = http_get_fast('https://tr.wikipedia.org/api/rest_v1/page/summary/' . urlencode($w_title), 2);
+            if ($w_sum) {
+                $wd = json_decode($w_sum, true);
+                if (!empty($wd['extract'])) {
+                    $sources[] = [
+                        'index' => count($sources) + 1,
+                        'title' => $w_title,
+                        'source' => 'Wikipedia (TR) Ansiklopedisi',
+                        'author' => 'Ansiklopedik Kaynak',
+                        'url' => $wd['content_urls']['desktop']['page'] ?? ('https://tr.wikipedia.org/wiki/' . urlencode($w_title)),
+                        'badge' => 'WIKI-TR',
+                        'snippet' => mb_substr($wd['extract'], 0, 400),
+                    ];
+                }
             }
         }
     }
@@ -368,38 +379,62 @@ foreach ($sources as $s) {
 }
 
 $system_prompt = $custom_sys ?: (
-    "Sen **SYNAX-OMNI v6.5** Süper Dil Modelisin (Dr. Ömer Faruk Aydın tarafından geliştirilen ChatGPT + Claude + Perplexity birleşimi yapay zeka). " .
+    "Sen **SYNAX-OMNI v6.6** Süper Dil Modelisin (Dr. Ömer Faruk Aydın tarafından geliştirilen, ChatGPT, Claude ve chat.z.ai kalitesinde çalışan çok amaçlı büyük dil modeli). " .
     "KURALLAR:\n" .
-    "1. Kullanıcının tam olarak sorduğu soruya veya istediği işe odaklan. Asla konu dışı hazır şablon veya alakasız metin ekleme!\n" .
-    "2. Sağlanan canlı kaynakları kullanarak cümle içinde `[1]`, `[2]` şeklinde Perplexity tarzı bilimsel atıflar yap.\n" .
-    "3. Kullanıcı kod, hesaplama, klinik algoritma veya makale istediğinde tam ve eksiksiz üret.\n" .
-    "4. Yanıtının en sonuna orta paneldeki Claude Artifact / Canvas alanında gösterilmek üzere şu formatta özel bir blok ekle:\n" .
-    "```artifact\nTITLE: <Çıktı Başlığı>\nTYPE: <code|markdown|html>\n<Tam Kod, Klinik Protokol Tablosu veya Makale Metni>\n```"
+    "1. Kullanıcının her sorusuna (günlük sohbet, tıp, yoğun bakım, acil tıp, akademik makale yazımı, biyoistatistik, yazılım mühendisliği, matematik, çeviri veya genel kültür) doğrudan, doğal, akıcı ve eksiksiz yanıt ver. Asla şablon veya alakasız konu dışı metin kullanma!\n" .
+    "2. Eğer kullanıcı bilimsel/tıbbi bir soru sorduysa ve sana CANLI KAYNAKLAR sağlandıysa cümle içinde `[1]`, `[2]` şeklinde atıflar yap.\n" .
+    "3. Kod, algoritma, tablo veya makale istendiğinde tam ve doğrudan çalıştırılabilir/yayınlanabilir kalitede üret."
 );
 
-$user_payload = "CANLI ÇEKİLEN BİLİMSEL & WEB KAYNAKLARI:\n" . ($sources_context ?: "(Genel Bilgi)") . "\n\nKULLANICI SORUSU / GÖREVİ:\n" . $prompt;
+// Build multi-turn messages array for the LLM
+$llm_messages = [
+    ['role' => 'system', 'content' => $system_prompt],
+];
+if (!empty($client_messages)) {
+    foreach (array_slice($client_messages, -12) as $cm) {
+        $r = $cm['role'] ?? '';
+        $c = trim($cm['content'] ?? '');
+        if (in_array($r, ['user', 'assistant'], true) && $c !== '') {
+            $llm_messages[] = ['role' => $r, 'content' => $c];
+        }
+    }
+}
+// Append current user turn (enriched with RAG sources if relevant)
+$last_user_payload = ($sources_context && !$is_greeting)
+    ? ("DOĞRULANMIŞ CANLI KAYNAKLAR (İlgiliyse kullan, değilse doğrudan soruyu yanıtla):\n" . $sources_context . "\n\nKULLANICI MESAJI:\n" . $prompt)
+    : $prompt;
+
+// Replace last user message or append it
+if (!empty($llm_messages) && $llm_messages[count($llm_messages) - 1]['role'] === 'user') {
+    $llm_messages[count($llm_messages) - 1]['content'] = $last_user_payload;
+} else {
+    $llm_messages[] = ['role' => 'user', 'content' => $last_user_payload];
+}
 
 $llm_reply = "";
-$used_model = "SYNAX-OMNI v6.5 (Groq LPU · Qwen-3.8-27B)";
+$reasoning_trace = "";
+$used_model = "SYNAX-OMNI v6.6 (GPT-OSS-120B)";
 
 if ($active_key) {
-    $models_to_try = $user_model ? [$user_model] : ['qwen/qwen3.8-27b', 'openai/gpt-oss-20b', 'openai/gpt-oss-120b'];
-    foreach ($models_to_try as $m) {
+    $default_chain = ['openai/gpt-oss-120b', 'qwen/qwen3.8-27b', 'llama-3.3-70b-versatile', 'openai/gpt-oss-20b'];
+    if ($user_model && !in_array($user_model, $default_chain, true)) {
+        array_unshift($default_chain, $user_model);
+    } elseif ($user_model) {
+        $default_chain = array_values(array_unique(array_merge([$user_model], $default_chain)));
+    }
+    foreach ($default_chain as $m) {
         $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
         $post_body = json_encode([
             'model' => $m,
-            'messages' => [
-                ['role' => 'system', 'content' => $system_prompt],
-                ['role' => 'user', 'content' => $user_payload],
-            ],
-            'temperature' => 0.35,
-            'max_tokens' => 3000,
+            'messages' => $llm_messages,
+            'temperature' => 0.4,
+            'max_tokens' => 4096,
         ]);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $post_body,
-            CURLOPT_TIMEOUT => 18,
+            CURLOPT_TIMEOUT => 22,
             CURLOPT_HTTPHEADER => [
                 'Authorization: Bearer ' . $active_key,
                 'Content-Type: application/json',
@@ -411,19 +446,52 @@ if ($active_key) {
         curl_close($ch);
         if ($code === 200 && $resp) {
             $j = json_decode($resp, true);
-            $content = trim($j['choices'][0]['message']['content'] ?? '');
-            $content = trim(preg_replace('/<think>[\s\S]*?<\/think>/', '', $content));
-            if ($content) {
-                $llm_reply = $content;
-                $used_model = "SYNAX-OMNI v6.5 · Groq LPU ($m)";
+            $raw_content = trim($j['choices'][0]['message']['content'] ?? '');
+            $reasoning_field = trim($j['choices'][0]['message']['reasoning'] ?? '');
+            if (preg_match('/<think>([\s\S]*?)<\/think>/', $raw_content, $m_think)) {
+                $reasoning_trace = trim($m_think[1]);
+                $raw_content = trim(preg_replace('/<think>[\s\S]*?<\/think>/', '', $raw_content));
+            } elseif ($reasoning_field) {
+                $reasoning_trace = $reasoning_field;
+            }
+            if ($raw_content) {
+                $llm_reply = $raw_content;
+                $used_model = "SYNAX-OMNI v6.6 ($m)";
                 break;
             }
         }
     }
 }
 
+// Secondary zero-key live cloud LLM fallback (Pollinations OpenAI GPT-OSS-20B)
 if (!$llm_reply) {
-    $llm_reply = "### 🧠 SYNAX-OMNI v6.5 Analizi: $prompt\n\n" . ($sources_context ?: "Sorgunuz 8 ajan ve 21 Q1 SCIE akademik beceri motoru tarafından işlendi.");
+    $ch = curl_init('https://text.pollinations.ai/openai');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode([
+            'model' => 'openai',
+            'messages' => $llm_messages,
+            'temperature' => 0.4,
+        ]),
+        CURLOPT_TIMEOUT => 15,
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'User-Agent: SYNAX-Omni/6.6'],
+    ]);
+    $p_resp = curl_exec($ch);
+    $p_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($p_code === 200 && $p_resp) {
+        $pj = json_decode($p_resp, true);
+        $p_content = trim($pj['choices'][0]['message']['content'] ?? '');
+        if ($p_content) {
+            $llm_reply = $p_content;
+            $used_model = "SYNAX-OMNI v6.6 (Cloud Reasoning LLM)";
+        }
+    }
+}
+
+if (!$llm_reply) {
+    $llm_reply = "### 🧠 SYNAX-OMNI v6.6 Yanıtı\n\n" . ($sources_context ?: "Sorgunuz işlendi.");
 }
 
 $art_title = "SYNAX-OMNI Çıktısı: " . mb_substr($prompt, 0, 46);
@@ -457,25 +525,33 @@ if (!$art_content) {
     }
 }
 
-$thinking_steps = [
-    "1. 🔎 [Akıllı MeSH & Sorgu Ayrıştırma]: Türkçe sorgu (`$tr_query`) ve PubMed MeSH terimi (`$en_query`) çıkarıldı.",
-    "2. 🌐 [Perplexity Canlı Kanıt Tarama]: NCBI PubMed (`efetch` tam özet) ve Wikipedia üzerinden " . count($sources) . " doğrulanmış birincil kaynak çekildi.",
-    "3. ⚡ [Süper-LLM Muhakeme]: `$used_model` motoruyla kaynak-doğrulamalı yanıt ve özel Canvas Artifact (`$art_title`) sentezlendi.",
-];
+$thinking_steps = [];
+if ($reasoning_trace) {
+    foreach (array_filter(array_map('trim', explode("\n", $reasoning_trace))) as $r_line) {
+        $thinking_steps[] = $r_line;
+    }
+}
+if (empty($thinking_steps) && $enable_deep_think) {
+    $thinking_steps = [
+        "🧠 [Model & Bağlam]: `$used_model` motoru çok-turlu sohbet geçmişiyle (" . count($llm_messages) . " mesaj) çalıştırıldı.",
+        "🔎 [Canlı Kanıt & RAG]: " . (count($sources) > 0 ? ("NCBI PubMed ve Wikipedia üzerinden " . count($sources) . " doğrulanmış kaynak (`$en_query`) incelendi.") : "Doğrudan dil modeli muhakemesi uygulandı."),
+    ];
+}
 
 $follow_ups = [
-    "\"$tr_query\" konusunu güncel klinik/akademik çalışmalarla daha derinlemesine karşılaştırır mısın?",
-    "Bu konu için doğrudan çalıştırılabilir bir Python simülasyonu veya hesaplama aracı yaz",
-    "Bu konudaki kritik karar noktalarını özetleyen kapsamlı bir tablo oluştur",
+    "Bu konuyu örnek bir kod veya klinik/pratik senaryo ile detaylandırır mısın?",
+    "Bu konudaki en önemli noktaları karşılaştırmalı bir tablo halinde özetle",
+    "Bu içeriği Q1 SCIE akademik makale formatında genişlet",
 ];
 
 echo json_encode([
-    'office_version' => '6.5.0',
+    'office_version' => '6.6.0',
     'job_id' => 'SYNAX-OMNI-' . rand(1000, 9999),
     'prompt' => $prompt,
     'target_agent_id' => $target_agent_id,
     'model_label' => $used_model,
     'reply' => $llm_reply,
+    'reasoning' => $reasoning_trace,
     'sources' => $sources,
     'thinking_steps' => $thinking_steps,
     'follow_ups' => $follow_ups,

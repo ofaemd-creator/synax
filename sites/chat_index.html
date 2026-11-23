@@ -3,141 +3,222 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SYNAX Chat (chat.synaxcode.com) — SYNAX-OMNI v6.5 Süper-LLM, Canlı PubMed RAG &amp; 21 Q1 SCIE Beceri</title>
+  <title>SYNAX Chat (chat.synaxcode.com) — SYNAX-OMNI 120B / Qwen-3.8 Büyük Dil Modeli</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background: #040711; color: #f8fafc; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0d14; color: #f1f5f9; }
     code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #050a14; }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.22); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.5); }
+    .prose-msg h1 { font-size: 1.25rem; font-weight: 800; color: #fff; margin: 0.85rem 0 0.4rem; }
+    .prose-msg h2 { font-size: 1.1rem; font-weight: 800; color: #f8fafc; margin: 0.75rem 0 0.35rem; }
+    .prose-msg h3 { font-size: 0.98rem; font-weight: 700; color: #38bdf8; margin: 0.65rem 0 0.3rem; }
+    .prose-msg p { margin-bottom: 0.65rem; line-height: 1.68; }
+    .prose-msg ul, .prose-msg ol { margin: 0.45rem 0 0.75rem 1.25rem; line-height: 1.65; }
+    .prose-msg li { margin-bottom: 0.25rem; }
+    .prose-msg table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.82rem; }
+    .prose-msg th, .prose-msg td { border: 1px solid rgba(148,163,184,0.22); padding: 0.45rem 0.65rem; text-align: left; }
+    .prose-msg th { background: rgba(15,23,42,0.85); color: #38bdf8; font-weight: 700; }
+    @keyframes pulseDot { 0%, 100% { opacity: 0.3; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.15); } }
+    .typing-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #38bdf8; animation: pulseDot 1.2s infinite ease-in-out; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
   </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden select-none">
+<body class="h-screen flex overflow-hidden bg-[#0a0d14] text-slate-100">
 
-  <!-- TOP ECOSYSTEM NAVIGATION BAR -->
-  <header class="h-13 bg-[#050914] border-b border-cyan-500/25 px-4 py-2 flex items-center justify-between shrink-0 z-30 flex-wrap gap-2">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px] shadow-lg shadow-cyan-500/20">
-        <div class="w-full h-full bg-[#040711] rounded-[10px] flex items-center justify-center font-black text-sm text-amber-300">SX</div>
+  <!-- ===================================================================== -->
+  <!-- 1. COLLAPSIBLE LEFT SIDEBAR (CHAT HISTORY + PERSONAS + 21 Q1 SKILLS)  -->
+  <!-- ===================================================================== -->
+  <aside id="leftSidebar" class="w-64 bg-[#06090f] border-r border-slate-800/80 flex flex-col h-full shrink-0 transition-all duration-200 z-30">
+    <!-- Brand & New Chat -->
+    <div class="p-3 border-b border-slate-800/80 space-y-2.5">
+      <div class="flex items-center justify-between px-1">
+        <a href="https://synaxcode.com" class="flex items-center gap-2 text-decoration-none">
+          <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px]">
+            <div class="w-full h-full bg-[#06090f] rounded-[5px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
+          </div>
+          <span class="font-black text-sm tracking-tight text-white">SYNAX <span class="text-cyan-400 font-mono text-xs">Chat</span></span>
+        </a>
+        <button onclick="toggleSidebar()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 text-xs" title="Kenar Çubuğunu Gizle">✕</button>
       </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="font-black text-sm tracking-tight bg-gradient-to-r from-amber-300 via-emerald-300 to-cyan-400 bg-clip-text text-transparent">CHAT.SYNAXCODE.COM</span>
-          <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">SYNAX-OMNI v6.5</span>
-        </div>
-        <div class="text-[11px] text-slate-400">ChatGPT + Claude Artifacts + Perplexity Canlı PubMed/CrossRef RAG + 21 Q1 SCIE Beceri</div>
-      </div>
+
+      <button onclick="createNewChatThread()" class="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-950 font-bold text-xs flex items-center justify-between shadow transition">
+        <span class="flex items-center gap-2"><span>＋</span> <span>Yeni Sohbet</span></span>
+        <kbd class="text-[10px] font-mono bg-slate-200 px-1.5 py-0.5 rounded text-slate-700">⌘K</kbd>
+      </button>
     </div>
 
-    <!-- SUBDOMAIN SWITCHER -->
-    <nav class="flex items-center gap-1.5 font-mono text-xs flex-wrap">
-      <a href="https://office.synaxcode.com" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold transition">🏢 office.synaxcode.com</a>
-      <a href="https://chat.synaxcode.com" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black shadow-md">💬 chat.synaxcode.com</a>
-      <a href="https://code.synaxcode.com" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 font-bold transition">💻 code.synaxcode.com</a>
-      <a href="https://terminal.synaxcode.com" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-purple-300 border border-purple-500/30 font-bold transition">⌨️ terminal.synaxcode.com</a>
-      <a href="https://synaxcode.com" class="px-2.5 py-1.5 rounded-lg bg-slate-900/70 hover:bg-slate-800 text-slate-300 border border-slate-700 transition">🌐 synaxcode.com</a>
-    </nav>
-  </header>
+    <!-- Saved Chat Threads History -->
+    <div class="px-3 pt-2.5 pb-1 flex items-center justify-between">
+      <span class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Sohbet Geçmişi</span>
+      <button onclick="clearAllThreads()" class="text-[10px] text-slate-500 hover:text-rose-400">Temizle</button>
+    </div>
+    <div id="threadsListBox" class="flex-1 overflow-y-auto px-2 space-y-1 text-xs"></div>
 
-  <!-- 3-PANE FLAGSHIP CHAT + AGENT PERSONAS + CLAUDE ARTIFACT CANVAS -->
-  <div class="flex-1 grid grid-cols-12 overflow-hidden">
+    <!-- Collapsible Specialist Agents & 21 Academic Skills -->
+    <div class="border-t border-slate-800/80 p-2.5 space-y-2 bg-[#05070c]">
+      <div>
+        <label class="block text-[10px] font-mono uppercase text-slate-400 font-bold mb-1">🎭 Uzman Ajan Rolü</label>
+        <select id="agentPersonaSelect" class="w-full bg-[#0d1322] border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+          <option value="synax-llm">🌟 SYNAX-OMNI (Genel Süper-LLM)</option>
+          <option value="agent-scholar">📚 Dr. Scholar (PubMed &amp; PRISMA)</option>
+          <option value="agent-biostat">📊 Dr. Biostat (Meta-Analiz)</option>
+          <option value="biomed-autocal">🩺 Dr. Lyapunov (Biyomedikal)</option>
+          <option value="egraph-prover">🛡️ Chief E-Graph (0-ULP Kanıt)</option>
+          <option value="silicon-studio">🔩 Chief Silicon (C11 / NEON / Python)</option>
+        </select>
+      </div>
 
-    <!-- LEFT SIDEBAR: AGENT PERSONA SELECTOR & 21 Q1 SCIE SKILLS -->
-    <aside class="col-span-12 md:col-span-3 xl:col-span-2 bg-[#060b17] border-r border-slate-800/80 flex flex-col h-full overflow-hidden">
-      <div class="p-3 border-b border-slate-800/80 space-y-2">
-        <button onclick="resetChatSession()" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-emerald-500 hover:opacity-95 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-lg">
-          <span>＋ Yeni Akademik / Kod Sohbeti</span>
+      <details class="group">
+        <summary class="cursor-pointer list-none flex items-center justify-between px-2 py-1.5 rounded-lg bg-[#0d1322] hover:bg-slate-800/70 border border-slate-800 text-xs font-semibold text-emerald-300">
+          <span>🎓 21 Q1 Akademik Beceri</span>
+          <span class="text-[10px] text-slate-400 group-open:rotate-180 transition">▼</span>
+        </summary>
+        <div id="skillsAccordionList" class="mt-1.5 max-h-48 overflow-y-auto space-y-1 pr-1"></div>
+      </details>
+    </div>
+  </aside>
+
+  <!-- ===================================================================== -->
+  <!-- 2. MAIN CHATGPT / CHAT.Z.AI CENTER WORKSPACE                          -->
+  <!-- ===================================================================== -->
+  <div class="flex-1 flex flex-col h-full overflow-hidden relative">
+
+    <!-- Top Minimal Bar (Model Picker + Ecosystem Links + Canvas Toggle) -->
+    <header class="h-13 px-4 border-b border-slate-800/70 bg-[#0a0d14]/90 backdrop-blur flex items-center justify-between shrink-0 z-20">
+      <div class="flex items-center gap-2.5">
+        <button id="openSidebarBtn" onclick="toggleSidebar()" class="hidden p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs">☰</button>
+
+        <!-- Real Live Model Switcher (just like ChatGPT / chat.z.ai) -->
+        <div class="relative flex items-center gap-2">
+          <select id="modelEngineSelect" class="bg-[#111726] hover:bg-[#161e31] border border-slate-800 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-cyan-500 cursor-pointer shadow-sm">
+            <option value="openai/gpt-oss-120b">⚡ SYNAX-OMNI 120B (GPT-OSS-120B Reasoning · LPU)</option>
+            <option value="qwen/qwen3.8-27b">🧠 Qwen-3.8-27B (DeepThink &amp; Kodlama · LPU)</option>
+            <option value="llama-3.3-70b-versatile">🦙 Llama-3.3-70B Versatile (Hızlı &amp; Doğal · LPU)</option>
+            <option value="openai/gpt-oss-20b">🚀 GPT-OSS-20B Turbo (Ultra-Düşük Gecikme)</option>
+          </select>
+          <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-[11px] font-mono">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Canlı LLM
+          </span>
+        </div>
+      </div>
+
+      <!-- Ecosystem Navigation & Canvas Toggle -->
+      <div class="flex items-center gap-1.5 text-xs">
+        <a href="https://synaxcode.com" class="hidden md:inline-block px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/70 transition">🌐 Ana Sayfa</a>
+        <a href="https://office.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">🏢 3D Ofis</a>
+        <a href="https://code.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">💻 Kod IDE</a>
+        <a href="https://terminal.synaxcode.com" class="hidden sm:inline-block px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">⌨️ Terminal</a>
+        <button onclick="toggleCanvasDrawer()" id="canvasToggleBtn" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-800 font-semibold transition flex items-center gap-1.5">
+          <span>✨ Canvas</span>
         </button>
-        <div class="space-y-1">
-          <label class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">Uzman Ajan Seçimi (8 Masa)</label>
-          <select id="agentPersonaSelect" onchange="onPersonaChange()" class="w-full bg-[#0b1326] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-mono text-amber-300 focus:outline-none focus:border-cyan-400">
-            <option value="synax-llm">🌟 Masa 1: SYNAX-OMNI Süper-LLM (Tümü)</option>
-            <option value="agent-scholar">📚 Masa 2: Dr. Scholar (PubMed &amp; PRISMA 2020)</option>
-            <option value="agent-biostat">📊 Masa 3: Dr. Biostat (Meta-Analiz &amp; Forest Plot)</option>
-            <option value="biomed-autocal">🩺 Masa 4: Dr. Lyapunov (EKG/IBP Sıfır-Sapma)</option>
-            <option value="egraph-prover">🛡️ Masa 5: Chief E-Graph (0-ULP IEEE-754 Kanıt)</option>
-            <option value="token-shield">⚡ Masa 6: Agent Shield (-%88.4 AST Sıkıştırma)</option>
-            <option value="context-vault">🔐 Masa 7: Agent Vault (SHA-256 Hafıza Devri)</option>
-            <option value="silicon-studio">🔩 Masa 8: Chief Silicon (ARM64 NEON / AVX2 / C11)</option>
-          </select>
-        </div>
-        <div class="space-y-1">
-          <label class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold">Motor &amp; Model</label>
-          <select id="modelEngineSelect" class="w-full bg-[#0b1326] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-400">
-            <option value="SYNAX-OMNI v6.5 (Groq LPU · Qwen-3.8-27B + Canlı PubMed RAG)">Groq LPU · Qwen-3.8-27B + PubMed RAG</option>
-            <option value="Claude Code 4.5 Sonnet + SYNAX 0-ULP Verifier">Claude Code 4.5 Sonnet + 0-ULP</option>
-            <option value="OpenAI Codex o3 + E-Graph Superoptimizer">OpenAI Codex o3 + E-Graph</option>
-            <option value="Google Antigravity Gemini 2.5 Pro">Google Antigravity Gemini 2.5 Pro</option>
-          </select>
-        </div>
       </div>
+    </header>
 
-      <!-- 21 Q1 SCIE ACADEMIC SKILLS QUICK LAUNCH -->
-      <div class="px-3 py-2 bg-[#080f20] border-b border-slate-800/80 flex items-center justify-between">
-        <span class="text-[10px] font-mono font-bold text-emerald-400 uppercase">🎓 21 Q1 SCIE Beceri Kısayolu</span>
-        <span id="liveEvoCounter" class="text-[10px] font-mono text-amber-300">46+ Beceri</span>
-      </div>
-      <div id="skillsQuickList" class="flex-1 overflow-y-auto p-2 space-y-1 text-xs"></div>
-    </aside>
+    <!-- Scrollable Chat Stream (or Centered Hero Welcome when empty) -->
+    <main id="mainScrollArea" class="flex-1 overflow-y-auto px-4 py-6">
+      <div class="max-w-3xl mx-auto">
 
-    <!-- CENTER PANE: STREAMING CONVERSATION & PERPLEXITY SOURCES -->
-    <main class="col-span-12 md:col-span-5 xl:col-span-6 flex flex-col h-full bg-[#040711] overflow-hidden select-text">
-      <div id="chatStreamBox" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+        <!-- Empty State Hero (Visible when new thread has 0 messages, just like chat.z.ai / chatgpt.com) -->
+        <div id="emptyHeroState" class="py-12 sm:py-20 text-center space-y-6">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[2px] shadow-xl shadow-cyan-500/15">
+            <div class="w-full h-full bg-[#0a0d14] rounded-[14px] flex items-center justify-center font-black text-xl text-amber-300">SX</div>
+          </div>
+          <div class="space-y-2">
+            <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">Bugün size nasıl yardımcı olabilirim?</h1>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">
+              <strong class="text-slate-200">SYNAX-OMNI 120B &amp; Qwen-3.8-27B</strong> gerçek büyük dil modeli. Her konuda doğal sohbet edin, kod yazdırın, canlı PubMed makaleleri tarayın veya 21 Q1 SCIE akademik beceriyi çalıştırın.
+            </p>
+          </div>
 
-      <!-- PROMPT COMPOSER -->
-      <div class="p-3 bg-[#070d1c] border-t border-slate-800/90 space-y-2">
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] font-mono">
-          <button onclick="sendQuickPrompt('Yoğun bakım EKG ve invaziv kan basıncı (IBP) monitörizasyonunda sıfır-sapmalı Lyapunov kalibrasyonu için PRISMA 2020 meta-analizi ve Q1 SCIE makale üret')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 shrink-0">🎓 Q1 SCIE Makale + PRISMA</button>
-          <button onclick="sendQuickPrompt('Acil serviste septik şok hemodinamik takibi için sıfır-sapmalı .sx çekirdeği ve ARM64 NEON / C11 donanım kodu yaz')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 shrink-0">🔩 ARM64 NEON &amp; .sx Sentezle</button>
-          <button onclick="sendQuickPrompt('Bu makale metnini Nature Medicine ve AMA 11th Ed. standardında De-AI Humanizer ile düzenle ve 3-hakemli SCIE denetiminden geçir')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 shrink-0">✍️ Humanizer &amp; 3-Hakem</button>
-          <button onclick="triggerChatSelfEvolve()" class="px-2.5 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/60 text-purple-300 border border-purple-500/40 shrink-0">🧬 +1 Yeni Beceri Evrimleş</button>
+          <!-- 4 Clean Starter Prompt Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left max-w-2xl mx-auto pt-2">
+            <button onclick="sendStarterPrompt('Acil serviste septik şok tanı ve tedavisini güncel kılavuzlara ve PubMed literatürüne göre adım adım açıkla.')" class="p-3.5 rounded-2xl bg-[#111622] hover:bg-[#161d2e] border border-slate-800/90 hover:border-cyan-500/40 transition group">
+              <div class="text-xs font-bold text-cyan-300 mb-1">🩺 Klinik &amp; Canlı PubMed Araştırma</div>
+              <div class="text-xs text-slate-400">Septik şok tanı ve tedavisini güncel PubMed kaynaklarıyla açıkla</div>
+            </button>
+            <button onclick="sendStarterPrompt('Yoğun bakım EKG ve invaziv kan basıncı monitörizasyonunda sıfır-sapmalı kalibrasyon için Q1 SCIE dergi formatında (IMRaD) makale taslağı yaz.')" class="p-3.5 rounded-2xl bg-[#111622] hover:bg-[#161d2e] border border-slate-800/90 hover:border-emerald-500/40 transition group">
+              <div class="text-xs font-bold text-emerald-300 mb-1">🎓 Q1 SCIE Bilimsel Makale Yazımı</div>
+              <div class="text-xs text-slate-400">Yoğun bakım monitörizasyonu için IMRaD makale taslağı oluştur</div>
+            </button>
+            <button onclick="sendStarterPrompt('Python ile arteriyel kan gazı (pH, PaCO2, HCO3, laktat, anyon açığı) yorumlayan kapsamlı ve çalıştırılabilir bir klinik karar destek sınıfı yaz.')" class="p-3.5 rounded-2xl bg-[#111622] hover:bg-[#161d2e] border border-slate-800/90 hover:border-amber-500/40 transition group">
+              <div class="text-xs font-bold text-amber-300 mb-1">💻 Python &amp; Algoritma Geliştirme</div>
+              <div class="text-xs text-slate-400">Arteriyel kan gazı yorumlayan Python klinik karar destek kodu yaz</div>
+            </button>
+            <button onclick="sendStarterPrompt('Aşağıdaki akademik paragrafı Nature Medicine ve AMA 11th Ed. stiline göre doğal, akıcı ve yapay zeka klişelerinden arındırılmış şekilde yeniden yaz: \"This study delves into the rich tapestry of AI in emergency medicine and serves as a game-changer.\"')" class="p-3.5 rounded-2xl bg-[#111622] hover:bg-[#161d2e] border border-slate-800/90 hover:border-purple-500/40 transition group">
+              <div class="text-xs font-bold text-purple-300 mb-1">✍️ De-AI Akademik Humanizer &amp; Editör</div>
+              <div class="text-xs text-slate-400">İngilizce/Türkçe akademik metni Q1 dergi diline göre düzenle</div>
+            </button>
+          </div>
         </div>
-        <div class="flex items-end gap-2">
-          <textarea id="chatInputBox" rows="2" placeholder="Araştırma konunuzu, klinik sorunuzu, makale taslağınızı veya üretilecek donanım/Python kodunu yazın (Enter ile gönder)..."
-            onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();submitChatMessage();}"
-            class="flex-1 bg-[#0b1326] border border-slate-700/90 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-cyan-400 resize-none"></textarea>
-          <button onclick="startVoiceDictation()" id="voiceBtn" class="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-xs font-bold shrink-0" title="Türkçe Sesli Komut">🎤</button>
-          <button onclick="submitChatMessage()" id="sendBtn" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-95 text-slate-950 font-black text-xs sm:text-sm shrink-0 shadow-lg">Gönder ↑</button>
-        </div>
+
+        <!-- Messages Stream -->
+        <div id="messagesList" class="space-y-6 pb-6"></div>
+
       </div>
     </main>
 
-    <!-- RIGHT PANE: CLAUDE-STYLE LIVE ARTIFACT WORKBENCH -->
-    <section class="col-span-12 md:col-span-4 xl:col-span-4 bg-[#070c18] border-l border-slate-800/90 flex flex-col h-full overflow-hidden select-text">
-      <div class="p-3 bg-[#091122] border-b border-slate-800 flex items-center justify-between gap-2">
-        <div>
-          <div class="text-xs font-black text-amber-300 flex items-center gap-1.5">
-            <span>✨ CANLI ARTIFACT &amp; Q1 MAKALE ATÖLYESİ</span>
+    <!-- Bottom Centered Omnibox Composer (chat.z.ai / chatgpt.com style) -->
+    <div class="px-4 pb-4 pt-2 bg-gradient-to-t from-[#0a0d14] via-[#0a0d14] to-transparent shrink-0">
+      <div class="max-w-3xl mx-auto">
+        <div class="bg-[#121723] border border-slate-700/80 focus-within:border-cyan-500/70 rounded-2xl p-3 shadow-2xl transition">
+          <textarea
+            id="chatInputBox"
+            rows="2"
+            placeholder="Herhangi bir konuda soru sorun, kod yazdırın veya makale/analiz isteyin..."
+            onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();submitChatMessage();}"
+            class="w-full bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none resize-none leading-relaxed"
+          ></textarea>
+
+          <!-- Composer Feature Pills Bar (DeepThink + Web/PubMed RAG + Voice + Send) -->
+          <div class="flex items-center justify-between pt-2 mt-1 border-t border-slate-800/80 flex-wrap gap-2">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button type="button" id="pillDeepThink" onclick="toggleDeepThink()" class="px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-purple-500/15 text-purple-300 border-purple-500/40">
+                <span>🧠 DeepThink</span>
+              </button>
+              <button type="button" id="pillWebRag" onclick="toggleWebRag()" class="px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-cyan-500/15 text-cyan-300 border-cyan-500/40">
+                <span>🌐 Canlı PubMed &amp; Web</span>
+              </button>
+              <button type="button" onclick="startVoiceDictation()" id="voiceBtn" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Türkçe Sesli Dikte">
+                🎤 Sesli
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button type="button" id="sendBtn" onclick="submitChatMessage()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 hover:opacity-95 text-slate-950 font-black text-xs sm:text-sm shadow-lg transition flex items-center gap-1">
+                <span>Gönder</span> <span>↑</span>
+              </button>
+            </div>
           </div>
-          <div id="artifactSubLabel" class="text-[11px] text-slate-400 font-mono">Sohbette üretilen makale, LaTeX, BibTeX ve kodlar burada açılır</div>
-        </div>
-        <div class="flex items-center gap-1.5 font-mono text-[11px]">
-          <button onclick="copyArtifactText()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-bold">📋 Kopyala</button>
-          <button onclick="downloadArtifactFile()" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold">⬇️ İndir</button>
         </div>
       </div>
-      <div class="p-3 bg-[#050914] border-b border-slate-800/80 grid grid-cols-3 gap-2 font-mono text-[11px]">
-        <div class="p-2 rounded-lg bg-[#0b1326] border border-slate-800">
-          <div class="text-slate-400 text-[10px]">SCIE Hazırlık</div>
-          <div id="artMetricScie" class="text-emerald-400 font-black">100.0 / 100</div>
-        </div>
-        <div class="p-2 rounded-lg bg-[#0b1326] border border-slate-800">
-          <div class="text-slate-400 text-[10px]">Lyapunov &amp; 0-ULP</div>
-          <div id="artMetricProof" class="text-cyan-400 font-black">V_{k+1} &lt; V_k SAFE</div>
-        </div>
-        <div class="p-2 rounded-lg bg-[#0b1326] border border-slate-800">
-          <div class="text-slate-400 text-[10px]">Doğrulanmış Kaynak</div>
-          <div id="artMetricSources" class="text-amber-300 font-black">PubMed + RAG</div>
-        </div>
-      </div>
-      <div class="flex-1 overflow-y-auto p-4">
-        <pre id="artifactCanvasBody" class="whitespace-pre-wrap font-mono text-xs leading-relaxed text-slate-200"></pre>
-      </div>
-    </section>
+    </div>
+
   </div>
+
+  <!-- ===================================================================== -->
+  <!-- 3. SLIDE-OVER ARTIFACT / CANVAS WORKBENCH (OPENS ON DEMAND)           -->
+  <!-- ===================================================================== -->
+  <section id="canvasDrawer" class="hidden w-full md:w-[440px] xl:w-[500px] bg-[#070a10] border-l border-slate-800 flex-col h-full shrink-0 z-30">
+    <div class="p-3 bg-[#0b101b] border-b border-slate-800 flex items-center justify-between gap-2">
+      <div class="truncate">
+        <div class="text-xs font-black text-amber-300">✨ CANLI CANVAS &amp; KOD / MAKALE ATÖLYESİ</div>
+        <div id="artifactSubLabel" class="text-[11px] text-slate-400 font-mono truncate">SYNAX_Artifact.md</div>
+      </div>
+      <div class="flex items-center gap-1.5 font-mono text-xs shrink-0">
+        <button onclick="copyArtifactText()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-bold">📋 Kopyala</button>
+        <button onclick="downloadArtifactFile()" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold">⬇️ İndir</button>
+        <button onclick="toggleCanvasDrawer(false)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300">✕</button>
+      </div>
+    </div>
+    <div class="flex-1 overflow-y-auto p-4">
+      <pre id="artifactCanvasBody" class="whitespace-pre-wrap font-mono text-xs leading-relaxed text-slate-200 select-text"></pre>
+    </div>
+  </section>
 
   <script>
     const SKILLS_21 = [
@@ -164,53 +245,371 @@
       { id: 'humanizer', num: '21', name: 'Akademik Humanizer (Sıfır AI-Tell)' }
     ];
 
+    let deepThinkEnabled = true;
+    let webRagEnabled = true;
     let currentArtifactContent = '';
-    let currentArtifactTitle = 'SYNAX_Q1_Artifact.md';
+    let currentArtifactTitle = 'SYNAX_Artifact.md';
+    let threads = JSON.parse(localStorage.getItem('synax_chat_threads_v66') || '[]');
+    let activeThreadId = null;
+    let isGenerating = false;
 
-    function renderSkillsSidebar() {
-      const box = document.getElementById('skillsQuickList');
-      box.innerHTML = SKILLS_21.map(s => `
-        <button onclick="runSkillInChat('${s.id}', '${s.name}')" class="w-full text-left px-2.5 py-1.5 rounded-lg bg-[#0b1326] hover:bg-[#111e3b] border border-slate-800 hover:border-emerald-500/40 transition flex items-center justify-between group">
-          <span class="truncate"><b class="text-emerald-400 font-mono">#${s.num}</b> <span class="text-slate-200">${s.name}</span></span>
-          <span class="text-slate-500 group-hover:text-cyan-400 text-[10px] font-mono">Çalıştır →</span>
+    function saveThreads() {
+      localStorage.setItem('synax_chat_threads_v66', JSON.stringify(threads.slice(0, 30)));
+    }
+
+    function getActiveThread() {
+      let t = threads.find(x => x.id === activeThreadId);
+      if (!t) {
+        t = { id: 'th-' + Date.now(), title: 'Yeni Sohbet', messages: [], updatedAt: Date.now() };
+        threads.unshift(t);
+        activeThreadId = t.id;
+        saveThreads();
+      }
+      return t;
+    }
+
+    function createNewChatThread() {
+      const t = { id: 'th-' + Date.now(), title: 'Yeni Sohbet', messages: [], updatedAt: Date.now() };
+      threads.unshift(t);
+      activeThreadId = t.id;
+      saveThreads();
+      renderThreadsSidebar();
+      renderActiveThreadMessages();
+      document.getElementById('chatInputBox').focus();
+    }
+
+    function selectThread(id) {
+      activeThreadId = id;
+      renderThreadsSidebar();
+      renderActiveThreadMessages();
+    }
+
+    function clearAllThreads() {
+      threads = [];
+      activeThreadId = null;
+      saveThreads();
+      createNewChatThread();
+    }
+
+    function renderThreadsSidebar() {
+      const box = document.getElementById('threadsListBox');
+      if (threads.length === 0) {
+        box.innerHTML = '<div class="text-slate-500 text-xs px-2 py-3">Henüz kayıtlı sohbet yok.</div>';
+        return;
+      }
+      box.innerHTML = threads.map(t => `
+        <button onclick="selectThread('${t.id}')" class="w-full text-left px-2.5 py-2 rounded-xl transition flex items-center justify-between group ${t.id === activeThreadId ? 'bg-[#161f33] text-white font-semibold border border-cyan-500/30' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200'}">
+          <span class="truncate pr-2">💬 ${escapeHtml(t.title || 'Yeni Sohbet')}</span>
         </button>
       `).join('');
     }
 
-    function runSkillInChat(skillId, skillName) {
+    function renderSkillsAccordion() {
+      const box = document.getElementById('skillsAccordionList');
+      box.innerHTML = SKILLS_21.map(s => `
+        <button onclick="runSkillPrompt('${s.id}', '${s.name}')" class="w-full text-left px-2 py-1.5 rounded-lg bg-[#090d18] hover:bg-[#131c31] text-[11px] text-slate-300 hover:text-emerald-300 transition truncate">
+          <b class="text-emerald-400 font-mono">#${s.num}</b> ${s.name}
+        </button>
+      `).join('');
+    }
+
+    function runSkillPrompt(skillId, skillName) {
       const inp = document.getElementById('chatInputBox');
-      const topic = inp.value.trim() || 'Yoğun bakım EKG ve invaziv kan basıncı (IBP) monitörizasyonunda sıfır-sapmalı Lyapunov kalibrasyonu';
-      inp.value = `[SYNAX BECERİ #${skillId} — ${skillName}]: ${topic} konusu için tam Q1 SCIE akademik çıktı, DerSimonian-Laird biyoistatistik sentezi ve doğrulanmış kaynakça üret.`;
+      const existing = inp.value.trim() || 'Yoğun bakım EKG ve invaziv kan basıncı monitörizasyonunda sıfır-sapmalı kalibrasyon';
+      inp.value = `[Akademik Beceri: ${skillName} (${skillId})] ${existing}`;
       submitChatMessage();
     }
 
-    function sendQuickPrompt(txt) {
+    function toggleSidebar() {
+      const sb = document.getElementById('leftSidebar');
+      const openBtn = document.getElementById('openSidebarBtn');
+      if (sb.classList.contains('hidden')) {
+        sb.classList.remove('hidden');
+        openBtn.classList.add('hidden');
+      } else {
+        sb.classList.add('hidden');
+        openBtn.classList.remove('hidden');
+      }
+    }
+
+    function toggleCanvasDrawer(forceState) {
+      const d = document.getElementById('canvasDrawer');
+      const show = typeof forceState === 'boolean' ? forceState : d.classList.contains('hidden');
+      if (show) {
+        d.classList.remove('hidden');
+        d.classList.add('flex');
+      } else {
+        d.classList.add('hidden');
+        d.classList.remove('flex');
+      }
+    }
+
+    function toggleDeepThink() {
+      deepThinkEnabled = !deepThinkEnabled;
+      const btn = document.getElementById('pillDeepThink');
+      btn.className = deepThinkEnabled
+        ? 'px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-purple-500/15 text-purple-300 border-purple-500/40'
+        : 'px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-slate-900 text-slate-400 border-slate-800';
+    }
+
+    function toggleWebRag() {
+      webRagEnabled = !webRagEnabled;
+      const btn = document.getElementById('pillWebRag');
+      btn.className = webRagEnabled
+        ? 'px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-cyan-500/15 text-cyan-300 border-cyan-500/40'
+        : 'px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-slate-900 text-slate-400 border-slate-800';
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function openInCanvas(title, encContent) {
+      const content = decodeURIComponent(encContent);
+      setArtifact(title, content, true);
+    }
+
+    function copyCodeBlock(encContent) {
+      navigator.clipboard.writeText(decodeURIComponent(encContent));
+    }
+
+    function formatRichMarkdown(text) {
+      let raw = text || '';
+      const codeBlocks = [];
+      raw = raw.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (_, lang, code) => {
+        const idx = codeBlocks.length;
+        const cleanLang = (lang || 'code').toUpperCase();
+        const enc = encodeURIComponent(code.trim());
+        codeBlocks.push(`
+          <div class="my-3 rounded-xl overflow-hidden border border-slate-800 bg-[#050811]">
+            <div class="px-3 py-1.5 bg-[#0c1220] border-b border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span class="font-bold text-cyan-300">${cleanLang}</span>
+              <div class="flex items-center gap-2">
+                <button onclick="copyCodeBlock('${enc}')" class="hover:text-white">📋 Kopyala</button>
+                <button onclick="openInCanvas('SYNAX_${cleanLang}_Kodu', '${enc}')" class="text-amber-300 hover:underline">✨ Canvas'ta Aç</button>
+              </div>
+            </div>
+            <pre class="p-3.5 text-xs font-mono text-emerald-300 overflow-x-auto leading-relaxed">${escapeHtml(code.trim())}</pre>
+          </div>
+        `);
+        return `__CODE_BLOCK_${idx}__`;
+      });
+
+      let h = escapeHtml(raw);
+      h = h.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+      h = h.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+      h = h.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+      h = h.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>');
+      h = h.replace(/`([^`]+)`/g, '<code class="bg-slate-800/90 text-cyan-300 px-1.5 py-0.5 rounded font-mono text-[12px]">$1</code>');
+      h = h.replace(/\[(\d+)\]/g, '<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded text-[10px] font-mono font-black mx-0.5">[$1]</span>');
+
+      // Paragraphs & line breaks
+      h = h.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('');
+
+      codeBlocks.forEach((cb, idx) => {
+        h = h.replace(`__CODE_BLOCK_${idx}__`, cb);
+      });
+      return `<div class="prose-msg text-sm text-slate-200 select-text">${h}</div>`;
+    }
+
+    function renderActiveThreadMessages() {
+      const t = getActiveThread();
+      const hero = document.getElementById('emptyHeroState');
+      const list = document.getElementById('messagesList');
+      if (!t.messages || t.messages.length === 0) {
+        hero.classList.remove('hidden');
+        list.innerHTML = '';
+        return;
+      }
+      hero.classList.add('hidden');
+      list.innerHTML = t.messages.map((m, idx) => {
+        if (m.role === 'user') {
+          return `
+            <div class="flex justify-end">
+              <div class="max-w-2xl bg-[#1a2234] border border-slate-700/70 rounded-2xl px-4 py-3 text-sm text-white leading-relaxed select-text shadow">
+                ${escapeHtml(m.content).replace(/\n/g, '<br/>')}
+              </div>
+            </div>
+          `;
+        } else {
+          let sourcesHtml = '';
+          if (m.sources && m.sources.length > 0) {
+            sourcesHtml = `
+              <div class="mb-3 flex gap-2 overflow-x-auto pb-1">
+                ${m.sources.map(s => `
+                  <a href="${s.url || '#'}" target="_blank" class="shrink-0 w-56 p-2 rounded-xl bg-[#0e1422] border border-slate-800 hover:border-cyan-500/50 transition block">
+                    <div class="flex items-center justify-between text-[10px] font-mono text-amber-300 font-bold">
+                      <span>[${s.index || 1}] ${escapeHtml(s.badge || 'PMID')}</span><span>↗</span>
+                    </div>
+                    <div class="text-xs font-bold text-cyan-300 truncate mt-0.5">${escapeHtml(s.title)}</div>
+                    <div class="text-[10px] text-slate-400 truncate">${escapeHtml(s.source)}</div>
+                  </a>
+                `).join('')}
+              </div>
+            `;
+          }
+          let thinkHtml = '';
+          if (m.thinking && m.thinking.length > 0) {
+            thinkHtml = `
+              <details class="mb-3 bg-[#0d121f] border border-purple-500/25 rounded-xl px-3 py-2 text-xs">
+                <summary class="cursor-pointer font-mono font-semibold text-purple-300">💭 DeepThink Muhakeme Süreci (${m.thinking.length} adım)</summary>
+                <div class="mt-2 space-y-1 text-slate-400 font-mono text-[11px] pl-2 border-l-2 border-purple-500/30">
+                  ${m.thinking.map(st => `<div>${escapeHtml(st)}</div>`).join('')}
+                </div>
+              </details>
+            `;
+          }
+          const encFull = encodeURIComponent(m.content || '');
+          return `
+            <div class="flex gap-3.5 items-start">
+              <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px] shrink-0 mt-0.5">
+                <div class="w-full h-full bg-[#0a0d14] rounded-[10px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span class="text-xs font-bold text-white">${escapeHtml(m.model || 'SYNAX-OMNI 120B')}</span>
+                </div>
+                ${sourcesHtml}
+                ${thinkHtml}
+                ${formatRichMarkdown(m.content)}
+                <div class="mt-2.5 flex items-center gap-3 text-xs text-slate-400 font-mono">
+                  <button onclick="copyCodeBlock('${encFull}')" class="hover:text-white flex items-center gap-1">📋 Kopyala</button>
+                  <button onclick="openInCanvas('SYNAX_Yaniti_${idx}', '${encFull}')" class="hover:text-amber-300 flex items-center gap-1">✨ Canvas'ta Aç</button>
+                  <button onclick="regenerateResponse(${idx})" class="hover:text-cyan-300 flex items-center gap-1">🔄 Yeniden Üret</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+
+      const sc = document.getElementById('mainScrollArea');
+      sc.scrollTop = sc.scrollHeight;
+    }
+
+    function sendStarterPrompt(txt) {
       document.getElementById('chatInputBox').value = txt;
       submitChatMessage();
     }
 
-    function onPersonaChange() {
-      const sel = document.getElementById('agentPersonaSelect');
-      const label = sel.options[sel.selectedIndex].text;
-      appendMessage('ai', `🎯 Aktif uzman ajan **${label}** olarak değiştirildi. Sorunuzu veya görevinizi doğrudan bu masaya iletebilirsiniz.`, [], ['Masa yönlendirmesi güncellendi.']);
+    async function regenerateResponse(aiIdx) {
+      const t = getActiveThread();
+      if (aiIdx > 0 && t.messages[aiIdx - 1] && t.messages[aiIdx - 1].role === 'user') {
+        const userPrompt = t.messages[aiIdx - 1].content;
+        t.messages = t.messages.slice(0, aiIdx - 1);
+        saveThreads();
+        document.getElementById('chatInputBox').value = userPrompt;
+        await submitChatMessage();
+      }
     }
 
-    function resetChatSession() {
-      document.getElementById('chatStreamBox').innerHTML = '';
-      initWelcomeMessage();
+    async function submitChatMessage() {
+      if (isGenerating) return;
+      const inp = document.getElementById('chatInputBox');
+      const prompt = inp.value.trim();
+      if (!prompt) return;
+      inp.value = '';
+
+      const t = getActiveThread();
+      if (t.messages.length === 0) {
+        t.title = prompt.slice(0, 42);
+      }
+      t.messages.push({ role: 'user', content: prompt });
+      t.updatedAt = Date.now();
+      saveThreads();
+      renderThreadsSidebar();
+      renderActiveThreadMessages();
+
+      // Append live typing indicator bubble
+      isGenerating = true;
+      const list = document.getElementById('messagesList');
+      const loadingDiv = document.createElement('div');
+      loadingDiv.id = 'liveTypingBubble';
+      loadingDiv.className = 'flex gap-3.5 items-start';
+      const selectedModel = document.getElementById('modelEngineSelect').value;
+      loadingDiv.innerHTML = `
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px] shrink-0">
+          <div class="w-full h-full bg-[#0a0d14] rounded-[10px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
+        </div>
+        <div class="bg-[#111622] border border-slate-800 rounded-2xl px-4 py-3 flex items-center gap-2.5 text-xs text-slate-300">
+          <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+          <span class="font-mono text-slate-400">${selectedModel} düşünüyor...</span>
+        </div>
+      `;
+      list.appendChild(loadingDiv);
+      const sc = document.getElementById('mainScrollArea');
+      sc.scrollTop = sc.scrollHeight;
+
+      const agentId = document.getElementById('agentPersonaSelect').value;
+      const historyPayload = t.messages.map(m => ({ role: m.role, content: m.content }));
+
+      const endpoints = ['api.php', 'https://synaxcode.com/api.php', '/api/office-chat'];
+      let successData = null;
+      for (const ep of endpoints) {
+        try {
+          const r = await fetch(ep, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              prompt: prompt,
+              messages: historyPayload,
+              target_agent_id: agentId,
+              user_model: selectedModel,
+              web_search: webRagEnabled,
+              deep_think: deepThinkEnabled
+            })
+          });
+          if (r.ok) {
+            const d = await r.json();
+            if (d && d.reply) {
+              successData = d;
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+
+      isGenerating = false;
+      const lb = document.getElementById('liveTypingBubble');
+      if (lb) lb.remove();
+
+      if (successData) {
+        t.messages.push({
+          role: 'assistant',
+          content: successData.reply,
+          model: successData.model_label || selectedModel,
+          sources: successData.sources || [],
+          thinking: successData.thinking_steps || []
+        });
+        saveThreads();
+        renderActiveThreadMessages();
+
+        // Automatically populate Canvas if code or long document was generated
+        if (successData.bespoke_artifact && successData.bespoke_artifact.content) {
+          setArtifact(successData.bespoke_artifact.title || 'SYNAX_Artifact.md', successData.bespoke_artifact.content, false);
+        }
+      } else {
+        t.messages.push({
+          role: 'assistant',
+          content: 'Bağlantı zaman aşımına uğradı, lütfen tekrar deneyin.',
+          model: selectedModel
+        });
+        renderActiveThreadMessages();
+      }
     }
 
-    function setArtifact(title, content, srcCount = 3) {
-      currentArtifactTitle = title || 'SYNAX_Q1_Artifact.md';
+    function setArtifact(title, content, openDrawer = false) {
+      currentArtifactTitle = title || 'SYNAX_Artifact.md';
       currentArtifactContent = content || '';
       document.getElementById('artifactSubLabel').textContent = currentArtifactTitle;
       document.getElementById('artifactCanvasBody').textContent = currentArtifactContent;
-      document.getElementById('artMetricSources').textContent = `${srcCount} Canlı Atıf`;
+      if (openDrawer) {
+        toggleCanvasDrawer(true);
+      }
     }
 
     function copyArtifactText() {
       navigator.clipboard.writeText(currentArtifactContent);
-      alert('Artifact içeriği panoya kopyalandı!');
     }
 
     function downloadArtifactFile() {
@@ -221,190 +620,32 @@
       a.click();
     }
 
-    function formatMd(text) {
-      let h = (text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      h = h.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, '<pre class="bg-[#050914] border border-slate-800 rounded-xl p-3 my-2 text-cyan-300 font-mono text-xs overflow-x-auto">$2</pre>');
-      h = h.replace(/^### (.*)$/gm, '<h3 class="text-sm font-black text-amber-300 mt-2 mb-1">$1</h3>');
-      h = h.replace(/^## (.*)$/gm, '<h2 class="text-base font-black text-emerald-300 mt-3 mb-1">$1</h2>');
-      h = h.replace(/^# (.*)$/gm, '<h1 class="text-lg font-black text-white mt-3 mb-1">$1</h1>');
-      h = h.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>');
-      h = h.replace(/`([^`]+)`/g, '<code class="bg-cyan-500/15 text-cyan-300 px-1.5 py-0.5 rounded font-mono text-[11px]">$1</code>');
-      h = h.replace(/\[(\d+)\]/g, '<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded text-[10px] font-mono font-black mx-0.5">[$1]</span>');
-      h = h.replace(/\n/g, '<br/>');
-      return h;
-    }
-
-    function appendMessage(role, text, sources = [], thinking = [], followUps = [], modelLabel = 'SYNAX-OMNI v6.5') {
-      const box = document.getElementById('chatStreamBox');
-      const wrap = document.createElement('div');
-      if (role === 'user') {
-        wrap.className = 'ml-auto max-w-2xl bg-gradient-to-r from-cyan-600/30 to-emerald-600/30 border border-cyan-500/40 rounded-2xl p-3.5 text-xs sm:text-sm text-white shadow-lg';
-        wrap.textContent = text;
-      } else {
-        wrap.className = 'max-w-3xl bg-[#091124] border border-slate-800 rounded-2xl p-4 text-xs sm:text-sm text-slate-200 space-y-3 shadow-xl';
-        let srcHtml = '';
-        if (sources && sources.length > 0) {
-          srcHtml = `
-            <div class="space-y-1.5">
-              <div class="text-[10px] font-mono font-extrabold text-cyan-400 uppercase">🌐 Canlı Doğrulanmış Bilimsel Kaynaklar (${sources.length} Birincil Atıf):</div>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                ${sources.map(s => `
-                  <a href="${s.url || '#'}" target="_blank" class="p-2 rounded-xl bg-[#050914] border border-slate-800 hover:border-cyan-500/50 transition block">
-                    <div class="flex items-center justify-between text-[10px] font-mono text-amber-300 font-bold">
-                      <span>[${s.index || 1}] ${s.badge || 'PMID'}</span><span>↗</span>
-                    </div>
-                    <div class="text-xs font-bold text-cyan-300 truncate mt-0.5">${s.title}</div>
-                    <div class="text-[10px] text-slate-400 truncate">${s.source}</div>
-                  </a>
-                `).join('')}
-              </div>
-            </div>
-          `;
-        }
-        let thinkHtml = '';
-        if (thinking && thinking.length > 0) {
-          thinkHtml = `
-            <details class="bg-[#050914] border border-purple-500/30 rounded-xl p-2.5 text-xs">
-              <summary class="cursor-pointer font-mono font-bold text-purple-300">💭 Claude Tarzı Derin Muhakeme &amp; 0-ULP Doğrulama Zinciri (${thinking.length} Adım)</summary>
-              <ul class="mt-2 space-y-1 pl-4 list-disc text-slate-300 font-mono text-[11px]">
-                ${thinking.map(t => `<li>${t}</li>`).join('')}
-              </ul>
-            </details>
-          `;
-        }
-        let followHtml = '';
-        if (followUps && followUps.length > 0) {
-          followHtml = `
-            <div class="pt-2 border-t border-slate-800/80 flex flex-wrap gap-1.5">
-              ${followUps.map(f => `
-                <button onclick="sendQuickPrompt(${JSON.stringify(f).replace(/"/g, '&quot;')})" class="text-left px-2.5 py-1.5 rounded-lg bg-[#050914] hover:bg-slate-800 border border-cyan-500/30 text-cyan-300 text-[11px] font-mono">💡 ${f} →</button>
-              `).join('')}
-            </div>
-          `;
-        }
-        wrap.innerHTML = `
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2 text-[11px] font-mono">
-            <span class="font-black text-amber-300">✨ ${modelLabel}</span>
-            <span class="text-emerald-400">0-ULP &amp; Zero-Fabrication Doğrulandı</span>
-          </div>
-          ${srcHtml}
-          ${thinkHtml}
-          <div class="leading-relaxed">${formatMd(text)}</div>
-          ${followHtml}
-        `;
-      }
-      box.appendChild(wrap);
-      box.scrollTop = box.scrollHeight;
-    }
-
-    async function submitChatMessage() {
-      const inp = document.getElementById('chatInputBox');
-      const prompt = inp.value.trim();
-      if (!prompt) return;
-      inp.value = '';
-      const agentId = document.getElementById('agentPersonaSelect').value;
-      const engine = document.getElementById('modelEngineSelect').value;
-      appendMessage('user', prompt);
-
-      const endpoints = ['api.php', 'https://synaxcode.com/api.php', '/api/office-chat'];
-      for (const ep of endpoints) {
-        try {
-          const r = await fetch(ep, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt, target_agent_id: agentId, engine_provider: engine })
-          });
-          if (r.ok) {
-            const d = await r.json();
-            if (d && d.reply) {
-              appendMessage('ai', d.reply, d.sources || [], d.thinking_steps || [], d.follow_ups || [], d.model_label || engine);
-              if (d.bespoke_artifact) {
-                setArtifact(d.bespoke_artifact.title, d.bespoke_artifact.content, (d.sources || []).length);
-              } else {
-                setArtifact(`SYNAX_Cikti_${d.job_id || 'Q1'}`, d.reply, (d.sources || []).length);
-              }
-              return;
-            }
-          }
-        } catch (e) {}
-      }
-    }
-
-    async function triggerChatSelfEvolve() {
-      const endpoints = ['api.php?action=self_evolve', 'https://synaxcode.com/api.php?action=self_evolve', '/api/self-evolve'];
-      for (const ep of endpoints) {
-        try {
-          const r = await fetch(ep, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
-          if (r.ok) {
-            const d = await r.json();
-            if (d && d.latest_evolved_skill) {
-              document.getElementById('liveEvoCounter').textContent = `Epoch #${d.evolution_epoch} · ${d.total_installed_skills} Beceri`;
-              const sk = d.latest_evolved_skill;
-              appendMessage('ai', `🧬 **Otonom Öz-Evrim (Epoch #${d.evolution_epoch}) Tamamlandı!**\n\n- **Yeni Sentezlenen Beceri:** \`${sk.id}\` (${sk.title_tr})\n- **Sentezleyen Ajan:** \`${sk.agent_owner}\`\n- **SHA-256 Kanıt Özeti:** \`${sk.sha256}\`\n- **Toplam Aktif Beceri:** **\`${d.total_installed_skills} Beceri\`**`, [], ['0-ULP Matematiksel & Zero-Injection Güvenlik Kapısı: PASSED']);
-              setArtifact(`${sk.id}_SKILL.md`, `# ${sk.title_tr}\n\n- ID: ${sk.id}\n- Epoch: ${d.evolution_epoch}\n- Owner: ${sk.agent_owner}\n- SHA-256: ${sk.sha256}\n`, 1);
-              return;
-            }
-          }
-        } catch (e) {}
-      }
-    }
-
     function startVoiceDictation() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SR) { alert('Tarayıcınız ses tanımayı desteklemiyor.'); return; }
       const rec = new SR();
       rec.lang = 'tr-TR';
       const btn = document.getElementById('voiceBtn');
-      btn.textContent = '🔴';
+      btn.textContent = '🔴 Dinliyor...';
       rec.onresult = (e) => {
         document.getElementById('chatInputBox').value = e.results[0][0].transcript;
-        btn.textContent = '🎤';
+        btn.textContent = '🎤 Sesli';
         submitChatMessage();
       };
-      rec.onerror = () => { btn.textContent = '🎤'; };
-      rec.onend = () => { btn.textContent = '🎤'; };
+      rec.onerror = () => { btn.textContent = '🎤 Sesli'; };
+      rec.onend = () => { btn.textContent = '🎤 Sesli'; };
       rec.start();
     }
 
-    function initWelcomeMessage() {
-      const welcome =
-        `Merhaba **Dr. Ömer Faruk Aydın**! **\`chat.synaxcode.com\` (SYNAX-OMNI v6.5 Süper-LLM & 21 Q1 SCIE Akademik Sohbet Stüdyosu)** aktif.\n\n` +
-        `- **Canlı PubMed & Wikipedia RAG:** Sorularınız anında İngilizce MeSH terimlerine çevrilerek NCBI PubMed (\`esearch\` + \`efetch\` tam özet) üzerinden gerçek PMID/DOI atıflarıyla yanıtlanır.\n` +
-        `- **21 Q1 SCIE Akademik Beceri:** Sol menüdeki 21 beceriden herhangi birine tıklayarak IMRaD makale yazımı, DerSimonian-Laird meta-analizi, De-AI Humanizer veya 3-Hakemli SCIE denetimini tek tıkla çalıştırabilirsiniz.\n` +
-        `- **Canlı Artifact Atölyesi:** Üretilen tüm makale, LaTeX (\`.tex\`), BibTeX ve donanım kodları sağ panelde anında açılır.`;
-      appendMessage('ai', welcome, [
-        { index: 1, title: 'Goal-Directed ICU Hemodynamic Telemetry (Vincent et al.)', source: 'Intensive Care Medicine · Q1 SCIE', url: 'https://pubmed.ncbi.nlm.nih.gov/29485124/', badge: 'PMID: 29485124' },
-        { index: 2, title: 'Consensus on Circulatory Shock Monitoring (Cecconi et al.)', source: 'Intensive Care Medicine · Q1 SCIE', url: 'https://pubmed.ncbi.nlm.nih.gov/25488107/', badge: 'PMID: 25488107' },
-        { index: 3, title: 'AI-Enabled Electrocardiography (Attia et al.)', source: 'npj Digital Medicine · Q1 SCIE', url: 'https://pubmed.ncbi.nlm.nih.gov/34665485/', badge: 'PMID: 34665485' }
-      ], [
-        '1. SYNAX-OMNI v6.5 ReAct motoru ve 8 uzman ajan masası bağlandı.',
-        '2. NCBI PubMed E-Utilities (efetch) ve 21 Q1 SCIE beceri kataloğu doğrulandı.',
-        '3. 7/24 Otonom Öz-Evrim (Self-Evolution) arka plan döngüsü başlatıldı.'
-      ], [
-        'Yoğun bakım EKG ve IBP monitörizasyonunda sıfır-sapmalı Lyapunov kalibrasyonu için Q1 SCIE makale üret',
-        'Septik şokta DerSimonian-Laird rastgele etkiler meta-analizi ve Forest Plot oluştur',
-        'ARM64 NEON ve Q16.16 MCU için 0-ULP doğrulanmış biyomedikal sinyal filtresi yaz'
-      ]);
-      setArtifact(
-        'SYNAX_Q1_SCIE_Referans_Sablonu.md',
-        `# 🏆 SYNAX-OMNI v6.5 — Q1 SCIE Akademik & Silikon Sentez Çıktısı\n\n` +
-        `• Durum: 100.0 / 100 (UNCONDITIONAL_ACCEPT_READY)\n` +
-        `• Lyapunov Kararlılık: V_{k+1} = (1 - γ)² V_k < V_k (γ = 0.24, %99.98 sapma bastırma)\n` +
-        `• Biyoistatistik Havuz: DerSimonian-Laird Pooled d = 0.855 (%95 GA: [0.761, 0.949], p < 0.0001)\n` +
-        `• Donanım Hedefleri: C11, ARM64 NEON, x86_64 AVX2, LLVM IR, Q16.16 MCU (19/19 0-ULP)\n`
-      );
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-      renderSkillsSidebar();
-      initWelcomeMessage();
-      setInterval(() => {
-        fetch('api.php?action=automation_status').then(r => r.json()).then(d => {
-          if (d && d.evolution_epoch) {
-            document.getElementById('liveEvoCounter').textContent = `Epoch #${d.evolution_epoch} · ${d.total_installed_skills} Beceri`;
-          }
-        }).catch(() => {});
-      }, 12000);
+      renderSkillsAccordion();
+      if (threads.length === 0) {
+        createNewChatThread();
+      } else {
+        activeThreadId = threads[0].id;
+        renderThreadsSidebar();
+        renderActiveThreadMessages();
+      }
     });
   </script>
 </body>
