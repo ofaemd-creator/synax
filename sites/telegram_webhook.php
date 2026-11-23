@@ -697,8 +697,8 @@ foreach ($sources as $s) {
 $active_pid = $sessions[$cid_key]['persona'] ?? 'synax-llm';
 $p_info = $personas_catalog[$active_pid] ?? $personas_catalog['synax-llm'];
 
-$cortex_file = __DIR__ . '/synax_memory_cortex.json';
-$cortex = file_exists($cortex_file) ? (json_decode(file_get_contents($cortex_file), true) ?: []) : [];
+$cortex_file = __DIR__ . '/synax_memory_cortex.php';
+$cortex = file_exists($cortex_file) ? (json_decode(preg_replace('/^<\?php exit; \?>\R?/', '', (string)file_get_contents($cortex_file)), true) ?: []) : [];
 $cx_cycles = intval($cortex['autonomous_training_cycles'] ?? 12);
 $cx_caps = intval($cortex['total_self_fed_capsules'] ?? 6);
 $cx_mems = intval($cortex['total_distilled_memories'] ?? 4);

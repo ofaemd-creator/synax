@@ -101,6 +101,7 @@
         </select>
 
         <!-- Top Info, Autonomous Self-Evolution & Personalization Cortex + Model Settings Buttons -->
+        <div id="founderOnlyControls" class="hidden items-center gap-2">
         <button onclick="openCortexModal('tabOverview')" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm" title="7/24 Otonom Öz-Beslenme, Bellek, Beceri Evrimi ve Kararlılık Korteksi">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>🧬 Öz-Evrim &amp; Bellek</span>
@@ -112,6 +113,8 @@
         <button onclick="openTechInfoModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-300 text-xs font-semibold flex items-center gap-1 transition" title="SYNAX Öz-Modelleme Mimarisi & Teknik Bilgiler">
           <span>ℹ️</span> <span class="hidden lg:inline">Teknik Bilgiler</span>
         </button>
+        </div>
+        <button id="founderLoginBtn" onclick="founderBtnClick()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center gap-1 transition" title="SYNAX Kurucu Girişi (yalnızca Dr. Ömer Faruk Aydın)">🔐 <span class="hidden md:inline">Kurucu Girişi</span></button>
         <button onclick="openModelSettingsModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1 transition" title="Model Parametreleri & Biçem Ayarları">
           <span>⚙️</span> <span class="hidden xl:inline">Parametreler</span>
         </button>
@@ -270,38 +273,7 @@
         <button onclick="closeTechInfoModal()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 text-xs font-bold">✕ Kapat</button>
       </div>
 
-      <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
-        <div class="p-3.5 rounded-xl bg-[#070b14] border border-slate-800 space-y-2">
-          <div class="font-bold text-amber-300">🧬 1. SYNAX 4-Katmanlı Hibrit Sinirsel-Sembolik Öz-Modelleme (Self-Modeling Pipeline)</div>
-          <p>Standart dil modellerinden farklı olarak SYNAX, sinirsel dil üretimini deterministik matematiksel ve bilimsel doğrulama katmanlarıyla birleştirir:</p>
-          <ul class="list-disc pl-5 space-y-1 text-slate-400">
-            <li><strong class="text-slate-200">Katman 1 — Alan &amp; Niyet Vektörleme:</strong> Sorguyu klinik tıp, Q1 akademik makale, biyoistatistik veya silikon/yazılım uzayında sınıflandırır.</li>
-            <li><strong class="text-slate-200">Katman 2 — 9-Motorlu Paralel Gerçek Zamanlı İnternet &amp; Literatür Arama (`curl_multi`):</strong> DuckDuckGo Canlı Web, Google News RSS, Canlı URL Okuyucu, NCBI PubMed (<code>esearch</code> + <code>efetch</code>), CrossRef DOI, ArXiv, Wikipedia (TR/EN), GitHub ve HackerNews motorlarını aynı anda (&le;2.5 sn) tarayarak sıfır-halüsinasyonlu canlı kanıt bağlar.</li>
-            <li><strong class="text-slate-200">Katman 3 — Sembolik &amp; Matematiksel Öz-Denetim:</strong> 19-küme IEEE-754 <code>0-ULP</code> aralık soyut yorumlama, <code>V_{k+1} &lt; V_k</code> daralmalı Lyapunov kararlılığı ve DerSimonian-Laird rastgele etkiler denklemlerini doğrular.</li>
-            <li><strong class="text-slate-200">Katman 4 — Çoklu-Omurga LPU Hızlandırma:</strong> Yüksek hızlı LPU çıkarım düğümleri (120B MoE Reasoning, 70B Dense ve 27B/32B DeepThink omurgaları) üzerinde sıfır gecikmeyle çalışır.</li>
-          </ul>
-        </div>
-
-        <div class="font-bold text-cyan-300 pt-1">🏛️ 2. SYNAX Özgün Model Ailesi (5 Uzmanlaşmış Model)</div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
-            <div class="font-bold text-white">⚡ SYNAX-OMNI 1.0 Ultra</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">120B MoE derin muhakeme omurgası + 8 Ajan orkestrasyonu + çok-turlu hafıza.</div>
-          </div>
-          <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
-            <div class="font-bold text-emerald-300">🩺 SYNAX-Med &amp; Q1 Scholar 1.0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Klinik karar destek, canlı PubMed MeSH taraması, PRISMA 2020 ve 21 Q1 SCIE makale becerisi.</div>
-          </div>
-          <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
-            <div class="font-bold text-cyan-300">🔩 SYNAX-Silicon &amp; Code 1.0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">.SX derleyici, C11, ARM64 NEON, x86 AVX2, Q16.16 MCU, Python TDD ve E-Graph optimizasyonu.</div>
-          </div>
-          <div class="p-3 rounded-xl bg-[#070b14] border border-slate-800">
-            <div class="font-bold text-purple-300">📊 SYNAX-Biostat &amp; Lyapunov 1.0</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">DerSimonian-Laird meta-analiz, Forest Plot, SAMPL denetimi ve V_{k+1}&lt;V_k sıfır-sapma.</div>
-          </div>
-        </div>
-      </div>
+      <div id="techInfoBody" class="text-xs text-slate-300">Kurucu doğrulaması yapılıyor...</div>
     </div>
   </div>
 
@@ -540,7 +512,81 @@
     </div>
   </div>
 
+  <!-- FOUNDER LOGIN (Zero-Trust) -->
+  <div id="founderLoginModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] items-center justify-center p-4">
+    <div class="bg-[#0b101d] border border-amber-500/40 rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-black text-white">🔐 SYNAX Kurucu Doğrulaması</h2>
+        <button onclick="closeFounderLogin()" class="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold">✕</button>
+      </div>
+      <p class="text-[11px] text-slate-400 leading-relaxed">Bellek, kalıcı kişiselleştirme ve teknik mimari katmanları yalnızca Kurucu için açıktır. Parola + doğrulayıcı uygulama kodu gerekir.</p>
+      <input type="password" id="founderPassInput" autocomplete="current-password" placeholder="Kurucu parolası (passkey)" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400" />
+      <input type="text" id="founderTotpInput" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 haneli doğrulayıcı kodu" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono tracking-widest focus:outline-none focus:border-amber-400" onkeydown="if(event.key==='Enter'){submitFounderLogin();}" />
+      <div id="founderLoginMsg" class="text-[11px] font-mono min-h-[16px]"></div>
+      <button onclick="submitFounderLogin()" class="w-full py-2 rounded-xl bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 font-black text-xs">Kimliği Doğrula &amp; Aç</button>
+    </div>
+  </div>
+
   <script>
+    let founderToken = sessionStorage.getItem('synax_founder_token') || '';
+    const _origFetch = window.fetch.bind(window);
+    window.fetch = (u, o = {}) => {
+      if (founderToken && typeof u === 'string' && u.indexOf('api.php') !== -1) {
+        o = Object.assign({}, o, { headers: Object.assign({}, o.headers || {}, { 'X-Synax-Sovereign-Token': founderToken }) });
+      }
+      return _origFetch(u, o);
+    };
+
+    function applyFounderUi(on) {
+      const box = document.getElementById('founderOnlyControls');
+      const btn = document.getElementById('founderLoginBtn');
+      if (box) { box.classList.toggle('hidden', !on); box.classList.toggle('flex', on); }
+      if (btn) btn.innerHTML = on ? '🔓 <span class="hidden md:inline">Kurucu · Çıkış</span>' : '🔐 <span class="hidden md:inline">Kurucu Girişi</span>';
+    }
+    function founderBtnClick() { if (founderToken) founderLogout(); else openFounderLogin(); }
+    function openFounderLogin() {
+      const m = document.getElementById('founderLoginModal');
+      m.classList.remove('hidden'); m.classList.add('flex');
+      document.getElementById('founderPassInput').focus();
+    }
+    function closeFounderLogin() {
+      const m = document.getElementById('founderLoginModal');
+      m.classList.add('hidden'); m.classList.remove('flex');
+      document.getElementById('founderPassInput').value = '';
+      document.getElementById('founderTotpInput').value = '';
+    }
+    function founderLogout() {
+      founderToken = ''; sessionStorage.removeItem('synax_founder_token');
+      applyFounderUi(false);
+      ['cortexModal', 'techInfoModal'].forEach(id => { const e = document.getElementById(id); if (e) { e.classList.add('hidden'); e.classList.remove('flex'); } });
+    }
+    async function submitFounderLogin() {
+      const msg = document.getElementById('founderLoginMsg');
+      msg.className = 'text-[11px] font-mono text-slate-300'; msg.textContent = 'Doğrulanıyor...';
+      try {
+        const r = await _origFetch('api.php?action=verify_sovereign', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'verify_sovereign', sovereign_passkey: document.getElementById('founderPassInput').value, totp_code: document.getElementById('founderTotpInput').value })
+        });
+        const d = await r.json().catch(() => ({}));
+        if (r.ok && d.authorized) {
+          founderToken = d.sovereign_token; sessionStorage.setItem('synax_founder_token', founderToken);
+          closeFounderLogin(); applyFounderUi(true);
+          personalizationLoadedOnce = false; refreshAutonomousCortex(false);
+        } else {
+          msg.className = 'text-[11px] font-mono text-rose-400'; msg.textContent = d.error || 'Doğrulama başarısız.';
+        }
+      } catch (e) { msg.className = 'text-[11px] font-mono text-rose-400'; msg.textContent = 'Bağlantı hatası.'; }
+    }
+    async function validateFounderSession() {
+      if (!founderToken) { applyFounderUi(false); return; }
+      try {
+        const r = await fetch('api.php?action=cortex_status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"action":"cortex_status"}' });
+        const d = await r.json();
+        if (d && d.authorized) { applyFounderUi(true); renderCortexData(d); } else { founderLogout(); }
+      } catch (e) {}
+    }
+
     const SKILLS_21 = [
       { id: 'academic-publication-pipeline', num: '20', name: '21-Beceri Tam Q1 Yayın Paketi' },
       { id: 'scientific-writing', num: '01', name: 'IMRaD Bilimsel Makale Yazımı' },
@@ -589,10 +635,17 @@
       if (pill) pill.textContent = MODEL_DESCRIPTIONS[val] || MODEL_DESCRIPTIONS['synax-omni-ultra'];
     }
 
-    function openTechInfoModal() {
+    async function openTechInfoModal() {
+      if (!founderToken) { openFounderLogin(); return; }
       const m = document.getElementById('techInfoModal');
       m.classList.remove('hidden');
       m.classList.add('flex');
+      try {
+        const r = await fetch('api.php?action=sovereign_tech_info', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"action":"sovereign_tech_info"}' });
+        const d = await r.json();
+        if (r.ok && d.html) { document.getElementById('techInfoBody').innerHTML = d.html; }
+        else { founderLogout(); closeTechInfoModal(); openFounderLogin(); }
+      } catch (e) {}
     }
     function closeTechInfoModal() {
       const m = document.getElementById('techInfoModal');
@@ -612,6 +665,7 @@
     }
 
     function openCortexModal(defaultTab = 'tabOverview') {
+      if (!founderToken) { openFounderLogin(); return; }
       const m = document.getElementById('cortexModal');
       m.classList.remove('hidden');
       m.classList.add('flex');
@@ -1366,6 +1420,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       renderSkillsAccordion();
+      validateFounderSession();
       if (threads.length === 0) {
         createNewChatThread();
       } else {
@@ -1382,7 +1437,7 @@
         const jitterMs = Math.floor(Math.random() * 4000);
         const waitMs = Math.max(20000, Math.round(baseSec * 1000 * backoffMultiplier) + jitterMs);
         setTimeout(async () => {
-          if (!isGenerating && document.visibilityState === 'visible') {
+          if (founderToken && !isGenerating && document.visibilityState === 'visible') {
             try {
               await refreshAutonomousCortex(true);
               bgFeedFailures = 0;
