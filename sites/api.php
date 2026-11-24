@@ -1097,7 +1097,46 @@ if ($action === 'evolution_status' || $action === 'automation_status') {
 }
 
 // ============================================================================
-// 2. LIVE MULTI-TURN LLM (GPT-OSS-120B / QWEN-3.8-27B / LLAMA-3.3-70B) + RAG
+// 2. PUBLIC USER DAILY QUOTA GUARD (Protects Founder's API Limits!)
+//    Founder (authenticated) & internal v1.php commercial billing bypass this.
+// ============================================================================
+$quota_file = __DIR__ . '/.synax_daily_quotas.php';
+$is_internal_v1 = (strpos((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 'SYNAX-V1-Gateway') !== false);
+$daily_limit_max = 15; // Normal public users: 15 messages per day (UTC)
+$quota_info = ['unlimited' => true, 'used' => 0, 'limit' => 'UNLIMITED', 'remaining' => 'UNLIMITED'];
+
+if (!$is_sovereign_founder && !$is_internal_v1) {
+    $today_utc = gmdate('Y-m-d');
+    $client_ip = (string)($_SERVER['HTTP_CF_CONNECTING_IP'] ?? ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')));
+    $client_ip = trim(explode(',', $client_ip)[0]);
+    $ip_key = substr(hash('sha256', $client_ip . '|synax_quota|' . $today_utc), 0, 20);
+
+    $q_store = synax_read_guarded($quota_file);
+    if (($q_store['date'] ?? '') !== $today_utc) {
+        $q_store = ['date' => $today_utc, 'counts' => []];
+    }
+    $used_today = intval($q_store['counts'][$ip_key] ?? 0);
+    if ($used_today >= $daily_limit_max) {
+        http_response_code(429);
+        echo json_encode([
+            'error' => 'DAILY_QUOTA_EXCEEDED',
+            'quota' => ['unlimited' => false, 'used' => $used_today, 'limit' => $daily_limit_max, 'remaining' => 0],
+            'reply' => "### ⏳ Günlük Ücretsiz Kullanım Kotanız Doldu ({$used_today}/{$daily_limit_max})\n\nSYNAX-OMNI 1.5 sunucu kaynaklarını korumak için misafir kullanıcılar günde **{$daily_limit_max} mesaj** ile sınırlandırılmıştır. Kotanız gece yarısı (UTC 00:00) otomatik yenilenir.\n\n* **Kurucu erişimi** için üst bardaki **🔐 Kurucu Girişi** ile sınırsız oturum açabilirsiniz.\n* **Kurumsal / sınırsız API erişimi** için `sk-synax-...` kredi paketi kullanabilirsiniz.",
+        ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        exit;
+    }
+    $q_store['counts'][$ip_key] = $used_today + 1;
+    synax_write_guarded($quota_file, $q_store);
+    $quota_info = [
+        'unlimited' => false,
+        'used' => $used_today + 1,
+        'limit' => $daily_limit_max,
+        'remaining' => max(0, $daily_limit_max - ($used_today + 1)),
+    ];
+}
+
+// ============================================================================
+// 2B. LIVE MULTI-TURN LLM (SYNAX-OMNI 1.5 MESH) + 10-ENGINE LIVE RAG
 // ============================================================================
 $prompt = trim($data['prompt'] ?? $data['message'] ?? 'Merhaba');
 $target_agent_id = $data['target_agent_id'] ?? 'synax-llm';
@@ -1931,10 +1970,11 @@ $follow_ups = [
 ];
 
 echo json_encode([
-    'office_version' => '8.1.0',
+    'office_version' => '9.1.0',
     'omni_version' => '1.5',
     'access_tier' => $is_sovereign_founder ? 'SOVEREIGN_FOUNDER' : 'PUBLIC_USER',
     'provider_tier' => $is_sovereign_founder ? $used_provider_tier : 'SYNAX-OMNI 1.5 Mesh',
+    'quota' => $quota_info,
     'live_date_utc' => $live_date_tr,
     'job_id' => 'SYNAX-OMNI-' . rand(1000, 9999),
     'prompt' => $prompt,

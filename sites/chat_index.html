@@ -117,49 +117,58 @@
   <!-- ===================================================================== -->
   <div class="flex-1 flex flex-col h-full overflow-hidden relative">
 
-    <!-- Top Minimal Bar (SYNAX Sovereign Model Picker + Technical Info + Settings + Ecosystem Links) -->
-    <header class="h-13 px-4 border-b border-slate-800/70 bg-[#0a0d14]/90 backdrop-blur flex items-center justify-between shrink-0 z-20 gap-2">
-      <div class="flex items-center gap-2">
-        <button id="openSidebarBtn" onclick="toggleSidebar()" class="hidden p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs">☰</button>
+    <!-- Top Clean Single-Line Header (Zero Wrap, Zero Overflow, Pixel-Aligned) -->
+    <header class="h-14 px-3 sm:px-4 border-b border-slate-800/80 bg-[#080c15]/95 backdrop-blur-xl flex items-center justify-between shrink-0 z-20 gap-2">
+      <!-- Left: Sidebar Toggle + Compact Model Picker + Founder Compact Controls -->
+      <div class="flex items-center gap-2 min-w-0 flex-nowrap">
+        <button id="openSidebarBtn" onclick="toggleSidebar()" class="hidden p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs shrink-0" title="Menüyü Aç">☰</button>
 
-        <!-- SYNAX-OMNI 1.5 Sovereign Model Family Selector -->
-        <select id="modelEngineSelect" onchange="updateActiveModelBadge()" class="bg-[#111726] hover:bg-[#161e31] border border-slate-800 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-cyan-500 cursor-pointer shadow-sm">
-          <option value="synax-omni-ultra">⚡ SYNAX-OMNI 1.5 Ultra (Amiral Gemisi Derin Muhakeme &amp; Canlı 2026)</option>
-          <option value="synax-core-1.5">🧬 SYNAX-Core 1.5 (Öz Çekirdek + Kendi Öğrenim Ağı)</option>
-          <option value="synax-med-scholar">🩺 SYNAX-Med &amp; Q1 Scholar 1.5 (Klinik Tıp &amp; Q1 SCIE Makale)</option>
-          <option value="synax-silicon-code">🔩 SYNAX-Silicon &amp; Code 1.5 (.SX, Python, ARM64 NEON &amp; 0-ULP)</option>
-          <option value="synax-biostat-lyapunov">📊 SYNAX-Biostat &amp; Lyapunov 1.5 (Meta-Analiz &amp; V_{k+1}&lt;V_k)</option>
-          <option value="synax-turbo-flash">🚀 SYNAX-Turbo 1.5 Flash (Ultra-Hızlı Sohbet &amp; Anlık Web)</option>
+        <!-- SYNAX-OMNI 1.5 Sovereign Model Family Selector (Fixed max width, clean truncation) -->
+        <select id="modelEngineSelect" onchange="updateActiveModelBadge()" class="max-w-[200px] sm:max-w-[260px] lg:max-w-[300px] truncate bg-[#111829] hover:bg-[#172036] border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-cyan-500 cursor-pointer shadow-sm shrink-0">
+          <option value="synax-omni-ultra">⚡ SYNAX-OMNI 1.5 Ultra</option>
+          <option value="synax-core-1.5">🧬 SYNAX-Core 1.5 (Öz Çekirdek)</option>
+          <option value="synax-med-scholar">🩺 SYNAX-Med &amp; Q1 Scholar 1.5</option>
+          <option value="synax-silicon-code">🔩 SYNAX-Silicon &amp; Code 1.5</option>
+          <option value="synax-biostat-lyapunov">📊 SYNAX-Biostat &amp; Lyapunov 1.5</option>
+          <option value="synax-turbo-flash">🚀 SYNAX-Turbo 1.5 Flash</option>
         </select>
 
-        <!-- Top Info, Autonomous Self-Evolution & Personalization Cortex + Model Settings Buttons -->
-        <div id="founderOnlyControls" class="hidden items-center gap-2">
-        <button onclick="openCortexModal('tabOverview')" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition shadow-sm" title="7/24 Otonom Öz-Beslenme, Bellek, Beceri Evrimi ve Kararlılık Korteksi">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>🧬 Öz-Evrim &amp; Bellek</span>
-          <span id="topCortexCounter" class="font-mono text-[10px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-200">Aktif</span>
-        </button>
-        <button onclick="openCortexModal('tabPersonalize')" class="px-2.5 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/40 text-purple-300 text-xs font-bold flex items-center gap-1 transition shadow-sm" title="Ultra-Profesyonel Kişiselleştirme & Bilişsel Customize Stüdyosu">
-          <span>🎛️</span> <span class="hidden md:inline">Kişiselleştir</span>
-        </button>
-        <button onclick="openTechInfoModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-300 text-xs font-semibold flex items-center gap-1 transition" title="SYNAX Öz-Modelleme Mimarisi & Teknik Bilgiler">
-          <span>ℹ️</span> <span class="hidden lg:inline">Teknik Bilgiler</span>
-        </button>
+        <!-- Founder-Only Compact Control Group (Never Wraps) -->
+        <div id="founderOnlyControls" class="hidden items-center gap-1.5 shrink-0 flex-nowrap">
+          <button onclick="openCortexModal('tabOverview')" class="h-8 px-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-bold inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 transition" title="Korteks, Bellek, Öz-Beslenme & Ticari API">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+            <span>🧬 Korteks</span>
+            <span id="topCortexCounter" class="hidden 2xl:inline font-mono text-[10px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-200">Aktif</span>
+          </button>
+          <button onclick="openCortexModal('tabPersonalize')" class="h-8 px-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/40 text-purple-300 text-xs font-bold inline-flex items-center gap-1 whitespace-nowrap shrink-0 transition" title="Kişiselleştirme & Bilişsel Ayarlar">
+            <span>🎛️</span><span class="hidden xl:inline">Kişiselleştir</span>
+          </button>
+          <button onclick="openTechInfoModal()" class="h-8 w-8 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-cyan-300 text-xs inline-flex items-center justify-center shrink-0 transition" title="Teknik Mimari Bilgileri">ℹ️</button>
         </div>
-        <button id="founderLoginBtn" onclick="founderBtnClick()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center gap-1 transition" title="SYNAX Kurucu Girişi (yalnızca Dr. Ömer Faruk Aydın)">🔐 <span class="hidden md:inline">Kurucu Girişi</span></button>
-        <button onclick="openModelSettingsModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1 transition" title="Model Parametreleri & Biçem Ayarları">
-          <span>⚙️</span> <span class="hidden xl:inline">Parametreler</span>
-        </button>
+
+        <button id="founderLoginBtn" onclick="founderBtnClick()" class="h-8 px-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-500/40 text-amber-300 text-xs font-bold inline-flex items-center gap-1 whitespace-nowrap shrink-0 transition" title="SYNAX Kurucu Girişi">🔐 <span class="hidden md:inline">Kurucu</span></button>
+        <button onclick="openModelSettingsModal()" class="h-8 w-8 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs inline-flex items-center justify-center shrink-0 transition" title="Model Parametreleri & Biçem">⚙️</button>
       </div>
 
-      <!-- Right Ecosystem Navigation & Export / Canvas -->
-      <div class="flex items-center gap-1.5 text-xs">
-        <a href="https://synaxcode.com" class="hidden xl:inline-block px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/70 transition">🌐 Ana Sayfa</a>
-        <a href="https://office.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">🏢 3D Ofis</a>
-        <a href="https://code.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">💻 Kod IDE</a>
-        <a href="https://terminal.synaxcode.com" class="hidden sm:inline-block px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">⌨️ Terminal</a>
-        <div class="relative inline-block">
-          <button onclick="toggleExportMenu('headerExportMenu')" class="hidden sm:inline-flex px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 font-semibold transition items-center gap-1" title="Tüm Sohbeti .md, .txt, .doc, .docx veya .pdf Olarak İndir">⬇️ <span class="hidden xl:inline">Dışa Aktar</span></button>
+      <!-- Right: Quota Pill + Ecosystem Apps Dropdown + Export + Canvas (Zero Wrap) -->
+      <div class="flex items-center gap-1.5 text-xs shrink-0 flex-nowrap">
+        <span id="headerQuotaPill" class="hidden sm:inline-flex items-center h-8 px-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px] font-mono text-slate-300 whitespace-nowrap shrink-0" title="Günlük Kullanım Kotası">📊 15/15</span>
+
+        <!-- Compact Ecosystem Apps Menu (Eliminates 4-link horizontal overflow!) -->
+        <div class="relative inline-block shrink-0">
+          <button onclick="toggleExportMenu('ecosystemAppsMenu')" class="h-8 px-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 font-semibold inline-flex items-center gap-1 whitespace-nowrap shrink-0 transition" title="SYNAX Uygulamaları">
+            <span>🧭</span><span class="hidden lg:inline">Uygulamalar</span><span class="text-[9px] text-slate-400">▼</span>
+          </button>
+          <div id="ecosystemAppsMenu" class="hidden absolute right-0 mt-1.5 w-48 bg-[#0d1424] border border-slate-700 rounded-xl shadow-2xl p-1.5 z-50 text-xs space-y-0.5">
+            <a href="https://synaxcode.com" class="block px-2.5 py-2 rounded-lg hover:bg-slate-800 text-slate-200 font-medium">🌐 Ana Portal</a>
+            <a href="https://office.synaxcode.com" class="block px-2.5 py-2 rounded-lg hover:bg-slate-800 text-cyan-300 font-medium">🏢 3D Ajan Ofisi</a>
+            <a href="https://code.synaxcode.com" class="block px-2.5 py-2 rounded-lg hover:bg-slate-800 text-emerald-300 font-medium">💻 Kod IDE Stüdyosu</a>
+            <a href="https://terminal.synaxcode.com" class="block px-2.5 py-2 rounded-lg hover:bg-slate-800 text-amber-300 font-medium">⌨️ Otonom Terminal</a>
+          </div>
+        </div>
+
+        <div class="relative inline-block shrink-0">
+          <button onclick="toggleExportMenu('headerExportMenu')" class="h-8 px-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 font-semibold inline-flex items-center gap-1 whitespace-nowrap shrink-0 transition" title="Sohbeti .pdf, .docx, .doc, .md veya .txt İndir">⬇️ <span class="hidden xl:inline">İndir</span></button>
           <div id="headerExportMenu" class="hidden absolute right-0 mt-1.5 w-44 bg-[#0d1424] border border-cyan-500/35 rounded-xl shadow-2xl p-1.5 z-50 text-xs font-mono space-y-0.5">
             <div class="px-2 py-1 text-[10px] text-slate-400 uppercase font-bold border-b border-slate-800 mb-1">Sohbeti İndir</div>
             <button onclick="exportCurrentThreadAs('pdf')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-rose-300">📕 PDF Belgesi (.pdf)</button>
@@ -169,8 +178,8 @@
             <button onclick="exportCurrentThreadAs('txt')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-slate-200">📃 Düz Metin (.txt)</button>
           </div>
         </div>
-        <button onclick="toggleCanvasDrawer()" id="canvasToggleBtn" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-800 font-semibold transition flex items-center gap-1.5">
-          <span>✨ Canvas</span>
+        <button onclick="toggleCanvasDrawer()" id="canvasToggleBtn" class="h-8 px-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-800 font-semibold inline-flex items-center gap-1 whitespace-nowrap shrink-0 transition">
+          <span>✨</span><span class="hidden sm:inline">Canvas</span>
         </button>
       </div>
     </header>
@@ -718,8 +727,16 @@
     function applyFounderUi(on) {
       const box = document.getElementById('founderOnlyControls');
       const btn = document.getElementById('founderLoginBtn');
+      const qp = document.getElementById('headerQuotaPill');
       if (box) { box.classList.toggle('hidden', !on); box.classList.toggle('flex', on); }
-      if (btn) btn.innerHTML = on ? '🔓 <span class="hidden md:inline">Kurucu · Çıkış</span>' : '🔐 <span class="hidden md:inline">Kurucu Girişi</span>';
+      if (btn) btn.innerHTML = on ? '🔓 <span class="hidden md:inline">Çıkış</span>' : '🔐 <span class="hidden md:inline">Kurucu</span>';
+      if (qp && on) {
+        qp.textContent = '♾️ Sınırsız';
+        qp.className = 'hidden sm:inline-flex items-center h-8 px-2.5 rounded-xl bg-amber-500/15 border border-amber-500/35 text-[11px] font-mono text-amber-300 whitespace-nowrap shrink-0';
+      } else if (qp && !on) {
+        qp.textContent = '📊 15/15';
+        qp.className = 'hidden sm:inline-flex items-center h-8 px-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px] font-mono text-slate-300 whitespace-nowrap shrink-0';
+      }
     }
     function founderBtnClick() { if (founderToken) founderLogout(); else openFounderLogin(); }
     function openFounderLogin() {
@@ -1289,7 +1306,7 @@
     }
 
     function toggleExportMenu(menuId) {
-      ['headerExportMenu', 'canvasExportMenu'].forEach(id => {
+      ['headerExportMenu', 'canvasExportMenu', 'ecosystemAppsMenu'].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         if (id === menuId) el.classList.toggle('hidden');
@@ -2108,8 +2125,14 @@
               custom_system_prompt: customSysVal
             })
           });
-          if (r.ok) {
+          if (r.ok || r.status === 429) {
             const d = await r.json();
+            if (d && d.quota) {
+              const qp = document.getElementById('headerQuotaPill');
+              if (qp) {
+                qp.textContent = d.quota.unlimited ? '♾️ Sınırsız' : `📊 ${d.quota.remaining}/${d.quota.limit}`;
+              }
+            }
             if (d && d.reply) {
               successData = d;
               break;
