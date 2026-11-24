@@ -11,83 +11,89 @@
     code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden bg-[#040711] text-slate-100">
+<body class="min-h-[100dvh] lg:h-[100dvh] flex flex-col lg:overflow-hidden bg-[#040711] text-slate-100 overflow-x-hidden">
 
-  <!-- UNIFIED SYNAX TOP NAVIGATION BAR (56px, Zero Clutter) -->
-  <header class="h-14 bg-[#060b16]/95 backdrop-blur border-b border-slate-800/90 px-4 flex items-center justify-between shrink-0 z-40">
-    <div class="flex items-center gap-6">
-      <a href="https://synaxcode.com" class="flex items-center gap-2.5 text-decoration-none">
+  <!-- UNIFIED SYNAX TOP NAVIGATION BAR (56px, Mobile + Desktop Responsive) -->
+  <header class="min-h-[56px] bg-[#060b16]/95 backdrop-blur border-b border-slate-800/90 px-3 sm:px-4 py-2 flex items-center justify-between gap-2 shrink-0 z-40 sticky top-0">
+    <div class="flex items-center gap-3 sm:gap-5 min-w-0">
+      <a href="https://synaxcode.com" class="flex items-center gap-2 text-decoration-none shrink-0">
         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px]">
           <div class="w-full h-full bg-[#040711] rounded-[6px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
         </div>
-        <span class="font-black text-sm tracking-tight text-white">SYNAX <span class="text-cyan-400 font-mono text-xs">v6.6</span></span>
+        <span class="font-black text-sm tracking-tight text-white whitespace-nowrap">SYNAX <span class="text-cyan-400 font-mono text-xs">1.5</span></span>
       </a>
-      <nav class="hidden md:flex items-center gap-1">
-        <a href="https://synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition">🌐 Ana Sayfa</a>
-        <a href="https://office.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition">🏢 3D Ajan Ofisi</a>
-        <a href="https://chat.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition">💬 AI Sohbet</a>
-        <a href="https://code.synaxcode.com" class="px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-extrabold text-xs shadow-sm transition">💻 Kod Stüdyosu</a>
-        <a href="https://terminal.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition">⌨️ Terminal</a>
-        <a href="https://synaxcode.org" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition">🎓 Akademik (.org)</a>
+      <nav class="hidden lg:flex items-center gap-1">
+        <a href="https://synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition whitespace-nowrap">🌐 Ana Sayfa</a>
+        <a href="https://office.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition whitespace-nowrap">🏢 3D Ofis</a>
+        <a href="https://chat.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition whitespace-nowrap">💬 Sohbet</a>
+        <a href="https://code.synaxcode.com" class="px-2.5 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-extrabold text-xs shadow-sm transition whitespace-nowrap">💻 Kod</a>
+        <a href="https://terminal.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition whitespace-nowrap">⌨️ Terminal</a>
+        <a href="https://synaxcode.org" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition whitespace-nowrap">🎓 Akademik</a>
       </nav>
     </div>
-    <div class="flex items-center gap-2">
-      
-      <select id="presetSelect" onchange="loadCodePreset(this.value)" class="bg-[#0b1326] border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-mono text-cyan-300">
+    <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
+      <select id="presetSelect" onchange="loadCodePreset(this.value)" class="max-w-[130px] sm:max-w-[230px] truncate bg-[#0b1326] border border-slate-700 rounded-lg px-2 py-1.5 text-xs font-mono text-cyan-300">
         <option value="lyapunov_ecg">Şablon 1: Lyapunov EKG Sıfır-Sapma (.sx)</option>
         <option value="septic_ibp">Şablon 2: Septik Şok IBP / CPP Kalkanı (.sx)</option>
         <option value="shock_index">Şablon 3: Acil Servis Şok İndeksi (.sx)</option>
         <option value="token_shield">Şablon 4: Token Shield -%88.4 AST (.sx)</option>
       </select>
-      <button onclick="compileAndRunSx()" class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-mono font-black text-xs shadow">▶ DERLE &amp; ÇALIŞTIR</button>
-
+      <button onclick="compileAndRunSx()" class="px-2.5 sm:px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-mono font-black text-xs shadow whitespace-nowrap">▶ DERLE</button>
+      <button onclick="document.getElementById('mobileNavDrawer').classList.toggle('hidden')" class="lg:hidden px-2 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-bold">☰</button>
     </div>
   </header>
+  <nav id="mobileNavDrawer" class="hidden lg:hidden bg-[#070d1d] border-b border-slate-800 px-3 py-2.5 grid grid-cols-2 gap-1.5 text-xs font-bold z-30">
+    <a href="https://synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-slate-200 border border-slate-800">🌐 Ana Sayfa</a>
+    <a href="https://office.synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-amber-300 border border-slate-800">🏢 3D Ajan Ofisi</a>
+    <a href="https://chat.synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-emerald-300 border border-slate-800">💬 AI Sohbet</a>
+    <a href="https://code.synaxcode.com" class="px-3 py-2 rounded-lg bg-cyan-500 text-slate-950">💻 Kod Stüdyosu</a>
+    <a href="https://terminal.synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-purple-300 border border-slate-800">⌨️ Terminal</a>
+    <a href="https://synaxcode.org" class="px-3 py-2 rounded-lg bg-slate-900 text-sky-300 border border-slate-800">🎓 Akademik (.org)</a>
+  </nav>
 
-
-  <!-- CLEAN 2-COLUMN IDE WORKSPACE -->
-  <div class="flex-1 grid grid-cols-12 overflow-hidden">
+  <!-- CLEAN RESPONSIVE 2-COLUMN IDE WORKSPACE (STACKS CLEANLY ON MOBILE) -->
+  <div class="flex-1 grid grid-cols-12 lg:overflow-hidden">
 
     <!-- LEFT (5 COLS): .SX EDITOR & SIGNAL VECTORS -->
-    <section class="col-span-12 lg:col-span-5 bg-[#060b16] border-r border-slate-800 flex flex-col h-full overflow-hidden">
-      <div class="px-4 py-2 bg-[#080f20] border-b border-slate-800 flex items-center justify-between text-xs font-mono">
-        <span id="activeFileName" class="text-amber-300 font-bold">📄 kernels/lyapunov_ecg_zero_drift.sx</span>
-        <span class="text-emerald-400">0-ULP IEEE-754 Guard</span>
+    <section class="col-span-12 lg:col-span-5 bg-[#060b16] border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col lg:h-full lg:overflow-hidden">
+      <div class="px-3 sm:px-4 py-2 bg-[#080f20] border-b border-slate-800 flex items-center justify-between text-xs font-mono gap-2">
+        <span id="activeFileName" class="text-amber-300 font-bold truncate">📄 kernels/lyapunov_ecg_zero_drift.sx</span>
+        <span class="text-emerald-400 whitespace-nowrap shrink-0">0-ULP Guard</span>
       </div>
-      <textarea id="sxEditor" spellcheck="false" class="flex-1 w-full p-4 bg-[#040711] text-cyan-100 font-mono text-xs leading-relaxed focus:outline-none resize-none"></textarea>
-      <div class="p-3 bg-[#080f20] border-t border-slate-800 grid grid-cols-2 gap-2 text-xs font-mono">
+      <textarea id="sxEditor" spellcheck="false" class="flex-1 min-h-[240px] lg:min-h-0 w-full p-3 sm:p-4 bg-[#040711] text-cyan-100 font-mono text-sm sm:text-xs leading-relaxed focus:outline-none resize-none"></textarea>
+      <div class="p-3 bg-[#080f20] border-t border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
         <div>
           <label class="text-[10px] text-slate-400 block mb-1">Kanal A (Ham Sensör Sinyali f32[])</label>
-          <input id="vecA" type="text" value="1.20, 1.45, -0.35, 1.85, 0.15, 0.30, -0.10, 1.25" class="w-full bg-[#040711] border border-slate-700 rounded px-2 py-1 text-white text-xs" />
+          <input id="vecA" type="text" value="1.20, 1.45, -0.35, 1.85, 0.15, 0.30, -0.10, 1.25" class="w-full bg-[#040711] border border-slate-700 rounded px-2 py-1.5 text-white text-sm sm:text-xs" />
         </div>
         <div>
           <label class="text-[10px] text-slate-400 block mb-1">Kanal B (Bazal Kayma / Drift f32[])</label>
-          <input id="vecB" type="text" value="0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11" class="w-full bg-[#040711] border border-slate-700 rounded px-2 py-1 text-white text-xs" />
+          <input id="vecB" type="text" value="0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11" class="w-full bg-[#040711] border border-slate-700 rounded px-2 py-1.5 text-white text-sm sm:text-xs" />
         </div>
       </div>
     </section>
 
     <!-- RIGHT (7 COLS): 60 FPS OSCILLOSCOPE & 4 CLEAN OUTPUT TABS -->
-    <section class="col-span-12 lg:col-span-7 bg-[#040711] flex flex-col h-full overflow-hidden">
+    <section class="col-span-12 lg:col-span-7 bg-[#040711] flex flex-col lg:h-full lg:overflow-hidden">
       <!-- Oscilloscope -->
       <div class="p-3 border-b border-slate-800 bg-[#060b16]">
-        <div class="flex items-center justify-between text-xs font-mono mb-1.5">
+        <div class="flex items-center justify-between text-xs font-mono mb-1.5 flex-wrap gap-1">
           <span class="font-bold text-white flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Canlı Biyomedikal Osiloskop (60 FPS)</span>
           <span id="oscStats" class="text-cyan-300">Lyapunov Bastırma: %99.98 · 18.4 µs</span>
         </div>
         <canvas id="oscCanvas" class="w-full h-36 rounded-xl bg-[#02040a] border border-slate-800 block"></canvas>
       </div>
 
-      <!-- 4 Clean Output Tabs -->
-      <div class="px-3 py-2 bg-[#080f20] border-b border-slate-800 flex items-center gap-2 font-mono text-xs">
-        <button onclick="switchCodeTab('console')" id="cTab-console" class="px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-black">💻 1. Yürütme &amp; 0-ULP Kanıt</button>
-        <button onclick="switchCodeTab('hardware')" id="cTab-hardware" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-white font-bold">🔩 2. C11 / ARM64 NEON / AVX2</button>
-        <button onclick="switchCodeTab('ast')" id="cTab-ast" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-white font-bold">🌳 3. E-Graph &amp; AST</button>
-        <button onclick="switchCodeTab('python')" id="cTab-python" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-white font-bold">🐍 4. Python + Pytest TDD</button>
+      <!-- 4 Clean Output Tabs (Horizontally Scrollable on Mobile) -->
+      <div class="px-3 py-2 bg-[#080f20] border-b border-slate-800 flex items-center gap-2 font-mono text-xs overflow-x-auto whitespace-nowrap">
+        <button onclick="switchCodeTab('console')" id="cTab-console" class="px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-black shrink-0">💻 1. Yürütme &amp; 0-ULP Kanıt</button>
+        <button onclick="switchCodeTab('hardware')" id="cTab-hardware" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-white font-bold shrink-0">🔩 2. C11 / ARM64 NEON / AVX2</button>
+        <button onclick="switchCodeTab('ast')" id="cTab-ast" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-white font-bold shrink-0">🌳 3. E-Graph &amp; AST</button>
+        <button onclick="switchCodeTab('python')" id="cTab-python" class="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 hover:text-white font-bold shrink-0">🐍 4. Python + Pytest TDD</button>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-4 font-mono text-xs">
-        <pre id="codeOutputPane" class="whitespace-pre-wrap leading-relaxed text-slate-200"></pre>
+      <div class="flex-1 overflow-y-auto p-3 sm:p-4 font-mono text-xs min-h-[240px]">
+        <pre id="codeOutputPane" class="whitespace-pre-wrap break-words leading-relaxed text-slate-200"></pre>
       </div>
     </section>
 

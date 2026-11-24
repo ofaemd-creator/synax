@@ -14,43 +14,54 @@
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
   </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body class="h-[100dvh] flex flex-col overflow-hidden bg-[#02050b]">
 
-  <!-- TOP ECOSYSTEM NAVIGATION BAR -->
-  <header class="bg-[#050914] border-b border-emerald-500/30 px-4 py-2 flex items-center justify-between shrink-0 z-30 flex-wrap gap-2 font-sans">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 via-cyan-400 to-purple-500 p-[1.5px] shadow-lg shadow-emerald-500/20">
-        <div class="w-full h-full bg-[#02050b] rounded-[10px] flex items-center justify-center font-mono font-black text-sm text-emerald-400">&gt;_</div>
+  <!-- COMPACT MOBILE + DESKTOP TOP NAVIGATION BAR -->
+  <header class="h-14 bg-[#050914] border-b border-emerald-500/30 px-3 sm:px-4 flex items-center justify-between shrink-0 z-40 gap-2 font-sans">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 via-cyan-400 to-purple-500 p-[1.5px] shrink-0">
+        <div class="w-full h-full bg-[#02050b] rounded-[9px] flex items-center justify-center font-mono font-black text-xs text-emerald-400">&gt;_</div>
       </div>
-      <div>
+      <div class="min-w-0">
         <div class="flex items-center gap-2">
-          <span class="font-black text-sm tracking-tight bg-gradient-to-r from-emerald-300 via-cyan-300 to-purple-400 bg-clip-text text-transparent">TERMINAL.SYNAXCODE.COM</span>
-          <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">SYNAX-OS v6.5 SHELL</span>
+          <span class="font-black text-xs sm:text-sm tracking-tight bg-gradient-to-r from-emerald-300 via-cyan-300 to-purple-400 bg-clip-text text-transparent truncate">SYNAX TERMINAL</span>
+          <span class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 whitespace-nowrap">OMNI 1.5 CLI</span>
         </div>
-        <div class="text-[11px] text-slate-400">8 Otonom Ajan Komuta Satırı · Canlı Vardiya &amp; Beceri Evrimi · 0-ULP Formal Prover CLI</div>
+        <div class="hidden md:block text-[11px] text-slate-400 truncate">8 Otonom Ajan Komuta Satırı · Canlı Vardiya &amp; 0-ULP Prover</div>
       </div>
     </div>
 
-    <nav class="flex items-center gap-1.5 font-mono text-xs flex-wrap">
-      <a href="https://office.synaxcode.com" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold transition">🏢 office.synaxcode.com</a>
-      <a href="https://chat.synaxcode.com" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 font-bold transition">💬 chat.synaxcode.com</a>
-      <a href="https://code.synaxcode.com" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 font-bold transition">💻 code.synaxcode.com</a>
-      <a href="https://terminal.synaxcode.com" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-500 text-slate-950 font-black shadow-md">⌨️ terminal.synaxcode.com</a>
-      <a href="https://synaxcode.com" class="px-2.5 py-1.5 rounded-lg bg-slate-900/70 hover:bg-slate-800 text-slate-300 border border-slate-700 transition">🌐 synaxcode.com</a>
-    </nav>
+    <div class="flex items-center gap-1.5 shrink-0">
+      <nav class="hidden lg:flex items-center gap-1.5 font-mono text-xs">
+        <a href="https://synaxcode.com" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 transition">🌐 Ana Sayfa</a>
+        <a href="https://office.synaxcode.com" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold transition">🏢 3D Ofis</a>
+        <a href="https://chat.synaxcode.com" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 font-bold transition">💬 AI Sohbet</a>
+        <a href="https://code.synaxcode.com" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 font-bold transition">💻 Kod</a>
+        <a href="https://terminal.synaxcode.com" class="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-500 text-slate-950 font-black shadow-md">⌨️ Terminal</a>
+      </nav>
+      <button onclick="document.getElementById('mobileTermNav').classList.toggle('hidden')" class="lg:hidden px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-bold">☰ Menü</button>
+    </div>
   </header>
+  <nav id="mobileTermNav" class="hidden lg:hidden bg-[#070d1d] border-b border-slate-800 px-3 py-2.5 grid grid-cols-2 gap-1.5 text-xs font-bold font-sans z-30 shrink-0">
+    <a href="https://synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-slate-200 border border-slate-800">🌐 Ana Sayfa</a>
+    <a href="https://office.synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-amber-300 border border-slate-800">🏢 3D Ajan Ofisi</a>
+    <a href="https://chat.synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-emerald-300 border border-slate-800">💬 AI Sohbet</a>
+    <a href="https://code.synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-cyan-300 border border-slate-800">💻 Kod Stüdyosu</a>
+    <a href="https://terminal.synaxcode.com" class="px-3 py-2 rounded-lg bg-purple-500 text-slate-950">⌨️ Terminal</a>
+    <a href="https://synaxcode.org" class="px-3 py-2 rounded-lg bg-slate-900 text-sky-300 border border-slate-800">🎓 Akademik (.org)</a>
+  </nav>
 
   <!-- QUICK COMMAND PALETTE BAR -->
-  <div class="bg-[#060c1a] border-b border-slate-800 px-4 py-2 flex items-center gap-2 overflow-x-auto text-xs shrink-0">
-    <span class="text-slate-400 font-bold shrink-0">⚡ Tek Tık Komutlar:</span>
+  <div class="bg-[#060c1a] border-b border-slate-800 px-3 sm:px-4 py-2 flex items-center gap-2 overflow-x-auto text-xs shrink-0">
+    <span class="text-slate-400 font-bold shrink-0">⚡ Komutlar:</span>
     <button onclick="runCmd('help')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 shrink-0">help</button>
-    <button onclick="runCmd('status')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 shrink-0">status (Canlı Daemon)</button>
-    <button onclick="runCmd('agents')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 shrink-0">agents (8 Masa)</button>
-    <button onclick="runCmd('step')" class="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 font-bold shrink-0">🤖 step (Otonom Vardiya Çalıştır)</button>
-    <button onclick="runCmd('evolve')" class="px-2.5 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 font-bold shrink-0">🧬 evolve (+1 Beceri Sentezle)</button>
-    <button onclick="runCmd('prove')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-purple-300 border border-purple-500/30 shrink-0">🛡️ prove (19/19 0-ULP Kanıt)</button>
-    <button onclick="runCmd('compile lyapunov_ecg.sx')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-pink-300 border border-pink-500/30 shrink-0">🔩 compile lyapunov_ecg.sx</button>
-    <button onclick="runCmd('q1 Yoğun bakım EKG sıfır-sapmalı Lyapunov kalibrasyonu')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-sky-300 border border-sky-500/30 shrink-0">🎓 q1 (21-Beceri Q1 Makale)</button>
+    <button onclick="runCmd('status')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/30 shrink-0">status</button>
+    <button onclick="runCmd('agents')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 shrink-0">agents</button>
+    <button onclick="runCmd('step')" class="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 font-bold shrink-0">🤖 step</button>
+    <button onclick="runCmd('evolve')" class="px-2.5 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 font-bold shrink-0">🧬 evolve</button>
+    <button onclick="runCmd('prove')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-purple-300 border border-purple-500/30 shrink-0">🛡️ prove</button>
+    <button onclick="runCmd('compile lyapunov_ecg.sx')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-pink-300 border border-pink-500/30 shrink-0">🔩 compile</button>
+    <button onclick="runCmd('q1 Yoğun bakım EKG sıfır-sapmalı Lyapunov kalibrasyonu')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-sky-300 border border-sky-500/30 shrink-0">🎓 q1</button>
     <button onclick="runCmd('ls')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 shrink-0">ls</button>
     <button onclick="runCmd('clear')" class="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-rose-300 border border-rose-500/30 shrink-0">clear</button>
   </div>
@@ -59,14 +70,15 @@
   <div class="flex-1 grid grid-cols-12 overflow-hidden">
     <!-- LEFT/MAIN: INTERACTIVE SHELL -->
     <main class="col-span-12 lg:col-span-8 flex flex-col h-full bg-[#02050b] overflow-hidden" onclick="document.getElementById('cmdInput').focus()">
-      <div id="termOutput" class="flex-1 overflow-y-auto p-4 space-y-2 text-xs sm:text-[13px] leading-relaxed select-text"></div>
-      <div class="p-3 bg-[#050a15] border-t border-slate-800 flex items-center gap-2">
-        <span class="text-emerald-400 font-bold shrink-0">dr.aydin@synax-os:~#</span>
+      <div id="termOutput" class="flex-1 overflow-y-auto overflow-x-auto p-3 sm:p-4 space-y-2 text-[11px] sm:text-[13px] leading-relaxed select-text"></div>
+      <div class="p-2.5 sm:p-3 bg-[#050a15] border-t border-slate-800 flex items-center gap-2">
+        <span class="text-emerald-400 font-bold shrink-0 hidden sm:inline">dr.aydin@synax-os:~#</span>
+        <span class="text-emerald-400 font-bold shrink-0 sm:hidden">~#</span>
         <input id="cmdInput" type="text" autofocus autocomplete="off" spellcheck="false"
-          placeholder="Komut yazın (ör: status, agents, step, evolve, prove, compile, q1 <konu>, assign <görev>, help)..."
+          placeholder="Komut yazın (status, step, evolve, q1, help)..."
           onkeydown="handleKey(event)"
-          class="flex-1 bg-transparent text-amber-300 font-bold text-xs sm:text-[13px] focus:outline-none" />
-        <button onclick="submitCmd()" class="px-3 py-1 rounded bg-emerald-500 text-slate-950 font-black text-xs">Çalıştır ↵</button>
+          class="flex-1 min-w-0 bg-transparent text-amber-300 font-bold text-base sm:text-[13px] focus:outline-none" />
+        <button onclick="submitCmd()" class="px-3 py-1.5 rounded bg-emerald-500 text-slate-950 font-black text-xs shrink-0">Çalıştır ↵</button>
       </div>
     </main>
 

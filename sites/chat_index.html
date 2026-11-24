@@ -34,7 +34,12 @@
     .prose-msg ol { list-style-type: decimal; }
     .prose-msg li { margin-bottom: 0.3rem; }
     .prose-msg blockquote { border-left: 3px solid #38bdf8; background: rgba(15, 23, 42, 0.65); padding: 0.6rem 0.9rem; margin: 0.8rem 0; border-radius: 0 0.6rem 0.6rem 0; color: #cbd5e1; }
-    .prose-msg table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 0.9rem 0; font-size: 0.84rem; border: 1px solid rgba(148,163,184,0.2); border-radius: 0.75rem; overflow: hidden; }
+    .prose-msg table { width: 100%; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; border-collapse: separate; border-spacing: 0; margin: 0.9rem 0; font-size: 0.84rem; border: 1px solid rgba(148,163,184,0.2); border-radius: 0.75rem; }
+    .prose-msg pre { overflow-x: auto; max-width: 100%; }
+    @media (max-width: 768px) {
+      .prose-msg { font-size: 0.92rem; }
+      #chatInputBox { font-size: 16px !important; }
+    }
     .prose-msg th, .prose-msg td { border-bottom: 1px solid rgba(148,163,184,0.14); border-right: 1px solid rgba(148,163,184,0.12); padding: 0.55rem 0.75rem; text-align: left; }
     .prose-msg th { background: rgba(15,23,42,0.92); color: #38bdf8; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
     .prose-msg tr:nth-child(even) td { background: rgba(15, 23, 42, 0.35); }
@@ -51,12 +56,15 @@
     .drag-over-active { border-color: #22d3ee !important; box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.22), 0 20px 45px rgba(0, 0, 0, 0.6) !important; background: #131c30 !important; }
   </style>
 </head>
-<body class="h-screen flex overflow-hidden bg-[#0a0d14] text-slate-100">
+<body class="h-[100dvh] flex overflow-hidden bg-[#0a0d14] text-slate-100">
+
+  <!-- MOBILE SIDEBAR BACKDROP -->
+  <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="hidden fixed inset-0 bg-black/65 backdrop-blur-sm z-40 lg:hidden"></div>
 
   <!-- ===================================================================== -->
-  <!-- 1. COLLAPSIBLE LEFT SIDEBAR (CHAT HISTORY + PERSONAS + 21 Q1 SKILLS)  -->
+  <!-- 1. COLLAPSIBLE LEFT SIDEBAR (MOBILE SLIDE-OVER DRAWER / DESKTOP RAIL) -->
   <!-- ===================================================================== -->
-  <aside id="leftSidebar" class="w-64 bg-[#06090f] border-r border-slate-800/80 flex flex-col h-full shrink-0 transition-all duration-200 z-30">
+  <aside id="leftSidebar" class="hidden lg:flex fixed lg:static inset-y-0 left-0 w-72 lg:w-64 bg-[#06090f] border-r border-slate-800/80 flex-col h-full shrink-0 transition-all duration-200 z-50 lg:z-30 shadow-2xl lg:shadow-none">
     <div class="p-3 border-b border-slate-800/80 space-y-2.5">
       <div class="flex items-center justify-between px-1">
         <a href="https://synaxcode.com" class="flex items-center gap-2 text-decoration-none">
@@ -120,11 +128,11 @@
     <!-- Top Clean Single-Line Header (Zero Wrap, Zero Overflow, Pixel-Aligned) -->
     <header class="h-14 px-3 sm:px-4 border-b border-slate-800/80 bg-[#080c15]/95 backdrop-blur-xl flex items-center justify-between shrink-0 z-20 gap-2">
       <!-- Left: Sidebar Toggle + Compact Model Picker + Founder Compact Controls -->
-      <div class="flex items-center gap-2 min-w-0 flex-nowrap">
-        <button id="openSidebarBtn" onclick="toggleSidebar()" class="hidden p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs shrink-0" title="Menüyü Aç">☰</button>
+      <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-nowrap">
+        <button id="openSidebarBtn" onclick="toggleSidebar()" class="lg:hidden inline-flex items-center justify-center h-8 w-8 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 text-sm shrink-0" title="Menüyü Aç">☰</button>
 
         <!-- SYNAX-OMNI 1.5 Sovereign Model Family Selector (Fixed max width, clean truncation) -->
-        <select id="modelEngineSelect" onchange="updateActiveModelBadge()" class="max-w-[200px] sm:max-w-[260px] lg:max-w-[300px] truncate bg-[#111829] hover:bg-[#172036] border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-cyan-500 cursor-pointer shadow-sm shrink-0">
+        <select id="modelEngineSelect" onchange="updateActiveModelBadge()" class="max-w-[135px] sm:max-w-[240px] lg:max-w-[300px] truncate bg-[#111829] hover:bg-[#172036] border border-slate-700/80 rounded-xl px-2.5 sm:px-3 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-cyan-500 cursor-pointer shadow-sm shrink-0">
           <option value="synax-omni-ultra">⚡ SYNAX-OMNI 1.5 Ultra</option>
           <option value="synax-core-1.5">🧬 SYNAX-Core 1.5 (Öz Çekirdek)</option>
           <option value="synax-med-scholar">🩺 SYNAX-Med &amp; Q1 Scholar 1.5</option>
@@ -328,7 +336,7 @@
   <!-- ===================================================================== -->
   <!-- 3. SLIDE-OVER ARTIFACT / CANVAS WORKBENCH (CODE + LIVE HTML PREVIEW)  -->
   <!-- ===================================================================== -->
-  <section id="canvasDrawer" class="hidden w-full md:w-[460px] xl:w-[520px] bg-[#070a10] border-l border-slate-800 flex-col h-full shrink-0 z-30">
+  <section id="canvasDrawer" class="hidden fixed md:static inset-0 md:inset-auto w-full md:w-[460px] xl:w-[520px] bg-[#070a10] border-l border-slate-800 flex-col h-full shrink-0 z-50 md:z-30">
     <div class="p-3 bg-[#0b101b] border-b border-slate-800 flex items-center justify-between gap-2">
       <div class="truncate">
         <div class="text-xs font-black text-amber-300">✨ SYNAX CANVAS &amp; ARTIFACT ATÖLYESİ</div>
@@ -1762,15 +1770,26 @@
       submitChatMessage();
     }
 
-    function toggleSidebar() {
+    function toggleSidebar(forceState) {
       const sb = document.getElementById('leftSidebar');
       const openBtn = document.getElementById('openSidebarBtn');
-      if (sb.classList.contains('hidden')) {
-        sb.classList.remove('hidden');
-        openBtn.classList.add('hidden');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const isDesktop = window.innerWidth >= 1024;
+      const currentlyHidden = isDesktop
+        ? sb.classList.contains('lg:hidden') || (sb.classList.contains('hidden') && !sb.classList.contains('lg:flex'))
+        : sb.classList.contains('hidden');
+      const shouldOpen = typeof forceState === 'boolean' ? forceState : currentlyHidden;
+
+      if (shouldOpen) {
+        sb.classList.remove('hidden', 'lg:hidden');
+        sb.classList.add('flex');
+        if (!isDesktop && backdrop) backdrop.classList.remove('hidden');
+        if (isDesktop && openBtn) { openBtn.classList.add('lg:hidden'); openBtn.classList.remove('lg:inline-flex'); }
       } else {
         sb.classList.add('hidden');
-        openBtn.classList.remove('hidden');
+        sb.classList.remove('flex', 'lg:flex');
+        if (backdrop) backdrop.classList.add('hidden');
+        if (isDesktop && openBtn) { openBtn.classList.remove('lg:hidden'); openBtn.classList.add('lg:inline-flex'); }
       }
     }
 
