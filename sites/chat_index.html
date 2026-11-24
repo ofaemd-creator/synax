@@ -13,6 +13,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- Multi-Format Document Export Engines (DOCX via JSZip OOXML + PDF via html2pdf) -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root { --sx-bg: #07090f; --sx-panel: #0c101a; --sx-card: #111726; --sx-border: rgba(148, 163, 184, 0.14); }
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: radial-gradient(circle at 50% -10%, #101b33 0%, #07090f 55%); color: #f1f5f9; }
@@ -151,7 +154,17 @@
         <a href="https://office.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">🏢 3D Ofis</a>
         <a href="https://code.synaxcode.com" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">💻 Kod IDE</a>
         <a href="https://terminal.synaxcode.com" class="hidden sm:inline-block px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 transition">⌨️ Terminal</a>
-        <button onclick="exportCurrentThreadMarkdown()" class="hidden sm:inline-flex px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 font-semibold transition" title="Sohbeti Markdown (.md) Olarak İndir">⬇️</button>
+        <div class="relative inline-block">
+          <button onclick="toggleExportMenu('headerExportMenu')" class="hidden sm:inline-flex px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 font-semibold transition items-center gap-1" title="Tüm Sohbeti .md, .txt, .doc, .docx veya .pdf Olarak İndir">⬇️ <span class="hidden xl:inline">Dışa Aktar</span></button>
+          <div id="headerExportMenu" class="hidden absolute right-0 mt-1.5 w-44 bg-[#0d1424] border border-cyan-500/35 rounded-xl shadow-2xl p-1.5 z-50 text-xs font-mono space-y-0.5">
+            <div class="px-2 py-1 text-[10px] text-slate-400 uppercase font-bold border-b border-slate-800 mb-1">Sohbeti İndir</div>
+            <button onclick="exportCurrentThreadAs('pdf')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-rose-300">📕 PDF Belgesi (.pdf)</button>
+            <button onclick="exportCurrentThreadAs('docx')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-cyan-300">📘 Word (.docx)</button>
+            <button onclick="exportCurrentThreadAs('doc')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-blue-300">📄 Word Klasik (.doc)</button>
+            <button onclick="exportCurrentThreadAs('md')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-emerald-300">📝 Markdown (.md)</button>
+            <button onclick="exportCurrentThreadAs('txt')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-slate-200">📃 Düz Metin (.txt)</button>
+          </div>
+        </div>
         <button onclick="toggleCanvasDrawer()" id="canvasToggleBtn" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-800 font-semibold transition flex items-center gap-1.5">
           <span>✨ Canvas</span>
         </button>
@@ -285,8 +298,17 @@
       <div class="flex items-center gap-1.5 font-mono text-xs shrink-0">
         <button onclick="setCanvasViewMode('code')" id="canvasModeCodeBtn" class="px-2 py-1 rounded-lg bg-cyan-500 text-slate-950 font-bold">📄 Metin/Kod</button>
         <button onclick="setCanvasViewMode('preview')" id="canvasModePrevBtn" class="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white font-bold">👁️ Önizleme</button>
-        <button onclick="copyArtifactText()" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-bold">📋</button>
-        <button onclick="downloadArtifactFile()" class="px-2 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold">⬇️</button>
+        <button onclick="copyArtifactText()" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 font-bold" title="Kopyala">📋</button>
+        <div class="relative inline-block">
+          <button onclick="toggleExportMenu('canvasExportMenu')" class="px-2 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold" title="Belgeyi İndir (.pdf, .docx, .doc, .md, .txt)">⬇️ İndir</button>
+          <div id="canvasExportMenu" class="hidden absolute right-0 mt-1.5 w-44 bg-[#0d1424] border border-emerald-500/35 rounded-xl shadow-2xl p-1.5 z-50 text-xs font-mono space-y-0.5">
+            <button onclick="exportDocument(currentArtifactTitle, currentArtifactContent, 'pdf')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-rose-300">📕 PDF (.pdf)</button>
+            <button onclick="exportDocument(currentArtifactTitle, currentArtifactContent, 'docx')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-cyan-300">📘 Word (.docx)</button>
+            <button onclick="exportDocument(currentArtifactTitle, currentArtifactContent, 'doc')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-blue-300">📄 Word (.doc)</button>
+            <button onclick="exportDocument(currentArtifactTitle, currentArtifactContent, 'md')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-emerald-300">📝 Markdown (.md)</button>
+            <button onclick="exportDocument(currentArtifactTitle, currentArtifactContent, 'txt')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-800 text-slate-200">📃 Düz Metin (.txt)</button>
+          </div>
+        </div>
         <button onclick="toggleCanvasDrawer(false)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300">✕</button>
       </div>
     </div>
@@ -1075,20 +1097,167 @@
       pill.classList.remove('flex');
     }
 
-    function exportCurrentThreadMarkdown() {
-      const t = getActiveThread();
-      if (!t.messages || t.messages.length === 0) {
-        alert('İndirilecek mesaj bulunmuyor.');
-        return;
-      }
-      const md = `# ${t.title || 'SYNAX Sohbet Kaydı'}\n\n` + t.messages.map(m =>
-        `### ${m.role === 'user' ? '👤 Dr. Aydın' : ('✨ ' + (m.model || 'SYNAX-OMNI'))}\n\n${m.content}\n`
-      ).join('\n---\n\n');
-      const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    function toggleExportMenu(menuId) {
+      ['headerExportMenu', 'canvasExportMenu'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (id === menuId) el.classList.toggle('hidden');
+        else el.classList.add('hidden');
+      });
+    }
+
+    function triggerBlobDownload(blob, filename) {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = (t.title || 'synax_sohbet').replace(/[^a-zA-Z0-9_-]/g, '_') + '.md';
+      a.download = filename;
+      document.body.appendChild(a);
       a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    }
+
+    function xmlEsc(s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function markdownToPlainText(md) {
+      return String(md || '')
+        .replace(/```[a-zA-Z0-9_-]*\n?/g, '')
+        .replace(/```/g, '')
+        .replace(/^#{1,6}\s+/gm, '')
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/\*(.*?)\*/g, '$1')
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1 ($2)')
+        .trim();
+    }
+
+    function buildPrintableHtmlBody(title, mdContent) {
+      const rendered = (window.marked && typeof window.marked.parse === 'function')
+        ? marked.parse(mdContent || '')
+        : `<pre style="white-space:pre-wrap;">${escapeHtml(mdContent || '')}</pre>`;
+      return `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; color: #0f172a; line-height: 1.65; font-size: 11.5pt; max-width: 100%;">
+          <div style="border-bottom: 2px solid #0284c7; padding-bottom: 8px; margin-bottom: 16px;">
+            <div style="font-size: 9pt; color: #0284c7; font-weight: 700; letter-spacing: 0.05em;">SYNAX-OMNI 1.5 · BELGE ÇIKTISI</div>
+            <h1 style="margin: 4px 0 0; font-size: 16pt; color: #0f172a;">${escapeHtml(title || 'SYNAX Raporu')}</h1>
+            <div style="font-size: 8.5pt; color: #64748b; margin-top: 2px;">Tarih: ${new Date().toLocaleString('tr-TR')}</div>
+          </div>
+          <style>
+            h1,h2,h3 { color: #0f172a; margin-top: 14px; margin-bottom: 6px; }
+            table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
+            th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
+            th { background: #f1f5f9; font-weight: 700; }
+            pre { background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 9pt; white-space: pre-wrap; word-break: break-word; }
+            code { background: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 9.5pt; }
+            blockquote { border-left: 3px solid #0284c7; padding-left: 10px; color: #334155; margin: 10px 0; }
+          </style>
+          <div>${rendered}</div>
+        </div>
+      `;
+    }
+
+    async function generateValidDocxBlob(title, mdContent) {
+      if (!window.JSZip) throw new Error('JSZip yüklenemedi');
+      const zip = new JSZip();
+      const lines = (title + '\n\n' + markdownToPlainText(mdContent)).split(/\r?\n/);
+      const paragraphsXml = lines.map((line, i) => {
+        const isTitle = (i === 0);
+        const rPr = isTitle ? '<w:rPr><w:b/><w:sz w:val="32"/><w:color w:val="0284C7"/></w:rPr>' : '<w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/><w:sz w:val="22"/></w:rPr>';
+        return `<w:p><w:r>${rPr}<w:t xml:space="preserve">${xmlEsc(line)}</w:t></w:r></w:p>`;
+      }).join('');
+
+      zip.file('[Content_Types].xml',
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+        '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+        '<Default Extension="xml" ContentType="application/xml"/>' +
+        '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+        '</Types>'
+      );
+      zip.file('_rels/.rels',
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+        '</Relationships>'
+      );
+      zip.file('word/document.xml',
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' +
+        paragraphsXml +
+        '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr>' +
+        '</w:body></w:document>'
+      );
+      return await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    }
+
+    async function exportDocument(title, mdContent, format) {
+      ['headerExportMenu', 'canvasExportMenu'].forEach(id => document.getElementById(id)?.classList.add('hidden'));
+      const baseName = (title || 'SYNAX_Cikti').replace(/[^a-zA-Z0-9ğüşöçıİĞÜŞÖÇ_-]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 55) || 'SYNAX_Cikti';
+      const fmt = (format || 'md').toLowerCase();
+
+      if (fmt === 'md') {
+        triggerBlobDownload(new Blob([mdContent || ''], { type: 'text/markdown;charset=utf-8' }), `${baseName}.md`);
+        showToast(`📝 ${baseName}.md indirildi`);
+      } else if (fmt === 'txt') {
+        triggerBlobDownload(new Blob([markdownToPlainText(mdContent)], { type: 'text/plain;charset=utf-8' }), `${baseName}.txt`);
+        showToast(`📃 ${baseName}.txt indirildi`);
+      } else if (fmt === 'doc') {
+        const docHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${escapeHtml(baseName)}</title></head><body>${buildPrintableHtmlBody(title, mdContent)}</body></html>`;
+        triggerBlobDownload(new Blob(['\ufeff', docHtml], { type: 'application/msword;charset=utf-8' }), `${baseName}.doc`);
+        showToast(`📄 ${baseName}.doc indirildi`);
+      } else if (fmt === 'docx') {
+        showToast('📘 .docx belgesi oluşturuluyor...');
+        try {
+          const blob = await generateValidDocxBlob(title, mdContent);
+          triggerBlobDownload(blob, `${baseName}.docx`);
+          showToast(`📘 ${baseName}.docx indirildi`);
+        } catch (e) {
+          showToast('✗ .docx oluşturulamadı, .doc olarak indiriliyor');
+          exportDocument(title, mdContent, 'doc');
+        }
+      } else if (fmt === 'pdf') {
+        showToast('📕 PDF oluşturuluyor...');
+        const container = document.createElement('div');
+        container.style.padding = '16px';
+        container.style.background = '#ffffff';
+        container.innerHTML = buildPrintableHtmlBody(title, mdContent);
+        if (window.html2pdf) {
+          await html2pdf().set({
+            margin: [12, 12, 12, 12],
+            filename: `${baseName}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(container).save();
+          showToast(`📕 ${baseName}.pdf indirildi`);
+        } else {
+          const w = window.open('', '_blank');
+          if (w) { w.document.write(`<html><head><meta charset="utf-8"><title>${escapeHtml(baseName)}</title></head><body>${container.innerHTML}<script>window.onload=()=>window.print();<\/script></body></html>`); w.document.close(); }
+        }
+      }
+    }
+
+    function exportCurrentThreadAs(format) {
+      const t = getActiveThread();
+      if (!t.messages || t.messages.length === 0) {
+        showToast('İndirilecek mesaj bulunmuyor');
+        return;
+      }
+      const md = t.messages.map(m =>
+        `## ${m.role === 'user' ? 'Kullanıcı' : (m.model || 'SYNAX-OMNI 1.5')}\n\n${m.content}\n`
+      ).join('\n---\n\n');
+      exportDocument(t.title || 'SYNAX_Sohbet', md, format);
+    }
+
+    function exportMessageByIdx(idx, format) {
+      const t = getActiveThread();
+      const m = t.messages && t.messages[idx];
+      if (!m) return;
+      exportDocument(`${t.title || 'SYNAX_Yaniti'}_Mesaj_${idx + 1}`, m.content || '', format);
+    }
+
+    function exportCurrentThreadMarkdown() {
+      exportCurrentThreadAs('md');
     }
 
     function setCanvasViewMode(mode) {
@@ -1524,6 +1693,13 @@
                   <button onclick="speakTextAloud('${encFull}')" class="hover:text-emerald-300 flex items-center gap-1 transition">🔊 Dinle</button>
                   <button onclick="openInCanvas('SYNAX_Yaniti_${idx}', '${encFull}')" class="hover:text-amber-300 flex items-center gap-1 transition">✨ Canvas</button>
                   <button onclick="regenerateResponse(${idx})" class="hover:text-cyan-300 flex items-center gap-1 transition">🔄 Yeniden Üret</button>
+                  <span class="text-slate-700">|</span>
+                  <span class="text-[10px] text-slate-500">İndir:</span>
+                  <button onclick="exportMessageByIdx(${idx}, 'pdf')" class="px-1.5 py-0.5 rounded bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 border border-rose-500/25 text-[10px] transition">.pdf</button>
+                  <button onclick="exportMessageByIdx(${idx}, 'docx')" class="px-1.5 py-0.5 rounded bg-cyan-500/10 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/25 text-[10px] transition">.docx</button>
+                  <button onclick="exportMessageByIdx(${idx}, 'doc')" class="px-1.5 py-0.5 rounded bg-blue-500/10 hover:bg-blue-500/25 text-blue-300 border border-blue-500/25 text-[10px] transition">.doc</button>
+                  <button onclick="exportMessageByIdx(${idx}, 'md')" class="px-1.5 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/25 text-[10px] transition">.md</button>
+                  <button onclick="exportMessageByIdx(${idx}, 'txt')" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[10px] transition">.txt</button>
                 </div>
                 ${followUpHtml}
               </div>
