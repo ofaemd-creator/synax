@@ -688,7 +688,7 @@
       { id: 'citation-management', num: '04', name: 'DOI/PMID & Atıf Doğrulama' },
       { id: 'peer-review', num: '05', name: '3-Hakemli SCIE Değerlendirme' },
       { id: 'venue-templates', num: '06', name: 'Q1 Dergi LaTeX & Cover Letter' },
-      { id: 'literature-review', num: '07', name: 'PRISMA 2020 Sistematik Derleme' },
+      { id: 'literature-review', num: '07', name: 'Sistematik Derleme (2025–2026 · PRISMA)' },
       { id: 'hypothesis-generation', num: '08', name: 'H0/H1/H2 Hipotez & Deney' },
       { id: 'scientific-brainstorming', num: '09', name: 'Literatür Boşluğu & FINER' },
       { id: 'scientific-visualization', num: '10', name: 'Okabe-Ito Forest Plot & Grafik' },
@@ -1380,14 +1380,14 @@
     }
 
     const SLASH_COMMANDS = [
-      { cmd: '/q1', desc: 'Q1 SCIE dergi standardında (IMRaD) makale taslağı yaz', tpl: '[Q1 SCIE Makale] ' },
-      { cmd: '/prisma', desc: 'PRISMA 2020 sistematik derleme ve PubMed kanıt sentezi', tpl: '[PRISMA 2020 Sistematik Derleme] ' },
-      { cmd: '/meta', desc: 'DerSimonian-Laird rastgele etkiler meta-analiz & Forest Plot', tpl: '[DerSimonian-Laird Meta-Analiz] ' },
+      { cmd: '/prisma', desc: 'PRISMA 2020 kılavuzuyla 2025–Kasım 2026 güncel PubMed/EuropePMC/CrossRef sistematik derleme', tpl: '[Güncel Sistematik Derleme (PRISMA 2020 Metodolojisi · Hedef Pencere: 2025–Kasım 2026 Canlı PubMed/EuropePMC/DOI)] ' },
+      { cmd: '/q1', desc: '2025–Kasım 2026 güncel kaynaklarla Q1 SCIE dergi standardında (IMRaD) makale taslağı', tpl: '[Q1 SCIE Makale · 2025–Kasım 2026 Güncel Literatür] ' },
+      { cmd: '/meta', desc: '2025–2026 güncel çalışmalarla DerSimonian-Laird + HKSJ meta-analiz & Forest Plot', tpl: '[DerSimonian-Laird & HKSJ Meta-Analiz · 2025–Kasım 2026 Güncel Çalışmalar] ' },
       { cmd: '/humanize', desc: 'Akademik metni AMA 11th Ed. / Nature Medicine stiline humanize et', tpl: '[De-AI Academic Humanizer] Aşağıdaki metni yapay zeka klişelerinden arındır:\n' },
-      { cmd: '/klinik', desc: 'Acil tıp / yoğun bakım algoritmik tanı & tedavi protokolü', tpl: '[Klinik Protokol] ' },
+      { cmd: '/klinik', desc: '2025–Kasım 2026 güncel kılavuzlarla acil tıp / yoğun bakım algoritmik protokolü', tpl: '[Güncel Klinik Protokol · 2025–Kasım 2026 Kılavuzları] ' },
       { cmd: '/kod', desc: 'Üretim kalitesinde, 0-ULP doğrulanmış Python / C11 / NEON kodu yaz', tpl: '[0-ULP Kod Sentezi] ' },
-      { cmd: '/web', desc: '9-motorlu gerçek zamanlı internet ve haber araştırması yap', tpl: '[Canlı Web Araştırması] ' },
-      { cmd: '/tablo', desc: 'Karşılaştırmalı bilimsel/teknik analiz tablosu oluştur', tpl: '[Karşılaştırmalı Tablo] ' }
+      { cmd: '/web', desc: '10-motorlu gerçek zamanlı Kasım 2026 internet, haber ve literatür araştırması', tpl: '[Canlı Kasım 2026 Web & Haber Araştırması] ' },
+      { cmd: '/tablo', desc: '2025–2026 güncel kanıtlarla karşılaştırmalı bilimsel/teknik analiz tablosu', tpl: '[Karşılaştırmalı Güncel Kanıt Tablosu (2025–2026)] ' }
     ];
 
     function handleComposerInput(el) {

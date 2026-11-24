@@ -1122,11 +1122,19 @@ if ($should_run_rag) {
         $parallel_requests['wiki_en'] = 'https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . urlencode($en_query) . '&format=json&srlimit=1';
     }
 
-    // 3. Scientific & Medical Literature Search (NCBI PubMed + CrossRef DOI + EuropePMC + ArXiv)
+    // 3. Scientific & Medical Literature Search (2025-2026 Live Recency First: NCBI PubMed + CrossRef DOI + EuropePMC + ArXiv)
     if (in_array($web_search_mode, ['all', 'academic'], true)) {
-        $parallel_requests['pubmed_esearch'] = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode($en_query) . '&retmax=3&sort=relevance&retmode=json';
-        $parallel_requests['crossref'] = 'https://api.crossref.org/works?query=' . urlencode($en_query) . '&rows=2&select=DOI,title,container-title,published-print,published-online,URL';
-        $parallel_requests['arxiv'] = 'http://export.arxiv.org/api/query?search_query=all:' . urlencode($en_query) . '&start=0&max_results=2';
+        $cur_year = intval(gmdate('Y'));
+        $recency_start_year = max(2025, $cur_year - 1);
+        $recency_date_span = "{$recency_start_year}/01/01:{$cur_year}/12/31[dp]";
+        $is_prisma_or_sr = (bool)preg_match('/(prisma|sistematik|meta-analiz|meta analiz|systematic review|derleme|literature|q1)/iu', $prompt);
+        $pm_retmax = $is_prisma_or_sr ? 5 : 3;
+
+        $parallel_requests['pubmed_esearch_recent'] = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode("({$en_query}) AND {$recency_date_span}") . '&retmax=' . $pm_retmax . '&sort=pub+date&retmode=json';
+        $parallel_requests['pubmed_esearch'] = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode($en_query) . '&retmax=3&sort=pub+date&retmode=json';
+        $parallel_requests['crossref'] = 'https://api.crossref.org/works?query=' . urlencode($en_query) . '&filter=from-pub-date:' . $recency_start_year . '-01-01&sort=published&order=desc&rows=' . ($is_prisma_or_sr ? 4 : 2) . '&select=DOI,title,container-title,published-print,published-online,URL';
+        $parallel_requests['europepmc'] = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=' . urlencode("({$en_query}) AND (FIRST_PDATE:[{$recency_start_year}-01-01 TO {$cur_year}-12-31])") . '&sort_date=y&pageSize=' . ($is_prisma_or_sr ? 3 : 2) . '&format=json';
+        $parallel_requests['arxiv'] = 'http://export.arxiv.org/api/query?search_query=all:' . urlencode($en_query) . '&sortBy=submittedDate&sortOrder=descending&start=0&max_results=2';
     }
 
     // 4. Tech, Developer & Open-Source Code Search (GitHub Repos + HackerNews Algolia + StackOverflow)
@@ -1242,43 +1250,79 @@ if ($should_run_rag) {
         }
     }
 
-    // E. Parse NCBI PubMed E-Utilities (`pubmed_esearch` + `efetch`)
-    if (!empty($multi_res['pubmed_esearch'])) {
+    // E. Parse NCBI PubMed E-Utilities (2025-2026 Recent First + Fallback)
+    $pmids = [];
+    if (!empty($multi_res['pubmed_esearch_recent'])) {
+        $es_rec = json_decode($multi_res['pubmed_esearch_recent'], true);
+        $pmids = $es_rec['esearchresult']['idlist'] ?? [];
+    }
+    if (count($pmids) < 2 && !empty($multi_res['pubmed_esearch'])) {
         $es_data = json_decode($multi_res['pubmed_esearch'], true);
-        $pmids = $es_data['esearchresult']['idlist'] ?? [];
-        if (!empty($pmids)) {
-            $efetch_xml = http_get_fast('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' . implode(',', $pmids) . '&retmode=xml', 2);
-            if ($efetch_xml) {
-                $xml = @simplexml_load_string($efetch_xml);
-                if ($xml && isset($xml->PubmedArticle)) {
-                    foreach ($xml->PubmedArticle as $art) {
-                        $pmid = (string)($art->MedlineCitation->PMID ?? '');
-                        $title = (string)($art->MedlineCitation->Article->ArticleTitle ?? '');
-                        $journal = (string)($art->MedlineCitation->Article->Journal->Title ?? 'PubMed Journal');
-                        $year = (string)($art->MedlineCitation->Article->Journal->JournalIssue->PubDate->Year ?? '2024');
-                        $abst = '';
-                        if (isset($art->MedlineCitation->Article->Abstract->AbstractText)) {
-                            foreach ($art->MedlineCitation->Article->Abstract->AbstractText as $ab_part) {
-                                $abst .= (string)$ab_part . ' ';
-                            }
-                        }
-                        $abst = trim($abst) ?: $title;
-                        if ($title) {
-                            $sources[] = [
-                                'index' => count($sources) + 1,
-                                'title' => $title,
-                                'source' => "PubMed · $journal ($year)",
-                                'author' => 'PubMed Indexed Study',
-                                'url' => "https://pubmed.ncbi.nlm.nih.gov/$pmid/",
-                                'badge' => "PMID: $pmid",
-                                'snippet' => mb_substr($abst, 0, 420),
-                            ];
+        $pmids = array_values(array_unique(array_merge($pmids, $es_data['esearchresult']['idlist'] ?? [])));
+    }
+    $pmids = array_slice($pmids, 0, 5);
+    if (!empty($pmids)) {
+        $efetch_xml = http_get_fast('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' . implode(',', $pmids) . '&retmode=xml', 3);
+        if ($efetch_xml) {
+            $xml = @simplexml_load_string($efetch_xml);
+            if ($xml && isset($xml->PubmedArticle)) {
+                foreach ($xml->PubmedArticle as $art) {
+                    $pmid = (string)($art->MedlineCitation->PMID ?? '');
+                    $title = (string)($art->MedlineCitation->Article->ArticleTitle ?? '');
+                    $journal = (string)($art->MedlineCitation->Article->Journal->Title ?? 'PubMed Journal');
+                    $year = (string)($art->MedlineCitation->Article->Journal->JournalIssue->PubDate->Year ?? ($art->MedlineCitation->Article->Journal->JournalIssue->PubDate->MedlineDate ?? gmdate('Y')));
+                    $month = (string)($art->MedlineCitation->Article->Journal->JournalIssue->PubDate->Month ?? '');
+                    $date_lbl = trim("$month $year");
+                    $abst = '';
+                    if (isset($art->MedlineCitation->Article->Abstract->AbstractText)) {
+                        foreach ($art->MedlineCitation->Article->Abstract->AbstractText as $ab_part) {
+                            $abst .= (string)$ab_part . ' ';
                         }
                     }
-                    $search_engines_used[] = 'NCBI PubMed';
+                    $abst = trim($abst) ?: $title;
+                    if ($title) {
+                        $sources[] = [
+                            'index' => count($sources) + 1,
+                            'title' => $title,
+                            'source' => "PubMed · $journal ($date_lbl)",
+                            'author' => 'PubMed Indexed Study',
+                            'url' => "https://pubmed.ncbi.nlm.nih.gov/$pmid/",
+                            'badge' => "PMID: $pmid · $year",
+                            'snippet' => mb_substr($abst, 0, 440),
+                        ];
+                    }
                 }
+                $search_engines_used[] = 'NCBI PubMed (2025-2026 Güncel)';
             }
         }
+    }
+
+    // E2. Parse EuropePMC Live 2025-2026 Biomedical Index
+    if (!empty($multi_res['europepmc'])) {
+        $epmc = json_decode($multi_res['europepmc'], true);
+        $ep_items = $epmc['resultList']['result'] ?? [];
+        $ep_added = 0;
+        foreach (array_slice($ep_items, 0, 3) as $ei) {
+            $e_title = trim($ei['title'] ?? '');
+            $e_pmid = $ei['pmid'] ?? '';
+            $e_doi = $ei['doi'] ?? '';
+            $e_j = $ei['journalTitle'] ?? 'EuropePMC';
+            $e_yr = $ei['pubYear'] ?? gmdate('Y');
+            $e_url = $e_doi ? "https://doi.org/$e_doi" : ($e_pmid ? "https://europepmc.org/article/MED/$e_pmid" : 'https://europepmc.org');
+            if ($e_title) {
+                $sources[] = [
+                    'index' => count($sources) + 1,
+                    'title' => $e_title,
+                    'source' => "EuropePMC · $e_j ($e_yr)",
+                    'author' => $ei['authorString'] ?? 'EuropePMC',
+                    'url' => $e_url,
+                    'badge' => "EPMC · $e_yr",
+                    'snippet' => mb_substr("$e_title — $e_j ($e_yr)" . (!empty($ei['citedByCount']) ? " · Atıf: {$ei['citedByCount']}" : ""), 0, 400),
+                ];
+                $ep_added++;
+            }
+        }
+        if ($ep_added > 0) $search_engines_used[] = 'EuropePMC (2025-2026)';
     }
 
     // F. Parse CrossRef Live DOI Registry (`crossref`)
@@ -1461,9 +1505,10 @@ foreach (array_slice($cortex['skill_mastery_matrix'] ?? [], 0, 6) as $skm) {
 // SYNAX-OMNI 1.5 Real-Time Temporal Grounding (breaks 2024 training cutoff!)
 $live_date_tr = gmdate('d.m.Y H:i') . ' UTC (Yıl: ' . gmdate('Y') . ')';
 $temporal_rule =
-    "\nCANLI ZAMAN VE GÜNCEL İNTERNET ÇAPALAMA (SYNAX-OMNI 1.5 TEMPORAL GROUNDING):\n" .
-    "- **Şu Anki Gerçek Tarih ve Saat:** {$live_date_tr}.\n" .
-    "- **2024 Bilgi Sınırını Aşma Kuralı:** Asla 'bilgilerim 2024'e kadar sınırlı' veya 'güncel olaylara erişemiyorum' deme! Sana aşağıda 9-motorlu gerçek zamanlı internet, haber (Google News/DuckDuckGo), PubMed, CrossRef ve ArXiv taramasından **bugünün canlı verileri** sağlanmıştır. Güncel sorularda bu canlı kaynakları birincil gerçek olarak kabul edip `[1]`, `[2]` atıflarıyla bugünün bilgisiyle yanıt ver.\n";
+    "\nCANLI ZAMAN VE GÜNCEL 2025-2026 LİTERATÜR / İNTERNET ÇAPALAMA (SYNAX-OMNI 1.5 TEMPORAL GROUNDING):\n" .
+    "- **Şu Anki Gerçek Tarih ve Saat:** {$live_date_tr} (Hedef Güncellik Penceresi: **2025 – Kasım 2026**).\n" .
+    "- **2024 Bilgi Sınırını Aşma & Güncel Kaynak Zorunluluğu:** Asla 'bilgilerim 2024'e kadar sınırlı' deme! Tüm `/prisma`, `/q1`, `/meta`, `/klinik` ve genel sorgularda önceliği **2025–Kasım 2026** döneminde yayımlanan en güncel NCBI PubMed, EuropePMC, CrossRef DOI, ArXiv ve canlı web kaynaklarına ver.\n" .
+    "- **PRISMA Raporlama Kuralı:** Sistematik derlemelerde **PRISMA 2020** kılavuz yapısını (PICO, tarama stratejisi, dahil/hariç tutma, akış şeması, RoB-2, GRADE) metodolojik çerçeve olarak kullan; ancak içerik ve literatür taramasını mutlaka **Kasım 2026'ya kadar uzanan en güncel 2025–2026 çalışmalarıyla** (`[1]`, `[2]` gerçek PMID/DOI atıflarıyla) doldur ve eski 2020 kaynaklarına saplanma.\n";
 
 if ($is_sovereign_founder) {
     // SOVEREIGN FOUNDER PROMPT (Dr. Ömer Faruk Aydın Authenticated Session)
