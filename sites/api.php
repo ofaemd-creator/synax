@@ -868,6 +868,130 @@ if ($action === 'founder_threads_save') {
     exit;
 }
 
+$api_keys_file = __DIR__ . '/.synax_api_keys.php';
+$core_corpus_file = __DIR__ . '/.synax_core_corpus.php';
+
+if ($action === 'core_corpus_status') {
+    if (!$is_sovereign_founder) {
+        http_response_code(403);
+        echo json_encode(['status' => 'FORBIDDEN_SOVEREIGN_ONLY'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    $corp = synax_read_guarded($core_corpus_file);
+    $samples = is_array($corp['samples'] ?? null) ? $corp['samples'] : [];
+    echo json_encode([
+        'status' => 'SYNAX_CORE_CORPUS_ACTIVE',
+        'total_samples' => count($samples),
+        'total_tokens_distilled' => intval($corp['total_tokens_distilled'] ?? 0),
+        'core_architecture' => 'SynaxTransformer (PyTorch Decoder-Only Causal Transformer + Neural-Symbolic 0-ULP Verifier)',
+        'latest_samples' => array_slice($samples, 0, 8),
+        'updated_at' => $corp['updated_at'] ?? gmdate('Y-m-d H:i:s') . ' UTC',
+    ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit;
+}
+
+if ($action === 'core_corpus_export_jsonl') {
+    if (!$is_sovereign_founder) {
+        http_response_code(403);
+        echo json_encode(['status' => 'FORBIDDEN_SOVEREIGN_ONLY'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    $corp = synax_read_guarded($core_corpus_file);
+    $samples = is_array($corp['samples'] ?? null) ? $corp['samples'] : [];
+    $lines = [];
+    foreach ($samples as $sp) {
+        $lines[] = json_encode([
+            'prompt' => $sp['prompt'] ?? '',
+            'completion' => $sp['completion'] ?? '',
+            'model' => $sp['model'] ?? 'SYNAX-OMNI 1.5',
+            'verified' => true,
+            'ts' => $sp['ts'] ?? '',
+        ], JSON_UNESCAPED_UNICODE);
+    }
+    echo json_encode(['status' => 'OK', 'count' => count($lines), 'jsonl' => implode("\n", $lines)], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if ($action === 'api_keys_manage') {
+    if (!$is_sovereign_founder) {
+        http_response_code(403);
+        echo json_encode(['status' => 'FORBIDDEN_SOVEREIGN_ONLY', 'error' => 'Ticari API anahtarları ve kredi yönetimi yalnızca Kurucu Dr. Ömer Faruk Aydın yetkisindedir.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    $store = synax_read_guarded($api_keys_file);
+    $keys = is_array($store['keys'] ?? null) ? $store['keys'] : [];
+    $op = $data['operation'] ?? 'list';
+
+    if ($op === 'create') {
+        $label = trim((string)($data['label'] ?? 'Yeni Müşteri Entegrasyonu'));
+        $tier = trim((string)($data['tier'] ?? 'pro'));
+        $credits = max(10.0, floatval($data['credits'] ?? 1000));
+        $raw_key = 'sk-synax-' . bin2hex(random_bytes(20));
+        $rec = [
+            'id' => 'key_' . bin2hex(random_bytes(5)),
+            'label' => $label,
+            'tier' => $tier,
+            'prefix' => substr($raw_key, 0, 15) . '••••' . substr($raw_key, -4),
+            'key_hash' => hash('sha256', $raw_key),
+            'status' => 'active',
+            'credits_remaining' => $credits,
+            'credits_granted_total' => $credits,
+            'credits_used_total' => 0.0,
+            'total_requests' => 0,
+            'total_tokens' => 0,
+            'created_at' => gmdate('Y-m-d H:i:s') . ' UTC',
+            'last_used_utc' => null,
+        ];
+        array_unshift($keys, $rec);
+        $store['keys'] = $keys;
+        synax_write_guarded($api_keys_file, $store);
+        echo json_encode(['status' => 'API_KEY_CREATED', 'raw_key_once' => $raw_key, 'record' => $rec, 'keys' => $keys], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        exit;
+    } elseif ($op === 'topup') {
+        $kid = trim((string)($data['key_id'] ?? ''));
+        $add_c = max(1.0, floatval($data['credits'] ?? 500));
+        foreach ($keys as $i => $k) {
+            if (($k['id'] ?? '') === $kid) {
+                $keys[$i]['credits_remaining'] = round(floatval($k['credits_remaining'] ?? 0) + $add_c, 3);
+                $keys[$i]['credits_granted_total'] = round(floatval($k['credits_granted_total'] ?? 0) + $add_c, 3);
+                break;
+            }
+        }
+        $store['keys'] = $keys;
+        synax_write_guarded($api_keys_file, $store);
+        echo json_encode(['status' => 'CREDITS_ADDED', 'keys' => $keys], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        exit;
+    } elseif ($op === 'toggle') {
+        $kid = trim((string)($data['key_id'] ?? ''));
+        foreach ($keys as $i => $k) {
+            if (($k['id'] ?? '') === $kid) {
+                $keys[$i]['status'] = (($k['status'] ?? 'active') === 'active') ? 'suspended' : 'active';
+                break;
+            }
+        }
+        $store['keys'] = $keys;
+        synax_write_guarded($api_keys_file, $store);
+        echo json_encode(['status' => 'KEY_STATUS_UPDATED', 'keys' => $keys], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        exit;
+    } elseif ($op === 'delete') {
+        $kid = trim((string)($data['key_id'] ?? ''));
+        $keys = array_values(array_filter($keys, fn($k) => ($k['id'] ?? '') !== $kid));
+        $store['keys'] = $keys;
+        synax_write_guarded($api_keys_file, $store);
+        echo json_encode(['status' => 'KEY_REVOKED', 'keys' => $keys], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        exit;
+    }
+
+    echo json_encode([
+        'status' => 'OK',
+        'keys' => $keys,
+        'total_platform_requests' => intval($store['total_platform_requests'] ?? 0),
+        'total_platform_credits_billed' => floatval($store['total_platform_credits_billed'] ?? 0),
+        'endpoint_url' => 'https://chat.synaxcode.com/v1.php',
+    ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit;
+}
+
 if ($action === 'save_providers_vault') {
     if (!$is_sovereign_founder) {
         http_response_code(403);
@@ -990,6 +1114,14 @@ $response_style = trim($data['response_style'] ?? 'standard');
 
 // Sovereign SYNAX-OMNI 1.5 Model Family Mapping -> Live Nov 2026 Frontier Multi-Provider Mesh (NVIDIA NIM + OpenRouter + Groq LPU + Unlimited Cloud)
 $synax_models_catalog = [
+    'synax-core-1.5' => [
+        'label' => 'SYNAX-Core 1.5 (Öz Çekirdek + Kendi Öğrenim Ağı)',
+        'subtitle' => 'SYNAX Öz Sinirsel-Sembolik Çekirdek + Canlı Damıtma & 0-ULP Kanıt Motoru',
+        'groq_model' => 'openai/gpt-oss-120b',
+        'openrouter_model' => 'nvidia/nemotron-3-ultra-550b-a55b:free',
+        'nvidia_model' => 'nvidia/nemotron-3-ultra-550b-a55b',
+        'sys_focus' => 'Sen SYNAX\'ın kendi öz çekirdeği olan SYNAX-Core 1.5 (SynaxTransformer + 0-ULP Sembolik Doğrulama + Kendi Kendini Eğiten Bilgi Grafiği) motorusun. Her doğrulanmış yanıtın doğrudan kendi çekirdek eğitim veri setini (JSONL Corpus) besler.',
+    ],
     'synax-omni-ultra' => [
         'label' => 'SYNAX-OMNI 1.5 Ultra',
         'subtitle' => 'Amiral Gemisi 550B/1T Derin Muhakeme, Canlı 2026 Web & Sınırsız Çoklu-Motor',
@@ -1714,6 +1846,37 @@ foreach ($routing_queue as $route) {
 
 if (!$llm_reply) {
     $llm_reply = "### 🧠 SYNAX-OMNI 1.5 Yanıtı\n\n" . ($sources_context ?: "Sorgunuz işlendi.");
+}
+
+// SYNAX-Core Continuous Knowledge Distillation: save high-utility verified Q&A pairs into .synax_core_corpus.php for SynaxTransformer self-training!
+if ($llm_reply !== '' && !$is_greeting && mb_strlen($prompt, 'UTF-8') >= 20 && mb_strlen($llm_reply, 'UTF-8') >= 120) {
+    $corp_check = synax_validate_learning_signal($prompt, [], 'prompt');
+    $rep_check = synax_validate_learning_signal(mb_substr($llm_reply, 0, 500, 'UTF-8'), [], 'completion');
+    if ($corp_check['valid'] && $rep_check['valid']) {
+        $corp = synax_read_guarded($core_corpus_file);
+        $samples = is_array($corp['samples'] ?? null) ? $corp['samples'] : [];
+        $p_hash = substr(hash('sha256', mb_strtolower(trim($prompt), 'UTF-8')), 0, 16);
+        $dup = false;
+        foreach (array_slice($samples, 0, 30) as $ex) {
+            if (($ex['hash'] ?? '') === $p_hash) { $dup = true; break; }
+        }
+        if (!$dup) {
+            $est_tok = intval(ceil((mb_strlen($prompt, 'UTF-8') + mb_strlen($llm_reply, 'UTF-8')) / 3.8));
+            array_unshift($samples, [
+                'hash' => $p_hash,
+                'prompt' => mb_substr($prompt, 0, 1500, 'UTF-8'),
+                'completion' => mb_substr($llm_reply, 0, 6000, 'UTF-8'),
+                'model' => $used_model,
+                'provider_tier' => $used_provider_tier,
+                'tokens' => $est_tok,
+                'ts' => gmdate('Y-m-d H:i:s') . ' UTC',
+            ]);
+            $corp['samples'] = array_slice($samples, 0, 250);
+            $corp['total_tokens_distilled'] = intval($corp['total_tokens_distilled'] ?? 0) + $est_tok;
+            $corp['updated_at'] = gmdate('Y-m-d H:i:s') . ' UTC';
+            synax_write_guarded($core_corpus_file, $corp);
+        }
+    }
 }
 
 $art_title = "SYNAX-OMNI Çıktısı: " . mb_substr($prompt, 0, 46);

@@ -125,6 +125,7 @@
         <!-- SYNAX-OMNI 1.5 Sovereign Model Family Selector -->
         <select id="modelEngineSelect" onchange="updateActiveModelBadge()" class="bg-[#111726] hover:bg-[#161e31] border border-slate-800 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-cyan-500 cursor-pointer shadow-sm">
           <option value="synax-omni-ultra">⚡ SYNAX-OMNI 1.5 Ultra (Amiral Gemisi Derin Muhakeme &amp; Canlı 2026)</option>
+          <option value="synax-core-1.5">🧬 SYNAX-Core 1.5 (Öz Çekirdek + Kendi Öğrenim Ağı)</option>
           <option value="synax-med-scholar">🩺 SYNAX-Med &amp; Q1 Scholar 1.5 (Klinik Tıp &amp; Q1 SCIE Makale)</option>
           <option value="synax-silicon-code">🔩 SYNAX-Silicon &amp; Code 1.5 (.SX, Python, ARM64 NEON &amp; 0-ULP)</option>
           <option value="synax-biostat-lyapunov">📊 SYNAX-Biostat &amp; Lyapunov 1.5 (Meta-Analiz &amp; V_{k+1}&lt;V_k)</option>
@@ -446,13 +447,14 @@
         </div>
       </div>
 
-      <!-- 5-Tab Navigation Bar -->
+      <!-- 6-Tab Navigation Bar -->
       <div class="flex items-center gap-1.5 border-b border-slate-800 pb-2 overflow-x-auto text-xs font-bold">
-        <button onclick="switchCortexTab('tabOverview')" id="btnTabOverview" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 transition shrink-0">🌐 1. 7/24 Öz-Beslenme</button>
+        <button onclick="switchCortexTab('tabOverview')" id="btnTabOverview" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 transition shrink-0">🌐 1. Öz-Beslenme</button>
         <button onclick="switchCortexTab('tabPersonalize')" id="btnTabPersonalize" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">🎛️ 2. Kişiselleştir</button>
-        <button onclick="switchCortexTab('tabMemory')" id="btnTabMemory" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">🧠 3. Bellek Bankası</button>
-        <button onclick="switchCortexTab('tabSkills')" id="btnTabSkills" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">📈 4. Beceri &amp; Kararlılık</button>
-        <button onclick="switchCortexTab('tabProviders')" id="btnTabProviders" class="px-3 py-1.5 rounded-xl bg-slate-900 text-amber-300 hover:text-white transition shrink-0">⚡ 5. OMNI 1.5 Sağlayıcılar (NVIDIA &amp; OpenRouter)</button>
+        <button onclick="switchCortexTab('tabMemory')" id="btnTabMemory" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">🧠 3. Bellek</button>
+        <button onclick="switchCortexTab('tabSkills')" id="btnTabSkills" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">📈 4. Beceri</button>
+        <button onclick="switchCortexTab('tabProviders')" id="btnTabProviders" class="px-3 py-1.5 rounded-xl bg-slate-900 text-amber-300 hover:text-white transition shrink-0">⚡ 5. Sağlayıcılar</button>
+        <button onclick="switchCortexTab('tabCommercial')" id="btnTabCommercial" class="px-3 py-1.5 rounded-xl bg-slate-900 text-cyan-300 hover:text-white transition shrink-0">💳 6. Core LLM &amp; API Key / Kredi Satışı</button>
       </div>
 
       <!-- TAB 1: 7/24 OTONOM ÖZ-BESLENME & SADAKAT -->
@@ -631,6 +633,60 @@
         </div>
       </div>
 
+      <!-- TAB 6: SYNAX CORE LLM SELF-TRAINING CORPUS & COMMERCIAL API KEY / CREDIT PLATFORM -->
+      <div id="cortexTabCommercial" class="hidden space-y-3.5 text-xs">
+        <!-- Core LLM Self-Training Status -->
+        <div class="p-3.5 rounded-xl bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-emerald-500/10 border border-cyan-500/35 space-y-2">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <div class="font-black text-cyan-300">🧬 SYNAX-Core Öz Çekirdek (SynaxTransformer) Sürekli Öğrenim &amp; Damıtma Havuzu</div>
+              <div class="text-[11px] text-slate-400">Her doğrulanmış sohbet otomatik olarak JSONL eğitim verisine damıtılır ve yerel PyTorch çekirdeğinizi eğitir.</div>
+            </div>
+            <button onclick="downloadCoreCorpusJsonl()" class="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-500/40 font-bold text-xs">⬇️ JSONL Eğitim Verisi İndir</button>
+          </div>
+          <div class="grid grid-cols-3 gap-2 font-mono text-center pt-1">
+            <div class="p-2 rounded-lg bg-[#070b14] border border-slate-800">
+              <div id="coreCorpusSamples" class="text-base font-black text-cyan-300">0</div>
+              <div class="text-[10px] text-slate-400">Doğrulanmış Eğitim Örneği</div>
+            </div>
+            <div class="p-2 rounded-lg bg-[#070b14] border border-slate-800">
+              <div id="coreCorpusTokens" class="text-base font-black text-emerald-300">0</div>
+              <div class="text-[10px] text-slate-400">Damıtılan Token</div>
+            </div>
+            <div class="p-2 rounded-lg bg-[#070b14] border border-slate-800">
+              <div id="platformBilledCredits" class="text-base font-black text-amber-300">0</div>
+              <div class="text-[10px] text-slate-400">Faturalanan API Kredisi</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Commercial API Key Generator -->
+        <div class="p-3.5 rounded-xl bg-[#070b14] border border-amber-500/30 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="font-black text-amber-300">💳 Ticari API Anahtarı (`sk-synax-...`) Üret &amp; Kredi Tanımla</span>
+            <span class="text-[10px] font-mono text-slate-400">Endpoint: <code class="text-cyan-300">https://chat.synaxcode.com/v1.php</code></span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <input type="text" id="newApiKeyLabel" placeholder="Müşteri / Uygulama Adı (örn: Hastane HBYS)" class="sm:col-span-2 bg-[#0d1424] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white" />
+            <input type="number" id="newApiKeyCredits" value="1000" min="10" placeholder="Kredi" class="bg-[#0d1424] border border-slate-700 rounded-xl px-3 py-2 text-xs text-amber-300 font-mono" />
+            <button onclick="createCommercialApiKey()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 font-black text-xs">＋ API Key Üret</button>
+          </div>
+          <div id="newRawApiKeyBanner" class="hidden p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 font-mono text-[11px] text-emerald-200 space-y-1">
+            <div class="font-bold text-amber-300">⚠️ Bu anahtar güvenlik nedeniyle YALNIZCA BİR KEZ gösterilir — hemen kopyalayın:</div>
+            <div class="flex items-center justify-between gap-2">
+              <code id="newRawApiKeyVal" class="text-white select-all break-all"></code>
+              <button onclick="navigator.clipboard.writeText(document.getElementById('newRawApiKeyVal').textContent);showToast('📋 API Key kopyalandı');" class="px-2 py-1 rounded bg-emerald-500 text-slate-950 font-bold shrink-0">📋 Kopyala</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Customer API Keys Table -->
+        <div class="space-y-1.5">
+          <div class="font-bold text-slate-300">🔑 Aktif Müşteri &amp; Geliştirici API Anahtarları (OpenAI SDK Uyumlu)</div>
+          <div id="commercialApiKeysList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -734,11 +790,12 @@
     ];
 
     const MODEL_DESCRIPTIONS = {
-      'synax-omni-ultra': 'SYNAX-OMNI 1.5 Ultra · Canlı 2026 İnternet Çapalı & Sınırsız Çoklu-Motor',
-      'synax-med-scholar': 'SYNAX-Med & Q1 Scholar 1.5 · Klinik Tıp, PRISMA 2020 & Q1 SCIE Makale Modeli',
-      'synax-silicon-code': 'SYNAX-Silicon & Code 1.5 · .SX Derleyici, ARM64 NEON / AVX2 & 0-ULP Kanıt Modeli',
-      'synax-biostat-lyapunov': 'SYNAX-Biostat & Lyapunov 1.5 · DerSimonian-Laird Meta-Analiz & V_{k+1}<V_k Modeli',
-      'synax-turbo-flash': 'SYNAX-Turbo 1.5 Flash · Ultra-Düşük Gecikmeli Doğal Sohbet & Anlık Web Sentezi'
+      'synax-omni-ultra': 'SYNAX-OMNI 1.5 Ultra · Canlı Kasım 2026 İnternet Çapalı & Sınırsız Çoklu-Motor',
+      'synax-core-1.5': 'SYNAX-Core 1.5 · Öz Çekirdek (SynaxTransformer) + Sürekli Damıtma & 0-ULP',
+      'synax-med-scholar': 'SYNAX-Med & Q1 Scholar 1.5 · Klinik Tıp, 2025-2026 PRISMA & Q1 SCIE Makale',
+      'synax-silicon-code': 'SYNAX-Silicon & Code 1.5 · .SX Derleyici, ARM64 NEON / AVX2 & 0-ULP Kanıt',
+      'synax-biostat-lyapunov': 'SYNAX-Biostat & Lyapunov 1.5 · DerSimonian-Laird Meta-Analiz & V_{k+1}<V_k',
+      'synax-turbo-flash': 'SYNAX-Turbo 1.5 Flash · Ultra-Düşük Gecikmeli Doğal Sohbet & Anlık Web'
     };
 
     let deepThinkEnabled = true;
@@ -806,8 +863,10 @@
         tabPersonalize: ['cortexTabPersonalize', 'btnTabPersonalize'],
         tabMemory: ['cortexTabMemory', 'btnTabMemory'],
         tabSkills: ['cortexTabSkills', 'btnTabSkills'],
-        tabProviders: ['cortexTabProviders', 'btnTabProviders']
+        tabProviders: ['cortexTabProviders', 'btnTabProviders'],
+        tabCommercial: ['cortexTabCommercial', 'btnTabCommercial']
       };
+      if (tabKey === 'tabCommercial') loadCommercialDashboard();
       Object.keys(tabs).forEach(k => {
         const [panelId, btnId] = tabs[k];
         const p = document.getElementById(panelId);
@@ -969,6 +1028,109 @@
       const bGq = document.getElementById('pvBadgeGroq');
       if (bGq) {
         bGq.textContent = pv.groq_configured ? 'Groq LPU: Aktif ✓' : 'Groq LPU: Bekliyor';
+      }
+    }
+
+    async function loadCommercialDashboard() {
+      if (!founderToken) return;
+      try {
+        const [rCorp, rKeys] = await Promise.all([
+          fetch('api.php?action=core_corpus_status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"action":"core_corpus_status"}' }),
+          fetch('api.php?action=api_keys_manage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"action":"api_keys_manage","operation":"list"}' })
+        ]);
+        if (rCorp.ok) {
+          const dc = await rCorp.json();
+          const elS = document.getElementById('coreCorpusSamples');
+          const elT = document.getElementById('coreCorpusTokens');
+          if (elS) elS.textContent = dc.total_samples || 0;
+          if (elT) elT.textContent = (dc.total_tokens_distilled || 0).toLocaleString('tr-TR');
+        }
+        if (rKeys.ok) {
+          const dk = await rKeys.json();
+          const elB = document.getElementById('platformBilledCredits');
+          if (elB) elB.textContent = dk.total_platform_credits_billed || 0;
+          renderCommercialApiKeys(dk.keys || []);
+        }
+      } catch (e) {}
+    }
+
+    function renderCommercialApiKeys(keys) {
+      const box = document.getElementById('commercialApiKeysList');
+      if (!box) return;
+      if (!keys.length) {
+        box.innerHTML = '<div class="text-slate-500 text-xs p-2">Henüz üretilmiş ticari API anahtarı yok. Yukarıdan ilk müşteri anahtarınızı oluşturabilirsiniz.</div>';
+        return;
+      }
+      box.innerHTML = keys.map(k => `
+        <div class="p-2.5 rounded-xl bg-[#070b14] border border-slate-800 flex items-center justify-between gap-2 flex-wrap">
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-white">${escapeHtml(k.label)}</span>
+              <span class="px-1.5 py-0.5 rounded font-mono text-[10px] ${k.status === 'active' ? 'bg-emerald-500/15 text-emerald-300' : 'bg-rose-500/15 text-rose-300'}">${k.status === 'active' ? 'AKTİF' : 'ASKIDA'}</span>
+            </div>
+            <div class="text-[10px] font-mono text-slate-400 mt-0.5">${escapeHtml(k.prefix)} · Kalan Kredi: <b class="text-amber-300">${k.credits_remaining}</b> · İstek: ${k.total_requests || 0}</div>
+          </div>
+          <div class="flex items-center gap-1.5 font-mono text-[10px]">
+            <button onclick="topupCommercialKey('${k.id}', 1000)" class="px-2 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30">+1000 Kredi</button>
+            <button onclick="toggleCommercialKey('${k.id}')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300">${k.status === 'active' ? 'Duraklat' : 'Aç'}</button>
+            <button onclick="deleteCommercialKey('${k.id}')" class="px-2 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/30 text-rose-300">Sil</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function createCommercialApiKey() {
+      const label = document.getElementById('newApiKeyLabel').value.trim() || 'SYNAX Entegrasyon';
+      const credits = parseFloat(document.getElementById('newApiKeyCredits').value || '1000');
+      const r = await fetch('api.php?action=api_keys_manage', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'api_keys_manage', operation: 'create', label, credits, tier: 'pro' })
+      });
+      if (r.ok) {
+        const d = await r.json();
+        document.getElementById('newApiKeyLabel').value = '';
+        if (d.raw_key_once) {
+          document.getElementById('newRawApiKeyVal').textContent = d.raw_key_once;
+          document.getElementById('newRawApiKeyBanner').classList.remove('hidden');
+        }
+        renderCommercialApiKeys(d.keys || []);
+        showToast('🔑 Yeni ticari API anahtarı oluşturuldu');
+      }
+    }
+
+    async function topupCommercialKey(key_id, credits) {
+      const r = await fetch('api.php?action=api_keys_manage', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'api_keys_manage', operation: 'topup', key_id, credits })
+      });
+      if (r.ok) { const d = await r.json(); renderCommercialApiKeys(d.keys || []); showToast(`💳 +${credits} kredi yüklendi`); }
+    }
+
+    async function toggleCommercialKey(key_id) {
+      const r = await fetch('api.php?action=api_keys_manage', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'api_keys_manage', operation: 'toggle', key_id })
+      });
+      if (r.ok) { const d = await r.json(); renderCommercialApiKeys(d.keys || []); }
+    }
+
+    async function deleteCommercialKey(key_id) {
+      if (!confirm('Bu API anahtarı kalıcı olarak iptal edilsin mi?')) return;
+      const r = await fetch('api.php?action=api_keys_manage', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'api_keys_manage', operation: 'delete', key_id })
+      });
+      if (r.ok) { const d = await r.json(); renderCommercialApiKeys(d.keys || []); showToast('🗑️ API anahtarı iptal edildi'); }
+    }
+
+    async function downloadCoreCorpusJsonl() {
+      const r = await fetch('api.php?action=core_corpus_export_jsonl', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{"action":"core_corpus_export_jsonl"}'
+      });
+      if (r.ok) {
+        const d = await r.json();
+        triggerBlobDownload(new Blob([d.jsonl || ''], { type: 'application/jsonl;charset=utf-8' }), `synax_core_corpus_${Date.now()}.jsonl`);
+        showToast(`🧬 ${d.count || 0} doğrulanmış eğitim örneği indirildi`);
       }
     }
 
