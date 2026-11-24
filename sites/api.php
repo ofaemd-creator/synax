@@ -933,46 +933,46 @@ $enable_deep_think = isset($data['deep_think']) ? (bool)$data['deep_think'] : tr
 $temperature = isset($data['temperature']) ? floatval($data['temperature']) : 0.35;
 $response_style = trim($data['response_style'] ?? 'standard');
 
-// Sovereign SYNAX-OMNI 1.5 Model Family Mapping -> Multi-Provider Unlimited Compute Routing (NVIDIA NIM + OpenRouter + Groq LPU + Zero-Key Fallback)
+// Sovereign SYNAX-OMNI 1.5 Model Family Mapping -> Live Nov 2026 Frontier Multi-Provider Mesh (NVIDIA NIM + OpenRouter + Groq LPU + Unlimited Cloud)
 $synax_models_catalog = [
     'synax-omni-ultra' => [
         'label' => 'SYNAX-OMNI 1.5 Ultra',
-        'subtitle' => 'Amiral Gemisi Derin Muhakeme, Canlı 2026 Web & Sınırsız Çoklu-Motor',
+        'subtitle' => 'Amiral Gemisi 550B/1T Derin Muhakeme, Canlı 2026 Web & Sınırsız Çoklu-Motor',
         'groq_model' => 'openai/gpt-oss-120b',
-        'openrouter_model' => 'deepseek/deepseek-r1:free',
-        'nvidia_model' => 'deepseek-ai/deepseek-r1',
+        'openrouter_model' => 'nvidia/nemotron-3-ultra-550b-a55b:free',
+        'nvidia_model' => 'nvidia/nemotron-3-ultra-550b-a55b',
         'sys_focus' => 'Genel derin muhakeme, gerçek zamanlı güncel olay analizi, klinik karar destek, bilimsel araştırma ve ileri yazılım mimarisini birleştiren amiral gemisi SYNAX-OMNI 1.5 Ultra modelisin.',
     ],
     'synax-med-scholar' => [
         'label' => 'SYNAX-Med & Q1 Scholar 1.5',
-        'subtitle' => 'Klinik Tıp, Yoğun Bakım, Canlı PubMed/DOI & Q1 SCIE Makale Modeli',
+        'subtitle' => 'Klinik Tıp, Yoğun Bakım, Canlı 2025-2026 PubMed/DOI & Q1 SCIE Makale Modeli',
         'groq_model' => 'openai/gpt-oss-120b',
-        'openrouter_model' => 'google/gemma-3-27b-it:free',
-        'nvidia_model' => 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
+        'openrouter_model' => 'google/gemma-4-31b-it:free',
+        'nvidia_model' => 'mistralai/mistral-large-4-1t-a52b',
         'sys_focus' => 'Klinik tıp, acil tıp, yoğun bakım hemodinamisi, canlı NCBI PubMed kanıt sentezi, PRISMA 2020 ve Q1 SCIE (Nature Medicine, The Lancet, ICM) makale yazımında uzmanlaşmış SYNAX-Med & Q1 Scholar 1.5 modelisin.',
     ],
     'synax-silicon-code' => [
         'label' => 'SYNAX-Silicon & Code 1.5',
         'subtitle' => '.SX Derleyici, Python, C11, ARM64 NEON / AVX2 & 0-ULP Kanıt Modeli',
         'groq_model' => 'qwen/qwen3.8-27b',
-        'openrouter_model' => 'qwen/qwen3-coder:free',
-        'nvidia_model' => 'qwen/qwen2.5-coder-32b-instruct',
+        'openrouter_model' => 'nvidia/nemotron-3.5-super-vl:free',
+        'nvidia_model' => 'nvidia/nemotron-3.5-super-vl-120b-a12b',
         'sys_focus' => 'Yazılım mühendisliği, Python, C11, ARM64 NEON, x86_64 AVX2, Q16.16 gömülü sistemler, E-Graph eşitlik doygunluğu ve 19-küme IEEE-754 0-ULP formal doğrulamada uzmanlaşmış SYNAX-Silicon & Code 1.5 modelisin.',
     ],
     'synax-biostat-lyapunov' => [
         'label' => 'SYNAX-Biostat & Lyapunov 1.5',
         'subtitle' => 'DerSimonian-Laird Meta-Analiz & V_{k+1} < V_k Sıfır-Sapma Modeli',
         'groq_model' => 'openai/gpt-oss-120b',
-        'openrouter_model' => 'deepseek/deepseek-r1:free',
-        'nvidia_model' => 'nvidia/llama-3.1-nemotron-ultra-253b-v1',
+        'openrouter_model' => 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'nvidia_model' => 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning',
         'sys_focus' => 'Biyoistatistiksel meta-analiz (DerSimonian-Laird rastgele etkiler, HKSJ, tau², Cochran Q, I², Forest Plot, SAMPL) ve daralmalı Lyapunov-Kalman (V_{k+1} < V_k) sıfır-sapma sensör kalibrasyonunda uzmanlaşmış SYNAX-Biostat & Lyapunov 1.5 modelisin.',
     ],
     'synax-turbo-flash' => [
         'label' => 'SYNAX-Turbo 1.5 Flash',
         'subtitle' => 'Ultra-Düşük Gecikmeli Doğal Sohbet & Anlık Canlı Web Sentezi',
         'groq_model' => 'llama-3.3-70b-versatile',
-        'openrouter_model' => 'meta-llama/llama-3.3-70b-instruct:free',
-        'nvidia_model' => 'meta/llama-3.3-70b-instruct',
+        'openrouter_model' => 'nvidia/nemotron-3.5-lightning:free',
+        'nvidia_model' => 'nvidia/nemotron-3.5-lightning-30b-a3b',
         'sys_focus' => 'Çok hızlı, akıcı, net, güncel ve pratik yanıtlar üreten SYNAX-Turbo 1.5 Flash modelisin.',
     ],
 ];
@@ -1626,13 +1626,13 @@ $provider_pref = trim($data['provider_preference'] ?? 'auto'); // 'auto', 'nvidi
 $routing_queue = [];
 
 if ($server_nvidia_key && in_array($provider_pref, ['auto', 'nvidia'], true)) {
-    foreach (array_values(array_unique([$preferred_nvidia, 'nvidia/llama-3.1-nemotron-ultra-253b-v1', 'deepseek-ai/deepseek-r1', 'meta/llama-3.3-70b-instruct'])) as $nm) {
+    foreach (array_values(array_unique([$preferred_nvidia, 'nvidia/nemotron-3.5-lightning-30b-a3b', 'google/gemma-4-31b-it', 'nvidia/nemotron-3-ultra-550b-a55b', 'mistralai/mistral-large-4-1t-a52b'])) as $nm) {
         $routing_queue[] = ['tier' => 'NVIDIA NIM', 'url' => 'https://integrate.api.nvidia.com/v1/chat/completions', 'key' => $server_nvidia_key, 'model' => $nm, 'headers' => []];
     }
 }
 if ($server_openrouter_key && in_array($provider_pref, ['auto', 'openrouter'], true)) {
     $or_headers = ['HTTP-Referer: https://chat.synaxcode.com', 'X-Title: SYNAX-OMNI 1.5'];
-    foreach (array_values(array_unique([$preferred_openrouter, 'deepseek/deepseek-r1:free', 'qwen/qwen3-coder:free', 'google/gemma-3-27b-it:free', 'meta-llama/llama-3.3-70b-instruct:free'])) as $om) {
+    foreach (array_values(array_unique([$preferred_openrouter, 'nvidia/nemotron-3.5-lightning:free', 'google/gemma-4-31b-it:free', 'nvidia/nemotron-3-ultra-550b-a55b:free', 'openrouter/free'])) as $om) {
         $routing_queue[] = ['tier' => 'OpenRouter', 'url' => 'https://openrouter.ai/api/v1/chat/completions', 'key' => $server_openrouter_key, 'model' => $om, 'headers' => $or_headers];
     }
 }
