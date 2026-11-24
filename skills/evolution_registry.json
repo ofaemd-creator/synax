@@ -1,6 +1,6 @@
 {
   "engine_version": "6.4.0",
-  "evolution_epoch": 15,
+  "evolution_epoch": 16,
   "base_skills_count": 21,
   "evolved_skills": [
     {
@@ -60,14 +60,14 @@
     },
     {
       "id": "icu-waveform-kalman-denoiser",
-      "epoch": 6,
+      "epoch": 16,
       "title_tr": "Yoğun Bakım Dalga Formu Adaptif Kalman-Lyapunov Gürültü Bastırıcı",
       "desc_tr": "500 Hz yoğun bakım EKG ve arter basıncı dalga formlarında hareket artefaktı ve elektrokoter gürültüsünü bastıran Kalman-Lyapunov çekirdeği",
       "desc_en": "Real-time adaptive Kalman-Lyapunov state estimation suppressing motion artifacts and electrosurgical interference in 500 Hz ICU ECG and arterial pressure waveforms.",
       "agent_owner": "Agent-Lyapunov (Masa 4)",
-      "sha256": "669dfab069b1d5deca2304349e6f160f725f893eecc4b3b37e5e4ebcd5405e3a",
+      "sha256": "b6e1c4f1db3229cba53b6acbbff902e0106a6532e33abd5b289e79361a61d98a",
       "installed_path": "skills/icu-waveform-kalman-denoiser/SKILL.md",
-      "timestamp_utc": "2026-11-21 18:07:07 UTC"
+      "timestamp_utc": "2026-11-24 09:02:04 UTC"
     },
     {
       "id": "multisilicon-simd-autotuner",
@@ -519,8 +519,35 @@
         "Aktif toplam beceri kapasitesi 46 beceriye yükseltildi.",
         "8 Ajanlı 3D Ofis telemetri önbelleği, Lyapunov sıfır-sapma (V_{k+1} < V_k) ve PRISMA 2020 kanıt indeksleri güncellendi."
       ]
+    },
+    {
+      "epoch": 16,
+      "timestamp_utc": "2026-11-24 09:02:04 UTC",
+      "synthesized_skill": {
+        "id": "icu-waveform-kalman-denoiser",
+        "epoch": 16,
+        "title_tr": "Yoğun Bakım Dalga Formu Adaptif Kalman-Lyapunov Gürültü Bastırıcı",
+        "desc_tr": "500 Hz yoğun bakım EKG ve arter basıncı dalga formlarında hareket artefaktı ve elektrokoter gürültüsünü bastıran Kalman-Lyapunov çekirdeği",
+        "desc_en": "Real-time adaptive Kalman-Lyapunov state estimation suppressing motion artifacts and electrosurgical interference in 500 Hz ICU ECG and arterial pressure waveforms.",
+        "agent_owner": "Agent-Lyapunov (Masa 4)",
+        "sha256": "b6e1c4f1db3229cba53b6acbbff902e0106a6532e33abd5b289e79361a61d98a",
+        "installed_path": "skills/icu-waveform-kalman-denoiser/SKILL.md",
+        "timestamp_utc": "2026-11-24 09:02:04 UTC"
+      },
+      "verification_gate": {
+        "passed": true,
+        "lyapunov_verified": true,
+        "dersimonian_laird_verified": true,
+        "security_sanitizer_verified": true
+      },
+      "total_installed_skills": 46,
+      "website_improvements": [
+        "Epoch #016: Yeni otonom beceri `icu-waveform-kalman-denoiser` (Yoğun Bakım Dalga Formu Adaptif Kalman-Lyapunov Gürültü Bastırıcı) sentezlendi ve doğrulandı.",
+        "Aktif toplam beceri kapasitesi 46 beceriye yükseltildi.",
+        "8 Ajanlı 3D Ofis telemetri önbelleği, Lyapunov sıfır-sapma (V_{k+1} < V_k) ve PRISMA 2020 kanıt indeksleri güncellendi."
+      ]
     }
   ],
   "total_installed_skills": 46,
-  "last_updated_utc": "2026-11-23 23:36:05 UTC"
+  "last_updated_utc": "2026-11-24 09:02:04 UTC"
 }
