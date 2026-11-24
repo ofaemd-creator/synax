@@ -3,225 +3,1163 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SYNAX (synaxcode.com) — Otonom Ajan Ofisi, Süper-LLM Sohbet, Çoklu-Silikon Kod &amp; Q1 Akademik Platform</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>SynaxCode — Düşünceden çalışan sisteme. | Araştırma · Ajanlar · Kod</title>
+  <link rel="icon" type="image/jpeg" href="data:image/jpeg;base64,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" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background: #040711; color: #f8fafc; }
-    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    :root {
+      --bg-obsidian: #03060c;
+      --bg-deep: #060c18;
+      --bg-card: #070e1c;
+      --cyan-glow: #38bdf8;
+      --cyan-neon: #06b6d4;
+      --violet-glow: #a855f7;
+      --gold-core: #f59e0b;
+      --text-pure: #ffffff;
+      --text-soft: #cbd5e1;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(16, 36, 72, 0.72) 0%, transparent 55%),
+        radial-gradient(circle at 85% 22%, rgba(6, 182, 212, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 15% 45%, rgba(168, 85, 247, 0.10) 0%, transparent 45%),
+        var(--bg-obsidian);
+      color: var(--text-pure);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ======================================================================
+       1. SIGNATURE BRAND LOCKUP & TOP NAVIGATION BAR
+       ====================================================================== */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      height: 68px;
+      background: rgba(3, 6, 13, 0.86);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 13px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .sx-hex-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      object-fit: cover;
+      display: block;
+      filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.45));
+    }
+    .brand-divider {
+      width: 1.5px;
+      height: 24px;
+      background: rgba(203, 213, 225, 0.38);
+    }
+    .brand-wordmark {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-pill {
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+    .nav-pill:hover {
+      color: #ffffff;
+      background: rgba(30, 41, 59, 0.65);
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+    .nav-pill.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border-color: rgba(56, 189, 248, 0.55);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.22);
+    }
+
+    /* ======================================================================
+       2. BRUSHED TITANIUM & SILVER PILL CTA BUTTONS (FROM REFERENCE VISUALS)
+       ====================================================================== */
+    .btn-titanium-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 28px;
+      border-radius: 999px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 3px),
+        linear-gradient(135deg, #c6ceda 0%, #f4f7fb 28%, #9ba6b8 62%, #e2e8f0 88%, #b0bac9 100%);
+      color: #050811;
+      font-size: 16.5px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      border: 1.5px solid rgba(255, 255, 255, 0.82);
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.65),
+        0 0 22px rgba(56, 189, 248, 0.22),
+        inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
+        inset 0 -1.5px 2px rgba(15, 23, 42, 0.35);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .btn-titanium-cta:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+      box-shadow:
+        0 14px 36px rgba(0, 0, 0, 0.75),
+        0 0 32px rgba(56, 189, 248, 0.42),
+        inset 0 1.5px 2px #ffffff;
+    }
+    .btn-titanium-cta.sm {
+      padding: 8px 18px;
+      font-size: 13.5px;
+    }
+
+    /* BRUSHED DARK TITANIUM PLAQUES ([icon] | Label) */
+    .titanium-plaque {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      padding: 11px 16px;
+      border-radius: 14px;
+      background:
+        repeating-linear-gradient(115deg, rgba(255,255,255,0.022) 0px, rgba(255,255,255,0.022) 1px, transparent 1px, transparent 4px),
+        linear-gradient(145deg, rgba(52, 63, 82, 0.88) 0%, rgba(21, 28, 42, 0.95) 52%, rgba(38, 48, 66, 0.90) 100%);
+      border: 1.2px solid rgba(186, 204, 230, 0.34);
+      box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.55),
+        0 2px 14px rgba(56, 189, 248, 0.16),
+        inset 0 1px 1px rgba(255, 255, 255, 0.28);
+      color: #f8fafc;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+    .titanium-plaque:hover {
+      border-color: rgba(56, 189, 248, 0.75);
+      box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.65),
+        0 0 22px rgba(56, 189, 248, 0.35),
+        inset 0 1px 1px rgba(255, 255, 255, 0.42);
+      transform: translateY(-2px);
+    }
+    .plaque-icon {
+      color: #7dd3fc;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .plaque-sep {
+      width: 1px;
+      height: 18px;
+      background: rgba(203, 213, 225, 0.32);
+      flex-shrink: 0;
+    }
+
+    /* ======================================================================
+       3. MONUMENTAL APPLE-STYLE HERO SECTION ("Düşünceden çalışan sisteme.")
+       ====================================================================== */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .hero-wrap {
+      padding: 46px 0 36px 0;
+      display: grid;
+      grid-template-columns: 1.05fr 1.15fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .kicker {
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #cbd5e1;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .monumental-h1 {
+      font-size: clamp(2.75rem, 5.2vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.03;
+      letter-spacing: -0.038em;
+      color: #ffffff;
+      margin-bottom: 18px;
+    }
+    .hero-lead {
+      font-size: clamp(1.1rem, 1.6vw, 1.38rem);
+      font-weight: 500;
+      color: #cbd5e1;
+      line-height: 1.45;
+      margin-bottom: 26px;
+    }
+    .hero-plaques-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .cta-domain-bar {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .cta-domain-sep {
+      width: 1.5px;
+      height: 28px;
+      background: rgba(203, 213, 225, 0.32);
+    }
+    .cta-domain-text {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      color: #f8fafc;
+      text-decoration: none;
+    }
+    .cta-domain-text:hover { color: #38bdf8; }
+
+    /* RIGHT HERO 3D SCULPTURE SHOWCASE & OMNIBOX LAUNCHER */
+    .hero-sculpture-card {
+      position: relative;
+      border-radius: 26px;
+      background: #04070e;
+      border: 1.5px solid rgba(56, 189, 248, 0.38);
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.85),
+        0 0 45px rgba(6, 182, 212, 0.18);
+      overflow: hidden;
+    }
+    .hero-sculpture-img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1122 / 630;
+      background: #04070e;
+      overflow: hidden;
+    }
+    .hero-sculpture-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .hero-sculpture-card:hover .hero-sculpture-img-wrap img {
+      transform: scale(1.02);
+    }
+    .hero-omnibox {
+      padding: 14px 16px;
+      background: linear-gradient(180deg, rgba(8, 15, 30, 0.96), rgba(4, 8, 18, 0.98));
+      border-top: 1px solid rgba(56, 189, 248, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .hero-omnibox-input {
+      flex: 1;
+      min-width: 200px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.30);
+      border-radius: 12px;
+      padding: 11px 14px;
+      color: #ffffff;
+      font-size: 13.5px;
+      font-weight: 500;
+      outline: none;
+    }
+    .hero-omnibox-input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.25);
+    }
+
+    /* ======================================================================
+       4. PLATFORM SHOWCASE CARDS (EXACT POSTER ARCHITECTURE IN WEB BENTO)
+       ====================================================================== */
+    .section-head {
+      margin: 44px 0 24px 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      padding-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+    }
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 26px;
+    }
+    .synax-poster-card {
+      background:
+        radial-gradient(circle at 50% 45%, rgba(14, 30, 58, 0.65) 0%, rgba(4, 7, 14, 0.98) 75%),
+        #04070e;
+      border: 1.5px solid rgba(148, 163, 184, 0.24);
+      border-radius: 28px;
+      padding: 30px 30px 26px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      box-shadow:
+        0 26px 65px rgba(0, 0, 0, 0.78),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .synax-poster-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(56, 189, 248, 0.62);
+      box-shadow:
+        0 32px 80px rgba(0, 0, 0, 0.88),
+        0 0 38px rgba(6, 182, 212, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    }
+    .card-top-lockup {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .card-mini-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .card-mini-brand img {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+    }
+    .card-mini-brand span {
+      font-size: 14px;
+      font-weight: 800;
+      color: #f8fafc;
+      letter-spacing: -0.02em;
+    }
+    .card-kicker {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #cbd5e1;
+      margin-top: 8px;
+    }
+    .card-h2 {
+      font-size: clamp(1.95rem, 2.7vw, 2.55rem);
+      font-weight: 800;
+      line-height: 1.06;
+      letter-spacing: -0.035em;
+      color: #ffffff;
+      margin-top: 4px;
+    }
+    .card-sub {
+      font-size: 15.5px;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-top: 6px;
+    }
+    .card-sculpture-stage {
+      width: calc(100% + 60px);
+      margin: 2px -30px;
+      position: relative;
+      background: #04070e;
+      overflow: hidden;
+      aspect-ratio: 1122 / 600;
+    }
+    .card-sculpture-stage img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.45s ease;
+    }
+    .synax-poster-card:hover .card-sculpture-stage img {
+      transform: scale(1.03);
+    }
+    /* Subtle top/bottom vignette blend on the 3D sculpture stage */
+    .card-sculpture-stage::before,
+    .card-sculpture-stage::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0;
+      height: 28px;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .card-sculpture-stage::before {
+      top: 0;
+      background: linear-gradient(180deg, #050913 0%, transparent 100%);
+    }
+    .card-sculpture-stage::after {
+      bottom: 0;
+      background: linear-gradient(0deg, #050913 0%, transparent 100%);
+    }
+
+    /* 4-ITEM CAPABILITY STRIP ([icon] | Label OR Titanium Plaques) */
+    .capability-strip-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      padding: 4px 0;
+    }
+    .cap-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background:
+        linear-gradient(145deg, rgba(44, 54, 72, 0.72) 0%, rgba(17, 24, 38, 0.88) 100%);
+      border: 1px solid rgba(180, 198, 224, 0.26);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      min-width: 0;
+    }
+    .cap-pill-icon {
+      color: #7dd3fc;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .cap-pill-sep {
+      width: 1px;
+      height: 16px;
+      background: rgba(203, 213, 225, 0.28);
+      flex-shrink: 0;
+    }
+    .cap-pill-text {
+      font-size: 11.8px;
+      font-weight: 700;
+      color: #f1f5f9;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-footer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 6px;
+      flex-wrap: wrap;
+    }
+    .card-domain-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16.5px;
+      font-weight: 600;
+      color: #f8fafc;
+      text-decoration: none;
+    }
+    .card-domain-label::before {
+      content: "";
+      display: inline-block;
+      width: 1.5px;
+      height: 22px;
+      background: rgba(203, 213, 225, 0.35);
+    }
+
+    /* ======================================================================
+       5. ARCHITECTURAL DAYLIGHT EDITION BANNER (VISUAL #12: "Bir fikirden bir evrene.")
+       ====================================================================== */
+    .daylight-banner {
+      margin-top: 44px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #f3efe6 0%, #e5ded0 100%);
+      color: #090d16;
+      padding: 38px 42px;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 36px;
+      align-items: center;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.75);
+      border: 1.5px solid rgba(255, 255, 255, 0.65);
+    }
+    .daylight-kicker {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #1e293b;
+      margin-bottom: 12px;
+    }
+    .daylight-h2 {
+      font-size: clamp(2.4rem, 4.2vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.04;
+      letter-spacing: -0.038em;
+      color: #070b14;
+      margin-bottom: 14px;
+    }
+    .daylight-sub {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 24px;
+    }
+    .btn-obsidian-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      background: #090e1a;
+      color: #ffffff;
+      font-size: 16.5px;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 12px 28px rgba(9, 14, 26, 0.35);
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+    .btn-obsidian-cta:hover {
+      transform: translateY(-2px);
+      background: #111a2e;
+    }
+    .daylight-sculpture-wrap {
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+      border: 1px solid rgba(15, 23, 42, 0.12);
+    }
+    .daylight-sculpture-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ======================================================================
+       6. FULL 12-POSTER OFFICIAL BRAND GALLERY (4:5 CARDS)
+       ====================================================================== */
+    .posters-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .poster-thumb-card {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1.5px solid rgba(148, 163, 184, 0.25);
+      background: #050913;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+    }
+    .poster-thumb-card:hover {
+      transform: translateY(-4px);
+      border-color: #38bdf8;
+      box-shadow: 0 18px 42px rgba(6, 182, 212, 0.28);
+    }
+    .poster-thumb-card img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 1024px) {
+      .hero-wrap, .daylight-banner { grid-template-columns: 1fr; }
+      .bento-grid { grid-template-columns: 1fr; }
+      .posters-gallery-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 720px) {
+      .top-nav { padding: 0 14px; height: 60px; }
+      .container { padding: 0 14px; }
+      .synax-poster-card { padding: 22px 18px; border-radius: 22px; }
+      .card-sculpture-stage { width: calc(100% + 36px); margin: 2px -18px; }
+      .capability-strip-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .posters-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .daylight-banner { padding: 24px 20px; }
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#040711] text-slate-100 overflow-x-hidden">
+<body>
 
-  <!-- UNIFIED SYNAX TOP NAVIGATION BAR (56px, Mobile + Desktop Responsive) -->
-  <header class="h-14 bg-[#060b16]/95 backdrop-blur border-b border-slate-800/90 px-3 sm:px-4 flex items-center justify-between shrink-0 z-40 sticky top-0">
-    <div class="flex items-center gap-3 sm:gap-6 min-w-0">
-      <a href="https://synaxcode.com" class="flex items-center gap-2 text-decoration-none shrink-0">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px]">
-          <div class="w-full h-full bg-[#040711] rounded-[6px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
-        </div>
-        <span class="font-black text-sm tracking-tight text-white whitespace-nowrap">SYNAX <span class="text-cyan-400 font-mono text-xs">1.5</span></span>
-      </a>
-      <nav class="hidden md:flex items-center gap-1">
-        <a href="https://synaxcode.com" class="px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-extrabold text-xs shadow-sm transition whitespace-nowrap">🌐 Ana Sayfa</a>
-        <a href="https://office.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition whitespace-nowrap">🏢 3D Ajan Ofisi</a>
-        <a href="https://chat.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition whitespace-nowrap">💬 AI Sohbet</a>
-        <a href="https://code.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition whitespace-nowrap">💻 Kod Stüdyosu</a>
-        <a href="https://terminal.synaxcode.com" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition whitespace-nowrap">⌨️ Terminal</a>
-        <a href="https://synaxcode.org" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/80 font-semibold text-xs transition whitespace-nowrap">🎓 Akademik (.org)</a>
-      </nav>
-    </div>
-    <div class="flex items-center gap-2 shrink-0">
-      <span id="globalEvoPill" class="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-mono text-[11px] font-semibold whitespace-nowrap">● 7/24 Otonom Aktif · 46+ Beceri</span>
-      <button onclick="document.getElementById('mobileNavDrawer').classList.toggle('hidden')" class="md:hidden px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-bold">☰ Menü</button>
+  <!-- ==================== TOP NAVIGATION BAR ==================== -->
+  <header class="top-nav">
+    <a href="https://synaxcode.com" class="brand-lockup">
+      <img src="data:image/jpeg;base64,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" alt="SX" class="sx-hex-icon" />
+      <span class="brand-divider"></span>
+      <span class="brand-wordmark">SynaxCode</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="#evren" class="nav-pill active">Evren</a>
+      <a href="https://chat.synaxcode.com" class="nav-pill">Chat</a>
+      <a href="https://office.synaxcode.com" class="nav-pill">Ajan Ofisi</a>
+      <a href="https://terminal.synaxcode.com" class="nav-pill">Terminal</a>
+      <a href="https://synaxcode.online" class="nav-pill">Studio</a>
+      <a href="https://synaxcode.org" class="nav-pill">Akademik</a>
+      <a href="https://code.synaxcode.com" class="nav-pill">Code</a>
+      <a href="#mimari" class="nav-pill">Mimari &amp; Kalkan</a>
+    </nav>
+
+    <div style="display:flex;align-items:center;gap:10px;">
+      <a href="https://chat.synaxcode.com" class="btn-titanium-cta sm">Chat’i keşfet →</a>
     </div>
   </header>
-  <nav id="mobileNavDrawer" class="hidden md:hidden bg-[#070d1d] border-b border-slate-800 px-3 py-2.5 grid grid-cols-2 gap-1.5 text-xs font-bold z-30">
-    <a href="https://synaxcode.com" class="px-3 py-2 rounded-lg bg-cyan-500 text-slate-950">🌐 Ana Sayfa</a>
-    <a href="https://office.synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-amber-300 border border-slate-800">🏢 3D Ajan Ofisi</a>
-    <a href="https://chat.synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-emerald-300 border border-slate-800">💬 AI Sohbet</a>
-    <a href="https://code.synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-cyan-300 border border-slate-800">💻 Kod Stüdyosu</a>
-    <a href="https://terminal.synaxcode.com" class="px-3 py-2 rounded-lg bg-slate-900 text-purple-300 border border-slate-800">⌨️ Terminal</a>
-    <a href="https://synaxcode.org" class="px-3 py-2 rounded-lg bg-slate-900 text-sky-300 border border-slate-800">🎓 Akademik (.org)</a>
-  </nav>
 
+  <main class="container" id="evren">
 
-  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 space-y-12">
-
-    <!-- 1. CLEAN HERO SECTION -->
-    <section class="text-center max-w-3xl mx-auto space-y-4">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-cyan-300">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>Dr. Ömer Faruk Aydın (@ofaemd-creator) · 7/24 Kendi Kendini Geliştiren Otonom Sistem</span>
-      </div>
-      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-        Tek Merkezden <span class="bg-gradient-to-r from-amber-300 via-emerald-300 to-cyan-400 bg-clip-text text-transparent">8 Otonom Ajan, 21 Q1 Akademik Beceri ve 0-ULP Silikon</span>
-      </h1>
-      <p class="text-sm sm:text-base text-slate-400 leading-relaxed">
-        Karmaşık menüler olmadan, ihtiyacınız olan çalışma ortamını aşağıdan seçin. Tüm uygulamalar arka planda aynı 7/24 otonom ajan motoruna bağlıdır.
-      </p>
-    </section>
-
-    <!-- 2. THE 4 CORE SUBDOMAIN APPLICATIONS (CRYSTAL CLEAR CARDS) -->
-    <section class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-      <!-- Card 1: 3D Agent Office -->
-      <a href="https://office.synaxcode.com" class="group p-6 rounded-2xl bg-[#080f20] hover:bg-[#0c162e] border border-amber-500/30 hover:border-amber-400 transition flex flex-col justify-between shadow-xl">
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-300 font-mono text-xs font-bold">office.synaxcode.com</span>
-            <span class="text-xs font-mono text-emerald-400 font-bold">● 8 Pixar Ajanı Aktif</span>
-          </div>
-          <h2 class="text-xl font-black text-white group-hover:text-amber-300 transition">🏢 1. 3D Ajan Ofisi &amp; Komuta Merkezi</h2>
-          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            8 uzman ajanı (SYNAX-LLM, Scholar, Biostat, Lyapunov, E-Graph, Token Shield, Context Vault, Silicon) 3D sahnede izleyin, tekil veya toplu görev atayın ve otonom vardiyaları yönetin.
-          </p>
-        </div>
-        <div class="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-300">
-          <span>3D Ajan Ofisini Aç</span>
-          <span class="group-hover:translate-x-1 transition">→</span>
-        </div>
-      </a>
-
-      <!-- Card 2: AI Chat -->
-      <a href="https://chat.synaxcode.com" class="group p-6 rounded-2xl bg-[#080f20] hover:bg-[#0c162e] border border-emerald-500/30 hover:border-emerald-400 transition flex flex-col justify-between shadow-xl">
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 font-mono text-xs font-bold">chat.synaxcode.com</span>
-            <span class="text-xs font-mono text-cyan-300 font-bold">PubMed RAG + 21 Q1 Beceri</span>
-          </div>
-          <h2 class="text-xl font-black text-white group-hover:text-emerald-300 transition">💬 2. SYNAX-OMNI AI &amp; Akademik Sohbet</h2>
-          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            Sade ve odaklanmış sohbet ekranı. Canlı NCBI PubMed özetleri, Perplexity tarzı doğrulanmış PMID/DOI atıfları, 21 Q1 SCIE makale becerisi ve sağ panelde canlı makale/kod atölyesi.
-          </p>
-        </div>
-        <div class="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-300">
-          <span>AI Sohbet Ekranını Aç</span>
-          <span class="group-hover:translate-x-1 transition">→</span>
-        </div>
-      </a>
-
-      <!-- Card 3: Code Studio -->
-      <a href="https://code.synaxcode.com" class="group p-6 rounded-2xl bg-[#080f20] hover:bg-[#0c162e] border border-cyan-500/30 hover:border-cyan-400 transition flex flex-col justify-between shadow-xl">
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="px-2.5 py-1 rounded-lg bg-cyan-500/15 text-cyan-300 font-mono text-xs font-bold">code.synaxcode.com</span>
-            <span class="text-xs font-mono text-amber-300 font-bold">C11 · ARM64 NEON · AVX2 · MCU</span>
-          </div>
-          <h2 class="text-xl font-black text-white group-hover:text-cyan-300 transition">💻 3. Çoklu-Silikon &amp; .SX Kod Stüdyosu</h2>
-          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            Biyomedikal sinyal işleme ve 0-ULP güvenlikli .sx çekirdeklerini yazın, 60 FPS canlı osiloskopta test edin, AST ağacını inceleyin ve tek tıkla ARM64 NEON / C99 / Python koduna derleyin.
-          </p>
-        </div>
-        <div class="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-cyan-300">
-          <span>Kod Stüdyosunu Aç</span>
-          <span class="group-hover:translate-x-1 transition">→</span>
-        </div>
-      </a>
-
-      <!-- Card 4: Web Terminal -->
-      <a href="https://terminal.synaxcode.com" class="group p-6 rounded-2xl bg-[#080f20] hover:bg-[#0c162e] border border-purple-500/30 hover:border-purple-400 transition flex flex-col justify-between shadow-xl">
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="px-2.5 py-1 rounded-lg bg-purple-500/15 text-purple-300 font-mono text-xs font-bold">terminal.synaxcode.com</span>
-            <span class="text-xs font-mono text-purple-300 font-bold">SYNAX-OS CLI v6.6</span>
-          </div>
-          <h2 class="text-xl font-black text-white group-hover:text-purple-300 transition">⌨️ 4. Otonom Ajan &amp; 0-ULP Komut Terminali</h2>
-          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            Doğrudan komut satırından <code class="text-purple-300">status</code>, <code class="text-purple-300">step</code>, <code class="text-purple-300">evolve</code>, <code class="text-purple-300">prove</code>, <code class="text-purple-300">compile</code> ve <code class="text-purple-300">q1</code> komutlarıyla 8 ajanı ve öz-evrim motorunu kontrol edin.
-          </p>
-        </div>
-        <div class="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-purple-300">
-          <span>Komut Terminalini Aç</span>
-          <span class="group-hover:translate-x-1 transition">→</span>
-        </div>
-      </a>
-
-    </section>
-
-    <!-- 3. LIVE AUTONOMOUS STATUS & QUICK ACTION BAR (CLEAN, SINGLE CARD) -->
-    <section class="p-5 rounded-2xl bg-[#070d1b] border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div class="space-y-1">
-        <div class="flex items-center gap-2 text-xs font-mono text-emerald-400 font-bold">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          <span id="hubStatusTitle">7/24 OTONOM ÖZ-EVRİM MOTORU AKTİF</span>
-        </div>
-        <p id="hubStatusDesc" class="text-xs text-slate-400">
-          Ajanlar arka planda sürekli yeni bilimsel makale becerileri (SKILL.md) ve 0-ULP doğrulanmış donanım çekirdekleri sentezlemektedir.
+    <!-- ==================== 1. MONUMENTAL HERO (VISUAL #1: "Düşünceden çalışan sisteme.") ==================== -->
+    <section class="hero-wrap">
+      <div>
+        <span class="kicker">ARAŞTIRMA · AJANLAR · KOD</span>
+        <h1 class="monumental-h1">
+          Düşünceden<br />çalışan sisteme.
+        </h1>
+        <p class="hero-lead">
+          Birbirine bağlı bir yapay zekâ ve geliştirme evreni.
         </p>
+
+        <!-- 5 Interactive Brushed-Titanium Node Plaques from Visual #1 -->
+        <div class="hero-plaques-grid">
+          <a href="https://chat.synaxcode.com" class="titanium-plaque">
+            <span class="plaque-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg></span>
+            <span class="plaque-sep"></span>
+            <span>Chat</span>
+          </a>
+          <a href="https://office.synaxcode.com" class="titanium-plaque">
+            <span class="plaque-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="4"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><circle cx="8.5" cy="16" r="1"/><circle cx="15.5" cy="16" r="1"/></svg></span>
+            <span class="plaque-sep"></span>
+            <span>Ajan Ofisi</span>
+          </a>
+          <a href="https://terminal.synaxcode.com" class="titanium-plaque">
+            <span class="plaque-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><polyline points="7 9 10 12 7 15"/><line x1="12" y1="15" x2="17" y2="15"/></svg></span>
+            <span class="plaque-sep"></span>
+            <span>Terminal</span>
+          </a>
+          <a href="https://synaxcode.online" class="titanium-plaque">
+            <span class="plaque-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></span>
+            <span class="plaque-sep"></span>
+            <span>Studio</span>
+          </a>
+          <a href="https://code.synaxcode.com" class="titanium-plaque">
+            <span class="plaque-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg></span>
+            <span class="plaque-sep"></span>
+            <span>Code</span>
+          </a>
+        </div>
+
+        <div class="cta-domain-bar">
+          <a href="#platformlar" class="btn-titanium-cta">Evreni keşfet →</a>
+          <span class="cta-domain-sep"></span>
+          <a href="https://synaxcode.com" class="cta-domain-text">synaxcode.com</a>
+        </div>
       </div>
-      <div class="flex items-center gap-2 shrink-0 font-mono text-xs">
-        <button onclick="runQuickCloudShift()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black transition">🤖 Şimdi Vardiya Çalıştır</button>
-        <button onclick="runQuickCloudEvolve()" class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold transition">🧬 +1 Beceri Evrimleş</button>
+
+      <!-- Right 3D Sculptural Hero Centerpiece + Quick Omnibox Launcher -->
+      <div class="hero-sculpture-card">
+        <div class="hero-sculpture-img-wrap">
+          <img src="sculpture_1.jpg" alt="SynaxCode .SX Evreni — Düşünceden çalışan sisteme" />
+        </div>
+        <div class="hero-omnibox">
+          <input
+            type="text"
+            id="universeQuickPrompt"
+            class="hero-omnibox-input"
+            placeholder="Bir fikir, araştırma konusu veya kod görevi yazın..."
+            onkeydown="if(event.key==='Enter') launchUniversePrompt('chat')"
+          />
+          <button onclick="launchUniversePrompt('chat')" class="btn-titanium-cta sm">Chat’te Başlat →</button>
+          <button onclick="launchUniversePrompt('office')" class="titanium-plaque" style="padding:8px 14px;font-size:13px;cursor:pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="4"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><circle cx="8.5" cy="16" r="1"/><circle cx="15.5" cy="16" r="1"/></svg> 8 Ajana Gönder</button>
+        </div>
       </div>
     </section>
 
-    <!-- 4. 8 SPECIALIST AGENTS SUMMARY (CLEAN 4x2 GRID) -->
-    <section class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h3 class="text-base font-black text-white">🏢 8 Uzman Ajan Masası</h3>
-        <a href="https://office.synaxcode.com" class="text-xs font-mono text-cyan-400 hover:underline">3D Ofiste Yönet →</a>
+    <!-- ==================== 2. ALTI ANA PLATFORM (VISUALS #2 – #7) ==================== -->
+    <div class="section-head" id="platformlar">
+      <div>
+        <span class="kicker" style="margin-bottom:6px;">SYNAXCODE EKOSİSTEMİ · 6 ÇEKİRDEK PLATFORM</span>
+        <h2 class="section-title">Tek çekirdek. Altı uzman çalışma alanı.</h2>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-        <div class="p-3.5 rounded-xl bg-[#080f1e] border border-slate-800"><div class="font-bold text-amber-300">1. SYNAX-LLM &amp; Hub</div><div class="text-slate-400 mt-1">Türkçe Doğal Dil &amp; 8 Ajan Orkestrasyonu</div></div>
-        <div class="p-3.5 rounded-xl bg-[#080f1e] border border-slate-800"><div class="font-bold text-sky-300">2. Agent-Scholar</div><div class="text-slate-400 mt-1">PubMed, CrossRef &amp; PRISMA 2020 Tarama</div></div>
-        <div class="p-3.5 rounded-xl bg-[#080f1e] border border-slate-800"><div class="font-bold text-indigo-300">3. Agent-Biostat</div><div class="text-slate-400 mt-1">DerSimonian-Laird Meta-Analiz &amp; Forest Plot</div></div>
-        <div class="p-3.5 rounded-xl bg-[#080f1e] border border-slate-800"><div class="font-bold text-emerald-300">4. Agent-Lyapunov</div><div class="text-slate-400 mt-1">V<sub>k+1</sub> &lt; V<sub>k</sub> Sıfır-Sapma Sensör Kalibrasyonu</div></div>
-        <div class="p-3.5 rounded-xl bg-[#080f1e] border border-slate-800"><div class="font-bold text-purple-300">5. Agent-EGraph</div><div class="text-slate-400 mt-1">19/19 IEEE-754 0-ULP Aralık Kanıtlayıcı</div></div>
-        <div class="p-3.5 rounded-xl bg-[#080f1e] border border-slate-800"><div class="font-bold text-blue-300">6. Agent-Shield</div><div class="text-slate-400 mt-1">-%88.4 AST Kod &amp; Log Token Sıkıştırıcı</div></div>
-        <div class="p-3.5 rounded-xl bg-[#080f1e] border border-slate-800"><div class="font-bold text-cyan-300">7. Agent-Vault</div><div class="text-slate-400 mt-1">SHA-256 (&lt;140 Token) Hafıza Devir Kapsülü</div></div>
-        <div class="p-3.5 rounded-xl bg-[#080f1e] border border-slate-800"><div class="font-bold text-pink-300">8. Agent-Silicon</div><div class="text-slate-400 mt-1">C11, ARM64 NEON, x86 AVX2 &amp; Q16.16 MCU</div></div>
+      <span id="globalEvoPill" style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#38bdf8;background:rgba(15,23,42,0.9);border:1px solid rgba(56,189,248,0.35);padding:7px 14px;border-radius:999px;">● SYNAX-OMNI 1.5 Aktif</span>
+    </div>
+
+    <section class="bento-grid">
+
+      <!-- PLATFORM 1: SYNAX CHAT (Visual #3) -->
+      <article class="synax-poster-card">
+        <div>
+          <div class="card-top-lockup">
+            <div class="card-mini-brand">
+              <img src="data:image/jpeg;base64,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" alt="SX" />
+              <span>| SynaxCode</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;">01 / CHAT</span>
+          </div>
+          <div class="card-kicker">S Y N A X &nbsp; C H A T</div>
+          <h2 class="card-h2">Sorudan<br />üretime.</h2>
+          <p class="card-sub">Araştır, yaz ve geliştir.</p>
+        </div>
+
+        <a href="https://chat.synaxcode.com" class="card-sculpture-stage">
+          <img src="sculpture_3.jpg" alt="SYNAX CHAT — Sorudan üretime" loading="lazy" />
+        </a>
+
+        <div>
+          <div class="capability-strip-4">
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Web &amp; PubMed</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Uzman ajanlar</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Kod desteği</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">PDF · DOCX · MD</span></div>
+          </div>
+          <div class="card-footer-bar" style="margin-top:14px;">
+            <a href="https://chat.synaxcode.com" class="btn-titanium-cta">Chat’i keşfet →</a>
+            <a href="https://chat.synaxcode.com" class="card-domain-label">chat.synaxcode.com</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PLATFORM 2: SYNAX AJAN OFİSİ (Visual #2) -->
+      <article class="synax-poster-card">
+        <div>
+          <div class="card-top-lockup">
+            <div class="card-mini-brand">
+              <img src="data:image/jpeg;base64,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" alt="SX" />
+              <span>| SynaxCode</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;">02 / AJAN OFİSİ</span>
+          </div>
+          <div class="card-kicker">S Y N A X &nbsp; A J A N &nbsp; O F İ S İ</div>
+          <h2 class="card-h2">Bir fikir.<br />Sekiz uzman.</h2>
+          <p class="card-sub">Görev ver. İş akışını birlikte yönet.</p>
+        </div>
+
+        <a href="https://office.synaxcode.com" class="card-sculpture-stage">
+          <img src="sculpture_2.jpg" alt="SYNAX AJAN OFİSİ — Bir fikir. Sekiz uzman." loading="lazy" />
+        </a>
+
+        <div>
+          <div class="capability-strip-4">
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">8 uzman ajan</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Özel ajanlar</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><polyline points="9 12 11 14 15 10"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Görev yönetimi</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Çıktı alanı</span></div>
+          </div>
+          <div class="card-footer-bar" style="margin-top:14px;">
+            <a href="https://office.synaxcode.com" class="btn-titanium-cta">Ofisi keşfet →</a>
+            <a href="https://office.synaxcode.com" class="card-domain-label">office.synaxcode.com</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PLATFORM 3: SYNAX TERMINAL (Visual #4) -->
+      <article class="synax-poster-card">
+        <div>
+          <div class="card-top-lockup">
+            <div class="card-mini-brand">
+              <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCABAAEADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD82KeiFjRGhY8V9B/s1/sbeOf2hpk1C0t4/D/g+Ns3PibVQY7UKD83lDgzMP8AZ+Ud2FdLaS1MYq7PDNP0a71O6gtbS2murmdxHFBBGZJJHPRVUAlifQCvsv4W/sB2HgvQ7Txx+0HrP/CHaCxD23ha3kzqd+eojbbkoT/zzjDPzyY6+pdJ8AaH+yj4b2fCL4f3XiTxK0fl3Hj/AF22UqmRz5CsVLfRAqerP0PCeD/gN4s/aJ8VNrXiHVZ9Ql8xRfXd1cK88UIblVUcQocEKqqB3C4+anRg670aSFVlGirtXPhTxJ8LdB8Upcap4B1NJ4A7FtLuGIeHk4UFuVx0w/8A30a8p1HTLrSLt7W9tpbS5T70Uy7WHv7j3HFegax4UOmeNtTk8JzXUDRXcotRu2z7d5wp5wxHTH8X44rcsfG8XiCxn0vxzoYdLYlHvxCUMDcffHDRNyOV455FdOIw9TCu1Q5sPiaWK/hvXt1PGqBXpPiL4PSqn2rw3dDVrZxvW2cr5+P9hh8sv4Yb2NecyxPbyvHIjRyISrI6lWU+hB5B9jXMmnsdLTW59IfsVeCPCHifxJ4t1jxfoa+I7bw5pQ1K306eQiGVwz53r0fhAAG+XJyQelfTVp+1r4hj+GsvxC1mzsWiadNN8HeDrUH7BFLyBPMODKUw2AcKNh2qu4EfKv7KGrNpdt8RyrYM2heX9eZKg0fxJd+JfhZ4Vs7Ekaj4Zvkuo4CcCddzEge5Vz+WO4rKUeZ6mqlyx0PoC48OfFf42WzeIfGvxW1uwilaTy4LU7IiwPCw28bICuOpJAHQtmvKtJ+Lni34OeNmtNX1B7i3jYRG/ikLlkyM+Zt/1qcfMOSPU16Z8PPjZpNwXutbEt7ot9ut5ooLfY0aZBERAcYaPapVWB2kZHBOaPjD4Fz/ABL8b6dL4TkbxP4Y1m/iht763Qh4CzruinTrFIgJzngjkEivSrVsHh4uMU4PpLo/K/fy+48WjHG16icrSi949UeR3+tJpOqXd4kdvrGn3EjPudMHBJbAJHTkkZGCPSvW/DXh3RPGmixHWbKS50yNHRYZAftSysscgiVhlm2rhiPmUK3PYVzOqfs96v4Q8Z6xol1byx2dhfzafbR3LGMXTeaxWyVugaRPnik6B/lP31r0WPUrWRb/AMfSWMWm6JocYh0uxht8SQuuFy+RuM28hAowGkI+8EJrwa2crF2prXu/yXqz0Y8PRw1R11p2S/H5JHj/AMWvhzb/AAa1dJLfWrpba6WS5ulNvERGQ2X85Wc/MNwHyBRkhRls15t8arrT9Y0Pw9qVpC/mzn5prjaZypgRwjMOoBJwOceta/xl1K98U+GbrUNSR47yS+EbRFiRCBFIRHnvgj8Tk1y3xNsns/B/hv8Aulkx/wCAqGuuFP2SWpca6r81ujsafwAvPs83ieMEjz7KOL82etr4L31pL4NvrC7ZWie5ilGxwHR1iZcqexwfx71w/wALZnt01xoyQwgjOR7M1ej6J8T9evvhB4Z0y/fGjadNBNd2Yto45JoFUoCZAocqAVkGSefm5xXoYTEQw1bnqR5lrp6qxhiaE69Hlpys9NfR3Ob03xnb3d5LNLm1vuY55FG5bhVOB5idJOns47NX3R+wz468K+GL24a1VI9av0jiilv78vbxzs22HbGFBZGY7Q5O5CcEc5PyfovhTw14Kvn12702HX7EA3trGJG2TgliAS2ThepwBn5QDk8ct8JNb1C78Wy6qETT7N2W+K26FYrcSSufkUdFHlqwA/uZFfP46nUrNwpppJprs32t5HrYSpCmuaerat5o/Qv9oTRtG+I3jvS7KLOo3Gin7Frl1b6hhnmb5ltfLI+Y7c5lONoQsSNleefHz4heFvib4Cfw34WeKXVtGVp7t04fVsRBZLuPGC7p8xOfmKu0gHLY+bPEnxe1JLWVdJFxbmV5Li/Mv+tnaZtzRSH+/N1cfwxBU/vZ950P9njVPjNa2XijwvaHwfHJtkjlupGRUulA8t7fI37ZOBnJAIYEMK+bll1ejKNeWy120vvr6/iep/amEUXRctdt+/8AXyOS/an+F2j6L8DNN1XSJlu47y4srlLqI5SXfaXJdh9WTp2ORXg3x00YWXww8B3RGPtSqwPri1SvbvGGo3134EvfhtfW76brEeoNM+lzQMkVtdoHQpFIflRZTKxCZwGxggEZ86/as0W98PfBv4SwX1rNaXIjZJIZ0KOjC2jypB5BHoa9jKpVFHkqybd+vboceLpU4rmpq1+x87eHfFF34XunltgrCTaJEbjIByMEcgg969C0TxNpuqvJdafGLXU5jvuLYEIZj/e2/dZv9pQM/wAQryUjvQpKsrKSGHII4IPrX0MopnlRk0fQfhK60CwdRd63JotgSc2V1FHLBGScsI/MZSgJydoZlyenauhv9Y0TWbGfSPA05ubi6m33Wq3EgZ5nCgBECqAWCDCRqqoqghQxrwzRPH5RPsuswDULVhtMuAZAP9oHhx9cH3rq/D3hJf7TtvEPgjWRpt5ayrNG6OwRHU7gCeWjOR0YFfwrSjKMJRVa7iuhjXhKcJOjZSa3PsX4WeBfh58NLC4uvGNuJ9a0u4aEWurD9xHLgMWWJCzXEhyCepzwdoFdzp/xy8ZfFm/uIPAttLp3h2MCCfW70mOKMjjCFDhWwSPLg3P0zIOleCTeDdA8LG58Z/FvxHBdefI0iaXBJ+5kJO4RsY8GYnOfKiCx+rGvLPi9+2j4i8ZWP9geD4m8I+GY08hPs4WO5kj/ALo2fLCp/ux8+rGu3H16WKp+xhHQ+Oyjh+pgsU8biqnPNt28j1L4xfEzwR8Ir17KG8m8W+J7fcEMjq0lvk5wSMrAPb5nPtXyp8R/iz4i+KN3C+tXZNnbFmtbGMnyYC3DEZ5ZiAAWPJx2HFcaWySTyScknuaO9eRSowoq0Ufd1Ks6jvJn/9k=" alt="SX" />
+              <span>| SynaxCode</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;">03 / TERMINAL</span>
+          </div>
+          <div class="card-kicker">S Y N A X &nbsp; T E R M I N A L</div>
+          <h2 class="card-h2">Komut sende.<br />Akış görünür.</h2>
+          <p class="card-sub">Ajanlarını ve süreçlerini tek yerden izle.</p>
+        </div>
+
+        <a href="https://terminal.synaxcode.com" class="card-sculpture-stage">
+          <img src="sculpture_4.jpg" alt="SYNAX TERMINAL — Komut sende. Akış görünür." loading="lazy" />
+        </a>
+
+        <div>
+          <div class="capability-strip-4">
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Komut paleti</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="4"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><circle cx="8.5" cy="16" r="1"/><circle cx="15.5" cy="16" r="1"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Ajan durumu</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Telemetri</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Derleme</span></div>
+          </div>
+          <div class="card-footer-bar" style="margin-top:14px;">
+            <a href="https://terminal.synaxcode.com" class="btn-titanium-cta">Terminal’i keşfet →</a>
+            <a href="https://terminal.synaxcode.com" class="card-domain-label">terminal.synaxcode.com</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PLATFORM 4: SYNAX STUDIO (Visual #5) -->
+      <article class="synax-poster-card">
+        <div>
+          <div class="card-top-lockup">
+            <div class="card-mini-brand">
+              <img src="data:image/jpeg;base64,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" alt="SX" />
+              <span>| SynaxCode</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;">04 / STUDIO</span>
+          </div>
+          <div class="card-kicker">S Y N A X &nbsp; S T U D I O</div>
+          <h2 class="card-h2">Kod ve sinyal.<br />Aynı çalışma alanı.</h2>
+          <p class="card-sub">Geliştir, çalıştır, birlikte incele.</p>
+        </div>
+
+        <a href="https://synaxcode.online" class="card-sculpture-stage">
+          <img src="sculpture_5.jpg" alt="SYNAX STUDIO — Kod ve sinyal. Aynı çalışma alanı." loading="lazy" />
+        </a>
+
+        <div>
+          <div class="capability-strip-4">
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Bulut IDE</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">AST görünümü</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="19" r="2.5"/><line x1="10.5" y1="7" x2="7" y2="16.5"/><line x1="13.5" y1="7" x2="17" y2="16.5"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">İşlem hattı</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2.5-6 5-6 7.5 0s5 6 7.5 0 3.5-3 5 0"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Sinyal izleme</span></div>
+          </div>
+          <div class="card-footer-bar" style="margin-top:14px;">
+            <a href="https://synaxcode.online" class="btn-titanium-cta">Studio’yu keşfet →</a>
+            <a href="https://synaxcode.online" class="card-domain-label">synaxcode.online</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PLATFORM 5: SYNAX AKADEMİK (Visual #6) -->
+      <article class="synax-poster-card">
+        <div>
+          <div class="card-top-lockup">
+            <div class="card-mini-brand">
+              <img src="data:image/jpeg;base64,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" alt="SX" />
+              <span>| SynaxCode</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;">05 / AKADEMİK</span>
+          </div>
+          <div class="card-kicker">S Y N A X &nbsp; A K A D E M İ K</div>
+          <h2 class="card-h2">Sor. Tara.<br />Analiz et.</h2>
+          <p class="card-sub">Literatür, analiz ve bilimsel yazım bir arada.</p>
+        </div>
+
+        <a href="https://synaxcode.org" class="card-sculpture-stage">
+          <img src="sculpture_6.jpg" alt="SYNAX AKADEMİK — Sor. Tara. Analiz et." loading="lazy" />
+        </a>
+
+        <div>
+          <div class="capability-strip-4">
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">PubMed &amp; CrossRef</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="19" r="2.5"/><line x1="10.5" y1="7" x2="7" y2="16.5"/><line x1="13.5" y1="7" x2="17" y2="16.5"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">PRISMA</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Biyoistatistik</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Bilimsel yazım</span></div>
+          </div>
+          <div class="card-footer-bar" style="margin-top:14px;">
+            <a href="https://synaxcode.org" class="btn-titanium-cta">Araştırmayı keşfet →</a>
+            <a href="https://synaxcode.org" class="card-domain-label">synaxcode.org</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PLATFORM 6: SYNAX CODE (Visual #7) -->
+      <article class="synax-poster-card">
+        <div>
+          <div class="card-top-lockup">
+            <div class="card-mini-brand">
+              <img src="data:image/jpeg;base64,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" alt="SX" />
+              <span>| SynaxCode</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;">06 / CODE</span>
+          </div>
+          <div class="card-kicker">S Y N A X &nbsp; C O D E</div>
+          <h2 class="card-h2">Koddan<br />donanımın diline.</h2>
+          <p class="card-sub">Kaynağı, yapıyı ve hedefleri birlikte incele.</p>
+        </div>
+
+        <a href="https://code.synaxcode.com" class="card-sculpture-stage">
+          <img src="sculpture_7.jpg" alt="SYNAX CODE — Koddan donanımın diline." loading="lazy" />
+        </a>
+
+        <div>
+          <div class="capability-strip-4">
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">.sx geliştirme</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="19" r="2.5"/><line x1="10.5" y1="7" x2="7" y2="16.5"/><line x1="13.5" y1="7" x2="17" y2="16.5"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">AST / E-Graph</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Donanım hedefleri</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c-4 0-4 2-4 4v2h4v1H6c-2.5 0-4 1.5-4 4.5S3.5 18 6 18h2v-2c0-2 1.5-3.5 3.5-3.5h5c1.5 0 2.5-1 2.5-2.5V6c0-2-1.5-4-4-4h-3z"/><path d="M12 22c4 0 4-2 4-4v-2h-4v-1h6c2.5 0 4-1.5 4-4.5S20.5 6 18 6h-2v2c0 2-1.5 3.5-3.5 3.5h-5"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Python testleri</span></div>
+          </div>
+          <div class="card-footer-bar" style="margin-top:14px;">
+            <a href="https://code.synaxcode.com" class="btn-titanium-cta">Code’u keşfet →</a>
+            <a href="https://code.synaxcode.com" class="card-domain-label">code.synaxcode.com</a>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ==================== 3. ÇEKİRDEK TEKNOLOJİLER & BAĞLANTI MİMARİSİ (VISUALS #8 – #11) ==================== -->
+    <div class="section-head" id="mimari">
+      <div>
+        <span class="kicker" style="margin-bottom:6px;">DERİN TEKNOLOJİ · KORUMA · HAFIZA · BİYOMEDİKAL</span>
+        <h2 class="section-title">Bağlamı koruyan ve donanıma inen çekirdek.</h2>
       </div>
+    </div>
+
+    <section class="bento-grid">
+
+      <!-- ENGINE 1: SYNAX TOKEN SHIELD (Visual #8) -->
+      <article class="synax-poster-card">
+        <div>
+          <div class="card-top-lockup">
+            <div class="card-mini-brand">
+              <img src="data:image/jpeg;base64,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" alt="SX" />
+              <span>| SynaxCode</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;">07 / TOKEN SHIELD</span>
+          </div>
+          <div class="card-kicker">S Y N A X &nbsp; T O K E N &nbsp; S H I E L D</div>
+          <h2 class="card-h2">Bağlamı<br />sadeleştir.</h2>
+          <p class="card-sub">Kodun yapısını öne çıkar.</p>
+        </div>
+
+        <a href="https://code.synaxcode.com" class="card-sculpture-stage">
+          <img src="sculpture_8.jpg" alt="SYNAX TOKEN SHIELD — Bağlamı sadeleştir." loading="lazy" />
+        </a>
+
+        <div>
+          <div class="capability-strip-4">
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Kod iskeletleri</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Log düzenleme</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Önbellek</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="16" height="12" rx="2"/><path d="M6 3h14a2 2 0 0 1 2 2v10"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Bağlam yönetimi</span></div>
+          </div>
+          <div class="card-footer-bar" style="margin-top:14px;">
+            <a href="https://code.synaxcode.com" class="btn-titanium-cta">Token Shield’ı keşfet →</a>
+            <a href="https://synaxcode.com" class="card-domain-label">synaxcode.com</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ENGINE 2: SYNAX CONTEXT VAULT (Visual #10) -->
+      <article class="synax-poster-card">
+        <div>
+          <div class="card-top-lockup">
+            <div class="card-mini-brand">
+              <img src="data:image/jpeg;base64,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" alt="SX" />
+              <span>| SynaxCode</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;">08 / CONTEXT VAULT</span>
+          </div>
+          <div class="card-kicker">S Y N A X &nbsp; C O N T E X T &nbsp; V A U L T</div>
+          <h2 class="card-h2">Ajan değişsin.<br />İşin devam etsin.</h2>
+          <p class="card-sub">Görev bağlamını bir sonraki ajana taşı.</p>
+        </div>
+
+        <a href="https://office.synaxcode.com" class="card-sculpture-stage">
+          <img src="sculpture_10.jpg" alt="SYNAX CONTEXT VAULT — Ajan değişsin. İşin devam etsin." loading="lazy" />
+        </a>
+
+        <div>
+          <div class="capability-strip-4">
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Hafıza kapsülü</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Görev devri</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Karar kaydı</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Dosya durumu</span></div>
+          </div>
+          <div class="card-footer-bar" style="margin-top:14px;">
+            <a href="https://office.synaxcode.com" class="btn-titanium-cta">Context Vault’u keşfet →</a>
+            <a href="https://synaxcode.com" class="card-domain-label">synaxcode.com</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ENGINE 3: SYNAX BIOMED AUTOCAL (Visual #11) -->
+      <article class="synax-poster-card">
+        <div>
+          <div class="card-top-lockup">
+            <div class="card-mini-brand">
+              <img src="data:image/jpeg;base64,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" alt="SX" />
+              <span>| SynaxCode</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;">09 / BIOMED AUTOCAL</span>
+          </div>
+          <div class="card-kicker">S Y N A X &nbsp; B I O M E D &nbsp; A U T O C A L</div>
+          <h2 class="card-h2">Sinyali anla.<br />Modelini geliştir.</h2>
+          <p class="card-sub">Biyomedikal sinyal ve kalibrasyon araştırmaları.</p>
+        </div>
+
+        <a href="https://synaxcode.online" class="card-sculpture-stage">
+          <img src="sculpture_11.jpg" alt="SYNAX BIOMED AUTOCAL — Sinyali anla. Modelini geliştir." loading="lazy" />
+        </a>
+
+        <div>
+          <div class="capability-strip-4">
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2.5-6 5-6 7.5 0s5 6 7.5 0 3.5-3 5 0"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Sinyal analizi</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Kalibrasyon</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Simülasyon</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Kod geliştirme</span></div>
+          </div>
+          <div class="card-footer-bar" style="margin-top:14px;">
+            <a href="https://synaxcode.online" class="btn-titanium-cta">Biomed’i keşfet →</a>
+            <a href="https://synaxcode.com" class="card-domain-label">synaxcode.com</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ENGINE 4: SYNAX BAĞLANTILARI (Visual #9) -->
+      <article class="synax-poster-card">
+        <div>
+          <div class="card-top-lockup">
+            <div class="card-mini-brand">
+              <img src="data:image/jpeg;base64,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" alt="SX" />
+              <span>| SynaxCode</span>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#38bdf8;">10 / BAĞLANTILAR</span>
+          </div>
+          <div class="card-kicker">S Y N A X &nbsp; B A Ğ L A N T I L A R I</div>
+          <h2 class="card-h2">Çalışma alanın<br />seninle.</h2>
+          <p class="card-sub">Masaüstü, editör ve mobil komutlar.</p>
+        </div>
+
+        <a href="https://office.synaxcode.com" class="card-sculpture-stage">
+          <img src="sculpture_9.jpg" alt="SYNAX BAĞLANTILARI — Çalışma alanın seninle." loading="lazy" />
+        </a>
+
+        <div>
+          <div class="capability-strip-4">
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">VS Code</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Uyumlu editörler</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Masaüstü uygulaması</span></div>
+            <div class="cap-pill"><span class="cap-pill-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span><span class="cap-pill-sep"></span><span class="cap-pill-text">Telegram köprüsü</span></div>
+          </div>
+          <div class="card-footer-bar" style="margin-top:14px;">
+            <a href="https://office.synaxcode.com" class="btn-titanium-cta">Bağlantıları keşfet →</a>
+            <a href="https://synaxcode.com" class="card-domain-label">synaxcode.com</a>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ==================== 4. ARCHITECTURAL DAYLIGHT EDITION (VISUAL #12: "Bir fikirden bir evrene.") ==================== -->
+    <section class="daylight-banner">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <img src="data:image/jpeg;base64,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" alt="SX" style="width:36px;height:36px;border-radius:9px;" />
+          <span style="width:1.5px;height:22px;background:rgba(15,23,42,0.35);"></span>
+          <span style="font-size:19px;font-weight:800;color:#070b14;letter-spacing:-0.02em;">SynaxCode</span>
+        </div>
+        <div class="daylight-kicker">BİLİM · YAPAY ZEKÂ · GELİŞTİRME</div>
+        <h2 class="daylight-h2">
+          Bir fikirden<br />bir evrene.
+        </h2>
+        <p class="daylight-sub">
+          Araştır. Ajanlarla çalış. Kodunu geliştir.
+        </p>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <a href="https://chat.synaxcode.com" class="btn-obsidian-cta">SynaxCode’u keşfet →</a>
+          <span style="width:1.5px;height:26px;background:rgba(15,23,42,0.3);"></span>
+          <span style="font-size:18px;font-weight:700;color:#0f172a;">synaxcode.com</span>
+        </div>
+      </div>
+      <div class="daylight-sculpture-wrap">
+        <img src="sculpture_12.jpg" alt="Bir fikirden bir evrene — SynaxCode" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- ==================== 5. 12 RESMİ TASARIM VİTRİNİ (4:5 KOLEKSİYON) ==================== -->
+    <div class="section-head" id="koleksiyon" style="margin-top:52px;">
+      <div>
+        <span class="kicker" style="margin-bottom:6px;">SYNAXCODE GÖRSEL KİMLİK SERİSİ · 12 TASARIM KARTI</span>
+        <h2 class="section-title">Tasarım yüzümüz ve ekosistem vitrini.</h2>
+      </div>
+    </div>
+
+    <section class="posters-gallery-grid" style="margin-bottom:56px;">
+      <a href="https://synaxcode.com" class="poster-thumb-card"><img src="poster_1.jpg" alt="1. Düşünceden çalışan sisteme" loading="lazy" /></a>
+      <a href="https://office.synaxcode.com" class="poster-thumb-card"><img src="poster_2.jpg" alt="2. Bir fikir. Sekiz uzman." loading="lazy" /></a>
+      <a href="https://chat.synaxcode.com" class="poster-thumb-card"><img src="poster_3.jpg" alt="3. Sorudan üretime." loading="lazy" /></a>
+      <a href="https://terminal.synaxcode.com" class="poster-thumb-card"><img src="poster_4.jpg" alt="4. Komut sende. Akış görünür." loading="lazy" /></a>
+      <a href="https://synaxcode.online" class="poster-thumb-card"><img src="poster_5.jpg" alt="5. Kod ve sinyal. Aynı çalışma alanı." loading="lazy" /></a>
+      <a href="https://synaxcode.org" class="poster-thumb-card"><img src="poster_6.jpg" alt="6. Sor. Tara. Analiz et." loading="lazy" /></a>
+      <a href="https://code.synaxcode.com" class="poster-thumb-card"><img src="poster_7.jpg" alt="7. Koddan donanımın diline." loading="lazy" /></a>
+      <a href="https://code.synaxcode.com" class="poster-thumb-card"><img src="poster_8.jpg" alt="8. Bağlamı sadeleştir." loading="lazy" /></a>
+      <a href="https://office.synaxcode.com" class="poster-thumb-card"><img src="poster_9.jpg" alt="9. Çalışma alanın seninle." loading="lazy" /></a>
+      <a href="https://office.synaxcode.com" class="poster-thumb-card"><img src="poster_10.jpg" alt="10. Ajan değişsin. İşin devam etsin." loading="lazy" /></a>
+      <a href="https://synaxcode.online" class="poster-thumb-card"><img src="poster_11.jpg" alt="11. Sinyali anla. Modelini geliştir." loading="lazy" /></a>
+      <a href="https://synaxcode.com" class="poster-thumb-card"><img src="poster_12.jpg" alt="12. Bir fikirden bir evrene." loading="lazy" /></a>
     </section>
 
   </main>
 
-  <footer class="border-t border-slate-800/80 py-5 px-6 text-center text-xs text-slate-500 font-mono">
-    SYNAX v6.6 Sovereign AI &amp; Multi-Silicon Ecosystem · Apache-2.0 Açık Kaynak · Dr. Ömer Faruk Aydın (<a href="https://github.com/ofaemd-creator" class="text-cyan-400 hover:underline">@ofaemd-creator</a>)
+  <footer style="border-top:1px solid rgba(148,163,184,0.16);padding:26px 24px;background:rgba(3,6,12,0.92);">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <img src="data:image/jpeg;base64,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" alt="SX" style="width:28px;height:28px;border-radius:7px;" />
+        <span style="font-size:14px;font-weight:800;color:#fff;">SynaxCode</span>
+        <span style="font-size:13px;color:#94a3b8;">· Kurucu &amp; Baş Mimar: Dr. Ömer Faruk Aydın</span>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px;font-weight:600;">
+        <a href="https://chat.synaxcode.com" style="color:#cbd5e1;text-decoration:none;">chat.synaxcode.com</a>
+        <a href="https://office.synaxcode.com" style="color:#cbd5e1;text-decoration:none;">office.synaxcode.com</a>
+        <a href="https://terminal.synaxcode.com" style="color:#cbd5e1;text-decoration:none;">terminal.synaxcode.com</a>
+        <a href="https://synaxcode.online" style="color:#cbd5e1;text-decoration:none;">synaxcode.online</a>
+        <a href="https://synaxcode.org" style="color:#cbd5e1;text-decoration:none;">synaxcode.org</a>
+        <a href="https://code.synaxcode.com" style="color:#cbd5e1;text-decoration:none;">code.synaxcode.com</a>
+      </div>
+    </div>
   </footer>
 
   <script>
+    function launchUniversePrompt(target) {
+      const inp = document.getElementById('universeQuickPrompt');
+      const q = (inp && inp.value.trim()) ? inp.value.trim() : '';
+      if (target === 'office') {
+        window.location.href = 'https://office.synaxcode.com' + (q ? ('?q=' + encodeURIComponent(q)) : '');
+      } else {
+        window.location.href = 'https://chat.synaxcode.com' + (q ? ('?q=' + encodeURIComponent(q)) : '');
+      }
+    }
     async function refreshHubTelemetry() {
       try {
         const r = await fetch('api.php?action=automation_status');
         if (r.ok) {
           const d = await r.json();
           const pill = document.getElementById('globalEvoPill');
-          const title = document.getElementById('hubStatusTitle');
-          const desc = document.getElementById('hubStatusDesc');
-          if (pill) pill.textContent = `● Epoch #${d.evolution_epoch || 3018} · ${d.total_installed_skills || 46} Beceri`;
-          if (title) title.textContent = `7/24 OTONOM ÖZ-EVRİM AKTİF (EPOCH #${d.evolution_epoch || 3018} · ${d.total_installed_skills || 46} BECERİ · ${d.total_completed_count || 5} GÖREV)`;
-          if (desc && d.latest_evolved_skill) {
-            desc.textContent = `Son Sentezlenen Beceri: ${d.latest_evolved_skill.id} — ${d.latest_evolved_skill.title_tr} (${d.latest_evolved_skill.agent_owner})`;
-          }
+          if (pill) pill.textContent = `● SYNAX-OMNI 1.5 · Epoch #${d.evolution_epoch || 3054} · ${d.total_installed_skills || 83} Beceri`;
         }
       } catch (e) {}
     }
-    async function runQuickCloudShift() {
-      document.getElementById('hubStatusTitle').textContent = '⏳ 8 Ajan Otonom Vardiyayı Çalıştırıyor...';
-      try {
-        const r = await fetch('api.php?action=automation_step', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
-        if (r.ok) {
-          const m = await r.json();
-          document.getElementById('hubStatusTitle').textContent = `✅ Vardiya Tamamlandı: ${m.mission_id} (${m.elapsed_ms} ms · SCIE 100/100)`;
-          document.getElementById('hubStatusDesc').textContent = `Görev: ${m.prompt}`;
-          refreshHubTelemetry();
-        }
-      } catch (e) {}
-    }
-    async function runQuickCloudEvolve() {
-      document.getElementById('hubStatusTitle').textContent = '🧬 Yeni Beceri Sentezleniyor...';
-      try {
-        const r = await fetch('api.php?action=self_evolve', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
-        if (r.ok) {
-          await refreshHubTelemetry();
-        }
-      } catch (e) {}
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-      refreshHubTelemetry();
-      setInterval(refreshHubTelemetry, 15000);
-    });
+    document.addEventListener('DOMContentLoaded', refreshHubTelemetry);
   </script>
 </body>
 </html>
