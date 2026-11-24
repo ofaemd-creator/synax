@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Synax — Çalışma Alanı (SYNAX-OMNI 1.5)</title>
+  <title>SYNAX Chat (chat.synaxcode.com) — SYNAX-OMNI 1.5 Ultra</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Master-Degree Markdown, Math (KaTeX) & Code Syntax Highlighting -->
@@ -18,18 +18,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
-      --bg: #F7F9FA;
-      --paper: #FFFFFF;
-      --ink: #18323D;
-      --muted: #697D86;
-      --line: #E2E9EC;
-      --accent: #087F83;
-      --soft: #E8F4F3;
-      --sidebar: #EDF2F4;
-      --bubble-user: #EAF0F2;
-      --topbar: rgba(255, 255, 255, 0.88);
-      --composer-border: #C9DADE;
-      --card-bg: rgba(255, 255, 255, 0.72);
+      --bg: #07090f;
+      --paper: #0f1523;
+      --ink: #f1f5f9;
+      --muted: #94a3b8;
+      --line: rgba(148, 163, 184, 0.16);
+      --accent: #38bdf8;
+      --soft: rgba(56, 189, 248, 0.14);
+      --sidebar: #06090f;
+      --bubble-user: #182238;
+      --topbar: rgba(8, 12, 21, 0.94);
+      --composer-border: rgba(56, 189, 248, 0.30);
+      --card-bg: rgba(14, 21, 38, 0.88);
     }
     html, body {
       width: 100%;
@@ -38,28 +38,28 @@
     }
     body {
       font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
+      background: radial-gradient(circle at 50% -10%, #101b33 0%, #07090f 55%);
       color: var(--ink);
     }
     .font-display { font-family: 'Manrope', 'DM Sans', sans-serif; }
     code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(105, 125, 134, 0.28); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.24); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.55); }
 
     .sx-sidebar { background: var(--sidebar); border-right: 1px solid var(--line); color: var(--ink); }
     .sx-topbar { background: var(--topbar); border-bottom: 1px solid var(--line); color: var(--ink); }
     .sx-paper { background: var(--paper); border: 1px solid var(--line); color: var(--ink); }
-    .sx-composer { background: var(--paper); border: 1px solid var(--composer-border); box-shadow: 0 8px 28px rgba(23, 60, 72, 0.06); }
-    .sx-composer:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(8, 127, 131, 0.14), 0 12px 32px rgba(23, 60, 72, 0.08); }
+    .sx-composer { background: rgba(15, 21, 35, 0.96); border: 1px solid var(--composer-border); box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45); }
+    .sx-composer:focus-within { border-color: #22d3ee; box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.22), 0 18px 44px rgba(0, 0, 0, 0.55); }
     .sx-card { background: var(--card-bg); border: 1px solid var(--line); transition: background 0.15s, border-color 0.15s, transform 0.15s; }
-    .sx-card:hover { background: var(--paper); border-color: var(--accent); transform: translateY(-1px); }
-    .sx-btn-outline { background: var(--paper); border: 1px solid var(--line); color: var(--ink); }
-    .sx-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .sx-card:hover { background: #141e36; border-color: rgba(56, 189, 248, 0.5); transform: translateY(-1px); }
+    .sx-btn-outline { background: #0f172a; border: 1px solid rgba(148, 163, 184, 0.22); color: #e2e8f0; }
+    .sx-btn-outline:hover { border-color: #38bdf8; color: #ffffff; background: #172036; }
     .sx-muted { color: var(--muted); }
     .sx-accent { color: var(--accent); }
-    .sx-user-bubble { background: var(--bubble-user); color: var(--ink); }
+    .sx-user-bubble { background: var(--bubble-user); border: 1px solid rgba(148, 163, 184, 0.2); color: #ffffff; }
 
     .prose-msg { font-size: 0.96rem; line-height: 1.76; color: var(--ink); letter-spacing: -0.004em; }
     .prose-msg h1 { font-family: 'Manrope', sans-serif; font-size: 1.32rem; font-weight: 800; color: var(--ink); margin: 1.1rem 0 0.5rem; letter-spacing: -0.02em; }
@@ -98,77 +98,72 @@
   <div id="sidebarBackdrop" onclick="toggleSidebar(false)" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-40 lg:hidden"></div>
 
   <!-- ===================================================================== -->
-  <!-- 1. EDITORIAL LEFT SIDEBAR (250px EXACT PROTOTYPE STRUCTURE)           -->
+  <!-- 1. SYNAX LEFT SIDEBAR (CLEAN 250px LAYOUT + ORIGINAL SYNAX BRAND)     -->
   <!-- ===================================================================== -->
   <aside id="leftSidebar" class="sx-sidebar hidden lg:flex fixed lg:static inset-y-0 left-0 w-[250px] flex-col h-full shrink-0 transition-all duration-200 z-50 lg:z-30 shadow-2xl lg:shadow-none">
-    <div class="px-[19px] pt-[24px] pb-3 space-y-3">
+    <div class="px-4 pt-5 pb-3 space-y-3">
       <div class="flex items-center justify-between px-1">
         <a href="https://synaxcode.com" class="flex items-center gap-2.5 text-decoration-none">
-          <div class="w-[34px] h-[36px] rounded-[10px] bg-[#18323D] text-[#8EE2DB] flex items-center justify-center font-display font-bold text-[22px] leading-none">s</div>
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px] shadow-md shadow-cyan-500/20">
+            <div class="w-full h-full bg-[#06090f] rounded-[6px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
+          </div>
           <div class="flex items-baseline gap-1.5">
-            <span class="font-display font-extrabold text-[24px] tracking-[-1px] leading-none text-[#18323D]">synax</span>
-            <span class="text-[10px] sx-muted font-medium">workspace</span>
+            <span class="font-display font-black text-base tracking-tight text-white">SYNAX</span>
+            <span class="text-cyan-400 font-mono text-xs font-bold">OMNI 1.5</span>
           </div>
         </a>
-        <button onclick="toggleSidebar(false)" class="lg:hidden p-1.5 rounded-lg sx-muted hover:opacity-80 text-sm" title="Menüyü Gizle">✕</button>
+        <button onclick="toggleSidebar(false)" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white text-sm" title="Menüyü Gizle">✕</button>
       </div>
 
-      <button onclick="createNewChatThread()" class="sx-paper w-full py-3 px-3 rounded-[10px] hover:border-[#087F83] font-semibold text-[13px] flex items-center justify-between transition shadow-[0_1px_2px_rgba(24,50,61,0.03)]">
-        <span class="flex items-center gap-2"><span class="text-base leading-none">＋</span> <span>Yeni sohbet</span></span>
-        <kbd class="text-[11px] sx-muted font-sans">⌘ K</kbd>
+      <button onclick="createNewChatThread()" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 hover:opacity-95 text-slate-950 font-extrabold text-xs flex items-center justify-between shadow-md transition">
+        <span class="flex items-center gap-2"><span class="text-base leading-none">＋</span> <span>Yeni Sohbet</span></span>
+        <kbd class="text-[10px] font-mono bg-slate-950/20 px-1.5 py-0.5 rounded text-slate-950">⌘K</kbd>
       </button>
 
       <!-- Instant Thread Search Box -->
       <div class="relative">
-        <input type="text" id="threadSearchInput" oninput="renderThreadsSidebar()" placeholder="Sohbetlerde ara…" class="sx-paper w-full rounded-[9px] px-3 py-1.5 text-xs placeholder:text-[#697D86] focus:outline-none focus:border-[#087F83] transition" />
+        <input type="text" id="threadSearchInput" oninput="renderThreadsSidebar()" placeholder="🔍 Sohbetlerde ara..." class="w-full bg-[#0c111d] border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/70 transition" />
       </div>
     </div>
 
-    <div class="px-5 pt-1 pb-1.5 flex items-center justify-between">
-      <span class="text-[11px] text-[#809099] font-medium flex items-center gap-1.5">
-        <span>Son sohbetler</span>
-        <span id="threadSyncPill" class="px-1.5 py-0.5 rounded-full text-[9px] font-mono bg-[#E8F4F3] text-[#087F83]">● Kayıtlı</span>
+    <div class="px-4 pt-1 pb-1.5 flex items-center justify-between">
+      <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
+        <span>Sohbet Geçmişi</span>
+        <span id="threadSyncPill" class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 text-[9px] font-mono">● Kayıtlı</span>
       </span>
-      <button onclick="clearAllThreads()" class="text-[10px] text-[#809099] hover:text-rose-600 transition">Temizle</button>
+      <button onclick="clearAllThreads()" class="text-[10px] text-slate-500 hover:text-rose-400 transition">Temizle</button>
     </div>
     <div id="threadsListBox" class="flex-1 overflow-y-auto px-3 space-y-1 text-xs"></div>
 
     <!-- Specialist Agents (6) & 21 Academic Skills -->
-    <div class="border-t border-[#E2E9EC] px-4 py-3 space-y-2.5">
+    <div class="border-t border-slate-800/80 px-3.5 py-3 space-y-2.5 bg-[#05070c]">
       <div>
-        <label class="block text-[10px] uppercase tracking-wider text-[#697D86] font-semibold mb-1">Uzmanlar (6)</label>
-        <select id="agentPersonaSelect" class="sx-paper w-full rounded-[9px] px-2.5 py-1.5 text-xs text-[#18323D] focus:outline-none focus:border-[#087F83]">
-          <option value="synax-llm">Baş Mimar (SYNAX-OMNI)</option>
-          <option value="agent-scholar">Dr. Scholar (PubMed &amp; PRISMA)</option>
-          <option value="agent-biostat">Dr. Biostat (Meta-Analiz)</option>
-          <option value="biomed-autocal">Dr. Lyapunov (Biyomedikal)</option>
-          <option value="egraph-prover">Chief E-Graph (0-ULP Kanıt)</option>
-          <option value="silicon-studio">Chief Silicon (Python &amp; C11)</option>
+        <label class="block text-[10px] font-mono uppercase text-slate-400 font-bold mb-1">🎭 Uzman Ajan Masası</label>
+        <select id="agentPersonaSelect" class="w-full bg-[#0d1322] border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+          <option value="synax-llm">🌟 Masa 1: SYNAX-OMNI Baş Mimar</option>
+          <option value="agent-scholar">📚 Masa 2: Dr. Scholar (PubMed &amp; PRISMA)</option>
+          <option value="agent-biostat">📊 Masa 3: Dr. Biostat (Meta-Analiz)</option>
+          <option value="biomed-autocal">🩺 Masa 4: Dr. Lyapunov (Biyomedikal)</option>
+          <option value="egraph-prover">🛡️ Masa 5: Chief E-Graph (0-ULP Kanıt)</option>
+          <option value="silicon-studio">🔩 Masa 8: Chief Silicon (C11 / NEON / Python)</option>
         </select>
       </div>
 
       <details class="group">
-        <summary class="sx-paper cursor-pointer list-none flex items-center justify-between px-2.5 py-1.5 rounded-[9px] text-xs font-semibold text-[#087F83]">
-          <span>21 Q1 Akademik Beceri</span>
-          <span class="text-[10px] sx-muted group-open:rotate-180 transition">▼</span>
+        <summary class="cursor-pointer list-none flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#0d1322] hover:bg-slate-800/70 border border-slate-800 text-xs font-semibold text-emerald-300">
+          <span>🎓 21 Q1 Akademik Beceri</span>
+          <span class="text-[10px] text-slate-400 group-open:rotate-180 transition">▼</span>
         </summary>
         <div id="skillsAccordionList" class="mt-1.5 max-h-40 overflow-y-auto space-y-1 pr-1"></div>
       </details>
 
-      <!-- Workspace Note & Profile (Exact Prototype Structure) -->
-      <div class="p-3 border border-[#D9E4E7] rounded-[12px] bg-[#F7F9FA]/60">
-        <div class="text-[12px] font-bold text-[#18323D]">Bir fikirden, bitmiş bir işe.</div>
-        <p class="text-[11px] leading-[1.55] text-[#697D86] my-1.5">Araştırmalarınızı ve belgelerinizi aynı çalışma alanında bir araya getirin.</p>
-        <button onclick="toggleCanvasDrawer(true)" class="text-[#087F83] text-[11px] font-bold hover:underline">Çalışma alanını keşfet ↗</button>
-      </div>
-
-      <div class="pt-1 flex items-center gap-2.5">
-        <div class="w-[33px] h-[33px] rounded-full bg-[#D2E4E7] text-[#18323D] flex items-center justify-center font-bold text-[11px] shrink-0">ÖF</div>
+      <div class="pt-1 flex items-center gap-2.5 border-t border-slate-800/80">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400/20 via-emerald-400/20 to-cyan-500/20 border border-cyan-500/35 text-cyan-300 flex items-center justify-center font-bold text-[11px] shrink-0">ÖF</div>
         <div class="min-w-0 flex-1">
-          <div class="text-[12px] font-bold text-[#18323D] truncate">Kişisel alan</div>
-          <div class="text-[10px] text-[#697D86] truncate">Synax çalışma alanı</div>
+          <div class="text-xs font-bold text-slate-100 truncate">SYNAX Çalışma Alanı</div>
+          <div class="text-[10px] text-slate-400 truncate">Dr. Ömer Faruk Aydın</div>
         </div>
-        <button onclick="openModelSettingsModal()" class="p-1.5 rounded-lg text-[#697D86] hover:text-[#087F83] text-sm shrink-0 transition" title="Yanıt Tercihleri">⚙</button>
+        <button onclick="openModelSettingsModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-cyan-300 text-sm shrink-0 transition" title="Model Ayarları">⚙️</button>
       </div>
     </div>
   </aside>
@@ -184,13 +179,13 @@
         <button id="openSidebarBtn" onclick="toggleSidebar()" class="lg:hidden sx-btn-outline inline-flex items-center justify-center h-9 w-9 rounded-[9px] text-sm shrink-0" title="Menüyü Aç">☰</button>
 
         <div class="flex items-center gap-1.5 min-w-0">
-          <select id="modelEngineSelect" onchange="updateActiveModelBadge()" class="w-[132px] sm:w-auto max-w-[132px] sm:max-w-[235px] truncate bg-transparent text-xs sm:text-sm font-bold focus:outline-none cursor-pointer">
-            <option value="synax-omni-ultra">SYNAX-OMNI 1.5</option>
-            <option value="synax-core-1.5">SYNAX-Core 1.5</option>
-            <option value="synax-med-scholar">SYNAX-Med &amp; Q1 Scholar</option>
-            <option value="synax-silicon-code">SYNAX-Silicon &amp; Code</option>
-            <option value="synax-biostat-lyapunov">SYNAX-Biostat &amp; Lyapunov</option>
-            <option value="synax-turbo-flash">SYNAX-Turbo 1.5 Flash</option>
+          <select id="modelEngineSelect" onchange="updateActiveModelBadge()" class="w-[136px] sm:w-auto max-w-[136px] sm:max-w-[245px] truncate bg-[#111829] border border-slate-700/80 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-cyan-500 cursor-pointer">
+            <option value="synax-omni-ultra">⚡ SYNAX-OMNI 1.5 Ultra</option>
+            <option value="synax-core-1.5">🧬 SYNAX-Core 1.5</option>
+            <option value="synax-med-scholar">🩺 SYNAX-Med &amp; Q1 Scholar</option>
+            <option value="synax-silicon-code">🔩 SYNAX-Silicon &amp; Code</option>
+            <option value="synax-biostat-lyapunov">📊 SYNAX-Biostat &amp; Lyapunov</option>
+            <option value="synax-turbo-flash">🚀 SYNAX-Turbo 1.5 Flash</option>
           </select>
           <span class="hidden lg:inline-block text-[10px] font-semibold px-2 py-0.5 rounded-[5px] border border-[var(--line)] sx-muted shrink-0">Ultra</span>
         </div>
@@ -256,42 +251,47 @@
     <main id="mainScrollArea" class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 sm:py-8">
       <div class="max-w-[780px] mx-auto">
 
-        <!-- Editorial Welcome Hero (Calm, Breathable, Zero Clutter) -->
+        <!-- SYNAX Dark Welcome Hero (Clean Structure + SYNAX Brand Colors & Symbols) -->
         <div id="emptyHeroState" class="py-6 sm:py-12 space-y-6 msg-enter">
           <div class="space-y-3">
-            <div class="inline-flex items-center gap-2 text-xs font-semibold sx-accent">
-              <span class="text-xl leading-none">✳</span>
-              <span id="heroActiveModelPill">Düşünmek, araştırmak, üretmek için.</span>
+            <div class="inline-flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px] shadow-lg shadow-cyan-500/20">
+                <div class="w-full h-full bg-[#07090f] rounded-[10px] flex items-center justify-center font-black text-base text-transparent bg-clip-text bg-gradient-to-br from-amber-300 via-emerald-300 to-cyan-300">SX</div>
+              </div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0d1424] border border-cyan-500/30 text-[11px] font-mono text-emerald-300">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="heroActiveModelPill">SYNAX-OMNI 1.5 Ultra · Canlı Web &amp; PubMed</span>
+              </div>
             </div>
-            <h1 class="font-display text-[25px] sm:text-[42px] font-bold tracking-tight leading-[1.2] break-words">
+            <h1 class="font-display text-[26px] sm:text-[42px] font-black tracking-tight leading-[1.2] break-words text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-emerald-200">
               Bugün ne üzerinde çalışalım?
             </h1>
-            <p class="text-sm sm:text-[15px] sx-muted leading-relaxed max-w-xl">
-              Bir soru sorun, bir dosya ekleyin ya da fikrinizi birlikte geliştirelim. Canlı web, PubMed ve belge çıktıları hazır.
+            <p class="text-sm sm:text-[15px] text-slate-400 leading-relaxed max-w-xl">
+              Bir soru sorun, bir dosya ekleyin ya da fikrinizi birlikte geliştirelim. Canlı internet, güncel PubMed ve tek tıkla <code class="text-emerald-300">.pdf / .docx / .md</code> çıktıları hazır.
             </p>
           </div>
 
-          <!-- 3 Clean Editorial Suggestion Cards -->
+          <!-- 3 Clean SYNAX Dark Cards -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left pt-2">
             <button onclick="sendStarterPrompt('Güncel PRISMA standartlarına göre sistematik derleme planlamak istiyorum. Araştırma sorumu PICO çerçevesinde oluşturmama ve güncel PubMed/CrossRef stratejisi kurmama yardım et.')" class="sx-card p-4 sm:p-5 rounded-2xl text-left flex sm:flex-col items-start gap-3 sm:gap-0">
-              <div class="w-8 h-8 rounded-[9px] bg-[#eaf0f5] text-[#4d6e8a] flex items-center justify-center text-sm font-bold shrink-0 sm:mb-3.5">📖</div>
+              <div class="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 flex items-center justify-center text-base shrink-0 sm:mb-3.5">🩺</div>
               <div>
-                <div class="text-[13px] font-bold mb-1">Literatürü araştır</div>
-                <div class="text-[11.5px] sx-muted leading-relaxed">Bir sorudan kaynaklı bir araştırma planına.</div>
+                <div class="text-[13px] font-bold text-white mb-1">Literatürü araştır</div>
+                <div class="text-[11.5px] text-slate-400 leading-relaxed">Güncel PRISMA &amp; PubMed kaynaklı araştırma planı.</div>
               </div>
             </button>
             <button onclick="sendStarterPrompt('Python ile klinik veya bilimsel veri analizi için temiz, test edilebilir bir araç geliştirmek istiyorum. Önce gereksinimleri netleştirip çalışan kodu yazalım.')" class="sx-card p-4 sm:p-5 rounded-2xl text-left flex sm:flex-col items-start gap-3 sm:gap-0">
-              <div class="w-8 h-8 rounded-[9px] bg-[#e8f3ef] text-[#40846f] flex items-center justify-center text-sm font-bold shrink-0 sm:mb-3.5">&lt;/&gt;</div>
+              <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center justify-center text-base shrink-0 sm:mb-3.5">🔩</div>
               <div>
-                <div class="text-[13px] font-bold mb-1">Birlikte kod yaz</div>
-                <div class="text-[11.5px] sx-muted leading-relaxed">Fikrini çalışan ve doğrulanmış bir çözüme dönüştür.</div>
+                <div class="text-[13px] font-bold text-white mb-1">Birlikte kod yaz</div>
+                <div class="text-[11.5px] text-slate-400 leading-relaxed">Fikrini çalışan, 0-ULP doğrulanmış koda dönüştür.</div>
               </div>
             </button>
             <button onclick="sendStarterPrompt('Klinik veya deneysel veri setimi analiz etmek istiyorum. Uygun biyoistatistiksel yöntemi seçmeme, görselleştirmeme ve bulguları yorumlamama yardım et.')" class="sx-card p-4 sm:p-5 rounded-2xl text-left flex sm:flex-col items-start gap-3 sm:gap-0">
-              <div class="w-8 h-8 rounded-[9px] bg-[#efedf7] text-[#8071a6] flex items-center justify-center text-sm font-bold shrink-0 sm:mb-3.5">📊</div>
+              <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 flex items-center justify-center text-base shrink-0 sm:mb-3.5">📊</div>
               <div>
-                <div class="text-[13px] font-bold mb-1">Veriyi anlamlandır</div>
-                <div class="text-[11.5px] sx-muted leading-relaxed">Analiz et, görselleştir ve bulgularını yorumla.</div>
+                <div class="text-[13px] font-bold text-white mb-1">Veriyi anlamlandır</div>
+                <div class="text-[11.5px] text-slate-400 leading-relaxed">Biyoistatistik analizi, tablo ve bulgu yorumlama.</div>
               </div>
             </button>
           </div>
@@ -332,27 +332,27 @@
               <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="sx-btn-outline px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium transition shrink-0 whitespace-nowrap" title="Dosya ekle">
                 📎 <span class="hidden sm:inline">Dosya ekle</span>
               </button>
-              <button type="button" id="pillWebRag" onclick="toggleWebRag()" class="px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium border transition flex items-center gap-1 bg-[var(--soft)] sx-accent border-[#cce5e1] shrink-0 whitespace-nowrap" title="Web araması">
-                <span>🌐</span><span class="hidden sm:inline">Web araması</span>
+              <button type="button" id="pillWebRag" onclick="toggleWebRag()" class="px-2.5 py-1.5 rounded-[8px] text-[11px] font-semibold border transition flex items-center gap-1 bg-cyan-500/15 text-cyan-300 border-cyan-500/40 shrink-0 whitespace-nowrap" title="Web araması">
+                <span>🌐</span><span class="hidden sm:inline">Canlı Web</span>
               </button>
-              <button type="button" id="pillDeepThink" onclick="toggleDeepThink()" class="sx-btn-outline px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium transition flex items-center gap-1 shrink-0 whitespace-nowrap" title="Derin düşün">
-                <span>✳</span><span class="hidden sm:inline">Derin düşün</span>
+              <button type="button" id="pillDeepThink" onclick="toggleDeepThink()" class="sx-btn-outline px-2.5 py-1.5 rounded-[8px] text-[11px] font-semibold transition flex items-center gap-1 shrink-0 whitespace-nowrap" title="Derin düşün">
+                <span>🧠</span><span class="hidden sm:inline">DeepThink</span>
               </button>
               <select id="webSearchModeSelect" class="sx-btn-outline rounded-[8px] px-2 py-1.5 text-[11px] font-medium focus:outline-none cursor-pointer shrink-0" title="Arama Kapsamı">
-                <option value="all">Tümü</option>
-                <option value="web_news">Web</option>
-                <option value="academic">PubMed</option>
-                <option value="tech_code">Kod</option>
+                <option value="all">🔎 Tümü</option>
+                <option value="web_news">📰 Web</option>
+                <option value="academic">🎓 PubMed</option>
+                <option value="tech_code">💻 Kod</option>
               </select>
               <button type="button" onclick="promptLiveUrlReader()" class="sx-btn-outline px-2 py-1.5 rounded-[8px] text-[11px] transition shrink-0" title="URL Oku">🔗</button>
               <button type="button" onclick="startVoiceDictation()" id="voiceBtn" class="sx-btn-outline px-2 py-1.5 rounded-[8px] text-[11px] transition shrink-0" title="Sesli Dikte">🎤</button>
             </div>
 
             <div class="flex items-center gap-2 shrink-0">
-              <button type="button" id="stopGenBtn" onclick="stopActiveGeneration()" class="hidden px-2.5 py-1.5 rounded-[9px] bg-rose-500/15 hover:bg-rose-500/25 text-rose-600 dark:text-rose-300 border border-rose-500/35 font-bold text-xs transition">
+              <button type="button" id="stopGenBtn" onclick="stopActiveGeneration()" class="hidden px-2.5 py-1.5 rounded-[9px] bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold text-xs transition">
                 ⏹ Durdur
               </button>
-              <button type="button" id="sendBtn" onclick="submitChatMessage()" class="w-9 h-9 rounded-[10px] bg-[#18323d] dark:bg-[#2dd4bf] text-white dark:text-[#070a12] hover:opacity-90 font-bold text-sm shadow-sm transition inline-flex items-center justify-center shrink-0" title="Gönder (Enter)">
+              <button type="button" id="sendBtn" onclick="submitChatMessage()" class="w-9 h-9 rounded-[10px] bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 hover:opacity-95 font-black text-base shadow-md shadow-cyan-500/20 transition inline-flex items-center justify-center shrink-0" title="Gönder (Enter)">
                 ↑
               </button>
             </div>
@@ -776,11 +776,11 @@
       if (box) { box.classList.toggle('hidden', !on); box.classList.toggle('flex', on); }
       if (btn) btn.innerHTML = on ? '🔓 <span class="hidden md:inline">Çıkış</span>' : '🔐 <span class="hidden md:inline">Kurucu</span>';
       if (qp && on) {
-        qp.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#087F83]"></span><span>Kurucu · Sınırsız</span>';
-        qp.className = 'hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#E8F4F3] border border-[#CCE5E1] text-[11px] font-semibold text-[#087F83] whitespace-nowrap shrink-0';
+        qp.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span><span>Kurucu · Sınırsız</span>';
+        qp.className = 'hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/35 text-[11px] font-mono text-amber-300 whitespace-nowrap shrink-0';
       } else if (qp && !on) {
-        qp.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-[#24978A]"></span><span>Çalışmaya hazır · 15/15</span>';
-        qp.className = 'hidden md:inline-flex items-center gap-1.5 text-[11px] text-[#697D86] whitespace-nowrap shrink-0';
+        qp.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>Hazır · 15/15</span>';
+        qp.className = 'hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/90 border border-slate-800 text-[11px] font-mono text-slate-300 whitespace-nowrap shrink-0';
       }
     }
     function founderBtnClick() { if (founderToken) founderLogout(); else openFounderLogin(); }
@@ -1670,21 +1670,22 @@
         ? sorted.filter(t => (t.title || '').toLowerCase().includes(q) || (t.messages || []).some(m => (m.content || '').toLowerCase().includes(q)))
         : sorted;
       if (filtered.length === 0) {
-        box.innerHTML = `<div class="text-[#697D86] text-xs px-2 py-3">${q ? 'Eşleşen sohbet bulunamadı.' : 'Henüz kayıtlı sohbet yok.'}</div>`;
+        box.innerHTML = `<div class="text-slate-500 text-xs px-2 py-3">${q ? 'Eşleşen sohbet bulunamadı.' : 'Henüz kayıtlı sohbet yok.'}</div>`;
         return;
       }
       box.innerHTML = filtered.map(t => {
         const msgCount = (t.messages || []).length;
         return `
-        <div onclick="selectThread('${t.id}')" class="cursor-pointer w-full text-left px-3 py-2 rounded-[8px] transition flex items-center justify-between gap-1 group ${t.id === activeThreadId ? 'bg-[#E2E9EC] text-[#18323D] font-semibold' : 'text-[#57707C] hover:bg-[#E2E9EC]/60 hover:text-[#18323D]'}">
+        <div onclick="selectThread('${t.id}')" class="cursor-pointer w-full text-left px-2.5 py-2 rounded-xl transition flex items-center justify-between gap-1 group ${t.id === activeThreadId ? 'bg-[#161f33] text-white font-semibold border border-cyan-500/35 shadow-sm' : 'text-slate-400 hover:bg-slate-900/90 hover:text-slate-200 border border-transparent'}">
           <div class="truncate pr-1 flex items-center gap-1.5 min-w-0">
-            <span class="truncate">${t.pinned ? '📌 ' : ''}${escapeHtml(t.title || 'Yeni Sohbet')}</span>
+            <span class="shrink-0">${t.pinned ? '📌' : '💬'}</span>
+            <span class="truncate">${escapeHtml(t.title || 'Yeni Sohbet')}</span>
           </div>
           <div class="flex items-center gap-0.5 shrink-0" onclick="event.stopPropagation()">
-            <span class="group-hover:hidden text-[10px] font-mono text-[#809099] px-1">${msgCount > 0 ? msgCount : ''}</span>
-            <button onclick="togglePinThread('${t.id}')" class="hidden group-hover:inline-block p-1 rounded hover:bg-white text-[#697D86] hover:text-[#087F83] text-[10px]" title="Sabitle">📌</button>
-            <button onclick="renameThread('${t.id}')" class="hidden group-hover:inline-block p-1 rounded hover:bg-white text-[#697D86] hover:text-[#087F83] text-[10px]" title="Yeniden Adlandır">✏️</button>
-            <button onclick="deleteThread('${t.id}')" class="hidden group-hover:inline-block p-1 rounded hover:bg-white text-[#697D86] hover:text-rose-600 text-[10px]" title="Sohbeti Sil">🗑️</button>
+            <span class="group-hover:hidden text-[10px] font-mono text-slate-500 px-1">${msgCount > 0 ? msgCount : ''}</span>
+            <button onclick="togglePinThread('${t.id}')" class="hidden group-hover:inline-block p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-amber-300 text-[10px]" title="Sabitle">📌</button>
+            <button onclick="renameThread('${t.id}')" class="hidden group-hover:inline-block p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-cyan-300 text-[10px]" title="Yeniden Adlandır">✏️</button>
+            <button onclick="deleteThread('${t.id}')" class="hidden group-hover:inline-block p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-[10px]" title="Sohbeti Sil">🗑️</button>
           </div>
         </div>
       `;
@@ -1845,8 +1846,8 @@
       deepThinkEnabled = !deepThinkEnabled;
       const btn = document.getElementById('pillDeepThink');
       btn.className = deepThinkEnabled
-        ? 'px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium border transition flex items-center gap-1 bg-[#E8F4F3] text-[#087F83] border-[#CCE5E1] shrink-0 whitespace-nowrap'
-        : 'sx-btn-outline px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium transition flex items-center gap-1 shrink-0 whitespace-nowrap';
+        ? 'px-2.5 py-1.5 rounded-[8px] text-[11px] font-semibold border transition flex items-center gap-1 bg-purple-500/15 text-purple-300 border-purple-500/40 shrink-0 whitespace-nowrap'
+        : 'sx-btn-outline px-2.5 py-1.5 rounded-[8px] text-[11px] font-semibold transition flex items-center gap-1 shrink-0 whitespace-nowrap';
     }
 
     function toggleWebRag() {
@@ -1854,8 +1855,8 @@
       const btn = document.getElementById('pillWebRag');
       const modeSel = document.getElementById('webSearchModeSelect');
       btn.className = webRagEnabled
-        ? 'px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium border transition flex items-center gap-1 bg-[#E8F4F3] text-[#087F83] border-[#CCE5E1] shrink-0 whitespace-nowrap'
-        : 'sx-btn-outline px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium transition flex items-center gap-1 shrink-0 whitespace-nowrap';
+        ? 'px-2.5 py-1.5 rounded-[8px] text-[11px] font-semibold border transition flex items-center gap-1 bg-cyan-500/15 text-cyan-300 border-cyan-500/40 shrink-0 whitespace-nowrap'
+        : 'sx-btn-outline px-2.5 py-1.5 rounded-[8px] text-[11px] font-semibold transition flex items-center gap-1 shrink-0 whitespace-nowrap';
       if (modeSel) modeSel.style.display = webRagEnabled ? 'inline-block' : 'none';
     }
 
