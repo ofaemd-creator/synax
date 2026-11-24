@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SYNAX Chat (chat.synaxcode.com) — SYNAX-OMNI 1.0 Ultra Egemen Büyük Dil Modeli</title>
+  <title>SYNAX Chat (chat.synaxcode.com) — SYNAX-OMNI 1.5 Ultra Egemen Büyük Dil Modeli</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Master-Degree Markdown, Math (KaTeX) & Code Syntax Highlighting -->
@@ -116,13 +116,13 @@
       <div class="flex items-center gap-2">
         <button id="openSidebarBtn" onclick="toggleSidebar()" class="hidden p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs">☰</button>
 
-        <!-- SYNAX Sovereign Model Family Selector -->
+        <!-- SYNAX-OMNI 1.5 Sovereign Model Family Selector -->
         <select id="modelEngineSelect" onchange="updateActiveModelBadge()" class="bg-[#111726] hover:bg-[#161e31] border border-slate-800 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-cyan-500 cursor-pointer shadow-sm">
-          <option value="synax-omni-ultra">⚡ SYNAX-OMNI 1.0 Ultra (Amiral Gemisi Derin Muhakeme)</option>
-          <option value="synax-med-scholar">🩺 SYNAX-Med &amp; Q1 Scholar 1.0 (Klinik Tıp &amp; Q1 SCIE Makale)</option>
-          <option value="synax-silicon-code">🔩 SYNAX-Silicon &amp; Code 1.0 (.SX, Python, ARM64 NEON &amp; 0-ULP)</option>
-          <option value="synax-biostat-lyapunov">📊 SYNAX-Biostat &amp; Lyapunov 1.0 (Meta-Analiz &amp; V_{k+1}&lt;V_k)</option>
-          <option value="synax-turbo-flash">🚀 SYNAX-Turbo 1.0 Flash (Ultra-Hızlı Sohbet &amp; Sentez)</option>
+          <option value="synax-omni-ultra">⚡ SYNAX-OMNI 1.5 Ultra (Amiral Gemisi Derin Muhakeme &amp; Canlı 2026)</option>
+          <option value="synax-med-scholar">🩺 SYNAX-Med &amp; Q1 Scholar 1.5 (Klinik Tıp &amp; Q1 SCIE Makale)</option>
+          <option value="synax-silicon-code">🔩 SYNAX-Silicon &amp; Code 1.5 (.SX, Python, ARM64 NEON &amp; 0-ULP)</option>
+          <option value="synax-biostat-lyapunov">📊 SYNAX-Biostat &amp; Lyapunov 1.5 (Meta-Analiz &amp; V_{k+1}&lt;V_k)</option>
+          <option value="synax-turbo-flash">🚀 SYNAX-Turbo 1.5 Flash (Ultra-Hızlı Sohbet &amp; Anlık Web)</option>
         </select>
 
         <!-- Top Info, Autonomous Self-Evolution & Personalization Cortex + Model Settings Buttons -->
@@ -170,7 +170,7 @@
           <div class="space-y-2">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] font-mono text-emerald-400">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span id="heroActiveModelPill">SYNAX-OMNI 1.0 Ultra · Sinirsel-Sembolik &amp; 0-ULP Doğrulamalı Mimari</span>
+              <span id="heroActiveModelPill">SYNAX-OMNI 1.5 Ultra · Canlı 2026 İnternet Çapalı &amp; Sınırsız Çoklu-Motor</span>
             </div>
             <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">Bugün size nasıl yardımcı olabilirim?</h1>
             <p class="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto">
@@ -395,12 +395,13 @@
         </div>
       </div>
 
-      <!-- 4-Tab Navigation Bar -->
+      <!-- 5-Tab Navigation Bar -->
       <div class="flex items-center gap-1.5 border-b border-slate-800 pb-2 overflow-x-auto text-xs font-bold">
-        <button onclick="switchCortexTab('tabOverview')" id="btnTabOverview" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 transition shrink-0">🌐 1. 7/24 Otonom Öz-Beslenme</button>
-        <button onclick="switchCortexTab('tabPersonalize')" id="btnTabPersonalize" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">🎛️ 2. Kişiselleştirme &amp; Customize</button>
-        <button onclick="switchCortexTab('tabMemory')" id="btnTabMemory" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">🧠 3. Kalıcı Bellek Bankası (Memory Vault)</button>
-        <button onclick="switchCortexTab('tabSkills')" id="btnTabSkills" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">📈 4. Beceri Evrimi &amp; Kararlılık Matrisi</button>
+        <button onclick="switchCortexTab('tabOverview')" id="btnTabOverview" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 transition shrink-0">🌐 1. 7/24 Öz-Beslenme</button>
+        <button onclick="switchCortexTab('tabPersonalize')" id="btnTabPersonalize" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">🎛️ 2. Kişiselleştir</button>
+        <button onclick="switchCortexTab('tabMemory')" id="btnTabMemory" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">🧠 3. Bellek Bankası</button>
+        <button onclick="switchCortexTab('tabSkills')" id="btnTabSkills" class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition shrink-0">📈 4. Beceri &amp; Kararlılık</button>
+        <button onclick="switchCortexTab('tabProviders')" id="btnTabProviders" class="px-3 py-1.5 rounded-xl bg-slate-900 text-amber-300 hover:text-white transition shrink-0">⚡ 5. OMNI 1.5 Sağlayıcılar (NVIDIA &amp; OpenRouter)</button>
       </div>
 
       <!-- TAB 1: 7/24 OTONOM ÖZ-BESLENME & SADAKAT -->
@@ -545,6 +546,40 @@
         </div>
       </div>
 
+      <!-- TAB 5: OMNI 1.5 SINIRSIZ ÇOKLU-SAĞLAYICI KASASI (NVIDIA NIM + OPENROUTER + GROQ) -->
+      <div id="cortexTabProviders" class="hidden space-y-3 text-xs">
+        <div class="p-3.5 rounded-xl bg-gradient-to-r from-emerald-500/10 via-cyan-500/10 to-amber-500/10 border border-cyan-500/30 space-y-1.5">
+          <div class="font-black text-cyan-300">⚡ SYNAX-OMNI 1.5 Sınırsız Çoklu-Sağlayıcı Ağı (Failover Mesh)</div>
+          <p class="text-[11px] text-slate-300 leading-relaxed">
+            Anahtarlar sunucuda <code>&lt;?php exit; ?&gt;</code> korumalı <code>.synax_providers.php</code> kasasında saklanır ve yalnızca Kurucu oturumuyla güncellenir. Bir sağlayıcı kota sınırına ulaşırsa SYNAX-OMNI 1.5 milisaniyeler içinde sıradaki sağlayıcıya (NVIDIA NIM → OpenRouter Free/Frontier → Groq LPU → Sınırsız Bulut Yedeği) otomatik geçer.
+          </p>
+          <div class="flex flex-wrap gap-2 pt-1 font-mono text-[10px]">
+            <span id="pvBadgeNvidia" class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">NVIDIA NIM: Bekliyor</span>
+            <span id="pvBadgeOpenRouter" class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">OpenRouter: Bekliyor</span>
+            <span id="pvBadgeGroq" class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Groq LPU: Aktif</span>
+            <span class="px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">Sınırsız Yedek Bulut: Aktif</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3">
+          <div>
+            <label class="block font-bold text-emerald-300 mb-1">🟢 NVIDIA NIM API Anahtarı (`nvapi-...` — DeepSeek-R1, Nemotron Ultra 253B, Qwen-Coder 32B)</label>
+            <input type="password" id="pvNvidiaKeyInput" placeholder="nvapi-... (build.nvidia.com adresinden ücretsiz alabilirsiniz)" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-emerald-400" />
+          </div>
+          <div>
+            <label class="block font-bold text-cyan-300 mb-1">🌐 OpenRouter API Anahtarı (`sk-or-v1-...` — DeepSeek-R1:free, Qwen3-Coder:free, Gemma-3-27B:free)</label>
+            <input type="password" id="pvOpenRouterKeyInput" placeholder="sk-or-v1-... (openrouter.ai/keys adresinden ücretsiz alabilirsiniz)" class="w-full bg-[#070b14] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-cyan-400" />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <span id="pvSaveStatus" class="text-emerald-400 font-mono text-xs"></span>
+          <button onclick="saveProvidersVault()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 via-cyan-500 to-amber-400 text-slate-950 font-black text-xs shadow-lg hover:opacity-95 transition">
+            🔐 Sağlayıcı Anahtarlarını Kasaya Mühürle
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -648,11 +683,11 @@
     ];
 
     const MODEL_DESCRIPTIONS = {
-      'synax-omni-ultra': 'SYNAX-OMNI 1.0 Ultra · Sinirsel-Sembolik & 0-ULP Doğrulamalı Amiral Gemisi',
-      'synax-med-scholar': 'SYNAX-Med & Q1 Scholar 1.0 · Klinik Tıp, PRISMA 2020 & Q1 SCIE Makale Modeli',
-      'synax-silicon-code': 'SYNAX-Silicon & Code 1.0 · .SX Derleyici, ARM64 NEON / AVX2 & 0-ULP Kanıt Modeli',
-      'synax-biostat-lyapunov': 'SYNAX-Biostat & Lyapunov 1.0 · DerSimonian-Laird Meta-Analiz & V_{k+1}<V_k Modeli',
-      'synax-turbo-flash': 'SYNAX-Turbo 1.0 Flash · Ultra-Düşük Gecikmeli Doğal Sohbet & Hızlı Sentez Modeli'
+      'synax-omni-ultra': 'SYNAX-OMNI 1.5 Ultra · Canlı 2026 İnternet Çapalı & Sınırsız Çoklu-Motor',
+      'synax-med-scholar': 'SYNAX-Med & Q1 Scholar 1.5 · Klinik Tıp, PRISMA 2020 & Q1 SCIE Makale Modeli',
+      'synax-silicon-code': 'SYNAX-Silicon & Code 1.5 · .SX Derleyici, ARM64 NEON / AVX2 & 0-ULP Kanıt Modeli',
+      'synax-biostat-lyapunov': 'SYNAX-Biostat & Lyapunov 1.5 · DerSimonian-Laird Meta-Analiz & V_{k+1}<V_k Modeli',
+      'synax-turbo-flash': 'SYNAX-Turbo 1.5 Flash · Ultra-Düşük Gecikmeli Doğal Sohbet & Anlık Web Sentezi'
     };
 
     let deepThinkEnabled = true;
@@ -719,7 +754,8 @@
         tabOverview: ['cortexTabOverview', 'btnTabOverview'],
         tabPersonalize: ['cortexTabPersonalize', 'btnTabPersonalize'],
         tabMemory: ['cortexTabMemory', 'btnTabMemory'],
-        tabSkills: ['cortexTabSkills', 'btnTabSkills']
+        tabSkills: ['cortexTabSkills', 'btnTabSkills'],
+        tabProviders: ['cortexTabProviders', 'btnTabProviders']
       };
       Object.keys(tabs).forEach(k => {
         const [panelId, btnId] = tabs[k];
@@ -866,6 +902,51 @@
             </div>
           `;
         }).join('');
+      }
+
+      const pv = d.providers || {};
+      const bNv = document.getElementById('pvBadgeNvidia');
+      if (bNv) {
+        bNv.textContent = pv.nvidia_configured ? 'NVIDIA NIM: Aktif ✓' : 'NVIDIA NIM: Anahtar Bekliyor';
+        bNv.className = pv.nvidia_configured ? 'px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30' : 'px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+      }
+      const bOr = document.getElementById('pvBadgeOpenRouter');
+      if (bOr) {
+        bOr.textContent = pv.openrouter_configured ? 'OpenRouter: Aktif ✓' : 'OpenRouter: Anahtar Bekliyor';
+        bOr.className = pv.openrouter_configured ? 'px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30' : 'px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+      }
+      const bGq = document.getElementById('pvBadgeGroq');
+      if (bGq) {
+        bGq.textContent = pv.groq_configured ? 'Groq LPU: Aktif ✓' : 'Groq LPU: Bekliyor';
+      }
+    }
+
+    async function saveProvidersVault() {
+      const st = document.getElementById('pvSaveStatus');
+      if (st) st.textContent = '⏳ Şifreli kasaya mühürleniyor...';
+      const payload = {
+        action: 'save_providers_vault',
+        nvidia_api_key: document.getElementById('pvNvidiaKeyInput').value.trim(),
+        openrouter_api_key: document.getElementById('pvOpenRouterKeyInput').value.trim()
+      };
+      try {
+        const r = await fetch('api.php?action=save_providers_vault', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const d = await r.json().catch(() => ({}));
+        if (r.ok && d.status === 'PROVIDERS_VAULT_SAVED') {
+          document.getElementById('pvNvidiaKeyInput').value = '';
+          document.getElementById('pvOpenRouterKeyInput').value = '';
+          renderCortexData({ cortex: {}, providers: d.providers });
+          if (st) st.textContent = '✓ Sağlayıcı anahtarları güvenle mühürlendi! OMNI 1.5 ağı aktif.';
+          showToast('⚡ NVIDIA & OpenRouter kasası güncellendi');
+        } else {
+          if (st) st.textContent = '✗ ' + (d.error || 'Yetkisiz işlem.');
+        }
+      } catch (e) {
+        if (st) st.textContent = '✗ Bağlantı hatası.';
       }
     }
 
