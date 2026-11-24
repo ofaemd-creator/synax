@@ -1348,19 +1348,15 @@ if ($should_run_rag) {
         $parallel_requests['wiki_en'] = 'https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . urlencode($en_query) . '&format=json&srlimit=1';
     }
 
-    // 3. Scientific & Medical Literature Search (2025-2026 Live Recency First: NCBI PubMed + CrossRef DOI + EuropePMC + ArXiv)
+    // 3. Scientific & Medical Literature Search (Full-History Landmark Evidence + Up-to-Present Latest Studies: NCBI PubMed + EuropePMC + CrossRef + ArXiv)
     if (in_array($web_search_mode, ['all', 'academic'], true)) {
-        $cur_year = intval(gmdate('Y'));
-        $recency_start_year = max(2025, $cur_year - 1);
-        $recency_date_span = "{$recency_start_year}/01/01:{$cur_year}/12/31[dp]";
         $is_prisma_or_sr = (bool)preg_match('/(prisma|sistematik|meta-analiz|meta analiz|systematic review|derleme|literature|q1)/iu', $prompt);
-        $pm_retmax = $is_prisma_or_sr ? 5 : 3;
-
-        $parallel_requests['pubmed_esearch_recent'] = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode("({$en_query}) AND {$recency_date_span}") . '&retmax=' . $pm_retmax . '&sort=pub+date&retmode=json';
-        $parallel_requests['pubmed_esearch'] = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode($en_query) . '&retmax=3&sort=pub+date&retmode=json';
-        $parallel_requests['crossref'] = 'https://api.crossref.org/works?query=' . urlencode($en_query) . '&filter=from-pub-date:' . $recency_start_year . '-01-01&sort=published&order=desc&rows=' . ($is_prisma_or_sr ? 4 : 2) . '&select=DOI,title,container-title,published-print,published-online,URL';
-        $parallel_requests['europepmc'] = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=' . urlencode("({$en_query}) AND (FIRST_PDATE:[{$recency_start_year}-01-01 TO {$cur_year}-12-31])") . '&sort_date=y&pageSize=' . ($is_prisma_or_sr ? 3 : 2) . '&format=json';
-        $parallel_requests['arxiv'] = 'http://export.arxiv.org/api/query?search_query=all:' . urlencode($en_query) . '&sortBy=submittedDate&sortOrder=descending&start=0&max_results=2';
+        // Combine BOTH highest-impact foundational studies (relevance) AND newest publications up to today (pub+date) — NEVER restrict to a narrow 1-year window!
+        $parallel_requests['pubmed_esearch_recent'] = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode($en_query) . '&retmax=' . ($is_prisma_or_sr ? 3 : 2) . '&sort=pub+date&retmode=json';
+        $parallel_requests['pubmed_esearch'] = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=' . urlencode($en_query) . '&retmax=' . ($is_prisma_or_sr ? 3 : 2) . '&sort=relevance&retmode=json';
+        $parallel_requests['crossref'] = 'https://api.crossref.org/works?query=' . urlencode($en_query) . '&rows=' . ($is_prisma_or_sr ? 3 : 2) . '&select=DOI,title,container-title,published-print,published-online,URL';
+        $parallel_requests['europepmc'] = 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=' . urlencode($en_query) . '&pageSize=' . ($is_prisma_or_sr ? 3 : 2) . '&format=json';
+        $parallel_requests['arxiv'] = 'http://export.arxiv.org/api/query?search_query=all:' . urlencode($en_query) . '&sortBy=relevance&sortOrder=descending&start=0&max_results=2';
     }
 
     // 4. Tech, Developer & Open-Source Code Search (GitHub Repos + HackerNews Algolia + StackOverflow)
@@ -1476,17 +1472,10 @@ if ($should_run_rag) {
         }
     }
 
-    // E. Parse NCBI PubMed E-Utilities (2025-2026 Recent First + Fallback)
-    $pmids = [];
-    if (!empty($multi_res['pubmed_esearch_recent'])) {
-        $es_rec = json_decode($multi_res['pubmed_esearch_recent'], true);
-        $pmids = $es_rec['esearchresult']['idlist'] ?? [];
-    }
-    if (count($pmids) < 2 && !empty($multi_res['pubmed_esearch'])) {
-        $es_data = json_decode($multi_res['pubmed_esearch'], true);
-        $pmids = array_values(array_unique(array_merge($pmids, $es_data['esearchresult']['idlist'] ?? [])));
-    }
-    $pmids = array_slice($pmids, 0, 5);
+    // E. Parse NCBI PubMed E-Utilities (Full-History High-Relevance + Latest Up-to-Today Combined!)
+    $pmids_recent = !empty($multi_res['pubmed_esearch_recent']) ? (json_decode($multi_res['pubmed_esearch_recent'], true)['esearchresult']['idlist'] ?? []) : [];
+    $pmids_rel = !empty($multi_res['pubmed_esearch']) ? (json_decode($multi_res['pubmed_esearch'], true)['esearchresult']['idlist'] ?? []) : [];
+    $pmids = array_slice(array_values(array_unique(array_merge($pmids_rel, $pmids_recent))), 0, 6);
     if (!empty($pmids)) {
         $efetch_xml = http_get_fast('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' . implode(',', $pmids) . '&retmode=xml', 3);
         if ($efetch_xml) {
@@ -1518,7 +1507,7 @@ if ($should_run_rag) {
                         ];
                     }
                 }
-                $search_engines_used[] = 'NCBI PubMed (2025-2026 Güncel)';
+                $search_engines_used[] = 'NCBI PubMed (Tam Tarihçe + Bugüne Kadar Güncel)';
             }
         }
     }
@@ -1548,7 +1537,7 @@ if ($should_run_rag) {
                 $ep_added++;
             }
         }
-        if ($ep_added > 0) $search_engines_used[] = 'EuropePMC (2025-2026)';
+        if ($ep_added > 0) $search_engines_used[] = 'EuropePMC';
     }
 
     // F. Parse CrossRef Live DOI Registry (`crossref`)
@@ -1731,10 +1720,10 @@ foreach (array_slice($cortex['skill_mastery_matrix'] ?? [], 0, 6) as $skm) {
 // SYNAX-OMNI 1.5 Real-Time Temporal Grounding (breaks 2024 training cutoff!)
 $live_date_tr = gmdate('d.m.Y H:i') . ' UTC (Yıl: ' . gmdate('Y') . ')';
 $temporal_rule =
-    "\nCANLI ZAMAN VE GÜNCEL 2025-2026 LİTERATÜR / İNTERNET ÇAPALAMA (SYNAX-OMNI 1.5 TEMPORAL GROUNDING):\n" .
-    "- **Şu Anki Gerçek Tarih ve Saat:** {$live_date_tr} (Hedef Güncellik Penceresi: **2025 – Kasım 2026**).\n" .
-    "- **2024 Bilgi Sınırını Aşma & Güncel Kaynak Zorunluluğu:** Asla 'bilgilerim 2024'e kadar sınırlı' deme! Tüm `/prisma`, `/q1`, `/meta`, `/klinik` ve genel sorgularda önceliği **2025–Kasım 2026** döneminde yayımlanan en güncel NCBI PubMed, EuropePMC, CrossRef DOI, ArXiv ve canlı web kaynaklarına ver.\n" .
-    "- **PRISMA Raporlama Kuralı:** Sistematik derlemelerde **PRISMA 2020** kılavuz yapısını (PICO, tarama stratejisi, dahil/hariç tutma, akış şeması, RoB-2, GRADE) metodolojik çerçeve olarak kullan; ancak içerik ve literatür taramasını mutlaka **Kasım 2026'ya kadar uzanan en güncel 2025–2026 çalışmalarıyla** (`[1]`, `[2]` gerçek PMID/DOI atıflarıyla) doldur ve eski 2020 kaynaklarına saplanma.\n";
+    "\nCANLI ZAMAN VE SINIRSIZ GÜNCEL BİLGİ ERİŞİMİ (SYNAX-OMNI 1.5 FULL-SPECTRUM TEMPORAL GROUNDING):\n" .
+    "- **Şu Anki Gerçek Tarih ve Saat:** {$live_date_tr} (Bugünün tarihine kadar olan TÜM bilimsel, klinik, teknik ve güncel web bilgilerine sınırsız erişim).\n" .
+    "- **Tarih Sıkışması Yasağı:** Araştırmalarını, yanıtlarını veya kaynak taramanı asla dar bir 1 yıllık aralığa sıkıştırma ve asla 'bilgilerim 2024'e kadar' deme! Konunun temel/dönüm noktası (landmark) çalışmalarından **bugünün tarihine (`{$live_date_tr}`) kadar** yayımlanan en güncel kılavuz, makale ve canlı web verilerinin tamamını bütünsel olarak sentezle.\n" .
+    "- **Güncel Sistematik Derleme & Kılavuz Standardı (PRISMA Güncel Çerçeve):** Sistematik derlemelerde, meta-analizlerde, klinik kılavuzlarda ve akademik sunumlarda güncel PRISMA + EQUATOR (PRISMA-S, PRISMA-AI / CONSORT-AI, TRIPOD+AI, RoB-2, GRADE) standartlarının en son sürümünü uygula ve literatürü başlangıçtan bugüne kadar kesintisiz tara.\n";
 
 if ($is_sovereign_founder) {
     // SOVEREIGN FOUNDER PROMPT (Dr. Ömer Faruk Aydın Authenticated Session)
