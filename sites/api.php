@@ -813,6 +813,61 @@ if ($action === 'manage_memory') {
     exit;
 }
 
+$founder_threads_file = __DIR__ . '/.synax_founder_threads.php';
+
+if ($action === 'founder_threads_load') {
+    if (!$is_sovereign_founder) {
+        http_response_code(403);
+        echo json_encode(['status' => 'FORBIDDEN_SOVEREIGN_ONLY', 'threads' => []], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    $store = synax_read_guarded($founder_threads_file);
+    echo json_encode([
+        'status' => 'FOUNDER_THREADS_LOADED',
+        'threads' => is_array($store['threads'] ?? null) ? $store['threads'] : [],
+        'updated_at' => $store['updated_at'] ?? null,
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if ($action === 'founder_threads_save') {
+    if (!$is_sovereign_founder) {
+        http_response_code(403);
+        echo json_encode(['status' => 'FORBIDDEN_SOVEREIGN_ONLY'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    $incoming_threads = is_array($data['threads'] ?? null) ? array_slice($data['threads'], 0, 40) : [];
+    // Compact oversized message arrays safely while preserving full conversation history
+    $clean_threads = [];
+    foreach ($incoming_threads as $th) {
+        if (!is_array($th) || empty($th['id'])) continue;
+        $msgs = [];
+        foreach (array_slice($th['messages'] ?? [], -60) as $m) {
+            if (!is_array($m) || empty($m['role'])) continue;
+            $msgs[] = [
+                'role' => (string)$m['role'],
+                'content' => mb_substr((string)($m['content'] ?? ''), 0, 24000, 'UTF-8'),
+                'model' => (string)($m['model'] ?? ''),
+                'sources' => array_slice(is_array($m['sources'] ?? null) ? $m['sources'] : [], 0, 10),
+                'engines' => array_slice(is_array($m['engines'] ?? null) ? $m['engines'] : [], 0, 8),
+                'thinking' => array_slice(is_array($m['thinking'] ?? null) ? $m['thinking'] : [], 0, 8),
+                'follow_ups' => array_slice(is_array($m['follow_ups'] ?? null) ? $m['follow_ups'] : [], 0, 4),
+            ];
+        }
+        $clean_threads[] = [
+            'id' => (string)$th['id'],
+            'title' => mb_substr((string)($th['title'] ?? 'Yeni Sohbet'), 0, 80, 'UTF-8'),
+            'pinned' => !empty($th['pinned']),
+            'updatedAt' => intval($th['updatedAt'] ?? (time() * 1000)),
+            'messages' => $msgs,
+        ];
+    }
+    $payload = ['updated_at' => gmdate('Y-m-d H:i:s') . ' UTC', 'threads' => $clean_threads];
+    synax_write_guarded($founder_threads_file, $payload);
+    echo json_encode(['status' => 'FOUNDER_THREADS_SAVED', 'count' => count($clean_threads), 'updated_at' => $payload['updated_at']], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
 if ($action === 'save_providers_vault') {
     if (!$is_sovereign_founder) {
         http_response_code(403);
