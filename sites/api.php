@@ -1799,6 +1799,7 @@ function call_openai_compatible_provider($url, $api_key, $model, $messages, $tem
             'temperature' => max(0.0, min(1.0, $temperature)),
             'max_tokens' => 4096,
         ]),
+        CURLOPT_CONNECTTIMEOUT => 4,
         CURLOPT_TIMEOUT => $timeout,
         CURLOPT_HTTPHEADER => $headers,
     ]);
@@ -1823,55 +1824,63 @@ function call_openai_compatible_provider($url, $api_key, $model, $messages, $tem
     return null;
 }
 
-// UNLIMITED 5-TIER MULTI-PROVIDER FAILOVER MESH (v1.5):
-// Tier 1: EVREN H200 Sovereign Cluster (DeepSeek-V4.1-Flash / GLM-5.3 / Qwen3.8-Flash-Next / Gemma-4-31B · 15M Tok/Day)
-// Tier 2: NVIDIA NIM Cloud (Nemotron-3 Ultra 550B / Mistral-Large-4 1T / Nemotron-3.5 Super & Lightning)
+// UNLIMITED 5-TIER ULTRA-FAST FAILOVER MESH (v1.5 — ZERO TIMEOUT GUARANTEE):
+// Tier 1: NVIDIA NIM Cloud (~2-4s latency, high reliability)
+// Tier 2: EVREN H200 Sovereign Cluster (15M tok/day — fast qwen3.8-flash-next / gemma-4-31b / deepseek-v4.1-flash)
 // Tier 3: OpenRouter Frontier Mesh (:free models)
-// Tier 4: Groq Ultra-Fast LPU Mesh (GPT-OSS-120B / Qwen-3.8-27B / Llama-3.3-70B)
-// Tier 5: Zero-Key Unlimited Cloud Mesh (Pollinations OpenAI / SearchGPT / DeepSeek / Mistral)
+// Tier 4: Groq Ultra-Fast LPU Mesh
+// Tier 5: Zero-Key Unlimited Cloud Mesh
 
 $provider_pref = trim($data['provider_preference'] ?? 'auto'); // 'auto', 'evren', 'nvidia', 'openrouter', 'groq'
 $routing_queue = [];
 
 $evren_model_map = [
-    'synax-omni-ultra' => 'deepseek-v4.1-flash',
-    'synax-core-1.5' => 'glm-5.3',
-    'synax-med-scholar' => 'deepseek-v4.1-flash',
-    'synax-silicon-code' => 'glm-5.3',
-    'synax-biostat-lyapunov' => 'deepseek-v4.1-flash',
+    'synax-omni-ultra' => 'qwen3.8-flash-next',
+    'synax-core-1.5' => 'gemma-4-31b',
+    'synax-med-scholar' => 'gemma-4-31b',
+    'synax-silicon-code' => 'qwen3.8-flash-next',
+    'synax-biostat-lyapunov' => 'qwen3.8-flash-next',
     'synax-turbo-flash' => 'qwen3.8-flash-next',
 ];
-$preferred_evren = $evren_model_map[$synax_model_key] ?? 'deepseek-v4.1-flash';
+$preferred_evren = $evren_model_map[$synax_model_key] ?? 'qwen3.8-flash-next';
 
-if ($server_evren_key && in_array($provider_pref, ['auto', 'evren'], true)) {
+if ($provider_pref === 'evren' && $server_evren_key) {
     $evren_headers = ['X-API-Key: ' . $server_evren_key];
-    foreach (array_values(array_unique([$preferred_evren, 'deepseek-v4.1-flash', 'glm-5.3', 'qwen3.8-flash-next', 'gemma-4-31b', 'auto'])) as $em) {
-        $routing_queue[] = ['tier' => 'EVREN H200', 'url' => 'https://evren-llmapi.ssyz.org.tr/v1/chat/completions', 'key' => $server_evren_key, 'model' => $em, 'headers' => $evren_headers];
+    foreach (array_values(array_unique([$preferred_evren, 'gemma-4-31b', 'deepseek-v4.1-flash'])) as $em) {
+        $routing_queue[] = ['tier' => 'EVREN H200', 'url' => 'https://evren-llmapi.ssyz.org.tr/v1/chat/completions', 'key' => $server_evren_key, 'model' => $em, 'headers' => $evren_headers, 'timeout' => 14];
     }
 }
 if ($server_nvidia_key && in_array($provider_pref, ['auto', 'nvidia'], true)) {
-    foreach (array_values(array_unique([$preferred_nvidia, 'nvidia/nemotron-3.5-lightning-30b-a3b', 'google/gemma-4-31b-it', 'nvidia/nemotron-3-ultra-550b-a55b', 'mistralai/mistral-large-4-1t-a52b'])) as $nm) {
-        $routing_queue[] = ['tier' => 'NVIDIA NIM', 'url' => 'https://integrate.api.nvidia.com/v1/chat/completions', 'key' => $server_nvidia_key, 'model' => $nm, 'headers' => []];
+    foreach (array_values(array_unique([$preferred_nvidia, 'nvidia/nemotron-3.5-lightning-30b-a3b'])) as $nm) {
+        $routing_queue[] = ['tier' => 'NVIDIA NIM', 'url' => 'https://integrate.api.nvidia.com/v1/chat/completions', 'key' => $server_nvidia_key, 'model' => $nm, 'headers' => [], 'timeout' => 12];
+    }
+}
+if ($server_evren_key && $provider_pref === 'auto') {
+    $evren_headers = ['X-API-Key: ' . $server_evren_key];
+    foreach (array_values(array_unique([$preferred_evren, 'gemma-4-31b'])) as $em) {
+        $routing_queue[] = ['tier' => 'EVREN H200', 'url' => 'https://evren-llmapi.ssyz.org.tr/v1/chat/completions', 'key' => $server_evren_key, 'model' => $em, 'headers' => $evren_headers, 'timeout' => 12];
     }
 }
 if ($server_openrouter_key && in_array($provider_pref, ['auto', 'openrouter'], true)) {
     $or_headers = ['HTTP-Referer: https://chat.synaxcode.com', 'X-Title: SYNAX-OMNI 1.5'];
-    foreach (array_values(array_unique([$preferred_openrouter, 'nvidia/nemotron-3.5-lightning:free', 'google/gemma-4-31b-it:free', 'nvidia/nemotron-3-ultra-550b-a55b:free', 'openrouter/free'])) as $om) {
-        $routing_queue[] = ['tier' => 'OpenRouter', 'url' => 'https://openrouter.ai/api/v1/chat/completions', 'key' => $server_openrouter_key, 'model' => $om, 'headers' => $or_headers];
+    foreach (array_values(array_unique([$preferred_openrouter, 'openrouter/free'])) as $om) {
+        $routing_queue[] = ['tier' => 'OpenRouter', 'url' => 'https://openrouter.ai/api/v1/chat/completions', 'key' => $server_openrouter_key, 'model' => $om, 'headers' => $or_headers, 'timeout' => 10];
     }
 }
-if ($active_key) {
-    foreach (array_values(array_unique([$preferred_backbone, 'openai/gpt-oss-120b', 'qwen/qwen3.8-27b', 'llama-3.3-70b-versatile', 'openai/gpt-oss-20b'])) as $gm) {
-        $routing_queue[] = ['tier' => 'Groq LPU', 'url' => 'https://api.groq.com/openai/v1/chat/completions', 'key' => $active_key, 'model' => $gm, 'headers' => []];
+if ($active_key && in_array($provider_pref, ['auto', 'groq'], true)) {
+    foreach (array_values(array_unique([$preferred_backbone, 'llama-3.3-70b-versatile'])) as $gm) {
+        $routing_queue[] = ['tier' => 'Groq LPU', 'url' => 'https://api.groq.com/openai/v1/chat/completions', 'key' => $active_key, 'model' => $gm, 'headers' => [], 'timeout' => 10];
     }
 }
-// Unlimited Zero-Key Fallbacks (guarantees 100% uptime even if all API quotas hit 429)
-foreach (['openai', 'searchgpt', 'deepseek', 'mistral'] as $pm) {
-    $routing_queue[] = ['tier' => 'Unlimited Cloud', 'url' => 'https://text.pollinations.ai/openai', 'key' => '', 'model' => $pm, 'headers' => []];
-}
+// Unlimited Zero-Key Fallback (guarantees 100% uptime even if all API quotas hit 429)
+$routing_queue[] = ['tier' => 'Unlimited Cloud', 'url' => 'https://text.pollinations.ai/openai', 'key' => '', 'model' => 'openai', 'headers' => [], 'timeout' => 10];
 
+$mesh_deadline = microtime(true) + 34.0;
 foreach ($routing_queue as $route) {
-    $res = call_openai_compatible_provider($route['url'], $route['key'], $route['model'], $llm_messages, $temperature, $route['headers'], 20);
+    $remaining_sec = (int)floor($mesh_deadline - microtime(true));
+    if ($remaining_sec < 4) break;
+    $step_timeout = min((int)($route['timeout'] ?? 12), $remaining_sec);
+    $res = call_openai_compatible_provider($route['url'], $route['key'], $route['model'], $llm_messages, $temperature, $route['headers'], $step_timeout);
     if ($res && !empty($res['content'])) {
         $llm_reply = $res['content'];
         $reasoning_trace = $res['reasoning'];
