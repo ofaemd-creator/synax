@@ -1659,6 +1659,15 @@
         if (sovToken) headers['X-Synax-Sovereign-Token'] = sovToken;
       } catch (_) {}
 
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const inv = (params.get('invite') || '').trim().toUpperCase();
+        if (inv && inv.startsWith('SX-DEMO-')) {
+          localStorage.setItem('synax_demo_invite', inv);
+        }
+      } catch (_) {}
+      const demoInvCode = localStorage.getItem('synax_demo_invite') || '';
+
       const reqPayload = JSON.stringify({
         prompt: promptText,
         messages: officeConversationHistory,
@@ -1667,7 +1676,8 @@
         user_api_key: userConnectedApiKey || '',
         user_model: userConnectedModel || selectedModel || 'SYNAX-OMNI 1.5 Ultra',
         custom_system_prompt: customSysPrompt || '',
-        web_search: true
+        web_search: true,
+        invite_code: demoInvCode
       });
 
       let workData = null;

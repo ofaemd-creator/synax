@@ -1118,15 +1118,157 @@ if ($action === 'evolution_status' || $action === 'automation_status') {
 }
 
 // ============================================================================
+// 1F. DEMO ACCOUNTS & INVITE LINKS / EMAIL MANAGER (Founder Protected)
+// ============================================================================
+$demo_invites_file = __DIR__ . '/.synax_demo_invites.php';
+
+if ($action === 'demo_invite_verify') {
+    $code = strtoupper(trim($data['invite_code'] ?? ($_GET['invite_code'] ?? '')));
+    $store = synax_read_guarded($demo_invites_file);
+    $invites = is_array($store['invites'] ?? null) ? $store['invites'] : [];
+    foreach ($invites as $inv) {
+        if (strtoupper($inv['code'] ?? '') === $code && ($inv['status'] ?? '') === 'active') {
+            $exp = intval($inv['expires_unix'] ?? 0);
+            if ($exp > 0 && time() > $exp) {
+                echo json_encode(['valid' => false, 'error' => 'Davet linkinin süresi dolmuş.'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+            $lim = intval($inv['quota_limit'] ?? 50);
+            $used = intval($inv['used'] ?? 0);
+            if ($lim > 0 && $used >= $lim) {
+                echo json_encode(['valid' => false, 'error' => 'Demo mesaj kotası dolmuş.'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+            echo json_encode([
+                'valid' => true,
+                'code' => $inv['code'],
+                'label' => $inv['label'],
+                'used' => $used,
+                'limit' => $lim === 0 ? 'UNLIMITED' : $lim,
+                'remaining' => $lim === 0 ? 'UNLIMITED' : max(0, $lim - $used),
+                'expires_at' => $inv['expires_at'] ?? '',
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+    }
+    echo json_encode(['valid' => false, 'error' => 'Geçersiz veya iptal edilmiş demo kodu.'], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+if ($action === 'demo_invites_manage') {
+    if (!$is_sovereign_founder) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Demo ve davet yönetimi yalnızca Kurucu Dr. Ömer Faruk Aydın yetkisindedir.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    $op = trim($data['operation'] ?? 'list');
+    $store = synax_read_guarded($demo_invites_file);
+    $invites = is_array($store['invites'] ?? null) ? $store['invites'] : [];
+    $email_sent = false;
+    $last_created = null;
+
+    if ($op === 'create') {
+        $label = trim($data['label'] ?? 'VIP Demo Kullanıcısı');
+        $email = trim($data['email'] ?? '');
+        $quota_limit = max(0, intval($data['quota_limit'] ?? 100)); // 0 = unlimited
+        $days = max(1, intval($data['days'] ?? 7));
+        $send_mail = !empty($data['send_email']);
+        $code = 'SX-DEMO-' . strtoupper(bin2hex(random_bytes(4)));
+        $exp_unix = time() + ($days * 86400);
+        $exp_str = gmdate('Y-m-d H:i', $exp_unix) . ' UTC';
+        $chat_url = 'https://chat.synaxcode.com/?invite=' . $code;
+        $office_url = 'https://office.synaxcode.com/?invite=' . $code;
+        $quota_txt = ($quota_limit === 0) ? 'Sınırsız' : ($quota_limit . ' Mesaj');
+
+        $new_inv = [
+            'code' => $code,
+            'label' => $label,
+            'email' => $email,
+            'quota_limit' => $quota_limit,
+            'used' => 0,
+            'status' => 'active',
+            'days' => $days,
+            'created_at' => gmdate('Y-m-d H:i') . ' UTC',
+            'expires_unix' => $exp_unix,
+            'expires_at' => $exp_str,
+            'chat_url' => $chat_url,
+            'office_url' => $office_url,
+        ];
+        array_unshift($invites, $new_inv);
+        $store['invites'] = $invites;
+        synax_write_guarded($demo_invites_file, $store);
+        $last_created = $new_inv;
+
+        if ($send_mail && $email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $subj = "=?UTF-8?B?" . base64_encode("SYNAX-OMNI 1.5 Özel Demo Erişim Davetiniz (" . $label . ")") . "?=";
+            $body_txt = "Sayın {$label},\n\n" .
+                "Dr. Ömer Faruk Aydın tarafından SYNAX-OMNI 1.5 Yapay Zeka & Büyük Dil Modeli Platformu özel demo erişimine davet edildiniz.\n\n" .
+                "• Doğrudan Sohbet Erişim Linkiniz:\n  {$chat_url}\n\n" .
+                "• 3D Ajan Ofisi Erişim Linkiniz:\n  {$office_url}\n\n" .
+                "• Demo Kodunuz: {$code}\n" .
+                "• Tanımlanan Kota: {$quota_txt} ({$days} Gün Geçerli)\n\n" .
+                "Linke tıkladığınızda demo hesabınız ek şifre gerektirmeden otomatik olarak aktifleşecektir.\n\n" .
+                "Saygılarımızla,\nSYNAX AI Systems — Dr. Ömer Faruk Aydın";
+            $hdrs = "From: SYNAX AI <noreply@synaxcode.com>\r\nReply-To: omerfa@msn.com\r\nContent-Type: text/plain; charset=UTF-8\r\n";
+            $email_sent = @mail($email, $subj, $body_txt, $hdrs);
+        }
+    } elseif ($op === 'revoke') {
+        $target_code = trim($data['code'] ?? '');
+        $invites = array_values(array_filter($invites, fn($x) => ($x['code'] ?? '') !== $target_code));
+        $store['invites'] = $invites;
+        synax_write_guarded($demo_invites_file, $store);
+    }
+
+    echo json_encode([
+        'status' => 'OK',
+        'invites' => $invites,
+        'created' => $last_created,
+        'email_sent' => $email_sent,
+    ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    exit;
+}
+
+// ============================================================================
 // 2. PUBLIC USER DAILY QUOTA GUARD (Protects Founder's API Limits!)
-//    Founder (authenticated) & internal v1.php commercial billing bypass this.
+//    Founder (authenticated), Demo Invite Holders & v1.php bypass IP limit.
 // ============================================================================
 $quota_file = __DIR__ . '/.synax_daily_quotas.php';
 $is_internal_v1 = (strpos((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 'SYNAX-V1-Gateway') !== false);
 $daily_limit_max = 15; // Normal public users: 15 messages per day (UTC)
 $quota_info = ['unlimited' => true, 'used' => 0, 'limit' => 'UNLIMITED', 'remaining' => 'UNLIMITED'];
 
-if (!$is_sovereign_founder && !$is_internal_v1) {
+$client_invite_code = strtoupper(trim($data['invite_code'] ?? ($_GET['invite'] ?? '')));
+$demo_invite_verified = false;
+
+if (!$is_sovereign_founder && !$is_internal_v1 && $client_invite_code !== '') {
+    $d_store = synax_read_guarded($demo_invites_file);
+    $d_list = is_array($d_store['invites'] ?? null) ? $d_store['invites'] : [];
+    foreach ($d_list as $idx => $inv) {
+        if (strtoupper($inv['code'] ?? '') === $client_invite_code && ($inv['status'] ?? '') === 'active') {
+            $exp = intval($inv['expires_unix'] ?? 0);
+            $lim = intval($inv['quota_limit'] ?? 50);
+            $used = intval($inv['used'] ?? 0);
+            if (($exp === 0 || time() <= $exp) && ($lim === 0 || $used < $lim)) {
+                $d_list[$idx]['used'] = $used + 1;
+                $d_list[$idx]['last_used_at'] = gmdate('Y-m-d H:i') . ' UTC';
+                $d_store['invites'] = $d_list;
+                synax_write_guarded($demo_invites_file, $d_store);
+                $demo_invite_verified = true;
+                $quota_info = [
+                    'unlimited' => ($lim === 0),
+                    'demo' => true,
+                    'label' => $inv['label'] ?? 'Demo',
+                    'used' => $used + 1,
+                    'limit' => ($lim === 0) ? 'UNLIMITED' : $lim,
+                    'remaining' => ($lim === 0) ? 'UNLIMITED' : max(0, $lim - ($used + 1)),
+                ];
+            }
+            break;
+        }
+    }
+}
+
+if (!$is_sovereign_founder && !$is_internal_v1 && !$demo_invite_verified) {
     $today_utc = gmdate('Y-m-d');
     $client_ip = (string)($_SERVER['HTTP_CF_CONNECTING_IP'] ?? ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')));
     $client_ip = trim(explode(',', $client_ip)[0]);
