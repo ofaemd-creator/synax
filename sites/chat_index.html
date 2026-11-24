@@ -6,26 +6,46 @@
   <title>SYNAX Chat (chat.synaxcode.com) — SYNAX-OMNI 1.0 Ultra Egemen Büyük Dil Modeli</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Master-Degree Markdown, Math (KaTeX) & Code Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0d14; color: #f1f5f9; }
+    :root { --sx-bg: #07090f; --sx-panel: #0c101a; --sx-card: #111726; --sx-border: rgba(148, 163, 184, 0.14); }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: radial-gradient(circle at 50% -10%, #101b33 0%, #07090f 55%); color: #f1f5f9; }
     code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.22); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(56, 189, 248, 0.5); }
-    .prose-msg h1 { font-size: 1.25rem; font-weight: 800; color: #fff; margin: 0.85rem 0 0.4rem; }
-    .prose-msg h2 { font-size: 1.1rem; font-weight: 800; color: #f8fafc; margin: 0.75rem 0 0.35rem; }
-    .prose-msg h3 { font-size: 0.98rem; font-weight: 700; color: #38bdf8; margin: 0.65rem 0 0.3rem; }
-    .prose-msg p { margin-bottom: 0.65rem; line-height: 1.68; }
-    .prose-msg ul, .prose-msg ol { margin: 0.45rem 0 0.75rem 1.25rem; line-height: 1.65; }
-    .prose-msg li { margin-bottom: 0.25rem; }
-    .prose-msg table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.82rem; }
-    .prose-msg th, .prose-msg td { border: 1px solid rgba(148,163,184,0.22); padding: 0.45rem 0.65rem; text-align: left; }
-    .prose-msg th { background: rgba(15,23,42,0.85); color: #38bdf8; font-weight: 700; }
+    .prose-msg { font-size: 0.94rem; line-height: 1.72; color: #e2e8f0; letter-spacing: -0.006em; }
+    .prose-msg h1 { font-size: 1.32rem; font-weight: 800; color: #fff; margin: 1.1rem 0 0.5rem; letter-spacing: -0.02em; }
+    .prose-msg h2 { font-size: 1.15rem; font-weight: 800; color: #f8fafc; margin: 0.95rem 0 0.4rem; padding-bottom: 0.25rem; border-bottom: 1px solid rgba(148,163,184,0.14); }
+    .prose-msg h3 { font-size: 1.0rem; font-weight: 700; color: #38bdf8; margin: 0.8rem 0 0.35rem; }
+    .prose-msg p { margin-bottom: 0.78rem; }
+    .prose-msg ul, .prose-msg ol { margin: 0.5rem 0 0.85rem 1.35rem; }
+    .prose-msg ul { list-style-type: disc; }
+    .prose-msg ol { list-style-type: decimal; }
+    .prose-msg li { margin-bottom: 0.3rem; }
+    .prose-msg blockquote { border-left: 3px solid #38bdf8; background: rgba(15, 23, 42, 0.65); padding: 0.6rem 0.9rem; margin: 0.8rem 0; border-radius: 0 0.6rem 0.6rem 0; color: #cbd5e1; }
+    .prose-msg table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 0.9rem 0; font-size: 0.84rem; border: 1px solid rgba(148,163,184,0.2); border-radius: 0.75rem; overflow: hidden; }
+    .prose-msg th, .prose-msg td { border-bottom: 1px solid rgba(148,163,184,0.14); border-right: 1px solid rgba(148,163,184,0.12); padding: 0.55rem 0.75rem; text-align: left; }
+    .prose-msg th { background: rgba(15,23,42,0.92); color: #38bdf8; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .prose-msg tr:nth-child(even) td { background: rgba(15, 23, 42, 0.35); }
+    .prose-msg tr:last-child td { border-bottom: none; }
+    .prose-msg a { color: #38bdf8; text-decoration: underline; text-underline-offset: 3px; }
+    .prose-msg pre code.hljs { background: transparent !important; padding: 0 !important; font-size: 0.78rem; line-height: 1.62; }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.5rem 0; }
     @keyframes pulseDot { 0%, 100% { opacity: 0.3; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.15); } }
+    @keyframes msgFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .msg-enter { animation: msgFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     .typing-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #38bdf8; animation: pulseDot 1.2s infinite ease-in-out; }
     .typing-dot:nth-child(2) { animation-delay: 0.2s; }
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    .drag-over-active { border-color: #22d3ee !important; box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.22), 0 20px 45px rgba(0, 0, 0, 0.6) !important; background: #131c30 !important; }
   </style>
 </head>
 <body class="h-screen flex overflow-hidden bg-[#0a0d14] text-slate-100">
@@ -49,6 +69,11 @@
         <span class="flex items-center gap-2"><span>＋</span> <span>Yeni Sohbet</span></span>
         <kbd class="text-[10px] font-mono bg-slate-200 px-1.5 py-0.5 rounded text-slate-700">⌘K</kbd>
       </button>
+
+      <!-- Instant Thread Search Box -->
+      <div class="relative">
+        <input type="text" id="threadSearchInput" oninput="renderThreadsSidebar()" placeholder="🔍 Sohbetlerde ara..." class="w-full bg-[#0c111d] border border-slate-800/90 focus:border-cyan-500/60 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none transition" />
+      </div>
     </div>
 
     <div class="px-3 pt-2.5 pb-1 flex items-center justify-between">
@@ -189,43 +214,51 @@
           <button onclick="clearAttachedFile()" class="text-slate-400 hover:text-rose-400 ml-3 font-bold">✕ Kaldır</button>
         </div>
 
-        <div class="bg-[#121723] border border-slate-700/80 focus-within:border-cyan-500/70 rounded-2xl p-3 shadow-2xl transition">
+        <div id="composerBox" class="relative bg-[#0f1523]/95 backdrop-blur-xl border border-slate-700/75 focus-within:border-cyan-400/75 focus-within:shadow-[0_0_0_1px_rgba(34,211,238,0.25),0_20px_50px_rgba(0,0,0,0.65)] rounded-2xl p-3 shadow-2xl transition-all duration-200">
+          <!-- Slash Command Palette Popup -->
+          <div id="slashCommandMenu" class="hidden absolute bottom-full left-0 right-0 mb-2 bg-[#0c111e] border border-cyan-500/35 rounded-2xl shadow-2xl p-1.5 z-40 max-h-60 overflow-y-auto space-y-0.5"></div>
+
           <textarea
             id="chatInputBox"
             rows="2"
-            placeholder="SYNAX-OMNI'ye soru sorun, dosya/makale yükleyin veya kod/analiz isteyin..."
-            onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();submitChatMessage();}"
-            class="w-full bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none resize-none leading-relaxed"
+            placeholder="SYNAX-OMNI'ye sorun, / ile hızlı komut açın, dosya sürükleyip bırakın..."
+            oninput="handleComposerInput(this)"
+            onkeydown="handleComposerKeydown(event)"
+            class="w-full bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none resize-none leading-relaxed max-h-52 overflow-y-auto"
           ></textarea>
 
           <!-- Composer Feature Pills Bar -->
           <div class="flex items-center justify-between pt-2 mt-1 border-t border-slate-800/80 flex-wrap gap-2">
             <div class="flex items-center gap-1.5 flex-wrap">
               <input type="file" id="fileUploadInput" accept=".txt,.md,.tex,.csv,.json,.py,.sx,.c,.h,.js,.html" class="hidden" onchange="handleFileUpload(event)" />
-              <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" title="Makale, Veri (.csv) veya Kod Dosyası Ekle">
-                📎 Dosya Ekle
+              <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 transition" title="Makale, Veri (.csv) veya Kod Dosyası Ekle (veya sürükle-bırak)">
+                📎 Dosya
               </button>
               <button type="button" id="pillDeepThink" onclick="toggleDeepThink()" class="px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-purple-500/15 text-purple-300 border-purple-500/40">
-                <span>🧠 Öz-Muhakeme (DeepThink)</span>
+                <span>🧠 DeepThink</span>
               </button>
               <button type="button" id="pillWebRag" onclick="toggleWebRag()" class="px-2.5 py-1 rounded-full text-xs font-semibold border transition flex items-center gap-1.5 bg-cyan-500/15 text-cyan-300 border-cyan-500/40" title="Gerçek Zamanlı İnternet, Haber, PubMed & Kod Araması">
-                <span>🌐 Canlı İnternet Araması</span>
+                <span>🌐 Canlı Web</span>
               </button>
               <select id="webSearchModeSelect" class="bg-[#0e1422] border border-cyan-500/30 hover:border-cyan-500/60 rounded-full px-2.5 py-1 text-xs font-semibold text-cyan-200 focus:outline-none cursor-pointer" title="Arama Kapsamı ve Motoru Seçin">
-                <option value="all">🔎 Tüm İnternet (Web + Haber + Akademik + Kod)</option>
-                <option value="web_news">📰 Canlı Web &amp; Güncel Haberler (DuckDuckGo + Google News)</option>
-                <option value="academic">🎓 Bilimsel &amp; Tıp (PubMed + CrossRef DOI + ArXiv)</option>
-                <option value="tech_code">💻 Yazılım &amp; Kod (GitHub + HackerNews + Web)</option>
+                <option value="all">🔎 Tüm İnternet</option>
+                <option value="web_news">📰 Web &amp; Haberler</option>
+                <option value="academic">🎓 PubMed + DOI + ArXiv</option>
+                <option value="tech_code">💻 GitHub + Kod</option>
               </select>
               <button type="button" onclick="promptLiveUrlReader()" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 transition" title="Herhangi Bir Web Sitesi Linkini Canlı Oku ve Analiz Et">
-                🔗 URL Oku
+                🔗 URL
               </button>
               <button type="button" onclick="startVoiceDictation()" id="voiceBtn" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Türkçe Sesli Dikte">
-                🎤 Sesli
+                🎤
               </button>
             </div>
 
             <div class="flex items-center gap-2">
+              <span id="composerCharBadge" class="hidden sm:inline text-[10px] font-mono text-slate-500">Enter ↵ · / komutlar</span>
+              <button type="button" id="stopGenBtn" onclick="stopActiveGeneration()" class="hidden px-3 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold text-xs transition flex items-center gap-1">
+                <span>⏹ Durdur</span>
+              </button>
               <button type="button" id="sendBtn" onclick="submitChatMessage()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 hover:opacity-95 text-slate-950 font-black text-xs sm:text-sm shadow-lg transition flex items-center gap-1">
                 <span>Gönder</span> <span>↑</span>
               </button>
@@ -234,6 +267,9 @@
         </div>
       </div>
     </div>
+
+    <!-- Toast Notification Container -->
+    <div id="synaxToast" class="pointer-events-none fixed bottom-24 right-6 z-[70] opacity-0 translate-y-2 transition-all duration-200 px-3.5 py-2 rounded-xl bg-[#0e1628] border border-cyan-500/40 text-xs font-semibold text-cyan-200 shadow-2xl"></div>
 
   </div>
 
@@ -1037,15 +1073,122 @@
 
     function renderThreadsSidebar() {
       const box = document.getElementById('threadsListBox');
-      if (threads.length === 0) {
-        box.innerHTML = '<div class="text-slate-500 text-xs px-2 py-3">Henüz kayıtlı sohbet yok.</div>';
+      const q = (document.getElementById('threadSearchInput')?.value || '').trim().toLowerCase();
+      const filtered = q
+        ? threads.filter(t => (t.title || '').toLowerCase().includes(q) || (t.messages || []).some(m => (m.content || '').toLowerCase().includes(q)))
+        : threads;
+      if (filtered.length === 0) {
+        box.innerHTML = `<div class="text-slate-500 text-xs px-2 py-3">${q ? 'Eşleşen sohbet bulunamadı.' : 'Henüz kayıtlı sohbet yok.'}</div>`;
         return;
       }
-      box.innerHTML = threads.map(t => `
-        <button onclick="selectThread('${t.id}')" class="w-full text-left px-2.5 py-2 rounded-xl transition flex items-center justify-between group ${t.id === activeThreadId ? 'bg-[#161f33] text-white font-semibold border border-cyan-500/30' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200'}">
-          <span class="truncate pr-2">💬 ${escapeHtml(t.title || 'Yeni Sohbet')}</span>
-        </button>
+      box.innerHTML = filtered.map(t => `
+        <div onclick="selectThread('${t.id}')" class="cursor-pointer w-full text-left px-2.5 py-2 rounded-xl transition flex items-center justify-between gap-1 group ${t.id === activeThreadId ? 'bg-[#161f33] text-white font-semibold border border-cyan-500/30 shadow-sm' : 'text-slate-400 hover:bg-slate-900/90 hover:text-slate-200 border border-transparent'}">
+          <span class="truncate pr-1">💬 ${escapeHtml(t.title || 'Yeni Sohbet')}</span>
+          <div class="hidden group-hover:flex items-center gap-0.5 shrink-0" onclick="event.stopPropagation()">
+            <button onclick="renameThread('${t.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-cyan-300 text-[10px]" title="Yeniden Adlandır">✏️</button>
+            <button onclick="deleteThread('${t.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400 text-[10px]" title="Sohbeti Sil">🗑️</button>
+          </div>
+        </div>
       `).join('');
+    }
+
+    function renameThread(id) {
+      const t = threads.find(x => x.id === id);
+      if (!t) return;
+      const next = prompt('Sohbet başlığını düzenleyin:', t.title || 'Yeni Sohbet');
+      if (next && next.trim()) {
+        t.title = next.trim().slice(0, 60);
+        saveThreads();
+        renderThreadsSidebar();
+        showToast('✓ Sohbet başlığı güncellendi');
+      }
+    }
+
+    function deleteThread(id) {
+      threads = threads.filter(x => x.id !== id);
+      if (activeThreadId === id) {
+        activeThreadId = threads.length > 0 ? threads[0].id : null;
+      }
+      saveThreads();
+      if (!activeThreadId) createNewChatThread();
+      else { renderThreadsSidebar(); renderActiveThreadMessages(); }
+      showToast('🗑️ Sohbet silindi');
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById('synaxToast');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.remove('opacity-0', 'translate-y-2');
+      el.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        el.classList.add('opacity-0', 'translate-y-2');
+        el.classList.remove('opacity-100', 'translate-y-0');
+      }, 2200);
+    }
+
+    const SLASH_COMMANDS = [
+      { cmd: '/q1', desc: 'Q1 SCIE dergi standardında (IMRaD) makale taslağı yaz', tpl: '[Q1 SCIE Makale] ' },
+      { cmd: '/prisma', desc: 'PRISMA 2020 sistematik derleme ve PubMed kanıt sentezi', tpl: '[PRISMA 2020 Sistematik Derleme] ' },
+      { cmd: '/meta', desc: 'DerSimonian-Laird rastgele etkiler meta-analiz & Forest Plot', tpl: '[DerSimonian-Laird Meta-Analiz] ' },
+      { cmd: '/humanize', desc: 'Akademik metni AMA 11th Ed. / Nature Medicine stiline humanize et', tpl: '[De-AI Academic Humanizer] Aşağıdaki metni yapay zeka klişelerinden arındır:\n' },
+      { cmd: '/klinik', desc: 'Acil tıp / yoğun bakım algoritmik tanı & tedavi protokolü', tpl: '[Klinik Protokol] ' },
+      { cmd: '/kod', desc: 'Üretim kalitesinde, 0-ULP doğrulanmış Python / C11 / NEON kodu yaz', tpl: '[0-ULP Kod Sentezi] ' },
+      { cmd: '/web', desc: '9-motorlu gerçek zamanlı internet ve haber araştırması yap', tpl: '[Canlı Web Araştırması] ' },
+      { cmd: '/tablo', desc: 'Karşılaştırmalı bilimsel/teknik analiz tablosu oluştur', tpl: '[Karşılaştırmalı Tablo] ' }
+    ];
+
+    function handleComposerInput(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 208) + 'px';
+      const val = el.value;
+      const charBadge = document.getElementById('composerCharBadge');
+      if (charBadge) {
+        charBadge.textContent = val.length > 0 ? `${val.length} karakter · Enter ↵` : 'Enter ↵ · / komutlar';
+      }
+      const menu = document.getElementById('slashCommandMenu');
+      if (!menu) return;
+      if (val.startsWith('/') && !val.includes('\n') && val.length <= 16) {
+        const q = val.toLowerCase();
+        const hits = SLASH_COMMANDS.filter(c => c.cmd.startsWith(q));
+        if (hits.length > 0) {
+          menu.innerHTML = hits.map(c => `
+            <button type="button" onclick="applySlashCommand('${c.cmd}')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-[#162038] flex items-center justify-between gap-3 transition">
+              <span class="font-mono text-xs font-bold text-cyan-300">${c.cmd}</span>
+              <span class="text-[11px] text-slate-400 truncate">${escapeHtml(c.desc)}</span>
+            </button>
+          `).join('');
+          menu.classList.remove('hidden');
+          return;
+        }
+      }
+      menu.classList.add('hidden');
+    }
+
+    function applySlashCommand(cmd) {
+      const item = SLASH_COMMANDS.find(c => c.cmd === cmd);
+      const inp = document.getElementById('chatInputBox');
+      if (item && inp) {
+        inp.value = item.tpl;
+        document.getElementById('slashCommandMenu').classList.add('hidden');
+        handleComposerInput(inp);
+        inp.focus();
+      }
+    }
+
+    function handleComposerKeydown(event) {
+      const menu = document.getElementById('slashCommandMenu');
+      if (event.key === 'Escape' && menu && !menu.classList.contains('hidden')) {
+        menu.classList.add('hidden');
+        return;
+      }
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        if (menu) menu.classList.add('hidden');
+        submitChatMessage();
+      }
     }
 
     function renderSkillsAccordion() {
@@ -1125,44 +1268,90 @@
 
     function copyCodeBlock(encContent) {
       navigator.clipboard.writeText(decodeURIComponent(encContent));
+      showToast('📋 Panoya kopyalandı');
+    }
+
+    function speakTextAloud(encContent) {
+      if (!('speechSynthesis' in window)) { showToast('Tarayıcı sesli okumayı desteklemiyor'); return; }
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        showToast('🔇 Sesli okuma durduruldu');
+        return;
+      }
+      const clean = decodeURIComponent(encContent).replace(/```[\s\S]*?```/g, ' kod bloğu ').replace(/[#*`_>\[\]]/g, ' ').slice(0, 3500);
+      const u = new SpeechSynthesisUtterance(clean);
+      u.lang = 'tr-TR';
+      u.rate = 1.05;
+      window.speechSynthesis.speak(u);
+      showToast('🔊 Sesli okunuyor (durdurmak için tekrar tıklayın)');
+    }
+
+    function editAndResendUserMessage(msgIdx) {
+      const t = getActiveThread();
+      if (!t.messages[msgIdx] || t.messages[msgIdx].role !== 'user') return;
+      const oldText = t.messages[msgIdx].content;
+      t.messages = t.messages.slice(0, msgIdx);
+      saveThreads();
+      renderActiveThreadMessages();
+      const inp = document.getElementById('chatInputBox');
+      inp.value = oldText;
+      handleComposerInput(inp);
+      inp.focus();
+      showToast('✏️ Mesajı düzenleyip tekrar gönderebilirsiniz');
     }
 
     function formatRichMarkdown(text) {
-      let raw = text || '';
-      const codeBlocks = [];
-      raw = raw.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (_, lang, code) => {
-        const idx = codeBlocks.length;
-        const cleanLang = (lang || 'code').toUpperCase();
-        const enc = encodeURIComponent(code.trim());
-        codeBlocks.push(`
-          <div class="my-3 rounded-xl overflow-hidden border border-slate-800 bg-[#050811]">
-            <div class="px-3 py-1.5 bg-[#0c1220] border-b border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
-              <span class="font-bold text-cyan-300">${cleanLang}</span>
-              <div class="flex items-center gap-2">
-                <button onclick="copyCodeBlock('${enc}')" class="hover:text-white">📋 Kopyala</button>
-                <button onclick="openInCanvas('SYNAX_${cleanLang}_Kodu', '${enc}')" class="text-amber-300 hover:underline">✨ Canvas'ta Aç</button>
+      const raw = text || '';
+      if (window.marked && typeof window.marked.parse === 'function') {
+        const renderer = new marked.Renderer();
+        renderer.code = (codeObj, langArg) => {
+          const codeStr = typeof codeObj === 'object' ? (codeObj.text || '') : String(codeObj || '');
+          const langStr = typeof codeObj === 'object' ? (codeObj.lang || '') : String(langArg || '');
+          const cleanLang = (langStr || 'code').toUpperCase();
+          const enc = encodeURIComponent(codeStr.trim());
+          let highlighted = escapeHtml(codeStr.trim());
+          if (window.hljs) {
+            try {
+              highlighted = (langStr && hljs.getLanguage(langStr))
+                ? hljs.highlight(codeStr.trim(), { language: langStr }).value
+                : hljs.highlightAuto(codeStr.trim()).value;
+            } catch (e) {}
+          }
+          return `
+            <div class="my-3.5 rounded-xl overflow-hidden border border-slate-800/90 bg-[#050811] shadow-lg">
+              <div class="px-3.5 py-1.5 bg-[#0c1222] border-b border-slate-800/90 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                <span class="font-bold text-cyan-300 tracking-wide">${escapeHtml(cleanLang)}</span>
+                <div class="flex items-center gap-3">
+                  <button onclick="copyCodeBlock('${enc}')" class="hover:text-white transition">📋 Kopyala</button>
+                  <button onclick="openInCanvas('SYNAX_${escapeHtml(cleanLang)}_Kodu', '${enc}')" class="text-amber-300 hover:text-amber-200 transition">✨ Canvas</button>
+                </div>
               </div>
+              <pre class="p-3.5 overflow-x-auto"><code class="hljs">${highlighted}</code></pre>
             </div>
-            <pre class="p-3.5 text-xs font-mono text-emerald-300 overflow-x-auto leading-relaxed">${escapeHtml(code.trim())}</pre>
-          </div>
-        `);
-        return `__CODE_BLOCK_${idx}__`;
-      });
+          `;
+        };
+        marked.setOptions({ gfm: true, breaks: true, renderer });
+        let html = marked.parse(raw);
+        html = html.replace(/\[(\d+)\]/g, '<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded text-[10px] font-mono font-black mx-0.5">[$1]</span>');
+        return `<div class="prose-msg select-text">${html}</div>`;
+      }
+      return `<div class="prose-msg select-text"><p>${escapeHtml(raw).replace(/\n/g, '<br/>')}</p></div>`;
+    }
 
-      let h = escapeHtml(raw);
-      h = h.replace(/^### (.*)$/gm, '<h3>$1</h3>');
-      h = h.replace(/^## (.*)$/gm, '<h2>$1</h2>');
-      h = h.replace(/^# (.*)$/gm, '<h1>$1</h1>');
-      h = h.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>');
-      h = h.replace(/`([^`]+)`/g, '<code class="bg-slate-800/90 text-cyan-300 px-1.5 py-0.5 rounded font-mono text-[12px]">$1</code>');
-      h = h.replace(/\[(\d+)\]/g, '<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.5 rounded text-[10px] font-mono font-black mx-0.5">[$1]</span>');
-
-      h = h.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('');
-
-      codeBlocks.forEach((cb, idx) => {
-        h = h.replace(`__CODE_BLOCK_${idx}__`, cb);
-      });
-      return `<div class="prose-msg text-sm text-slate-200 select-text">${h}</div>`;
+    function renderMathInContainer(container) {
+      if (window.renderMathInElement && container) {
+        try {
+          window.renderMathInElement(container, {
+            delimiters: [
+              { left: '$$', right: '$$', display: true },
+              { left: '\\[', right: '\\]', display: true },
+              { left: '$', right: '$', display: false },
+              { left: '\\(', right: '\\)', display: false }
+            ],
+            throwOnError: false
+          });
+        } catch (e) {}
+      }
     }
 
     function renderActiveThreadMessages() {
@@ -1178,9 +1367,12 @@
       list.innerHTML = t.messages.map((m, idx) => {
         if (m.role === 'user') {
           return `
-            <div class="flex justify-end">
-              <div class="max-w-2xl bg-[#1a2234] border border-slate-700/70 rounded-2xl px-4 py-3 text-sm text-white leading-relaxed select-text shadow">
-                ${escapeHtml(m.content).replace(/\n/g, '<br/>')}
+            <div class="flex justify-end group msg-enter">
+              <div class="flex flex-col items-end max-w-2xl">
+                <div class="bg-[#182238] border border-slate-700/75 rounded-2xl rounded-tr-sm px-4 py-3 text-sm text-white leading-relaxed select-text shadow-md">
+                  ${escapeHtml(m.content).replace(/\n/g, '<br/>')}
+                </div>
+                <button onclick="editAndResendUserMessage(${idx})" class="mt-1 opacity-0 group-hover:opacity-100 transition text-[10px] font-mono text-slate-400 hover:text-cyan-300 px-1.5">✏️ Düzenle</button>
               </div>
             </div>
           `;
@@ -1224,10 +1416,19 @@
           }
           const encFull = encodeURIComponent(m.content || '');
           const cleanModelLabel = (m.model || 'SYNAX-OMNI 1.0 Ultra').replace(/\(openai\/.*?\)|\(qwen\/.*?\)|\(llama.*?\)/gi, '').trim();
+          const followUpHtml = (idx === t.messages.length - 1 && m.follow_ups && m.follow_ups.length > 0) ? `
+            <div class="mt-3 pt-2.5 border-t border-slate-800/60 flex flex-wrap gap-1.5">
+              ${m.follow_ups.map(fu => `
+                <button onclick="sendStarterPrompt('${escapeHtml(fu).replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 rounded-xl bg-[#0e1525] hover:bg-[#152038] border border-slate-800 hover:border-cyan-500/40 text-[11px] text-slate-300 hover:text-cyan-200 transition text-left">
+                  ↪ ${escapeHtml(fu)}
+                </button>
+              `).join('')}
+            </div>
+          ` : '';
           return `
-            <div class="flex gap-3.5 items-start">
-              <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px] shrink-0 mt-0.5">
-                <div class="w-full h-full bg-[#0a0d14] rounded-[10px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
+            <div class="flex gap-3.5 items-start msg-enter">
+              <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px] shrink-0 mt-0.5 shadow-md shadow-cyan-500/10">
+                <div class="w-full h-full bg-[#07090f] rounded-[10px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1.5">
@@ -1237,17 +1438,20 @@
                 ${sourcesHtml}
                 ${thinkHtml}
                 ${formatRichMarkdown(m.content)}
-                <div class="mt-2.5 flex items-center gap-3 text-xs text-slate-400 font-mono">
-                  <button onclick="copyCodeBlock('${encFull}')" class="hover:text-white flex items-center gap-1">📋 Kopyala</button>
-                  <button onclick="openInCanvas('SYNAX_Yaniti_${idx}', '${encFull}')" class="hover:text-amber-300 flex items-center gap-1">✨ Canvas'ta Aç</button>
-                  <button onclick="regenerateResponse(${idx})" class="hover:text-cyan-300 flex items-center gap-1">🔄 Yeniden Üret</button>
+                <div class="mt-2.5 flex items-center gap-3 text-xs text-slate-400 font-mono flex-wrap">
+                  <button onclick="copyCodeBlock('${encFull}')" class="hover:text-white flex items-center gap-1 transition">📋 Kopyala</button>
+                  <button onclick="speakTextAloud('${encFull}')" class="hover:text-emerald-300 flex items-center gap-1 transition">🔊 Dinle</button>
+                  <button onclick="openInCanvas('SYNAX_Yaniti_${idx}', '${encFull}')" class="hover:text-amber-300 flex items-center gap-1 transition">✨ Canvas</button>
+                  <button onclick="regenerateResponse(${idx})" class="hover:text-cyan-300 flex items-center gap-1 transition">🔄 Yeniden Üret</button>
                 </div>
+                ${followUpHtml}
               </div>
             </div>
           `;
         }
       }).join('');
 
+      renderMathInContainer(list);
       const sc = document.getElementById('mainScrollArea');
       sc.scrollTop = sc.scrollHeight;
     }
@@ -1268,12 +1472,28 @@
       }
     }
 
+    let activeAbortController = null;
+    function stopActiveGeneration() {
+      if (activeAbortController) {
+        activeAbortController.abort();
+        activeAbortController = null;
+      }
+      isGenerating = false;
+      document.getElementById('stopGenBtn')?.classList.add('hidden');
+      document.getElementById('sendBtn')?.classList.remove('hidden');
+      const lb = document.getElementById('liveTypingBubble');
+      if (lb) lb.remove();
+      showToast('⏹ Üretim durduruldu');
+    }
+
     async function submitChatMessage() {
       if (isGenerating) return;
       const inp = document.getElementById('chatInputBox');
       let prompt = inp.value.trim();
       if (!prompt && !attachedFileContent) return;
       inp.value = '';
+      inp.style.height = 'auto';
+      handleComposerInput(inp);
 
       if (attachedFileContent) {
         prompt = `${prompt || 'Eklenen dosyayı analiz et:'}\n\n[EKLENEN DOSYA: ${attachedFileName}]\n\`\`\`\n${attachedFileContent}\n\`\`\``;
@@ -1282,7 +1502,7 @@
 
       const t = getActiveThread();
       if (t.messages.length === 0) {
-        t.title = prompt.slice(0, 42);
+        t.title = prompt.slice(0, 46);
       }
       t.messages.push({ role: 'user', content: prompt });
       t.updatedAt = Date.now();
@@ -1291,21 +1511,24 @@
       renderActiveThreadMessages();
 
       isGenerating = true;
+      activeAbortController = new AbortController();
+      document.getElementById('stopGenBtn')?.classList.remove('hidden');
+      document.getElementById('sendBtn')?.classList.add('hidden');
       const list = document.getElementById('messagesList');
       const loadingDiv = document.createElement('div');
       loadingDiv.id = 'liveTypingBubble';
-      loadingDiv.className = 'flex gap-3.5 items-start';
+      loadingDiv.className = 'flex gap-3.5 items-start msg-enter';
       const selEl = document.getElementById('modelEngineSelect');
       const selectedModelKey = selEl.value;
       const selectedModelName = selEl.options[selEl.selectedIndex].text.split('(')[0].trim();
 
       loadingDiv.innerHTML = `
         <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 via-emerald-400 to-cyan-500 p-[1.5px] shrink-0">
-          <div class="w-full h-full bg-[#0a0d14] rounded-[10px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
+          <div class="w-full h-full bg-[#07090f] rounded-[10px] flex items-center justify-center font-black text-xs text-amber-300">SX</div>
         </div>
-        <div class="bg-[#111622] border border-slate-800 rounded-2xl px-4 py-3 flex items-center gap-2.5 text-xs text-slate-300">
+        <div class="bg-[#0f1524] border border-cyan-500/25 rounded-2xl px-4 py-3 flex items-center gap-2.5 text-xs text-slate-300 shadow-lg">
           <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
-          <span class="font-mono text-slate-400">${escapeHtml(selectedModelName)} öz-muhakeme yürütüyor...</span>
+          <span class="font-mono text-cyan-200">${escapeHtml(selectedModelName)} ${webRagEnabled ? 'canlı ağları tarayıp ' : ''}sentezliyor...</span>
         </div>
       `;
       list.appendChild(loadingDiv);
@@ -1325,6 +1548,7 @@
         try {
           const r = await fetch(ep, {
             method: 'POST',
+            signal: activeAbortController.signal,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               prompt: prompt,
@@ -1346,10 +1570,15 @@
               break;
             }
           }
-        } catch (e) {}
+        } catch (e) {
+          if (e.name === 'AbortError') break;
+        }
       }
 
       isGenerating = false;
+      activeAbortController = null;
+      document.getElementById('stopGenBtn')?.classList.add('hidden');
+      document.getElementById('sendBtn')?.classList.remove('hidden');
       const lb = document.getElementById('liveTypingBubble');
       if (lb) lb.remove();
 
@@ -1360,7 +1589,8 @@
           model: successData.model_label || selectedModelName,
           sources: successData.sources || [],
           engines: successData.search_engines_used || [],
-          thinking: successData.thinking_steps || []
+          thinking: successData.thinking_steps || [],
+          follow_ups: successData.follow_ups || []
         });
         saveThreads();
         renderActiveThreadMessages();
@@ -1371,7 +1601,7 @@
       } else {
         t.messages.push({
           role: 'assistant',
-          content: 'Bağlantı zaman aşımına uğradı, lütfen tekrar deneyin.',
+          content: 'Bağlantı zaman aşımına uğradı veya işlem durduruldu, lütfen tekrar deneyin.',
           model: selectedModelName
         });
         renderActiveThreadMessages();
@@ -1449,6 +1679,38 @@
         }, waitMs);
       }
       scheduleNextAutonomousFeed();
+
+      // Master-Degree Global Keyboard Shortcuts (⌘K / Ctrl+K -> New Chat, Esc -> Close Modals)
+      document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          createNewChatThread();
+          showToast('＋ Yeni sohbet açıldı (⌘K)');
+        } else if (e.key === 'Escape') {
+          closeFounderLogin();
+          closeCortexModal();
+          closeTechInfoModal();
+          closeModelSettingsModal();
+        }
+      });
+
+      // Drag & Drop File Upload directly onto Composer Box
+      const cBox = document.getElementById('composerBox');
+      if (cBox) {
+        ['dragenter', 'dragover'].forEach(evName => {
+          cBox.addEventListener(evName, (ev) => { ev.preventDefault(); cBox.classList.add('drag-over-active'); });
+        });
+        ['dragleave', 'drop'].forEach(evName => {
+          cBox.addEventListener(evName, (ev) => { ev.preventDefault(); cBox.classList.remove('drag-over-active'); });
+        });
+        cBox.addEventListener('drop', (ev) => {
+          const f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+          if (f) {
+            handleFileUpload({ target: { files: [f] } });
+            showToast(`📎 ${f.name} sohbete eklendi`);
+          }
+        });
+      }
     });
   </script>
 </body>
