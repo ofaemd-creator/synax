@@ -73,17 +73,17 @@
     }
 
     /* 3-TIER MASTER-DEGREE VERTICAL LAYOUT:
-       1. TOP: 3D PIXAR-TYCOON OFFICE STAGE
+       1. TOP: 3D PIXAR-TYCOON OFFICE STAGE (SEAMLESS EDGE-TO-EDGE COCKPIT)
        2. MIDDLE: PROMINENT SEARCH-BAR-STYLE CHAT & COMMAND HUB
-       3. BOTTOM: AGENT & SKILL SELECTION SCREENS */
+       3. BOTTOM: SMART COMPACT AGENT & SKILL SELECTION SCREENS */
     .office-shell {
       width: 100%;
-      max-width: 1340px;
+      max-width: 1260px;
       margin: 0 auto;
-      padding: 14px 18px 40px 18px;
+      padding: 6px 14px 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 7px;
     }
 
     .nav-dropdown-wrap { position: relative; }
@@ -106,25 +106,26 @@
     .nav-dropdown-menu a.active-link { background: rgba(6, 182, 212, 0.22); color: #38bdf8; }
 
     .panel {
+      width: 100%;
       background: var(--bg-glass);
       border: 1px solid var(--border-cyan);
-      border-radius: 18px;
+      border-radius: 16px;
       display: flex; flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.60);
     }
     .panel-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 16px;
+      padding: 7px 14px;
       background: linear-gradient(90deg, rgba(10, 16, 34, 0.96), rgba(17, 27, 54, 0.92));
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 12px; font-weight: 800; letter-spacing: 0.25px;
+      font-size: 11.5px; font-weight: 800; letter-spacing: 0.2px;
       flex-wrap: wrap; gap: 8px;
     }
     .btn-action {
       background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(16, 185, 129, 0.25));
       color: #fef08a; border: 1px solid rgba(245, 158, 11, 0.55);
-      padding: 5px 11px; border-radius: 8px; font-size: 11px; font-weight: 800;
+      padding: 4px 10px; border-radius: 7px; font-size: 10.5px; font-weight: 800;
       cursor: pointer; transition: all 0.15s; white-space: nowrap;
     }
     .btn-action:hover {
@@ -132,119 +133,178 @@
       color: #030712; border-color: #fde047;
     }
 
-    /* TIER 1: PIXAR + TYCOON 3D INTERACTIVE DIORAMA STAGE (EXACT 1376x768 ASPECT RATIO) */
+    /* TIER 1: PIXAR + TYCOON 3D INTERACTIVE DIORAMA STAGE (100% EDGE-TO-EDGE FRAME FIT) */
     .stage-backdrop {
       width: 100%;
-      background: radial-gradient(circle at 50% 45%, #121f3d 0%, #060b16 75%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: #172135;
+      display: block;
     }
     .stage-wrap {
       position: relative;
       width: 100%;
-      max-width: 960px;
-      aspect-ratio: 1376 / 768;
-      height: auto;
-      margin: 0 auto;
-      background: #131c2e;
+      max-width: 100%;
+      height: clamp(230px, 29.5vh, 315px);
+      margin: 0;
+      background: #172135;
       overflow: hidden;
       user-select: none;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.65);
     }
     #office3dCanvas {
-      width: 100%; height: 100%; display: block; cursor: pointer;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: pointer;
+    }
+    /* SLEEK LEFT & RIGHT COCKPIT HUD WINGS INSIDE THE 3D STAGE FRAME */
+    .stage-wing-hud {
+      position: absolute;
+      top: 10px;
+      bottom: 38px;
+      width: 188px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 5px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .stage-wing-hud.left { left: 10px; }
+    .stage-wing-hud.right { right: 10px; }
+    .wing-card {
+      pointer-events: auto;
+      background: rgba(7, 12, 26, 0.84);
+      border: 1px solid rgba(56, 189, 248, 0.30);
+      border-radius: 10px;
+      padding: 5px 8px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    }
+    .wing-card:hover {
+      border-color: #fde047;
+      background: rgba(15, 23, 42, 0.95);
+      transform: translateX(2px);
+    }
+    .wing-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .wing-info {
+      min-width: 0; flex: 1;
+    }
+    .wing-name {
+      font-size: 10px; font-weight: 800; color: #f8fafc;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .wing-sub {
+      font-size: 8.8px; color: #94a3b8;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .wing-lvl {
+      font-size: 8.5px; font-weight: 900; color: #fde047;
+      background: rgba(245, 158, 11, 0.16);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      padding: 1px 5px; border-radius: 5px; flex-shrink: 0;
+    }
+    @media (max-width: 1024px) {
+      .stage-wing-hud { display: none; }
+      .stage-wrap { height: auto; aspect-ratio: 1376 / 768; }
     }
     .stage-overlay-top {
-      position: absolute; top: 10px; left: 12px; right: 12px;
+      position: absolute; top: 8px; left: 12px; right: 12px;
       display: flex; align-items: center; justify-content: space-between;
       pointer-events: none; z-index: 10;
     }
     .stage-overlay-bar {
-      position: absolute; bottom: 10px; left: 12px; right: 12px;
+      position: absolute; bottom: 7px; left: 10px; right: 10px;
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      pointer-events: none; font-size: 10.5px; color: #f1f5f9; z-index: 10;
+      pointer-events: none; font-size: 10px; color: #f1f5f9; z-index: 10;
       flex-wrap: wrap;
     }
     .stage-pill {
       pointer-events: auto;
       background: rgba(6, 11, 25, 0.88);
       border: 1px solid rgba(245, 158, 11, 0.45);
-      padding: 5px 11px; border-radius: 999px;
+      padding: 4px 10px; border-radius: 999px;
       backdrop-filter: blur(10px);
       font-weight: 700;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.55);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.55);
     }
 
-    /* TIER 2: PROMINENT CENTERED SEARCH-BAR-STYLE COMMAND & CHAT HUB (MIDDLE) */
+    /* TIER 2: PROMINENT CENTERED SEARCH-BAR-STYLE COMMAND & CHAT HUB (100% ALIGNED WIDTH) */
     .omnibox-hub {
       width: 100%;
-      max-width: 1060px;
-      margin: 0 auto;
+      max-width: 100%;
+      margin: 0;
       background: linear-gradient(180deg, rgba(10, 18, 38, 0.97) 0%, rgba(6, 11, 24, 0.98) 100%);
-      border: 1.5px solid rgba(56, 189, 248, 0.55);
-      border-radius: 22px;
-      box-shadow: 0 0 42px rgba(6, 182, 212, 0.22), 0 20px 55px rgba(0, 0, 0, 0.7);
+      border: 1.5px solid rgba(56, 189, 248, 0.50);
+      border-radius: 16px;
+      box-shadow: 0 0 28px rgba(6, 182, 212, 0.16), 0 12px 32px rgba(0, 0, 0, 0.6);
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
     .omnibox-hero-top {
-      padding: 16px 20px 14px 20px;
-      background: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.16), transparent 72%);
-      border-bottom: 1px solid rgba(56, 189, 248, 0.18);
+      padding: 10px 14px;
+      background: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.15), transparent 72%);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.16);
       display: flex;
       flex-direction: column;
-      gap: 11px;
+      gap: 8px;
     }
     .omnibox-title-row {
       display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 8px;
+      flex-wrap: wrap; gap: 6px;
     }
     .omnibox-search-bar {
       display: flex;
       align-items: center;
       gap: 8px;
       background: rgba(4, 8, 20, 0.96);
-      border: 2px solid rgba(56, 189, 248, 0.55);
-      border-radius: 16px;
-      padding: 7px 10px 7px 14px;
-      box-shadow: 0 0 26px rgba(6, 182, 212, 0.18), inset 0 1px 0 rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(56, 189, 248, 0.55);
+      border-radius: 12px;
+      padding: 4px 8px 4px 12px;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.15), inset 0 1px 0 rgba(255,255,255,0.06);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .omnibox-search-bar:focus-within {
       border-color: #34d399;
-      box-shadow: 0 0 34px rgba(16, 185, 129, 0.30);
+      box-shadow: 0 0 28px rgba(16, 185, 129, 0.28);
     }
     .omnibox-search-icon {
-      font-size: 18px; flex-shrink: 0; opacity: 0.9;
+      font-size: 16px; flex-shrink: 0; opacity: 0.9;
     }
     .omnibox-input {
       flex: 1;
       background: transparent;
       border: none;
       color: #ffffff;
-      font-size: 14.5px;
+      font-size: 13.5px;
       font-weight: 500;
-      padding: 8px 6px;
+      padding: 6px 4px;
       outline: none;
       min-width: 0;
     }
     .omnibox-input::placeholder { color: #94a3b8; }
     .omnibox-controls-row {
       display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 8px;
+      flex-wrap: wrap; gap: 6px;
     }
     .omnibox-select-group {
-      display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
     }
     .omnibox-select {
       background: rgba(15, 23, 42, 0.96);
       color: #e2e8f0;
       border: 1px solid rgba(56, 189, 248, 0.38);
-      border-radius: 9px;
-      padding: 5px 10px;
-      font-size: 11.5px;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 11px;
       font-weight: 700;
       outline: none;
       cursor: pointer;
@@ -255,12 +315,12 @@
       color: #030712;
       font-weight: 900;
       border: none;
-      padding: 10px 20px;
-      border-radius: 12px;
+      padding: 7px 16px;
+      border-radius: 9px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
       white-space: nowrap;
-      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+      box-shadow: 0 3px 12px rgba(16, 185, 129, 0.32);
       transition: transform 0.12s, filter 0.15s;
     }
     .omnibox-send-btn:hover { filter: brightness(1.12); transform: translateY(-1px); }
@@ -269,12 +329,12 @@
     /* FLOATING TYCOON CHARACTER POPUP MODAL IN 3D SCENE */
     .tycoon-popup {
       position: absolute;
-      top: 52px; right: 14px;
-      width: 295px;
+      top: 12px; right: 206px;
+      width: 280px;
       background: rgba(8, 14, 30, 0.95);
       border: 2px solid #f59e0b;
-      border-radius: 14px;
-      padding: 11px 13px;
+      border-radius: 12px;
+      padding: 9px 11px;
       box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 158, 11, 0.35);
       backdrop-filter: blur(14px);
       z-index: 20;
@@ -286,25 +346,25 @@
       to { transform: scale(1) translateY(0); opacity: 1; }
     }
 
-    /* TIER 3: BOTTOM SELECTION SCREENS (4-COLUMN RESPONSIVE AGENT MATRIX + QUICK MISSIONS) */
+    /* TIER 3: BOTTOM SELECTION SCREENS (SMART COMPACT 4-COLUMN MATRIX + MISSIONS) */
     .assign-header {
-      padding: 10px 16px;
+      padding: 7px 14px;
       background: rgba(8, 13, 27, 0.96);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 10px;
-      font-size: 12px; font-weight: 800; color: #fde047;
+      flex-wrap: wrap; gap: 8px;
+      font-size: 11.5px; font-weight: 800; color: #fde047;
     }
     .selection-tabs {
-      display: flex; gap: 6px; flex-wrap: wrap;
+      display: flex; gap: 5px; flex-wrap: wrap;
     }
     .sel-tab {
       background: rgba(15, 23, 42, 0.9);
       color: #cbd5e1;
       border: 1px solid rgba(148, 163, 184, 0.28);
-      border-radius: 9px;
-      padding: 6px 12px;
-      font-size: 11.5px;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 11px;
       font-weight: 800;
       cursor: pointer;
       transition: all 0.15s;
@@ -316,126 +376,139 @@
     }
     .desks-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      padding: 14px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 7px;
+      padding: 8px 10px;
     }
-    @media (max-width: 1150px) {
-      .desks-grid { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 1100px) {
+      .desks-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-    @media (max-width: 640px) {
-      .desks-grid { grid-template-columns: 1fr; }
+    @media (max-width: 600px) {
+      .desks-grid { grid-template-columns: minmax(0, 1fr); }
     }
     .mission-cards-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      padding: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      padding: 10px 12px;
     }
     @media (max-width: 900px) {
-      .mission-cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .mission-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 600px) {
-      .mission-cards-grid { grid-template-columns: 1fr; }
+      .mission-cards-grid { grid-template-columns: minmax(0, 1fr); }
     }
     .mission-card {
       background: var(--bg-card);
       border: 1px solid rgba(56, 189, 248, 0.24);
-      border-radius: 13px;
-      padding: 12px 14px;
+      border-radius: 11px;
+      padding: 9px 11px;
       cursor: pointer;
       transition: all 0.18s;
-      display: flex; flex-direction: column; gap: 6px;
+      display: flex; flex-direction: column; gap: 4px;
       text-align: left;
+      min-width: 0;
     }
     .mission-card:hover {
       border-color: #fde047;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 26px rgba(6, 182, 212, 0.18);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(6, 182, 212, 0.16);
     }
     .desk-box {
       background: var(--bg-card);
       border: 1px solid rgba(255, 255, 255, 0.10);
-      border-radius: 13px;
-      padding: 10px 11px;
-      display: flex; flex-direction: column; gap: 6px;
+      border-radius: 11px;
+      padding: 8px 9px;
+      display: flex; flex-direction: column; gap: 5px;
       transition: all 0.2s; position: relative;
+      min-width: 0; overflow: hidden;
     }
     .desk-box:hover {
       border-color: rgba(245, 158, 11, 0.55);
       transform: translateY(-1px);
     }
     .desk-box.focused {
-      border: 2px solid #f59e0b;
-      box-shadow: 0 0 24px rgba(245, 158, 11, 0.32);
+      border: 1.5px solid #f59e0b;
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.30);
     }
     .desk-top {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      min-width: 0;
     }
     .pixar-avatar-wrap {
-      display: flex; align-items: center; gap: 9px; cursor: pointer;
+      display: flex; align-items: center; gap: 7px; cursor: pointer;
+      min-width: 0; flex: 1;
     }
     .pixar-portrait {
-      width: 42px; height: 42px; border-radius: 50%;
-      border: 2px solid #f59e0b;
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1.5px solid #f59e0b;
       background-repeat: no-repeat;
       background-size: 620% 620%;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.6);
       flex-shrink: 0;
       position: relative;
     }
     .lvl-pill {
-      position: absolute; bottom: -4px; right: -4px;
+      position: absolute; bottom: -3px; right: -3px;
       background: linear-gradient(135deg, #f59e0b, #ef4444);
-      color: #fff; font-size: 8px; font-weight: 900;
-      padding: 1px 4px; border-radius: 6px;
+      color: #fff; font-size: 7.5px; font-weight: 900;
+      padding: 1px 3.5px; border-radius: 5px;
       border: 1px solid #040711;
     }
-    .desk-title {
-      font-size: 11.5px; font-weight: 800; color: #ffffff;
+    .desk-title-wrap {
+      min-width: 0; flex: 1;
     }
-    .desk-role { font-size: 9.8px; color: var(--text-muted); margin-top: 1px; }
+    .desk-title {
+      font-size: 11px; font-weight: 800; color: #ffffff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .desk-role {
+      font-size: 9.3px; color: var(--text-muted); margin-top: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
     .engine-select {
       background: rgba(7, 12, 24, 0.95);
       color: #fde047;
-      border: 1px solid rgba(245, 158, 11, 0.45);
-      border-radius: 7px; font-size: 9.5px; font-weight: 800;
-      padding: 3px 6px; outline: none; cursor: pointer;
+      border: 1px solid rgba(245, 158, 11, 0.40);
+      border-radius: 6px; font-size: 8.8px; font-weight: 800;
+      padding: 2px 4px; outline: none; cursor: pointer;
+      max-width: 78px; flex-shrink: 0;
     }
     .desk-speech {
-      font-size: 10.5px; color: #34d399;
+      font-size: 9.8px; color: #34d399;
       background: rgba(6, 11, 23, 0.78);
-      padding: 4px 8px; border-radius: 7px;
-      border-left: 3px solid var(--emerald);
+      padding: 3px 7px; border-radius: 6px;
+      border-left: 2.5px solid var(--emerald);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .progress-track {
-      width: 100%; height: 6px; background: rgba(15, 23, 42, 0.95);
+      width: 100%; height: 4px; background: rgba(15, 23, 42, 0.95);
       border-radius: 999px; overflow: hidden;
     }
     .progress-fill {
       height: 100%; border-radius: 999px; transition: width 0.35s ease;
     }
-    .desk-assign-row { display: flex; gap: 5px; align-items: center; }
+    .desk-assign-row { display: flex; gap: 4px; align-items: center; min-width: 0; }
     .desk-input {
       flex: 1; background: rgba(6, 10, 22, 0.95);
       border: 1px solid rgba(148, 163, 184, 0.28);
-      color: #f1f5f9; padding: 5px 8px; border-radius: 7px;
-      font-size: 10.5px; outline: none; min-width: 0;
+      color: #f1f5f9; padding: 4px 7px; border-radius: 6px;
+      font-size: 10px; outline: none; min-width: 0;
     }
     .desk-input:focus { border-color: #fde047; }
     .btn-assign {
       background: linear-gradient(135deg, #f59e0b, #ea580c);
-      color: #ffffff; border: none; padding: 5px 9px; border-radius: 7px;
-      font-size: 10px; font-weight: 900; cursor: pointer; white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+      color: #ffffff; border: none; padding: 4px 7px; border-radius: 6px;
+      font-size: 9.5px; font-weight: 900; cursor: pointer; white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.30); flex-shrink: 0;
     }
     .btn-assign:hover { filter: brightness(1.15); }
     .btn-view-work {
       background: rgba(16, 185, 129, 0.18); color: #34d399;
       border: 1px solid rgba(16, 185, 129, 0.45);
-      padding: 5px 7px; border-radius: 7px;
-      font-size: 10px; font-weight: 800; cursor: pointer; white-space: nowrap;
+      padding: 4px 6px; border-radius: 6px;
+      font-size: 9.5px; font-weight: 800; cursor: pointer; white-space: nowrap;
+      flex-shrink: 0;
     }
 
     /* WORKBENCH ARTIFACT DRAWER */
@@ -485,23 +558,23 @@
 
     /* CHAT STREAM INSIDE MIDDLE OMNIBOX */
     .quick-bar {
-      display: flex; gap: 6px; flex-wrap: wrap;
+      display: flex; gap: 5px; flex-wrap: wrap;
     }
     .q-chip {
-      flex-shrink: 0; font-size: 11px; font-weight: 700;
-      padding: 5px 11px; border-radius: 999px;
+      flex-shrink: 0; font-size: 10.5px; font-weight: 700;
+      padding: 4px 10px; border-radius: 999px;
       background: rgba(23, 33, 58, 0.95);
       border: 1px solid rgba(56, 189, 248, 0.32);
       color: #e2e8f0; cursor: pointer; transition: all 0.15s;
     }
     .q-chip:hover { border-color: var(--amber); background: rgba(245, 158, 11, 0.18); color: #fff; }
     .chat-box {
-      overflow-y: auto; padding: 14px 18px;
-      display: flex; flex-direction: column; gap: 12px;
-      min-height: 220px; max-height: 480px;
+      overflow-y: auto; padding: 8px 12px;
+      display: flex; flex-direction: column; gap: 8px;
+      min-height: 48px; max-height: 290px;
       background: rgba(4, 8, 18, 0.55);
     }
-    .bubble { padding: 12px 15px; border-radius: 14px; font-size: 13px; line-height: 1.6; max-width: 96%; }
+    .bubble { padding: 8px 12px; border-radius: 11px; font-size: 12.5px; line-height: 1.5; max-width: 98%; }
     .bubble.user {
       align-self: flex-end; background: linear-gradient(135deg, #0284c7, #2563eb);
       color: #fff; border-bottom-right-radius: 4px;
@@ -512,17 +585,17 @@
       color: #f1f5f9; border-bottom-left-radius: 4px; width: 100%;
     }
     .bubble-head {
-      font-size: 10.5px; font-weight: 800; color: #fbbf24; margin-bottom: 6px;
+      font-size: 10px; font-weight: 800; color: #fbbf24; margin-bottom: 4px;
       display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;
     }
     .bubble-actions {
-      display: flex; gap: 5px; margin-top: 10px; padding-top: 8px;
+      display: flex; gap: 5px; margin-top: 7px; padding-top: 6px;
       border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap;
     }
     .msg-act-btn {
       background: rgba(15, 23, 42, 0.92); color: #cbd5e1;
       border: 1px solid rgba(148, 163, 184, 0.28);
-      border-radius: 7px; padding: 4px 8px; font-size: 10.5px; font-weight: 700;
+      border-radius: 6px; padding: 3px 7px; font-size: 10px; font-weight: 700;
       cursor: pointer; transition: all 0.15s;
     }
     .msg-act-btn:hover { border-color: #38bdf8; color: #fff; background: rgba(56, 189, 248, 0.16); }
@@ -672,6 +745,10 @@
       <div class="stage-backdrop">
       <div class="stage-wrap" id="stageContainer">
         <canvas id="office3dCanvas"></canvas>
+
+        <!-- Sleek Left & Right Cockpit HUD Wings filling the widescreen stage frame -->
+        <div class="stage-wing-hud left" id="stageWingLeft"></div>
+        <div class="stage-wing-hud right" id="stageWingRight"></div>
 
         <!-- Floating Tycoon Character Quick-Task Modal inside 3D Scene -->
         <div class="tycoon-popup" id="tycoonPopupModal">
@@ -1184,19 +1261,19 @@
               <div class="pixar-portrait" style="background-image:url('${PIXAR_DIORAMA_URI}');background-position:${d.bgPos};border-color:${d.color};">
                 <span class="lvl-pill">LVL ${d.level}</span>
               </div>
-              <div>
-                <div class="desk-title">${d.name}</div>
-                <div class="desk-role">${d.role}</div>
+              <div class="desk-title-wrap">
+                <div class="desk-title" title="${d.name}">${d.name}</div>
+                <div class="desk-role" title="${d.role}">${d.role}</div>
               </div>
             </div>
             <select class="engine-select" id="engine-${d.id}" onchange="updateDeskEngine('${d.id}', this.value)">
-              <option value="Claude Code" ${d.engine.includes('Claude') ? 'selected' : ''}>Claude Code</option>
-              <option value="OpenAI Codex" ${d.engine.includes('Codex') ? 'selected' : ''}>OpenAI Codex</option>
-              <option value="Google Antigravity" ${d.engine.includes('Antigravity') ? 'selected' : ''}>Google Antigravity</option>
-              <option value="SYNAX-LLM Türkçe" ${d.engine.includes('SYNAX') ? 'selected' : ''}>SYNAX-LLM Türkçe</option>
+              <option value="Claude Code" ${d.engine.includes('Claude') ? 'selected' : ''}>Claude</option>
+              <option value="OpenAI Codex" ${d.engine.includes('Codex') ? 'selected' : ''}>Codex</option>
+              <option value="Google Antigravity" ${d.engine.includes('Antigravity') ? 'selected' : ''}>AGY</option>
+              <option value="SYNAX-LLM Türkçe" ${d.engine.includes('SYNAX') ? 'selected' : ''}>SYNAX</option>
             </select>
           </div>
-          <div class="desk-speech" id="speech-${d.id}" style="border-left-color:${d.color};">💬 ${d.speech}</div>
+          <div class="desk-speech" id="speech-${d.id}" style="border-left-color:${d.color};" title="${d.speech}">💬 ${d.speech}</div>
           <div class="progress-track">
             <div class="progress-fill" id="prog-${d.id}" style="width:${d.progress}%;background:${d.color};"></div>
           </div>
@@ -1206,14 +1283,30 @@
               class="desk-input"
               id="input-${d.id}"
               value="${d.defaultTask}"
-              placeholder="Bu Pixar ajanına özel görev yazın..."
+              placeholder="Özel görev..."
               onkeydown="if(event.key==='Enter') assignTaskToSingleAgent('${d.id}')"
             />
-            <button class="btn-assign" onclick="assignTaskToSingleAgent('${d.id}')">🎯 Görev Ata</button>
-            <button class="btn-view-work" onclick="switchWorkbenchTab('${d.targetTab}')">📄 Çıktı</button>
+            <button class="btn-assign" onclick="assignTaskToSingleAgent('${d.id}')">🎯 Ata</button>
+            <button class="btn-view-work" onclick="switchWorkbenchTab('${d.targetTab}')" title="Çıktıyı Gör">📄</button>
           </div>
         </div>
       `).join('');
+
+      // Also populate the Left (Desks 1-4) & Right (Desks 5-8) 3D Stage Cockpit HUD Wings
+      const wingLeft = document.getElementById('stageWingLeft');
+      const wingRight = document.getElementById('stageWingRight');
+      const renderWingCard = (d, idx) => `
+        <div class="wing-card" onclick="focusPixarCharacter(${idx})" style="${focusedDeskIndex === idx ? 'border-color:#fde047;background:rgba(245,158,11,0.18);' : ''}">
+          <span class="wing-dot" style="background:${d.color};box-shadow:0 0 8px ${d.color};"></span>
+          <div class="wing-info">
+            <div class="wing-name">${d.shortTitle}</div>
+            <div class="wing-sub">${d.speech}</div>
+          </div>
+          <span class="wing-lvl">L${d.level}</span>
+        </div>
+      `;
+      if (wingLeft) wingLeft.innerHTML = AGENT_DESKS.slice(0, 4).map((d, i) => renderWingCard(d, i)).join('');
+      if (wingRight) wingRight.innerHTML = AGENT_DESKS.slice(4, 8).map((d, i) => renderWingCard(d, i + 4)).join('');
     }
 
     function updateDeskEngine(agentId, newEngine) {
@@ -1350,8 +1443,16 @@
         }
       });
 
-      // Spawn continuous Tycoon orbs from all 8 Pixar characters
-      AGENT_DESKS.forEach((_, idx) => spawnTycoonBurst(idx));
+      // Spawn gentle initial Tycoon orbs without overlapping all 8 yellow XP texts at frame 0
+      [0, 3, 5, 7].forEach((idx, k) => {
+        const d = AGENT_DESKS[idx];
+        if (d) {
+          tycoonOrbs.push({
+            fromU: d.u, fromV: d.v, toU: 0.500, toV: 0.475,
+            t: k * 0.24, speed: 0.015, color: d.color, size: 4.5
+          });
+        }
+      });
 
       function animateTycoonLoop() {
         tick += 0.035;
@@ -1375,15 +1476,15 @@
             });
           }
         }
-        if (Math.random() < 0.025) {
+        if (Math.random() < 0.008 && xpFloaters.length === 0) {
           const rIdx = Math.floor(Math.random() * AGENT_DESKS.length);
           const d = AGENT_DESKS[rIdx];
           xpFloaters.push({
-            u: d.headU + (Math.random() - 0.5) * 0.03,
+            u: d.headU,
             v: d.headV,
             text: d.xpTag,
             color: d.color,
-            alpha: 1.0,
+            alpha: 0.95,
             dy: 0
           });
         }
@@ -1394,8 +1495,18 @@
         ctx.clearRect(0, 0, W, H);
 
         // Compute camera transform mapping normalized (u, v) in [0..1] to screen (sx, sy)
-        const drawW = W * camZoom;
-        const drawH = H * camZoom;
+        // Preserve exact 1376:768 native aspect ratio for the 3D diorama while seamlessly extending the studio background across the full frame width
+        const IMG_ASPECT = 1376 / 768;
+        let baseW, baseH;
+        if (W / H >= IMG_ASPECT) {
+          baseH = H * 1.04;
+          baseW = baseH * IMG_ASPECT;
+        } else {
+          baseW = W;
+          baseH = W / IMG_ASPECT;
+        }
+        const drawW = baseW * camZoom;
+        const drawH = baseH * camZoom;
         const offsetX = (W * 0.5) - (camCenterU * drawW) + (parallaxX * dpr);
         const offsetY = (H * 0.5) - (camCenterV * drawH) + (parallaxY * dpr);
 
@@ -1406,8 +1517,16 @@
           };
         }
 
-        // 1. Draw the High-Resolution Pixar + Tycoon 3D Office Diorama
+        // 1. Draw the High-Resolution Pixar + Tycoon 3D Office Diorama with Zero-Seam Edge-to-Edge Studio Scanline Extension
         if (dioramaImg.complete && dioramaImg.naturalWidth > 0) {
+          const nw = dioramaImg.naturalWidth;
+          const nh = dioramaImg.naturalHeight;
+          if (offsetX > 0) {
+            ctx.drawImage(dioramaImg, 0, 0, 8, nh, 0, offsetY, offsetX + 2, drawH);
+          }
+          if (offsetX + drawW < W) {
+            ctx.drawImage(dioramaImg, nw - 8, 0, 8, nh, offsetX + drawW - 2, offsetY, W - (offsetX + drawW - 2), drawH);
+          }
           ctx.drawImage(dioramaImg, offsetX, offsetY, drawW, drawH);
         }
 
@@ -1491,13 +1610,14 @@
             ctx.restore();
           }
 
-          // Floating Pixar-Tycoon Character Nameplate & Live Progress Pill above head
-          const bobY = Math.sin(tick * 1.8 + idx) * 2.8 * dpr;
-          const badgeY = headPt.y - 14 * dpr * camZoom + bobY;
+          // Floating Pixar-Tycoon Character Nameplate & Live Progress Pill above head (scaled proportionally to stage height)
+          const uiScale = Math.max(0.66, Math.min(1.15, (drawH / dpr) / 510));
+          const bobY = Math.sin(tick * 1.8 + idx) * 2.2 * dpr * uiScale;
+          const badgeY = headPt.y - 11 * dpr * uiScale + bobY;
           const titleText = `${d.shortTitle} · %${d.progress}`;
-          ctx.font = `800 ${Math.round(9.2 * dpr * Math.min(1.18, camZoom))}px Inter, -apple-system, sans-serif`;
-          const tw = ctx.measureText(titleText).width + 16 * dpr;
-          const bh = 18 * dpr * Math.min(1.15, camZoom);
+          ctx.font = `800 ${Math.round(9.0 * dpr * uiScale)}px Inter, -apple-system, sans-serif`;
+          const tw = ctx.measureText(titleText).width + 13 * dpr * uiScale;
+          const bh = 16.5 * dpr * uiScale;
           const bx = headPt.x - tw / 2;
           const by = badgeY - bh / 2;
 
@@ -2277,12 +2397,8 @@ irm https://raw.githubusercontent.com/ofaemd-creator/synax-agent-office/main/ins
     function updateEvolutionHUD(data) {
       if (!data) return;
       const badge = document.getElementById('synaxEvoStatusBadge');
-      const sk = data.latest_evolved_skill || {};
       if (badge) {
-        badge.innerHTML =
-          `🤖 <b>Tamamlanan Otonom Görev: ${data.total_completed_count || 4}</b> · ` +
-          `🧬 <b>Evrim Epoch #${data.evolution_epoch || 1} (${data.total_installed_skills || 45} Beceri)</b> · ` +
-          `Son: <code>${sk.id || 'academic-publication-pipeline'}</code>`;
+        badge.innerHTML = `● 8 Ajan · Epoch #${data.evolution_epoch || 1} (${data.total_installed_skills || 45} Beceri)`;
       }
     }
 
@@ -2374,12 +2490,8 @@ irm https://raw.githubusercontent.com/ofaemd-creator/synax-agent-office/main/ins
             const st = await r.json();
             if (st && (st.evolution_epoch || st.total_completed_count !== undefined)) {
               const badge = document.getElementById('synaxEvoStatusBadge');
-              const sk = st.latest_evolved_skill || {};
               if (badge) {
-                badge.innerHTML =
-                  `🤖 <b>Tamamlanan Otonom Görev: ${st.total_completed_count || 4}</b> · ` +
-                  `🧬 <b>Evrim Epoch #${st.evolution_epoch || 18} (${st.total_installed_skills || 45} Beceri)</b> · ` +
-                  `Son: <code>${sk.id || 'academic-publication-pipeline'}</code>`;
+                badge.innerHTML = `● 8 Ajan · Epoch #${st.evolution_epoch || 18} (${st.total_installed_skills || 45} Beceri)`;
               }
               const feedBox = document.getElementById('synaxLiveMissionsTicker');
               if (feedBox && Array.isArray(st.recent_completed_missions) && st.recent_completed_missions.length > 0) {
@@ -2445,15 +2557,10 @@ irm https://raw.githubusercontent.com/ofaemd-creator/synax-agent-office/main/ins
       pollAutomationAndEvolutionStatus();
       setInterval(() => { if (_autoLoopEnabled) pollAutomationAndEvolutionStatus(); }, 10000);
       _autoLoopTimer = setInterval(() => { if (_autoLoopEnabled) triggerAutonomousOfficeShift(true); }, 35000);
-      appendChatBubble(
-        'ai',
-        'Merhaba **Dr. Aydın**! **SYNAX-OMNI 1.5 — 3D Pixar-Tycoon Ajan Ofisi** yenilendi!\n\n' +
-        '- **Üstte:** Etkileşimli 3D Ajan Ofisi sahnesi (herhangi bir karaktere tıklayıp yakınlaşabilirsiniz).\n' +
-        '- **Ortada:** Belirgin arama çubuğu tarzı canlı sohbet ve komuta merkezi (**NVIDIA NIM + OpenRouter + Canlı İnternet + PubMed**).\n' +
-        '- **Altta:** 8 Pixar Ajanı görev matrisi, Akademik/PRISMA ve Silikon seçim ekranları.\n\n' +
-        'Yukarıdaki arama çubuğuna sorunuzu yazıp **Enter** tuşuna basmanız yeterli — yanıtlar anında burada görünür ve `.MD`, `.TXT`, `.DOC`, `.PDF` olarak indirilebilir.',
-        'SYNAX-OMNI 1.5 · 3D Ajan Ofisi'
-      );
+      const chatBox = document.getElementById('chatMessagesBox');
+      if (chatBox) {
+        chatBox.innerHTML = `<div style="font-size:12px;color:#94a3b8;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:2px 4px;"><span>✨ <strong style="color:#38bdf8;">SYNAX-OMNI 1.5</strong> ve <strong>8 Pixar Ajanı</strong> hazır — yukarıdaki arama çubuğundan soru sorabilir veya aşağıdaki seçim ekranlarından görev başlatabilirsiniz.</span><span style="color:#34d399;font-size:11px;font-weight:700;">● Canlı Web + PubMed + 0-ULP Aktif</span></div>`;
+      }
       document.addEventListener('click', (e) => {
         const dd = document.getElementById('appsDropdownMenu');
         if (dd && dd.classList.contains('open') && !e.target.closest('.nav-dropdown-wrap')) {
