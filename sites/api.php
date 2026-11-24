@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $server_groq_key = getenv('GROQ_API_KEY') ?: '';
 $server_openrouter_key = getenv('OPENROUTER_API_KEY') ?: '';
 $server_nvidia_key = getenv('NVIDIA_API_KEY') ?: '';
+$server_evren_key = getenv('EVREN_API_KEY') ?: '';
 foreach ([__DIR__, dirname(__DIR__)] as $__env_dir) {
     if (@is_readable($__env_dir . '/.synax_env.php')) {
         include $__env_dir . '/.synax_env.php';
@@ -34,6 +35,9 @@ $providers_vault = [];
 if (@is_readable($providers_vault_file)) {
     $__pv_raw = preg_replace('/^<\?php exit; \?>\R?/', '', (string)@file_get_contents($providers_vault_file));
     $providers_vault = json_decode($__pv_raw, true) ?: [];
+}
+if (!$server_evren_key && !empty($providers_vault['evren_api_key'])) {
+    $server_evren_key = trim($providers_vault['evren_api_key']);
 }
 if (!$server_openrouter_key && !empty($providers_vault['openrouter_api_key'])) {
     $server_openrouter_key = trim($providers_vault['openrouter_api_key']);
@@ -999,7 +1003,7 @@ if ($action === 'save_providers_vault') {
         exit;
     }
     $pv = synax_read_guarded($providers_vault_file);
-    foreach (['openrouter_api_key', 'nvidia_api_key', 'groq_api_key'] as $pk) {
+    foreach (['evren_api_key', 'openrouter_api_key', 'nvidia_api_key', 'groq_api_key'] as $pk) {
         if (isset($data[$pk])) {
             $val = trim((string)$data[$pk]);
             if ($val !== '' && strpos($val, '••') === false) {
@@ -1015,6 +1019,7 @@ if ($action === 'save_providers_vault') {
         'status' => 'PROVIDERS_VAULT_SAVED',
         'providers' => [
             'groq_configured' => !empty($pv['groq_api_key']) || !empty($server_groq_key),
+            'evren_configured' => !empty($pv['evren_api_key']) || !empty($server_evren_key),
             'openrouter_configured' => !empty($pv['openrouter_api_key']) || !empty($server_openrouter_key),
             'nvidia_configured' => !empty($pv['nvidia_api_key']) || !empty($server_nvidia_key),
             'pollinations_unlimited' => true,
@@ -1042,6 +1047,7 @@ if ($action === 'cortex_status') {
         'cortex' => $cortex,
         'providers' => [
             'groq_configured' => !empty($server_groq_key),
+            'evren_configured' => !empty($server_evren_key),
             'openrouter_configured' => !empty($server_openrouter_key),
             'nvidia_configured' => !empty($server_nvidia_key),
             'pollinations_unlimited' => true,
@@ -1817,15 +1823,32 @@ function call_openai_compatible_provider($url, $api_key, $model, $messages, $tem
     return null;
 }
 
-// UNLIMITED MULTI-PROVIDER FAILOVER MESH (v1.5):
-// Tier 1: NVIDIA NIM Cloud (DeepSeek-R1 / Nemotron Ultra 253B / Qwen2.5-Coder-32B)
-// Tier 2: OpenRouter Frontier Mesh (DeepSeek-R1:free / Qwen3-Coder:free / Gemma-3-27B:free / Llama-3.3-70B:free)
-// Tier 3: Groq Ultra-Fast LPU Mesh (GPT-OSS-120B / Qwen-3.8-27B / Llama-3.3-70B / GPT-OSS-20B)
-// Tier 4: Zero-Key Unlimited Cloud Mesh (Pollinations OpenAI / SearchGPT / DeepSeek / Mistral)
+// UNLIMITED 5-TIER MULTI-PROVIDER FAILOVER MESH (v1.5):
+// Tier 1: EVREN H200 Sovereign Cluster (DeepSeek-V4.1-Flash / GLM-5.3 / Qwen3.8-Flash-Next / Gemma-4-31B · 15M Tok/Day)
+// Tier 2: NVIDIA NIM Cloud (Nemotron-3 Ultra 550B / Mistral-Large-4 1T / Nemotron-3.5 Super & Lightning)
+// Tier 3: OpenRouter Frontier Mesh (:free models)
+// Tier 4: Groq Ultra-Fast LPU Mesh (GPT-OSS-120B / Qwen-3.8-27B / Llama-3.3-70B)
+// Tier 5: Zero-Key Unlimited Cloud Mesh (Pollinations OpenAI / SearchGPT / DeepSeek / Mistral)
 
-$provider_pref = trim($data['provider_preference'] ?? 'auto'); // 'auto', 'nvidia', 'openrouter', 'groq'
+$provider_pref = trim($data['provider_preference'] ?? 'auto'); // 'auto', 'evren', 'nvidia', 'openrouter', 'groq'
 $routing_queue = [];
 
+$evren_model_map = [
+    'synax-omni-ultra' => 'deepseek-v4.1-flash',
+    'synax-core-1.5' => 'glm-5.3',
+    'synax-med-scholar' => 'deepseek-v4.1-flash',
+    'synax-silicon-code' => 'glm-5.3',
+    'synax-biostat-lyapunov' => 'deepseek-v4.1-flash',
+    'synax-turbo-flash' => 'qwen3.8-flash-next',
+];
+$preferred_evren = $evren_model_map[$synax_model_key] ?? 'deepseek-v4.1-flash';
+
+if ($server_evren_key && in_array($provider_pref, ['auto', 'evren'], true)) {
+    $evren_headers = ['X-API-Key: ' . $server_evren_key];
+    foreach (array_values(array_unique([$preferred_evren, 'deepseek-v4.1-flash', 'glm-5.3', 'qwen3.8-flash-next', 'gemma-4-31b', 'auto'])) as $em) {
+        $routing_queue[] = ['tier' => 'EVREN H200', 'url' => 'https://evren-llmapi.ssyz.org.tr/v1/chat/completions', 'key' => $server_evren_key, 'model' => $em, 'headers' => $evren_headers];
+    }
+}
 if ($server_nvidia_key && in_array($provider_pref, ['auto', 'nvidia'], true)) {
     foreach (array_values(array_unique([$preferred_nvidia, 'nvidia/nemotron-3.5-lightning-30b-a3b', 'google/gemma-4-31b-it', 'nvidia/nemotron-3-ultra-550b-a55b', 'mistralai/mistral-large-4-1t-a52b'])) as $nm) {
         $routing_queue[] = ['tier' => 'NVIDIA NIM', 'url' => 'https://integrate.api.nvidia.com/v1/chat/completions', 'key' => $server_nvidia_key, 'model' => $nm, 'headers' => []];
