@@ -1,6 +1,6 @@
 {
   "engine_version": "6.4.0",
-  "evolution_epoch": 17,
+  "evolution_epoch": 18,
   "base_skills_count": 21,
   "evolved_skills": [
     {
@@ -82,14 +82,14 @@
     },
     {
       "id": "network-meta-analysis-grade",
-      "epoch": 8,
+      "epoch": 18,
       "title_tr": "Ağ Meta-Analizi (Network Meta-Analysis), SUCRA Sıralaması & CINeMA/GRADE",
       "desc_tr": "Çoklu tedavi karşılaştırmalı Ağ Meta-Analizi (NMA), tutarsızlık (node-splitting) kontrolü ve SUCRA tedavi başarı sıralaması",
       "desc_en": "Frequentist and Bayesian Network Meta-Analysis (NMA), node-splitting inconsistency checks, SUCRA treatment ranking probabilities, and CINeMA/GRADE certainty evaluation.",
       "agent_owner": "Agent-Biostat & Agent-Scholar",
-      "sha256": "295116b6fd231eecd6bc63cde6596aa4bd0e0add248e51c333edb9a2e4e810ed",
+      "sha256": "9d1aef63b20398d6ebe2ca8752794cb0fcad2d6d093cc5112b98589e48ff2d03",
       "installed_path": "skills/network-meta-analysis-grade/SKILL.md",
-      "timestamp_utc": "2026-11-21 18:07:07 UTC"
+      "timestamp_utc": "2026-11-25 07:40:14 UTC"
     },
     {
       "id": "individual-participant-data-ipd",
@@ -573,8 +573,35 @@
         "Aktif toplam beceri kapasitesi 46 beceriye yükseltildi.",
         "8 Ajanlı 3D Ofis telemetri önbelleği, Lyapunov sıfır-sapma (V_{k+1} < V_k) ve PRISMA 2020 kanıt indeksleri güncellendi."
       ]
+    },
+    {
+      "epoch": 18,
+      "timestamp_utc": "2026-11-25 07:40:14 UTC",
+      "synthesized_skill": {
+        "id": "network-meta-analysis-grade",
+        "epoch": 18,
+        "title_tr": "Ağ Meta-Analizi (Network Meta-Analysis), SUCRA Sıralaması & CINeMA/GRADE",
+        "desc_tr": "Çoklu tedavi karşılaştırmalı Ağ Meta-Analizi (NMA), tutarsızlık (node-splitting) kontrolü ve SUCRA tedavi başarı sıralaması",
+        "desc_en": "Frequentist and Bayesian Network Meta-Analysis (NMA), node-splitting inconsistency checks, SUCRA treatment ranking probabilities, and CINeMA/GRADE certainty evaluation.",
+        "agent_owner": "Agent-Biostat & Agent-Scholar",
+        "sha256": "9d1aef63b20398d6ebe2ca8752794cb0fcad2d6d093cc5112b98589e48ff2d03",
+        "installed_path": "skills/network-meta-analysis-grade/SKILL.md",
+        "timestamp_utc": "2026-11-25 07:40:14 UTC"
+      },
+      "verification_gate": {
+        "passed": true,
+        "lyapunov_verified": true,
+        "dersimonian_laird_verified": true,
+        "security_sanitizer_verified": true
+      },
+      "total_installed_skills": 46,
+      "website_improvements": [
+        "Epoch #018: Yeni otonom beceri `network-meta-analysis-grade` (Ağ Meta-Analizi (Network Meta-Analysis), SUCRA Sıralaması & CINeMA/GRADE) sentezlendi ve doğrulandı.",
+        "Aktif toplam beceri kapasitesi 46 beceriye yükseltildi.",
+        "8 Ajanlı 3D Ofis telemetri önbelleği, Lyapunov sıfır-sapma (V_{k+1} < V_k) ve PRISMA 2020 kanıt indeksleri güncellendi."
+      ]
     }
   ],
   "total_installed_skills": 46,
-  "last_updated_utc": "2026-11-24 22:05:18 UTC"
+  "last_updated_utc": "2026-11-25 07:40:14 UTC"
 }
