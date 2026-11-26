@@ -1,19 +1,19 @@
 {
   "status": "AUTONOMOUS_EVOLUTION_ACTIVE",
   "engine_version": "6.4.0",
-  "evolution_epoch": 19,
+  "evolution_epoch": 20,
   "total_installed_skills": 46,
-  "last_updated_utc": "2026-11-25 21:21:05 UTC",
+  "last_updated_utc": "2026-11-26 07:29:56 UTC",
   "latest_evolved_skill": {
-    "id": "individual-participant-data-ipd",
-    "epoch": 19,
-    "title_tr": "Bireysel Hasta Verisi (IPD) Meta-Analizi & Alt-Grup Etkileşim Modeli",
-    "desc_tr": "PRISMA-IPD uyumlu tek ve iki aşamalı Bireysel Hasta Verisi meta-analizi ve karma etkili alt-grup etkileşim modellemesi",
-    "desc_en": "PRISMA-IPD compliant one-stage and two-stage Individual Participant Data meta-analysis with mixed-effects treatment-by-covariate interaction modeling.",
-    "agent_owner": "Agent-Biostat (Masa 3)",
-    "sha256": "b4a60d21870f0628e662e446be83e36d153f918dba4399e7ace31fefdc593703",
-    "installed_path": "skills/individual-participant-data-ipd/SKILL.md",
-    "timestamp_utc": "2026-11-25 21:21:05 UTC"
+    "id": "propensity-score-causal-matching",
+    "epoch": 20,
+    "title_tr": "Eğilim Skoru Eşleştirme (PSM) & Ters Olasılık Ağırlıklandırma (IPTW)",
+    "desc_tr": "Gözlemsel çalışmalarda Eğilim Skoru Eşleştirme (PSM), IPTW ağırlıklandırma, SMD denge kontrolü ve E-değeri nedensellik analizi",
+    "desc_en": "Observational causal inference via Propensity Score Matching (PSM), Inverse Probability of Treatment Weighting (IPTW), standardized mean difference (SMD < 0.10) balance diagnostics, and E-value sensitivity.",
+    "agent_owner": "Agent-Critical-Thinking & Agent-Biostat",
+    "sha256": "74d4ff7bcb8afb002491fdc066295a61b1c1644accbf92fa72e2e011a843d01f",
+    "installed_path": "skills/propensity-score-causal-matching/SKILL.md",
+    "timestamp_utc": "2026-11-26 07:29:56 UTC"
   },
   "evolved_skills": [
     {
@@ -117,18 +117,18 @@
     },
     {
       "id": "propensity-score-causal-matching",
-      "epoch": 10,
+      "epoch": 20,
       "title_tr": "Eğilim Skoru Eşleştirme (PSM) & Ters Olasılık Ağırlıklandırma (IPTW)",
       "desc_tr": "Gözlemsel çalışmalarda Eğilim Skoru Eşleştirme (PSM), IPTW ağırlıklandırma, SMD denge kontrolü ve E-değeri nedensellik analizi",
       "desc_en": "Observational causal inference via Propensity Score Matching (PSM), Inverse Probability of Treatment Weighting (IPTW), standardized mean difference (SMD < 0.10) balance diagnostics, and E-value sensitivity.",
       "agent_owner": "Agent-Critical-Thinking & Agent-Biostat",
-      "sha256": "6f6487d24e26736cd5e4ce71ca8c112542e2116a34d1d8e437204002a52a5c3d",
+      "sha256": "74d4ff7bcb8afb002491fdc066295a61b1c1644accbf92fa72e2e011a843d01f",
       "installed_path": "skills/propensity-score-causal-matching/SKILL.md",
-      "timestamp_utc": "2026-11-21 18:07:07 UTC"
+      "timestamp_utc": "2026-11-26 07:29:56 UTC"
     }
   ],
   "recent_website_improvements": [
-    "Epoch #019: Yeni otonom beceri `individual-participant-data-ipd` (Bireysel Hasta Verisi (IPD) Meta-Analizi & Alt-Grup Etkileşim Modeli) sentezlendi ve doğrulandı.",
+    "Epoch #020: Yeni otonom beceri `propensity-score-causal-matching` (Eğilim Skoru Eşleştirme (PSM) & Ters Olasılık Ağırlıklandırma (IPTW)) sentezlendi ve doğrulandı.",
     "Aktif toplam beceri kapasitesi 46 beceriye yükseltildi.",
     "8 Ajanlı 3D Ofis telemetri önbelleği, Lyapunov sıfır-sapma (V_{k+1} < V_k) ve PRISMA 2020 kanıt indeksleri güncellendi."
   ],
