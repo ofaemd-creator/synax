@@ -1,31 +1,31 @@
 {
   "status": "AUTONOMOUS_EVOLUTION_ACTIVE",
   "engine_version": "6.4.0",
-  "evolution_epoch": 20,
+  "evolution_epoch": 21,
   "total_installed_skills": 46,
-  "last_updated_utc": "2026-11-26 07:29:56 UTC",
+  "last_updated_utc": "2026-11-26 21:07:56 UTC",
   "latest_evolved_skill": {
-    "id": "propensity-score-causal-matching",
-    "epoch": 20,
-    "title_tr": "Eğilim Skoru Eşleştirme (PSM) & Ters Olasılık Ağırlıklandırma (IPTW)",
-    "desc_tr": "Gözlemsel çalışmalarda Eğilim Skoru Eşleştirme (PSM), IPTW ağırlıklandırma, SMD denge kontrolü ve E-değeri nedensellik analizi",
-    "desc_en": "Observational causal inference via Propensity Score Matching (PSM), Inverse Probability of Treatment Weighting (IPTW), standardized mean difference (SMD < 0.10) balance diagnostics, and E-value sensitivity.",
-    "agent_owner": "Agent-Critical-Thinking & Agent-Biostat",
-    "sha256": "74d4ff7bcb8afb002491fdc066295a61b1c1644accbf92fa72e2e011a843d01f",
-    "installed_path": "skills/propensity-score-causal-matching/SKILL.md",
-    "timestamp_utc": "2026-11-26 07:29:56 UTC"
+    "id": "bayesian-meta-regression",
+    "epoch": 21,
+    "title_tr": "Hiyerarşik Bayesyen Meta-Regresyon & Önsel Duyarlılık Analizi",
+    "desc_tr": "Hiyerarşik Bayesyen rastgele etkiler meta-analizi, yarı-Cauchy önsel dağılım duyarlılığı ve ortak değişken meta-regresyonu",
+    "desc_en": "Hierarchical Bayesian random-effects meta-analysis, weakly informative half-Cauchy priors for tau, and meta-regression covariate modeling.",
+    "agent_owner": "Agent-Biostat (Masa 3)",
+    "sha256": "5b87bb0cc213da6b4ad41f74c8db408d5e32bc18ddeeac0654b2151ccdece336",
+    "installed_path": "skills/bayesian-meta-regression/SKILL.md",
+    "timestamp_utc": "2026-11-26 21:07:56 UTC"
   },
   "evolved_skills": [
     {
       "id": "bayesian-meta-regression",
-      "epoch": 11,
+      "epoch": 21,
       "title_tr": "Hiyerarşik Bayesyen Meta-Regresyon & Önsel Duyarlılık Analizi",
       "desc_tr": "Hiyerarşik Bayesyen rastgele etkiler meta-analizi, yarı-Cauchy önsel dağılım duyarlılığı ve ortak değişken meta-regresyonu",
       "desc_en": "Hierarchical Bayesian random-effects meta-analysis, weakly informative half-Cauchy priors for tau, and meta-regression covariate modeling.",
       "agent_owner": "Agent-Biostat (Masa 3)",
-      "sha256": "da833e60ca6df6c3eb03d0f34567684a294148dbb112c15789406334ff1fa9da",
+      "sha256": "5b87bb0cc213da6b4ad41f74c8db408d5e32bc18ddeeac0654b2151ccdece336",
       "installed_path": "skills/bayesian-meta-regression/SKILL.md",
-      "timestamp_utc": "2026-11-22 05:47:30 UTC"
+      "timestamp_utc": "2026-11-26 21:07:56 UTC"
     },
     {
       "id": "survival-kaplan-meier-cox",
@@ -128,7 +128,7 @@
     }
   ],
   "recent_website_improvements": [
-    "Epoch #020: Yeni otonom beceri `propensity-score-causal-matching` (Eğilim Skoru Eşleştirme (PSM) & Ters Olasılık Ağırlıklandırma (IPTW)) sentezlendi ve doğrulandı.",
+    "Epoch #021: Yeni otonom beceri `bayesian-meta-regression` (Hiyerarşik Bayesyen Meta-Regresyon & Önsel Duyarlılık Analizi) sentezlendi ve doğrulandı.",
     "Aktif toplam beceri kapasitesi 46 beceriye yükseltildi.",
     "8 Ajanlı 3D Ofis telemetri önbelleği, Lyapunov sıfır-sapma (V_{k+1} < V_k) ve PRISMA 2020 kanıt indeksleri güncellendi."
   ],
