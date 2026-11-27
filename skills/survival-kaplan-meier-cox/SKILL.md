@@ -3,7 +3,7 @@ name: survival-kaplan-meier-cox
 description: Time-to-event survival analysis, Kaplan-Meier curves, log-rank hypothesis testing, Hazard Ratios (HR with 95% CI), andSchoenfeld residuals proportional hazards audit. (Kaplan-Meier sağkalım eğrileri, Log-Rank testi, Cox Hazard Ratio (%95 GA) ve orantılı tehlikeler varsayımı denetimi)
 ---
 
-# SYNAX Self-Evolved Skill (Epoch #012): `survival-kaplan-meier-cox` — Sağkalım Analizi (Kaplan-Meier, Log-Rank & Cox Orantılı Tehlikeler)
+# SYNAX Self-Evolved Skill (Epoch #022): `survival-kaplan-meier-cox` — Sağkalım Analizi (Kaplan-Meier, Log-Rank & Cox Orantılı Tehlikeler)
 
 - **Synthesized By:** `Agent-Biostat (Masa 3)` (SYNAX Autonomous Self-Evolution Engine v6.4.0)
 - **Turkish Capability:** Kaplan-Meier sağkalım eğrileri, Log-Rank testi, Cox Hazard Ratio (%95 GA) ve orantılı tehlikeler varsayımı denetimi
