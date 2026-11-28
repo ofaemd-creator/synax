@@ -1,19 +1,19 @@
 {
   "status": "AUTONOMOUS_EVOLUTION_ACTIVE",
   "engine_version": "6.4.0",
-  "evolution_epoch": 23,
+  "evolution_epoch": 24,
   "total_installed_skills": 46,
-  "last_updated_utc": "2026-11-27 20:52:32 UTC",
+  "last_updated_utc": "2026-11-28 06:56:53 UTC",
   "latest_evolved_skill": {
-    "id": "diagnostic-roc-delong-audit",
-    "epoch": 23,
-    "title_tr": "Tanısal Doğruluk, ROC/AUC, DeLong Testi & STARD 2015 Denetimi",
-    "desc_tr": "STARD 2015 uyumlu tanısal doğruluk, ROC/AUC, DeLong testi, duyarlılık/özgüllük ve olabilirlik oranları (LR+/LR-) analizi",
-    "desc_en": "Diagnostic accuracy evaluation compliant with STARD 2015: ROC-AUC confidence intervals, DeLong pairwise AUC comparison, Youden J index, Fagan nomogram, and likelihood ratios (LR+/LR-).",
-    "agent_owner": "Agent-Scholar & Agent-Biostat",
-    "sha256": "8bab1298b617dade194a8bbf2ae8da43e1631afccb8056913cdd6c8a0884befb",
-    "installed_path": "skills/diagnostic-roc-delong-audit/SKILL.md",
-    "timestamp_utc": "2026-11-27 20:52:32 UTC"
+    "id": "clinical-trial-power-simulator",
+    "epoch": 24,
+    "title_tr": "Klinik Araştırma Örneklem Büyüklüğü & Monte Carlo Güç Simülatörü",
+    "desc_tr": "Klinik araştırmalarda a-priori örneklem büyüklüğü, ardışık alfa-harcama sınırları ve Monte Carlo istatistiksel güç simülasyonu",
+    "desc_en": "A-priori and adaptive clinical trial sample size calculation, O'Brien-Fleming alpha-spending sequential boundaries, and Monte Carlo power (1 - beta) simulation.",
+    "agent_owner": "Agent-Biostat (Masa 3)",
+    "sha256": "5fd3d1347151d21e199c9cec02d54355bbad29a7c7fb31abecaed10732d6adb3",
+    "installed_path": "skills/clinical-trial-power-simulator/SKILL.md",
+    "timestamp_utc": "2026-11-28 06:56:53 UTC"
   },
   "evolved_skills": [
     {
@@ -51,14 +51,14 @@
     },
     {
       "id": "clinical-trial-power-simulator",
-      "epoch": 14,
+      "epoch": 24,
       "title_tr": "Klinik Araştırma Örneklem Büyüklüğü & Monte Carlo Güç Simülatörü",
       "desc_tr": "Klinik araştırmalarda a-priori örneklem büyüklüğü, ardışık alfa-harcama sınırları ve Monte Carlo istatistiksel güç simülasyonu",
       "desc_en": "A-priori and adaptive clinical trial sample size calculation, O'Brien-Fleming alpha-spending sequential boundaries, and Monte Carlo power (1 - beta) simulation.",
       "agent_owner": "Agent-Biostat (Masa 3)",
-      "sha256": "4d8a24f452b85db1b237e9c195164afe94b211630f9871e5218ab4ae9b48ad6b",
+      "sha256": "5fd3d1347151d21e199c9cec02d54355bbad29a7c7fb31abecaed10732d6adb3",
       "installed_path": "skills/clinical-trial-power-simulator/SKILL.md",
-      "timestamp_utc": "2026-11-23 06:34:10 UTC"
+      "timestamp_utc": "2026-11-28 06:56:53 UTC"
     },
     {
       "id": "equator-consort-ai-extension",
@@ -128,7 +128,7 @@
     }
   ],
   "recent_website_improvements": [
-    "Epoch #023: Yeni otonom beceri `diagnostic-roc-delong-audit` (Tanısal Doğruluk, ROC/AUC, DeLong Testi & STARD 2015 Denetimi) sentezlendi ve doğrulandı.",
+    "Epoch #024: Yeni otonom beceri `clinical-trial-power-simulator` (Klinik Araştırma Örneklem Büyüklüğü & Monte Carlo Güç Simülatörü) sentezlendi ve doğrulandı.",
     "Aktif toplam beceri kapasitesi 46 beceriye yükseltildi.",
     "8 Ajanlı 3D Ofis telemetri önbelleği, Lyapunov sıfır-sapma (V_{k+1} < V_k) ve PRISMA 2020 kanıt indeksleri güncellendi."
   ],
